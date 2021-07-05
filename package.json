@@ -14,9 +14,18 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
+    "@fradser/prettier-config": "^2.0.1",
     "@types/react": "17.0.11",
     "eslint": "7.29.0",
     "eslint-config-next": "11.0.1",
+    "prettier": "^2.3.2",
     "typescript": "4.3.4"
+  },
+  "prettier": "@fradser/prettier-config",
+  "eslintConfig": {
+    "extends": [
+      "next",
+      "next/core-web-vitals"
+    ]
   }
 }
