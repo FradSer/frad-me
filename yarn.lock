@@ -275,11 +275,6 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fradser/prettier-config@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@fradser/prettier-config/-/prettier-config-2.0.1.tgz#246a42ab38abff9cb55950d2bfb56a5f7716e769"
-  integrity sha512-a34OWaWEQjzgJy4A+lhcRi8dm3Laneopq+MujgE8VkLv8QeH3jkUXpvbokZATYKzl5ahOyHa0mgMs1LIXC93ng==
-
 "@fullhuman/postcss-purgecss@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@fullhuman/postcss-purgecss/-/postcss-purgecss-4.0.3.tgz#55d71712ec1c7a88e0d1ba5f10ce7fb6aa05beb4"
