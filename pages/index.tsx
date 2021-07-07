@@ -16,9 +16,9 @@ export default function Home() {
           </a>
         </h1>
 
-        <p className="mt-3 text-2xl">
+        <p className="mt-3 text-2xl ">
           Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
+          <code className="p-3 font-mono text-lg bg-gray-100 rounded-lg">
             pages/index.js
           </code>
         </p>
