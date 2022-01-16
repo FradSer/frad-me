@@ -44,7 +44,7 @@ export default function Home() {
 
         <section className="w-full h-screen">
           <div className="flex h-full flex-row tems-center justify-center">
-            <h1 className="flex flex-col items-start justify-center text-4xl xl:text-6xl 2xl:text-8xl font-bold">
+            <h1 className="flex flex-col items-start justify-center text-3xl xl:text-5xl 2xl:text-7xl font-bold">
               <div className="relative">
                 <div className="absolute bottom-24 -left-24 ">
                   <Triangle />
