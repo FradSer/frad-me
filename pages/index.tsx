@@ -4,66 +4,88 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>Frad LEE | a self-taught crafter</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+      <main className="flex flex-col w-full px-20 text-center">
+        <nav className="flex w-full h-24">
+          <div className="flex grow h-full items-center">
+            <a href="#" aria-current="page">
+              <img src="/logo.svg" alt="f. Logo" className="" />
+            </a>
+          </div>
+          <div>
+            <ul className="flex flex-row items-center h-full text-2xl space-x-8">
+              <li>
+                <a href="#" className="">
+                  work
+                </a>
+              </li>
+              <li>
+                <a href="#" className="">
+                  blog
+                </a>
+              </li>
+              <li>
+                <a href="#" className="">
+                  side
+                </a>
+              </li>
+              <li>
+                <a href="#" className="flex justify-end">
+                  resume
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
 
-        <p className="mt-3 text-2xl ">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-lg">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <section className="w-full h-screen">
+          <div className="flex h-full flex-row tems-center justify-center">
+            <h1 className="flex flex-col items-start justify-center text-4xl xl:text-6xl 2xl:text-8xl font-bold">
+              <div className="relative">
+                <div className="absolute bottom-24 -left-24 w-32 h-32">
+                  <svg viewBox="0 0 149 129">
+                    <path
+                      d="M74.5 0L148.545 128.25H0.454826L74.5 0Z"
+                      fill="black"
+                    />
+                  </svg>
+                </div>
+                Frad LEE
+                <span className="text-gray-500"> is a self-taught crafter</span>
+              </div>
+              <div className="w-full flex">
+                <span className="text-gray-500">who eager to learn for</span>
+                <div className="flex grow ml-2 lg:ml-8 bg-black"></div>
+              </div>
+              <span className="text-gray-500">
+                advancement. Whether it&apos;s{' '}
+              </span>
+              <div>
+                coding
+                <span className="text-gray-500"> with a new language, </span>
+              </div>
+              <div>
+                design
+                <span className="text-gray-500">
+                  {' '}
+                  with any tools whatsoever
+                </span>
+              </div>
+              <div className="relative">
+                <span className="text-gray-500">or building a </span>
+                startup
+                <div className="absolute top-6 -right-24 h-24 w-24">
+                  <svg viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="48" fill="black" />
+                  </svg>
+                </div>
+              </div>
+            </h1>
+          </div>
+        </section>
       </main>
 
       <footer className="flex items-center justify-center w-full h-24 border-t">
