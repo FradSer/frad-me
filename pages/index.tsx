@@ -1,5 +1,7 @@
 import Head from 'next/head';
+
 import Triangle from './components/triangle';
+import DotCircle from './components/dot-circle';
 
 export default function Home() {
   return (
@@ -73,11 +75,7 @@ export default function Home() {
               <div className="relative">
                 <span className="text-gray-500">or building a </span>
                 startup
-                <div className="absolute top-6 -right-24 h-24 w-24">
-                  <svg viewBox="0 0 96 96">
-                    <circle cx="48" cy="48" r="48" fill="black" />
-                  </svg>
-                </div>
+                <DotCircle />
               </div>
             </h1>
           </div>
