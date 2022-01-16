@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Triangle from './components/triangle';
 
 export default function Home() {
   return (
@@ -45,13 +46,8 @@ export default function Home() {
           <div className="flex h-full flex-row tems-center justify-center">
             <h1 className="flex flex-col items-start justify-center text-4xl xl:text-6xl 2xl:text-8xl font-bold">
               <div className="relative">
-                <div className="absolute bottom-24 -left-24 w-32 h-32">
-                  <svg viewBox="0 0 149 129">
-                    <path
-                      d="M74.5 0L148.545 128.25H0.454826L74.5 0Z"
-                      fill="black"
-                    />
-                  </svg>
+                <div className="absolute bottom-24 -left-24 ">
+                  <Triangle />
                 </div>
                 Frad LEE
                 <span className="text-gray-500"> is a self-taught crafter</span>
