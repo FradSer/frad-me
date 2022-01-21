@@ -8,7 +8,7 @@ export default function Triangle() {
       rotate: initialRotate,
     },
     hover: {
-      rotate: initialRotate + 90,
+      rotate: initialRotate + 45,
       transition: { type: 'spring', stiffness: 50 },
     },
   };

@@ -27,7 +27,7 @@ export default function DotCircle() {
       onHoverEnd={() => {
         controls.start(arrowVariants.hoverInit);
       }}
-      className="absolute bottom-4 right-0 "
+      className="absolute bottom-4 right-0 z-30"
     >
       <motion.div
         animate={controls}

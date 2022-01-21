@@ -2,6 +2,7 @@ import Head from 'next/head';
 
 import Triangle from './components/triangle';
 import DotCircle from './components/dot-circle';
+import Rectangle from './components/rectangle';
 
 export default function Home() {
   return (
@@ -12,7 +13,7 @@ export default function Home() {
       </Head>
 
       <main className="flex flex-col w-full px-20 text-center">
-        <nav className="flex w-full h-24">
+        <nav className="flex w-full h-24 z-30">
           <div className="flex grow h-full items-center">
             <a href="#" aria-current="page">
               <img src="/logo.svg" alt="f. Logo" className="" />
@@ -48,7 +49,7 @@ export default function Home() {
           <div className="flex h-full flex-row tems-center justify-center">
             <h1 className="flex flex-col items-start justify-center text-3xl xl:text-5xl 2xl:text-7xl font-bold">
               <div className="relative">
-                <div className="absolute bottom-24 -left-24 ">
+                <div className="absolute bottom-24 -left-24 z-30">
                   <Triangle />
                 </div>
                 Frad LEE
@@ -56,7 +57,8 @@ export default function Home() {
               </div>
               <div className="w-full flex">
                 <span className="text-gray-500">who eager to learn for</span>
-                <div className="flex grow ml-2 lg:ml-8 bg-black"></div>
+                {/* <div className="flex grow ml-2 lg:ml-8 bg-black"></div> */}
+                <Rectangle />
               </div>
               <span className="text-gray-500">
                 advancement. Whether it&apos;s{' '}
