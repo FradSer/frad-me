@@ -6,7 +6,7 @@ import Rectangle from './components/rectangle';
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="cursor-none bg-white flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
         <title>Frad LEE | a self-taught crafter</title>
         <link rel="icon" href="/favicon.ico" />
