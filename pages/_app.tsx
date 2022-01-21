@@ -1,6 +1,8 @@
 import '../styles/globals.css';
 
 import { useState, useEffect } from 'react';
+
+import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 
 import Loading from './components/loading';
@@ -10,10 +12,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const handleStart = (url) => {
+    const handleStart = (url: string) => {
       url !== router.pathname ? setLoading(true) : setLoading(false);
     };
-    const handleComplete = (url) => setLoading(false);
+    const handleComplete = (url: string) => setLoading(false);
 
     router.events.on('routeChangeStart', handleStart);
     router.events.on('routeChangeComplete', handleComplete);

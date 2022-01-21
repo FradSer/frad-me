@@ -26,7 +26,7 @@ export default function Rectangle() {
     clamp: true,
   });
 
-  const onMove = (e) => {
+  const onMove = (e: any) => {
     // get position information for the card
     const bounds = e.currentTarget.getBoundingClientRect();
 
