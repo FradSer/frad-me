@@ -1,8 +1,8 @@
 import Head from 'next/head';
 
-import Triangle from './components/triangle';
-import DotCircle from './components/dot-circle';
-import Rectangle from './components/rectangle';
+import Triangle from '../components/triangle';
+import DotCircle from '../components/dot-circle';
+import Rectangle from '../components/rectangle';
 
 export default function Home() {
   return (

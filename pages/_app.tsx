@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 
-import DotRing from './components/dot-ring';
-import Loading from './components/loading';
+import DotRing from '../components/dot-ring';
+import Loading from '../components/loading';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
