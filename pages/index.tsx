@@ -1,12 +1,14 @@
 import Head from 'next/head';
 
+import ThemeChanger from '../components/theme-changer';
+
 import Triangle from '../components/triangle';
 import DotCircle from '../components/dot-circle';
 import Rectangle from '../components/rectangle';
 
 export default function Home() {
   return (
-    <div className="cursor-none bg-white flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="cursor-none bg-white dark:bg-black flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
         <title>Frad LEE | a self-taught crafter</title>
         <link rel="icon" href="/favicon.ico" />
@@ -16,7 +18,12 @@ export default function Home() {
         <nav className="flex w-full h-24 z-30">
           <div className="flex grow h-full items-center">
             <a href="#" aria-current="page">
-              <img src="/logo.svg" alt="f. Logo" className="" />
+              <svg
+                viewBox="0 0 19 35"
+                className="w-8 h-8 fill-black dark:fill-white"
+              >
+                <path d="M14.816 0.919998C10.112 0.919998 6.848 3.32 5.744 9.128L5.024 12.824H0.895999L0.319999 15.752H4.448L0.703999 35H4.16L7.952 15.752H12.848L13.376 12.824H8.528L9.248 9.08C9.968 5.432 12.032 4.232 14.576 4.232H15.008L15.68 0.919998H14.816ZM17.7652 35L18.7252 30.056H13.7812L12.8212 35H17.7652Z" />
+              </svg>
             </a>
           </div>
           <div>
@@ -40,6 +47,9 @@ export default function Home() {
                 <a href="#" className="flex justify-end">
                   resume
                 </a>
+              </li>
+              <li>
+                <ThemeChanger />
               </li>
             </ul>
           </div>
@@ -84,17 +94,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
+      <footer className="flex items-center justify-center w-full h-24"></footer>
     </div>
   );
 }

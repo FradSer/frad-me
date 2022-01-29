@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 
 import { useState, useEffect } from 'react';
+import { ThemeProvider } from 'next-themes';
 
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
@@ -24,11 +25,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <>
+    <ThemeProvider forcedTheme={Component.theme || undefined} attribute="class">
       <DotRing />
       <Loading loading={loading} />
       <Component {...pageProps} />
-    </>
+    </ThemeProvider>
   );
 }
 

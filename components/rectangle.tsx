@@ -42,8 +42,7 @@ export default function Rectangle() {
   return (
     <div className="flex grow ml-2 lg:ml-8">
       <motion.div
-        // onPointerMove={onMove}
-        className="bg-black w-full h-full"
+        className="bg-black dark:bg-white w-full h-full"
         style={{
           rotateX: rotateX,
           rotateY: rotateY,

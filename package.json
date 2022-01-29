@@ -16,6 +16,7 @@
     "framer-motion": "^5.6.0",
     "next": "12.0.8",
     "next-fonts": "^1.5.1",
+    "next-themes": "^0.0.15",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "three": "^0.136.0"
@@ -38,9 +39,7 @@
     "semi": true,
     "overrides": [
       {
-        "files": [
-          "*.json"
-        ],
+        "files": ["*.json"],
         "options": {
           "parser": "json"
         }
@@ -48,10 +47,7 @@
     ]
   },
   "eslintConfig": {
-    "extends": [
-      "next",
-      "next/core-web-vitals"
-    ],
+    "extends": ["next", "next/core-web-vitals"],
     "rules": {
       "@next/next/no-img-element": "off"
     }
