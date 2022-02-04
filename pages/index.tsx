@@ -1,11 +1,11 @@
 import Head from 'next/head';
 
-import FLogo from '../components/f-logo';
-import ThemeChanger from '../components/theme-changer';
+import FLogo from '../components/Header/FLogo';
+import ThemeChanger from '../components/Header/ThemeChanger';
 
-import Triangle from '../components/triangle';
-import DotCircle from '../components/dot-circle';
-import Rectangle from '../components/rectangle';
+import Triangle from '../components/Landing/Triangle';
+import DotCircle from '../components/Landing/DotCircle';
+import Rectangle from '../components/Landing/Rectangle';
 
 export default function Home() {
   return (

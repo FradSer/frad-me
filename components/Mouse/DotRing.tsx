@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-import useMousePosition from '../hooks/useMousePosition';
+import useMousePosition from '../../hooks/useMousePosition';
 
 export default function DotRing() {
   const { x, y } = useMousePosition();

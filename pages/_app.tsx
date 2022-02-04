@@ -6,8 +6,9 @@ import { useRouter } from 'next/router';
 
 import { ThemeProvider } from 'next-themes';
 
-import DotRing from '../components/dot-ring';
-import Loading from '../components/loading';
+import Loading from './loading';
+
+import DotRing from '../components/Mouse/DotRing';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
