@@ -6,6 +6,7 @@ import ThemeChanger from '../components/Header/ThemeChanger';
 import Triangle from '../components/Landing/Triangle';
 import DotCircle from '../components/Landing/DotCircle';
 import Rectangle from '../components/Landing/Rectangle';
+import WorkCard from '../components/Landing/WorkCard';
 
 export default function Home() {
   return (
@@ -33,40 +34,38 @@ export default function Home() {
         />
       </Head>
 
-      <main className="flex flex-col w-full px-20 text-center">
-        <nav className="flex w-full h-24 z-30">
+      <main className="flex flex-col w-full text-center">
+        <nav className="flex w-full px-40 h-24 z-30">
           <div className="flex grow h-full items-center fill-black dark:fill-white">
             <a href="#" aria-current="page">
               <FLogo />
             </a>
           </div>
-          <div>
-            <ul className="flex flex-row items-center h-full text-2xl space-x-8">
-              <li>
-                <a href="#" className="">
-                  work
-                </a>
-              </li>
-              <li>
-                <a href="#" className="">
-                  blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="">
-                  side
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex justify-end">
-                  resume
-                </a>
-              </li>
-              <li>
-                <ThemeChanger />
-              </li>
-            </ul>
-          </div>
+          <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8 ">
+            <li>
+              <a href="#" className="">
+                work
+              </a>
+            </li>
+            <li>
+              <a href="#" className="">
+                blog
+              </a>
+            </li>
+            <li>
+              <a href="#" className="">
+                side
+              </a>
+            </li>
+            <li>
+              <a href="#" className="flex justify-end">
+                resume
+              </a>
+            </li>
+            <li>
+              <ThemeChanger />
+            </li>
+          </ul>
         </nav>
 
         <section className="w-full h-screen">
@@ -105,6 +104,37 @@ export default function Home() {
               </div>
             </h1>
           </div>
+        </section>
+        <section className="w-screen grid gap-4 grid-cols-2">
+          <WorkCard
+            title="Eye Protection Design Handbook"
+            subTitle="Design Research"
+            backgroundColor="black"
+          />
+          <WorkCard
+            title="Usability Design for Xigua Video"
+            subTitle="Design Research / Product Design"
+            backgroundColor="black"
+          />
+          <WorkCard
+            title="Pachino"
+            subTitle="Product Design / Development"
+            backgroundColor={'red-500'}
+            backgroundImage="pachino"
+            isFullScreen={true}
+            isCenter={true}
+          />
+          <WorkCard
+            title="Eye Protection Design Handbook"
+            subTitle="Design Research"
+            backgroundColor="black"
+          />
+          <WorkCard
+            title="BearyChat"
+            subTitle="Product Management / Strategy"
+            backgroundColor="black"
+            isCenter={true}
+          />
         </section>
       </main>
 
