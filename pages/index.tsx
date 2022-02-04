@@ -35,9 +35,9 @@ export default function Home() {
 
       <main className="flex flex-col w-full px-20 text-center">
         <nav className="flex w-full h-24 z-30">
-          <div className="flex grow h-full items-center">
+          <div className="flex grow h-full items-center fill-black dark:fill-white">
             <a href="#" aria-current="page">
-              <FLogo className="fill-black dark:fill-white" />
+              <FLogo />
             </a>
           </div>
           <div>
