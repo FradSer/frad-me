@@ -11,7 +11,25 @@ export default function Home() {
     <div className="cursor-none bg-white dark:bg-black flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
         <title>Frad LEE | a self-taught crafter</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/webclip.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
       </Head>
 
       <main className="flex flex-col w-full px-20 text-center">
@@ -19,10 +37,11 @@ export default function Home() {
           <div className="flex grow h-full items-center">
             <a href="#" aria-current="page">
               <svg
-                viewBox="0 0 19 35"
-                className="w-8 h-8 fill-black dark:fill-white"
+                viewBox="0 0 1024 1024"
+                className="w-12 h-12 fill-black dark:fill-white"
               >
-                <path d="M14.816 0.919998C10.112 0.919998 6.848 3.32 5.744 9.128L5.024 12.824H0.895999L0.319999 15.752H4.448L0.703999 35H4.16L7.952 15.752H12.848L13.376 12.824H8.528L9.248 9.08C9.968 5.432 12.032 4.232 14.576 4.232H15.008L15.68 0.919998H14.816ZM17.7652 35L18.7252 30.056H13.7812L12.8212 35H17.7652Z" />
+                <path d="M359.274 448.928a19.96 19.96 0 0 0-18.75 13.118l-19.117 52.395c-4.751 13.021 4.89 26.802 18.75 26.802h233.461a19.959 19.959 0 0 0 18.751-13.119l19.117-52.395c4.751-13.021-4.89-26.801-18.751-26.801H359.274ZM618.032 767.902a19.96 19.96 0 0 0-18.751 13.118l-19.117 52.395c-4.751 13.021 4.89 26.802 18.751 26.802h49.821a19.961 19.961 0 0 0 18.751-13.119l19.117-52.395c4.751-13.021-4.89-26.801-18.751-26.801h-49.821Z" />
+                <path d="M370.751 860.217a9.98 9.98 0 0 0 9.381-6.574l128.136-353.896 23.087-65.729 32.451-87.735a342.268 342.268 0 0 1 16.549-37.674c6.224-12.118 13.705-22.442 22.442-30.971 8.736-8.529 18.8-14.778 30.192-18.748 11.392-3.97 24.407-4.665 39.046-2.083 7.93 1.398 14.989 3.272 21.178 5.622 2.395.909 5.625 2.296 8.684 3.653 5.111 2.269 11.137.035 13.413-5.073l22.806-51.155c2.319-5.203-.177-11.27-5.541-13.189-10.76-3.849-28.231-9.682-41.221-11.972-28.668-5.055-54.259-4.376-76.773 2.039-22.515 6.414-42.392 16.597-59.632 30.549-17.24 13.952-31.86 30.884-43.862 50.794a384.195 384.195 0 0 0-30.379 62.612l-32.612 88.65-23.087 65.73-130.977 361.764c-2.362 6.508 2.458 13.386 9.381 13.386h67.338Z" />
               </svg>
             </a>
           </div>
