@@ -3,24 +3,22 @@ import { motion, useAnimation } from 'framer-motion';
 type IWorkCardProps = {
   title: String;
   subTitle: String;
-  backgroundColor: String;
-  backgroundImage?: String;
+  background?: String;
   isFullScreen?: boolean;
   isCenter?: boolean;
 };
 
 export default function WorkCard<T extends IWorkCardProps>(props: T) {
-  // * Styles
+  // * Styling
 
   var backgroundImageClass =
     'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll';
 
-  if (props.backgroundImage !== '') {
-    backgroundImageClass += ' bg-' + props.backgroundImage;
-  }
-
-  if (props.backgroundColor !== '') {
-    backgroundImageClass += ' bg-' + props.backgroundColor;
+  switch (props.background) {
+    case 'pachino':
+      backgroundImageClass += ' bg-pachino bg-red-600';
+    default:
+      backgroundImageClass += ' bg-black';
   }
 
   // * Animation

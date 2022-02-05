@@ -109,30 +109,25 @@ export default function Home() {
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
-            backgroundColor="black"
           />
           <WorkCard
             title="Usability Design for Xigua Video"
             subTitle="Design Research / Product Design"
-            backgroundColor="black"
           />
           <WorkCard
             title="Pachino"
             subTitle="Product Design / Development"
-            backgroundColor={'red-500'}
-            backgroundImage="pachino"
+            background="pachino"
             isFullScreen={true}
             isCenter={true}
           />
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
-            backgroundColor="black"
           />
           <WorkCard
             title="BearyChat"
             subTitle="Product Management / Strategy"
-            backgroundColor="black"
             isCenter={true}
           />
         </section>
