@@ -9,7 +9,7 @@ import { motion, useTransform, useMotionValue } from 'framer-motion';
 
 export default function Rectangle() {
   // * Hooks
-  const { x, y } = useMousePosition();
+  const mousePosition = useMousePosition();
   const size = useWindowSize();
 
   // * Animation
@@ -30,8 +30,8 @@ export default function Rectangle() {
   });
 
   // set x,y local coordinates
-  const xValue = x / size.width;
-  const yValue = y / size.height;
+  const xValue = mousePosition.x / size.width;
+  const yValue = mousePosition.y / size.height;
 
   // update MotionValues
   mouseX.set(xValue, true);

@@ -7,7 +7,7 @@ import { MouseContext } from '../../context/Mouse/MouseContext';
 
 export default function DotRing() {
   // * Hooks
-  const { x, y } = useMousePosition();
+  const mousePosition = useMousePosition();
   const { cursorType, cursorChangeHandler } = useMouse();
 
   // * Animation
@@ -67,16 +67,18 @@ export default function DotRing() {
       <motion.div
         animate={controls}
         variants={textVariants}
+        initial="initial"
         className="fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50"
-        style={{ left: `${x}px`, top: `${y}px` }}
+        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       >
         READ
       </motion.div>
       <motion.div
         animate={controls}
         variants={sizeVariants}
+        initial="initial"
         className="fixed mix-blend-difference duration-50 rounded-full bg-white pointer-events-none z-40"
-        style={{ left: `${x}px`, top: `${y}px` }}
+        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       ></motion.div>
     </div>
   );

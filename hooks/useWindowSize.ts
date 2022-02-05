@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 
-interface Size {
-  width: number;
-  height: number;
-}
+type Size = { width: number; height: number };
 
 export default function useWindowSize(): Size {
   // Initialize state with undefined width/height so server and client renders match
