@@ -1,5 +1,7 @@
 import { motion, useAnimation } from 'framer-motion';
 
+import useMouse from '../../hooks/useMouse';
+
 type IWorkCardProps = {
   title: String;
   subTitle: String;
@@ -17,6 +19,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   switch (props.background) {
     case 'pachino':
       backgroundImageClass += ' bg-pachino bg-red-600';
+      break;
     default:
       backgroundImageClass += ' bg-black';
   }
@@ -67,16 +70,21 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
     },
   };
 
+  // * Hooks
+  const { cursorType, cursorChangeHandler } = useMouse();
+
   // * Render
 
   return (
     <motion.div
       onHoverStart={() => {
+        cursorChangeHandler('work-card-hovered');
         backgroundImageControls.start(backgroundImageVariants.hover);
         backgroundMaskControls.start(backgroundMaskVariants.hover);
         textControls.start(textVariants.hover);
       }}
       onHoverEnd={() => {
+        cursorChangeHandler('default');
         backgroundImageControls.start(backgroundImageVariants.initial);
         backgroundMaskControls.start(backgroundMaskVariants.initial);
         textControls.start(textVariants.initial);

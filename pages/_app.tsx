@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 
 import { ThemeProvider } from 'next-themes';
 
+import MouseContextProvider from '../context/Mouse/MouseContextProvider';
+
 import Loading from './loading';
 
 import DotRing from '../components/Mouse/DotRing';
@@ -26,11 +28,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <ThemeProvider forcedTheme={undefined} attribute="class">
-      <DotRing />
-      <Loading loading={loading} />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <MouseContextProvider>
+      <ThemeProvider forcedTheme={undefined} attribute="class">
+        <DotRing />
+        <Loading loading={loading} />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </MouseContextProvider>
   );
 }
 

@@ -40,7 +40,9 @@
     "semi": true,
     "overrides": [
       {
-        "files": ["*.json"],
+        "files": [
+          "*.json"
+        ],
         "options": {
           "parser": "json"
         }
@@ -48,7 +50,10 @@
     ]
   },
   "eslintConfig": {
-    "extends": ["next", "next/core-web-vitals"],
+    "extends": [
+      "next",
+      "next/core-web-vitals"
+    ],
     "rules": {
       "@next/next/no-img-element": "off"
     }
