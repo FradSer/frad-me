@@ -2,13 +2,23 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   mode: 'jit',
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
+      backgroundImage: {
+        pachino: "url('/img/pachino-background.png')",
+      },
       fontFamily: {
         sans: ['GT Eesti Text Trial', ...defaultTheme.fontFamily.sans],
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
+      },
+      aspectRatio: {
+        '100/62': '100 / 62',
+        '100/31': '100 / 31',
       },
     },
   },

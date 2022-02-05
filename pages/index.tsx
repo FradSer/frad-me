@@ -1,82 +1,138 @@
 import Head from 'next/head';
 
+import FLogo from '../components/Header/FLogo';
+import ThemeChanger from '../components/Header/ThemeChanger';
+
+import Triangle from '../components/Landing/Triangle';
+import DotCircle from '../components/Landing/DotCircle';
+import Rectangle from '../components/Landing/Rectangle';
+import WorkCard from '../components/Landing/WorkCard';
+
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="cursor-none bg-white dark:bg-black flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Frad LEE</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/webclip.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+      <main className="flex flex-col w-full text-center">
+        <nav className="sticky top-0 flex w-full px-40 h-24 z-50">
+          <div className="flex grow h-full items-center fill-black dark:fill-white">
+            <a href="#" aria-current="page">
+              <FLogo />
+            </a>
+          </div>
+          <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8 ">
+            <li>
+              <a href="#" className="">
+                work
+              </a>
+            </li>
+            <li>
+              <a href="#" className="">
+                blog
+              </a>
+            </li>
+            <li>
+              <a href="#" className="">
+                side
+              </a>
+            </li>
+            <li>
+              <a href="#" className="flex justify-end">
+                resume
+              </a>
+            </li>
+            <li>
+              <ThemeChanger />
+            </li>
+          </ul>
+        </nav>
 
-        <p className="mt-3 text-2xl ">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-lg">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <section className="w-full h-screen">
+          <div className="flex h-full flex-row tems-center justify-center">
+            <h1 className="flex flex-col items-start justify-center text-3xl xl:text-5xl 2xl:text-7xl font-bold">
+              <div className="relative">
+                <div className="absolute bottom-24 -left-24 z-30">
+                  <Triangle />
+                </div>
+                Frad LEE
+                <span className="text-gray-500"> is a self-taught crafter</span>
+              </div>
+              <div className="w-full flex">
+                <span className="text-gray-500">who eager to learn for</span>
+                <Rectangle />
+              </div>
+              <span className="text-gray-500">
+                advancement. Whether it&apos;s{' '}
+              </span>
+              <div>
+                coding
+                <span className="text-gray-500"> with a new language, </span>
+              </div>
+              <div>
+                design
+                <span className="text-gray-500">
+                  {' '}
+                  with any tools whatsoever
+                </span>
+              </div>
+              <div className="relative">
+                <span className="text-gray-500">or building a </span>
+                startup
+                <DotCircle />
+              </div>
+            </h1>
+          </div>
+        </section>
+        <section className="w-screen grid gap-4 grid-cols-2">
+          <WorkCard
+            title="Eye Protection Design Handbook"
+            subTitle="Design Research"
+          />
+          <WorkCard
+            title="Usability Design for Xigua Video"
+            subTitle="Design Research / Product Design"
+          />
+          <WorkCard
+            title="Pachino"
+            subTitle="Product Design / Development"
+            background="pachino"
+            isFullScreen={true}
+            isCenter={true}
+          />
+          <WorkCard
+            title="Eye Protection Design Handbook"
+            subTitle="Design Research"
+          />
+          <WorkCard
+            title="BearyChat"
+            subTitle="Product Management / Strategy"
+            isCenter={true}
+          />
+        </section>
       </main>
 
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
+      <footer className="flex items-center justify-center w-full h-24"></footer>
     </div>
   );
 }
