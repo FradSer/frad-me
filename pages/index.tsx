@@ -35,7 +35,7 @@ export default function Home() {
       </Head>
 
       <main className="flex flex-col w-full text-center">
-        <nav className="flex w-full px-40 h-24 z-30">
+        <nav className="sticky top-0 flex w-full px-40 h-24 z-50">
           <div className="flex grow h-full items-center fill-black dark:fill-white">
             <a href="#" aria-current="page">
               <FLogo />
@@ -80,7 +80,6 @@ export default function Home() {
               </div>
               <div className="w-full flex">
                 <span className="text-gray-500">who eager to learn for</span>
-                {/* <div className="flex grow ml-2 lg:ml-8 bg-black"></div> */}
                 <Rectangle />
               </div>
               <span className="text-gray-500">
