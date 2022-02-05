@@ -10,7 +10,7 @@ import {
 // https://github.com/brunob/leaflet.fullscreen/issues/52
 
 export default function Rectangle() {
-  const [angle, setAngle] = React.useState(12);
+  const [angle, setAngle] = React.useState(2);
   const [perspective, setPerspective] = React.useState(500);
 
   // we replace the useState with two motion values. One for each axis.
@@ -19,10 +19,10 @@ export default function Rectangle() {
   const y = useMotionValue(0.5);
   const x = useMotionValue(0.5);
 
-  const rotateY = useTransform(x, [0, 1], [-angle, angle], {
+  const skewX = useTransform(y, [0, 1], [angle, -angle], {
     clamp: true,
   });
-  const rotateX = useTransform(y, [0, 1], [angle, -angle], {
+  const skewY = useTransform(x, [0, 1], [-angle, angle], {
     clamp: true,
   });
 
@@ -44,8 +44,8 @@ export default function Rectangle() {
       <motion.div
         className="bg-black dark:bg-white w-full h-full"
         style={{
-          rotateX: rotateX,
-          rotateY: rotateY,
+          skewX: skewX,
+          skewY: skewY,
         }}
       ></motion.div>
       <motion.div
