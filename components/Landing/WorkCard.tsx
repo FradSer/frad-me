@@ -1,6 +1,6 @@
 import { motion, useAnimation } from 'framer-motion';
 
-import useMouse from '../../hooks/useMouse';
+import useMouseContext from '../../hooks/useMouseContext';
 
 type IWorkCardProps = {
   title: String;
@@ -71,20 +71,20 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   };
 
   // * Hooks
-  const { cursorType, cursorChangeHandler } = useMouse();
+  const mouseContext = useMouseContext();
 
   // * Render
 
   return (
     <motion.div
       onHoverStart={() => {
-        cursorChangeHandler('work-card-hovered');
+        mouseContext.cursorChangeHandler('work-card-hovered');
         backgroundImageControls.start(backgroundImageVariants.hover);
         backgroundMaskControls.start(backgroundMaskVariants.hover);
         textControls.start(textVariants.hover);
       }}
       onHoverEnd={() => {
-        cursorChangeHandler('default');
+        mouseContext.cursorChangeHandler('default');
         backgroundImageControls.start(backgroundImageVariants.initial);
         backgroundMaskControls.start(backgroundMaskVariants.initial);
         textControls.start(textVariants.initial);

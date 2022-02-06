@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 import { ThemeProvider } from 'next-themes';
 
-import MouseContextProvider from '../context/Mouse/MouseContextProvider';
+import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 
 import Loading from './loading';
 

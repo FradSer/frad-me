@@ -1,14 +1,12 @@
 import { motion, useAnimation } from 'framer-motion';
 
 import useMousePosition from '../../hooks/useMousePosition';
-import useMouse from '../../hooks/useMouse';
-
-import { MouseContext } from '../../context/Mouse/MouseContext';
+import useMouseContext from '../../hooks/useMouseContext';
 
 export default function DotRing() {
   // * Hooks
   const mousePosition = useMousePosition();
-  const { cursorType, cursorChangeHandler } = useMouse();
+  const mouseContext = useMouseContext();
 
   // * Animation
   const controls = useAnimation();
@@ -53,7 +51,7 @@ export default function DotRing() {
     },
   };
 
-  switch (cursorType) {
+  switch (mouseContext.cursorType) {
     case 'work-card-hovered':
       controls.start('workCardHover');
       break;
