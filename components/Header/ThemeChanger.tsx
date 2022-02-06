@@ -12,7 +12,7 @@ export default function ThemeChanger() {
   return (
     <div>
       {theme !== undefined && (
-        <button onClick={() => toggleTheme()}>
+        <button onClick={() => toggleTheme()} className="hover:cursor-none">
           {isDark ? 'light' : 'dark'}
         </button>
       )}

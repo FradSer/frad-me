@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
 import FLogo from '../components/Header/FLogo';
-import ThemeChanger from '../components/Header/ThemeChanger';
+import Header from '../components/Header';
 
 import Triangle from '../components/Landing/Triangle';
 import DotCircle from '../components/Landing/DotCircle';
@@ -35,38 +35,7 @@ export default function Home() {
       </Head>
 
       <main className="flex flex-col w-full text-center">
-        <nav className="sticky top-0 flex w-full px-40 h-24 z-50">
-          <div className="flex grow h-full items-center fill-black dark:fill-white">
-            <a href="#" aria-current="page">
-              <FLogo />
-            </a>
-          </div>
-          <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8 ">
-            <li>
-              <a href="#" className="">
-                work
-              </a>
-            </li>
-            <li>
-              <a href="#" className="">
-                blog
-              </a>
-            </li>
-            <li>
-              <a href="#" className="">
-                side
-              </a>
-            </li>
-            <li>
-              <a href="#" className="flex justify-end">
-                resume
-              </a>
-            </li>
-            <li>
-              <ThemeChanger />
-            </li>
-          </ul>
-        </nav>
+        <Header />
 
         <section className="w-full h-screen">
           <div className="flex h-full flex-row tems-center justify-center">
