@@ -17,7 +17,7 @@ export default function DotRing() {
   const backgroundClass = classNames(
     'fixed duration-50 rounded-full bg-white pointer-events-none z-40',
     {
-      'mix-blend-difference': mouseContext.cursorType === 'default',
+      'mix-blend-difference': mouseContext.cursorType != 'work-card-hovered',
     }
   );
 
@@ -25,13 +25,18 @@ export default function DotRing() {
   const controls = useAnimation();
   const transition = { type: 'spring', stiffness: 100 };
 
-  const sizeVariants = {
+  const backgroundVariants = {
     initial: {
       height: '2rem',
       width: '2rem',
+      opacity: 1,
       transition: {
         ...transition,
       },
+    },
+    headerLinkHovered: {
+      opacity: 0,
+      transition: { type: 'spring', stiffness: 100 },
     },
     workCardHover: {
       height: '4rem',
@@ -65,6 +70,9 @@ export default function DotRing() {
   };
 
   switch (mouseContext.cursorType) {
+    case 'header-link-hovered':
+      controls.start('headerLinkHovered');
+      break;
     case 'work-card-hovered':
       controls.start('workCardHover');
       break;
@@ -86,7 +94,7 @@ export default function DotRing() {
       </motion.div>
       <motion.div
         animate={controls}
-        variants={sizeVariants}
+        variants={backgroundVariants}
         initial="initial"
         className={backgroundClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
