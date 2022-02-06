@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
 import useMousePosition from '../../hooks/useMousePosition';
@@ -7,6 +8,18 @@ export default function DotRing() {
   // * Hooks
   const mousePosition = useMousePosition();
   const mouseContext = useMouseContext();
+
+  // * Styling
+  const textClass = classNames(
+    'fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50'
+  );
+
+  const backgroundClass = classNames(
+    'fixed duration-50 rounded-full bg-white pointer-events-none z-40',
+    {
+      'mix-blend-difference': mouseContext.cursorType === 'default',
+    }
+  );
 
   // * Animation
   const controls = useAnimation();
@@ -66,7 +79,7 @@ export default function DotRing() {
         animate={controls}
         variants={textVariants}
         initial="initial"
-        className="fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50"
+        className={textClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       >
         READ
@@ -75,7 +88,7 @@ export default function DotRing() {
         animate={controls}
         variants={sizeVariants}
         initial="initial"
-        className="fixed mix-blend-difference duration-50 rounded-full bg-white pointer-events-none z-40"
+        className={backgroundClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       ></motion.div>
     </div>
