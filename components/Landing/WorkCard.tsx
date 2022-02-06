@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
 import useMouseContext from '../../hooks/useMouseContext';
@@ -12,17 +13,13 @@ type IWorkCardProps = {
 
 export default function WorkCard<T extends IWorkCardProps>(props: T) {
   // * Styling
-
-  var backgroundImageClass =
-    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll';
-
-  switch (props.background) {
-    case 'pachino':
-      backgroundImageClass += ' bg-pachino bg-red-600';
-      break;
-    default:
-      backgroundImageClass += ' bg-black';
-  }
+  const backgroundImageClass = classNames(
+    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll',
+    {
+      'bg-pachino bg-red-600': props.background === 'pachino',
+      'bg-black': props.background == null,
+    }
+  );
 
   // * Animation
 
