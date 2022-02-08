@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Sky, Text } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Sky, Text, PerspectiveCamera } from '@react-three/drei';
 import { VRCanvas, DefaultXRControllers, Interactive } from '@react-three/xr';
+
+import Model from './Model';
 
 function Floor() {
   return (
@@ -56,15 +59,22 @@ function Button(props: any) {
   );
 }
 
+const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
 export default function WebXR() {
   return (
     <VRCanvas>
-      <Sky sunPosition={[0, 1, 0]} />
-      <Floor />
+      <Sky sunPosition={[0, 10, 0]} />
       <ambientLight />
-      <pointLight position={[10, 10, 10]} />
       <DefaultXRControllers />
-      <Button position={[0, 0.8, -1]} />
+      <PerspectiveCamera
+        position={[-0.405, 5.116, -0.241]}
+        rotation={[deg2rad(-33.61), deg2rad(-52.21), deg2rad(-27.71)]}
+        fov={50.0}
+        makeDefault
+      />
+      <pointLight position={[10, 10, 10]} />
+      <Model />
     </VRCanvas>
   );
 }
