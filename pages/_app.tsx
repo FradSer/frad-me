@@ -1,20 +1,29 @@
 import '../styles/globals.css';
 
 import { useState, useEffect } from 'react';
+
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import classNames from 'classnames';
 
 import { ThemeProvider } from 'next-themes';
 
+import useXRDetect from '../hooks/useXRDetect';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 
 import Loading from './loading';
 
 import DotRing from '../components/Mouse/DotRing';
 
+const WebXR = dynamic(() => import('../components/WebXR'), { ssr: false });
+
 function MyApp({ Component, pageProps }: AppProps) {
+  // * Hooks
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const xrDetect = useXRDetect();
 
   useEffect(() => {
     const handleStart = (url: string) => {
@@ -27,7 +36,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.events.on('routeChangeError', handleComplete);
   }, [router]);
 
-  return (
+  // * Render
+  return xrDetect.isXR ? (
+    <div className="h-screen w-screen">
+      <WebXR />
+    </div>
+  ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
