@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Sky, Text } from '@react-three/drei';
 import { VRCanvas, DefaultXRControllers, Interactive } from '@react-three/xr';
