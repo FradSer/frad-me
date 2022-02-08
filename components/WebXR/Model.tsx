@@ -34,7 +34,7 @@ const Model = () => {
 
   /* State */
   const [model, setModel] = useState<Object3D | null>(null);
-  const [animation, setAnimation] = useState<AnimationClip[] | null>(null);
+  //   const [animation, setAnimation] = useState<AnimationClip[] | null>(null);
 
   /* Mixer */
   //   const [mixer] = useState(() => new THREE.AnimationMixer(null));
@@ -44,9 +44,9 @@ const Model = () => {
     const loader = new GLTFLoader();
     loader.load('room.gltf', async (gltf) => {
       const nodes = await gltf.parser.getDependencies('node');
-      const animations = await gltf.parser.getDependencies('animation');
+      //   const animations = await gltf.parser.getDependencies('animation');
       setModel(nodes[0]);
-      setAnimation(animations);
+      //   setAnimation(animations);
     });
   }, []);
 
@@ -69,6 +69,8 @@ const Model = () => {
   //       return (group.current.rotation.y += 0.01);
   //   });
 
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
   return (
     <>
       {model ? (
@@ -77,6 +79,8 @@ const Model = () => {
           dispose={null}
         >
           <primitive
+            position={[0, 0, 0]}
+            rotation={[deg2rad(0), deg2rad(72), deg2rad(0)]}
             // ref={group}
             name="Object_0"
             object={model}

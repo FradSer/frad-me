@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Sky, Text, PerspectiveCamera } from '@react-three/drei';
-import { VRCanvas, DefaultXRControllers, Interactive } from '@react-three/xr';
+import {
+  useXR,
+  DefaultXRControllers,
+  Interactive,
+  VRCanvas,
+} from '@react-three/xr';
 
 import Model from './Model';
 
@@ -59,7 +64,17 @@ function Button(props: any) {
   );
 }
 
-const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+function Player() {
+  const { player } = useXR();
+
+  useFrame(() => {
+    player.position.x = -1;
+    player.position.y = 4;
+    player.position.z = -3;
+  });
+
+  return null;
+}
 
 export default function WebXR() {
   return (
@@ -67,12 +82,7 @@ export default function WebXR() {
       <Sky sunPosition={[0, 10, 0]} />
       <ambientLight />
       <DefaultXRControllers />
-      <PerspectiveCamera
-        position={[-0.405, 5.116, -0.241]}
-        rotation={[deg2rad(-33.61), deg2rad(-52.21), deg2rad(-27.71)]}
-        fov={50.0}
-        makeDefault
-      />
+      <Player />
       <pointLight position={[10, 10, 10]} />
       <Model />
     </VRCanvas>
