@@ -1,26 +1,42 @@
+import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
 import useMousePosition from '../../hooks/useMousePosition';
-import useMouse from '../../hooks/useMouse';
-
-import { MouseContext } from '../../context/Mouse/MouseContext';
+import useMouseContext from '../../hooks/useMouseContext';
 
 export default function DotRing() {
   // * Hooks
-  const { x, y } = useMousePosition();
-  const { cursorType, cursorChangeHandler } = useMouse();
+  const mousePosition = useMousePosition();
+  const mouseContext = useMouseContext();
+
+  // * Styling
+  const textClass = classNames(
+    'fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50'
+  );
+
+  const backgroundClass = classNames(
+    'fixed duration-50 rounded-full bg-white pointer-events-none z-40',
+    {
+      'mix-blend-difference': mouseContext.cursorType != 'work-card-hovered',
+    }
+  );
 
   // * Animation
   const controls = useAnimation();
   const transition = { type: 'spring', stiffness: 100 };
 
-  const sizeVariants = {
+  const backgroundVariants = {
     initial: {
       height: '2rem',
       width: '2rem',
+      opacity: 1,
       transition: {
         ...transition,
       },
+    },
+    headerLinkHovered: {
+      opacity: 0,
+      transition: { type: 'spring', stiffness: 100 },
     },
     workCardHover: {
       height: '4rem',
@@ -53,7 +69,10 @@ export default function DotRing() {
     },
   };
 
-  switch (cursorType) {
+  switch (mouseContext.cursorType) {
+    case 'header-link-hovered':
+      controls.start('headerLinkHovered');
+      break;
     case 'work-card-hovered':
       controls.start('workCardHover');
       break;
@@ -67,16 +86,18 @@ export default function DotRing() {
       <motion.div
         animate={controls}
         variants={textVariants}
-        className="fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50"
-        style={{ left: `${x}px`, top: `${y}px` }}
+        initial="initial"
+        className={textClass}
+        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       >
         READ
       </motion.div>
       <motion.div
         animate={controls}
-        variants={sizeVariants}
-        className="fixed mix-blend-difference duration-50 rounded-full bg-white pointer-events-none z-40"
-        style={{ left: `${x}px`, top: `${y}px` }}
+        variants={backgroundVariants}
+        initial="initial"
+        className={backgroundClass}
+        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       ></motion.div>
     </div>
   );

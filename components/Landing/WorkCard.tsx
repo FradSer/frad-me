@@ -1,6 +1,7 @@
+import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
-import useMouse from '../../hooks/useMouse';
+import useMouseContext from '../../hooks/useMouseContext';
 
 type IWorkCardProps = {
   title: String;
@@ -12,17 +13,13 @@ type IWorkCardProps = {
 
 export default function WorkCard<T extends IWorkCardProps>(props: T) {
   // * Styling
-
-  var backgroundImageClass =
-    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll';
-
-  switch (props.background) {
-    case 'pachino':
-      backgroundImageClass += ' bg-pachino bg-red-600';
-      break;
-    default:
-      backgroundImageClass += ' bg-black';
-  }
+  const backgroundImageClass = classNames(
+    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll',
+    {
+      'bg-pachino bg-red-600': props.background === 'pachino',
+      'bg-black': props.background == null,
+    }
+  );
 
   // * Animation
 
@@ -71,20 +68,20 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   };
 
   // * Hooks
-  const { cursorType, cursorChangeHandler } = useMouse();
+  const mouseContext = useMouseContext();
 
   // * Render
 
   return (
     <motion.div
       onHoverStart={() => {
-        cursorChangeHandler('work-card-hovered');
+        mouseContext.cursorChangeHandler('work-card-hovered');
         backgroundImageControls.start(backgroundImageVariants.hover);
         backgroundMaskControls.start(backgroundMaskVariants.hover);
         textControls.start(textVariants.hover);
       }}
       onHoverEnd={() => {
-        cursorChangeHandler('default');
+        mouseContext.cursorChangeHandler('default');
         backgroundImageControls.start(backgroundImageVariants.initial);
         backgroundMaskControls.start(backgroundMaskVariants.initial);
         textControls.start(textVariants.initial);
