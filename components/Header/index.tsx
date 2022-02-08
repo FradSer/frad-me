@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import FLogo from './FLogo';
 import HeaderLink from './HeaderLink';
-import ThemeChanger from './ThemeChanger';
+import ThemeSwitcher from './ThemeSwitcher';
 
 export default function Header() {
   // * Reader
@@ -30,7 +30,7 @@ export default function Header() {
           <HeaderLink title="resume" href="/resume" />
         </li>
         <li>
-          <ThemeChanger />
+          <ThemeSwitcher />
         </li>
       </ul>
     </nav>
