@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
-import useMousePosition from '../../hooks/useMousePosition';
 import useMouseContext from '../../hooks/useMouseContext';
+import useMousePosition from '../../hooks/useMousePosition';
 
 export default function DotRing() {
   // * Hooks

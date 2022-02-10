@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import classNames from 'classnames';
+import Link from 'next/link';
 
 import FLogo from './FLogo';
 import HeaderLink from './HeaderLink';

@@ -1,20 +1,16 @@
-import '../styles/globals.css';
-
-import { useState, useEffect } from 'react';
-
-import { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
 import classNames from 'classnames';
-
 import { ThemeProvider } from 'next-themes';
-
-import useXRDetect from '../hooks/useXRDetect';
-import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
-
-import Loading from './loading';
+import { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import DotRing from '../components/Mouse/DotRing';
+import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
+import useXRDetect from '../hooks/useXRDetect';
+import Loading from './loading';
+
+import '../styles/globals.css';
 
 const WebXR = dynamic(() => import('../components/WebXR'), { ssr: false });
 

@@ -1,11 +1,9 @@
 import Head from 'next/head';
 
-import FLogo from '../components/Header/FLogo';
 import Header from '../components/Header';
-
-import Triangle from '../components/Landing/Triangle';
 import DotCircle from '../components/Landing/DotCircle';
 import Rectangle from '../components/Landing/Rectangle';
+import Triangle from '../components/Landing/Triangle';
 import WorkCard from '../components/Landing/WorkCard';
 
 export default function Home() {

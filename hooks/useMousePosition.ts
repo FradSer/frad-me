@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
+import { useEffect, useState } from 'react';
 
 type MousePosition = { x: number; y: number };
 

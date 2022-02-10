@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { motion } from 'framer-motion';
 import classNames from 'classnames';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 import useMouseContext from '../../hooks/useMouseContext';
 

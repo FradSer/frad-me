@@ -1,9 +1,8 @@
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { useState } from 'react';
 
 import useMousePosition from '../../hooks/useMousePosition';
 import useWindowSize from '../../hooks/useWindowSize';
-
-import { motion, useTransform, useMotionValue } from 'framer-motion';
 
 // https://github.com/brunob/leaflet.fullscreen/issues/52
 
