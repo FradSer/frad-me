@@ -1,8 +1,9 @@
-import { PerspectiveCamera, Sky, Text } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { DefaultXRControllers, Interactive, useXR, VRCanvas } from '@react-three/xr';
 import { useEffect, useRef, useState } from 'react';
 
+import useXRDetect from '../../hooks/useXRDetect';
 import Model from './Model';
 
 function Floor() {
@@ -71,7 +72,11 @@ function Player() {
 }
 
 export default function WebXR() {
-  return (
+  const xrDetect = useXRDetect();
+
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
+  return xrDetect.isVR ? (
     <VRCanvas>
       <Sky sunPosition={[0, 10, 0]} />
       <ambientLight />
@@ -80,5 +85,18 @@ export default function WebXR() {
       <pointLight position={[10, 10, 10]} />
       <Model />
     </VRCanvas>
+  ) : (
+    <Canvas>
+      <Sky />
+      <PerspectiveCamera
+        position={[20, 20, 20]}
+        rotation={[deg2rad(60), deg2rad(60), deg2rad(50)]}
+        makeDefault
+      />
+      <OrbitControls />
+      <ambientLight />
+      <pointLight position={[10, 10, 10]} />
+      <Model />
+    </Canvas>
   );
 }
