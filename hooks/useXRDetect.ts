@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
 
 type XRDetect = {
-  isXR: boolean;
+  isVR: boolean;
 };
 
 // Detect if the browser is supporting WebXR
 // https://developer.mozilla.org/en-US/docs/Web/API/WebXR_API
+// https://www.devbridge.com/articles/ar-app-development-tutorial/
 export default function useXRDetect(): XRDetect {
-  const [isXR, setIsXR] = useState(false);
+  const [isVR, setIsXR] = useState(false);
 
   useEffect(() => {
-    if ('xr' in window.navigator) {
-      setIsXR(true);
-    }
+    navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+      setIsXR(supported);
+    });
   }, []);
 
-  return { isXR };
+  return { isVR };
 }
