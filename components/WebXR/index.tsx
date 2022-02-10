@@ -1,13 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-
+import { PerspectiveCamera, Sky, Text } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sky, Text, PerspectiveCamera } from '@react-three/drei';
-import {
-  useXR,
-  DefaultXRControllers,
-  Interactive,
-  VRCanvas,
-} from '@react-three/xr';
+import { DefaultXRControllers, Interactive, useXR, VRCanvas } from '@react-three/xr';
+import { useEffect, useRef, useState } from 'react';
 
 import Model from './Model';
 
