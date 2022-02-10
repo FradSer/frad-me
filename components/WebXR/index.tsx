@@ -1,10 +1,16 @@
 import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { DefaultXRControllers, Interactive, useXR, VRCanvas } from '@react-three/xr';
+import {
+  DefaultXRControllers,
+  Interactive,
+  useXR,
+  VRCanvas,
+} from '@react-three/xr';
 import { useEffect, useRef, useState } from 'react';
 
 import useXRDetect from '../../hooks/useXRDetect';
 import Model from './Model';
+import XIGLogo from './XIGLogo';
 
 function Floor() {
   return (
@@ -84,6 +90,7 @@ export default function WebXR() {
       <Player />
       <pointLight position={[10, 10, 10]} />
       <Model />
+      <XIGLogo />
     </VRCanvas>
   ) : (
     <Canvas>
@@ -97,6 +104,7 @@ export default function WebXR() {
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
       <Model />
+      <XIGLogo />
     </Canvas>
   );
 }
