@@ -1,7 +1,16 @@
-import { useState } from 'react';
+import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import {
+  DefaultXRControllers,
+  Interactive,
+  useXR,
+  VRCanvas,
+} from '@react-three/xr';
+import { useEffect, useRef, useState } from 'react';
 
-import { Sky, Text } from '@react-three/drei';
-import { VRCanvas, DefaultXRControllers, Interactive } from '@react-three/xr';
+import useXRDetect from '../../hooks/useXRDetect';
+import Model from './Model';
+import XIGLogo from './XIGLogo';
 
 function Floor() {
   return (
@@ -56,15 +65,46 @@ function Button(props: any) {
   );
 }
 
+function Player() {
+  const { player } = useXR();
+
+  useFrame(() => {
+    player.position.x = -1;
+    player.position.y = 4;
+    player.position.z = -3;
+  });
+
+  return null;
+}
+
 export default function WebXR() {
-  return (
+  const xrDetect = useXRDetect();
+
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
+  return xrDetect.isVR ? (
     <VRCanvas>
-      <Sky sunPosition={[0, 1, 0]} />
-      <Floor />
+      <Sky sunPosition={[0, 10, 0]} />
+      <ambientLight />
+      <DefaultXRControllers />
+      <Player />
+      <pointLight position={[10, 10, 10]} />
+      <Model />
+      <XIGLogo />
+    </VRCanvas>
+  ) : (
+    <Canvas>
+      <Sky />
+      <PerspectiveCamera
+        position={[20, 20, 20]}
+        rotation={[deg2rad(60), deg2rad(60), deg2rad(50)]}
+        makeDefault
+      />
+      <OrbitControls />
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <DefaultXRControllers />
-      <Button position={[0, 0.8, -1]} />
-    </VRCanvas>
+      <Model />
+      <XIGLogo />
+    </Canvas>
   );
 }

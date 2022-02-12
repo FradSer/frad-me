@@ -33,18 +33,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   // * Render
-  return xrDetect.isXR ? (
+  return (
     <div className="h-screen w-screen">
       <WebXR />
     </div>
-  ) : (
-    <MouseContextProvider>
-      <ThemeProvider forcedTheme={undefined} attribute="class">
-        <DotRing />
-        <Loading loading={loading} />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </MouseContextProvider>
   );
 }
 
