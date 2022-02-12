@@ -1,14 +1,9 @@
 import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import {
-  DefaultXRControllers,
-  Interactive,
-  useXR,
-  VRCanvas,
-} from '@react-three/xr';
-import { useEffect, useRef, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { DefaultXRControllers, Interactive, useXR } from '@react-three/xr';
+import { useState } from 'react';
 
-import useXRDetect from '../../hooks/useXRDetect';
+import GenericCanvas from './GeneralCanvas';
 import Model from './Model';
 import XIGLogo from './XIGLogo';
 
@@ -65,6 +60,33 @@ function Button(props: any) {
   );
 }
 
+function GenericChildren() {
+  return (
+    <>
+      <Sky sunPosition={[0, 10, 0]} />
+      <ambientLight />
+      <pointLight position={[10, 10, 10]} />
+      <Model />
+      <XIGLogo />
+    </>
+  );
+}
+
+function CanvasChildren() {
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
+  return (
+    <>
+      <PerspectiveCamera
+        position={[20, 20, 20]}
+        rotation={[deg2rad(60), deg2rad(60), deg2rad(50)]}
+        makeDefault
+      />
+      <OrbitControls />
+    </>
+  );
+}
+
 function Player() {
   const { player } = useXR();
 
@@ -77,34 +99,23 @@ function Player() {
   return null;
 }
 
-export default function WebXR() {
-  const xrDetect = useXRDetect();
-
-  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
-
-  return xrDetect.isVR ? (
-    <VRCanvas>
-      <Sky sunPosition={[0, 10, 0]} />
-      <ambientLight />
+function VRCanvasChildren() {
+  return (
+    <>
       <DefaultXRControllers />
       <Player />
-      <pointLight position={[10, 10, 10]} />
-      <Model />
-      <XIGLogo />
-    </VRCanvas>
-  ) : (
-    <Canvas>
-      <Sky />
-      <PerspectiveCamera
-        position={[20, 20, 20]}
-        rotation={[deg2rad(60), deg2rad(60), deg2rad(50)]}
-        makeDefault
+    </>
+  );
+}
+
+export default function WebXR() {
+  return (
+    <div className="h-screen w-screen">
+      <GenericCanvas
+        genericChildren={<GenericChildren />}
+        vrCanvasChildren={<VRCanvasChildren />}
+        canvasChildren={<CanvasChildren />}
       />
-      <OrbitControls />
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Model />
-      <XIGLogo />
-    </Canvas>
+    </div>
   );
 }
