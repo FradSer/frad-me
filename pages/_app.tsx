@@ -1,14 +1,15 @@
-import classNames from 'classnames';
 import { ThemeProvider } from 'next-themes';
 import { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import DotRing from '../components/Mouse/DotRing';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 import useXRDetect from '../hooks/useXRDetect';
 import Loading from './loading';
+import Header from '../components/Header';
 
 import '../styles/globals.css';
 
@@ -40,7 +41,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
         <Loading loading={loading} />
-        <Component {...pageProps} />
+        <div className="cursor-none">
+          <Header />
+          <Component {...pageProps} />
+        </div>
       </ThemeProvider>
     </MouseContextProvider>
   );

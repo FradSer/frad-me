@@ -6,35 +6,16 @@ import Rectangle from '../components/Landing/Rectangle';
 import Triangle from '../components/Landing/Triangle';
 import WorkCard from '../components/Landing/WorkCard';
 
+import { postFilePaths, POSTS_PATH } from '../utils/mdxUtils';
+
 export default function Home() {
   return (
-    <div className="cursor-none bg-white dark:bg-black flex flex-col items-center justify-center min-h-screen py-2">
+    <>
       <Head>
         <title>Frad LEE</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/webclip.png" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
       </Head>
 
-      <main className="flex flex-col w-full text-center">
-        <Header />
-
+      <main className="bg-white dark:bg-black flex flex-col w-full items-center justify-center min-h-screen py-2 text-center">
         <section className="w-full h-screen">
           <div className="flex h-full flex-row tems-center justify-center">
             <h1 className="flex flex-col items-start justify-center text-3xl xl:text-5xl 2xl:text-7xl font-bold">
@@ -75,14 +56,17 @@ export default function Home() {
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
+            link="eye-protection-design-handbook"
           />
           <WorkCard
             title="Usability Design for Xigua Video"
             subTitle="Design Research / Product Design"
+            link="usability-design-for-xigua-video"
           />
           <WorkCard
             title="Pachino"
             subTitle="Product Design / Development"
+            link="pachino"
             background="pachino"
             isFullScreen={true}
             isCenter={true}
@@ -90,16 +74,18 @@ export default function Home() {
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
+            link="eye-protection-design-handbook"
           />
           <WorkCard
             title="BearyChat"
             subTitle="Product Management / Strategy"
+            link="bearychat"
             isCenter={true}
           />
         </section>
       </main>
 
       <footer className="flex items-center justify-center w-full h-24"></footer>
-    </div>
+    </>
   );
 }
