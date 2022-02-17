@@ -25,8 +25,11 @@ export default function DotRing() {
   const controls = useAnimation();
   const transition = { type: 'spring', stiffness: 100 };
 
+  const transitionOffset = { x: '-50%', y: '-50%' };
+
   const backgroundVariants = {
     initial: {
+      ...transitionOffset,
       height: '2rem',
       width: '2rem',
       opacity: 1,
@@ -39,6 +42,7 @@ export default function DotRing() {
       transition: { type: 'spring', stiffness: 100 },
     },
     workCardHover: {
+      ...transitionOffset,
       height: '4rem',
       width: '4rem',
       transition: {
@@ -49,6 +53,7 @@ export default function DotRing() {
 
   const textVariants = {
     initial: {
+      ...transitionOffset,
       height: '2rem',
       width: '2rem',
       opacity: 0,
@@ -59,6 +64,7 @@ export default function DotRing() {
     },
 
     workCardHover: {
+      ...transitionOffset,
       height: '4rem',
       width: '4rem',
       opacity: 1,
