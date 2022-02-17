@@ -6,7 +6,7 @@ import useMouseContext from '../../hooks/useMouseContext';
 type IWorkCardProps = {
   title: string;
   subTitle: string;
-  link: string;
+  slug: string;
   background?: string;
   isFullScreen?: boolean;
   isCenter?: boolean;
@@ -74,7 +74,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   // * Render
 
   return (
-    <Link as={`/works/${props.link}`} href={`/works/[slug]`} passHref>
+    <Link href={`/works/${props.slug}`} passHref>
       <motion.div
         onHoverStart={() => {
           mouseContext.cursorChangeHandler('work-card-hovered');

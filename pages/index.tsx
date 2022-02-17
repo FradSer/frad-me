@@ -6,8 +6,6 @@ import Rectangle from '../components/Landing/Rectangle';
 import Triangle from '../components/Landing/Triangle';
 import WorkCard from '../components/Landing/WorkCard';
 
-import { postFilePaths, POSTS_PATH } from '../utils/mdxUtils';
-
 export default function Home() {
   return (
     <>
@@ -56,17 +54,17 @@ export default function Home() {
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
-            link="eye-protection-design-handbook"
+            slug="eye-protection-design-handbook"
           />
           <WorkCard
             title="Usability Design for Xigua Video"
             subTitle="Design Research / Product Design"
-            link="usability-design-for-xigua-video"
+            slug="usability-design-for-xigua-video"
           />
           <WorkCard
             title="Pachino"
             subTitle="Product Design / Development"
-            link="pachino"
+            slug="pachino"
             background="pachino"
             isFullScreen={true}
             isCenter={true}
@@ -74,12 +72,12 @@ export default function Home() {
           <WorkCard
             title="Eye Protection Design Handbook"
             subTitle="Design Research"
-            link="eye-protection-design-handbook"
+            slug="eye-protection-design-handbook"
           />
           <WorkCard
             title="BearyChat"
             subTitle="Product Management / Strategy"
-            link="bearychat"
+            slug="bearychat"
             isCenter={true}
           />
         </section>
