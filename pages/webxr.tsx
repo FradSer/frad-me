@@ -3,9 +3,9 @@ import { useFrame } from '@react-three/fiber';
 import { DefaultXRControllers, Interactive, useXR } from '@react-three/xr';
 import { useState } from 'react';
 
-import GenericCanvas from './GeneralCanvas';
-import Model from './Model';
-import XIGLogo from './XIGLogo';
+import GenericCanvas from '../components/WebXR/GeneralCanvas';
+import Model from '../components/WebXR/Model';
+import XIGLogo from '../components/WebXR/XIGLogo';
 
 function Floor() {
   return (

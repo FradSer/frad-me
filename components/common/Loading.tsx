@@ -8,7 +8,7 @@ type ILoadingProps = {
 
 export default function Loading<T extends ILoadingProps>(props: T) {
   const classNames = props.loading
-    ? 'w-full h-full flex items-center justify-center'
+    ? 'w-screen h-screen flex items-center justify-center'
     : 'hidden';
 
   return <div className={classNames}>loading</div>;

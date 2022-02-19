@@ -4,15 +4,15 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import Loading from '../components/common/Loading';
 import Header from '../components/Header';
 import DotRing from '../components/Mouse/DotRing';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 import useXRDetect from '../hooks/useXRDetect';
-import Loading from './loading';
 
 import '../styles/globals.css';
 
-const WebXR = dynamic(() => import('../components/WebXR'), { ssr: false });
+const WebXR = dynamic(() => import('./webxr'), { ssr: false });
 
 function MyApp({ Component, pageProps }: AppProps) {
   // * Hooks
