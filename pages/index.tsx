@@ -13,9 +13,7 @@ export default function Home() {
       </Head>
 
       <main className="bg-white dark:bg-black flex flex-col w-full items-center justify-center min-h-screen py-2 text-center">
-        <section className="w-full h-screen">
-          <Hero />
-        </section>
+        <Hero />
         <section className="w-screen grid gap-4 grid-cols-2">
           {workLinks.map((link) => (
             <WorkCard
