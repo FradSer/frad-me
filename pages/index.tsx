@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Hero from '../components/Landing/Hero';
 import WorkCard from '../components/Landing/WorkCard';
 
+import workLinks from '../content/workLinks';
+
 export default function Home() {
   return (
     <>
@@ -15,35 +17,17 @@ export default function Home() {
           <Hero />
         </section>
         <section className="w-screen grid gap-4 grid-cols-2">
-          <WorkCard
-            title="Eye Protection Design Handbook"
-            subTitle="Design Research"
-            slug="eye-protection-design-handbook"
-          />
-          <WorkCard
-            title="Usability Design for Xigua Video"
-            subTitle="Design Research / Product Design"
-            slug="usability-design-for-xigua-video"
-          />
-          <WorkCard
-            title="Pachino"
-            subTitle="Product Design / Development"
-            slug="pachino"
-            background="pachino"
-            isFullScreen={true}
-            isCenter={true}
-          />
-          <WorkCard
-            title="Eye Protection Design Handbook"
-            subTitle="Design Research"
-            slug="eye-protection-design-handbook"
-          />
-          <WorkCard
-            title="BearyChat"
-            subTitle="Product Management / Strategy"
-            slug="bearychat"
-            isCenter={true}
-          />
+          {workLinks.map((link) => (
+            <WorkCard
+              key={link.title}
+              title={link.title}
+              subTitle={link.subTitle}
+              slug={link.slug}
+              background={link.background}
+              isFullScreen={link.isFullScreen}
+              isCenter={link.isCenter}
+            />
+          ))}
         </section>
       </main>
 
