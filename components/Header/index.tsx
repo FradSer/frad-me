@@ -8,8 +8,8 @@ import ThemeSwitcher from './ThemeSwitcher';
 export default function Header() {
   // * Reader
   return (
-    <nav className="sticky top-0 flex w-full px-40 h-24 z-50">
-      <div className="flex grow h-full items-center fill-black dark:fill-white">
+    <nav className="sticky top-0 flex items-center justify-between px-40 h-24 z-50">
+      <div className="flex h-full items-center fill-black dark:fill-white">
         <Link href="/">
           <a className="hover:cursor-none">
             <FLogo />

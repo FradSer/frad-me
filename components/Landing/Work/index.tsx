@@ -1,5 +1,5 @@
-import WorkCard from './WorkCard';
 import workLinks from '../../../content/workLinks';
+import WorkCard from './WorkCard';
 
 const MAX_DISPLAY_WORKS = 5;
 

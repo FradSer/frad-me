@@ -40,10 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
         <Loading loading={loading} />
-        <div className="cursor-none">
-          <Header />
-          <Component {...pageProps} />
-        </div>
+        <Component {...pageProps} />
       </ThemeProvider>
     </MouseContextProvider>
   );
