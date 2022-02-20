@@ -1,20 +1,25 @@
 import { motion, useAnimation } from 'framer-motion';
 
+import {
+  primaryTransition,
+  secondaryTransition,
+} from '../../../utils/motion/springTransitions';
+
 export default function DotCircle() {
   const controls = useAnimation();
 
   const arrowVariants = {
     initial: {
       opacity: [0, 1],
-      transition: { type: 'spring', stiffness: 50, delay: 2.5 },
+      transition: { ...primaryTransition, delay: 2.5 },
     },
     hoverInit: {
       y: 0,
-      transition: { type: 'spring', stiffness: 50 },
+      transition: { ...primaryTransition },
     },
     hoverAnim: {
       y: [6, -6, 6],
-      transition: { type: 'spring', stiffness: 100, repeat: Infinity },
+      transition: { ...secondaryTransition, repeat: Infinity },
     },
   };
 
@@ -39,7 +44,7 @@ export default function DotCircle() {
       </motion.div>
       <motion.div
         animate={{ height: ['1rem', '6rem'], width: ['1rem', '6rem'] }}
-        transition={{ type: 'spring', stiffness: 50, delay: 2 }}
+        transition={{ ...primaryTransition, delay: 2 }}
         className="absolute z-0 "
       >
         <svg viewBox="0 0 96 96" className="fill-black dark:fill-white">

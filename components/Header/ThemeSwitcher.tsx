@@ -3,6 +3,10 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 import useMouseContext from '../../hooks/useMouseContext';
+import {
+  primaryTransition,
+  secondaryTransition,
+} from '../../utils/motion/springTransitions';
 
 export default function ThemeSwitcher() {
   // * Hooks
@@ -20,15 +24,13 @@ export default function ThemeSwitcher() {
     initial: {
       scale: 1,
       transition: {
-        type: 'spring',
-        stiffness: 50,
+        ...primaryTransition,
       },
     },
     hover: {
       scale: 1.1,
       transition: {
-        type: 'spring',
-        stiffness: 100,
+        ...secondaryTransition,
       },
     },
   };

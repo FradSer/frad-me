@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 
+import { primaryTransition } from '../../../utils/motion/springTransitions';
+
 export default function Triangle() {
   const initialRotate = Math.random() * 360;
 
@@ -9,7 +11,7 @@ export default function Triangle() {
     },
     hover: {
       rotate: initialRotate + 45,
-      transition: { type: 'spring', stiffness: 50 },
+      transition: { ...primaryTransition },
     },
   };
 

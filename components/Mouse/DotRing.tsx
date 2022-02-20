@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 
 import useMouseContext from '../../hooks/useMouseContext';
 import useMousePosition from '../../hooks/useMousePosition';
+import { primaryTransition } from '../../utils/motion/springTransitions';
 
 export default function DotRing() {
   // * Hooks
@@ -23,7 +24,6 @@ export default function DotRing() {
 
   // * Animation
   const controls = useAnimation();
-  const transition = { type: 'spring', stiffness: 100 };
 
   const transitionOffset = { x: '-50%', y: '-50%' };
 
@@ -34,19 +34,19 @@ export default function DotRing() {
       width: '2rem',
       opacity: 1,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
     headerLinkHovered: {
       opacity: 0,
-      transition: { type: 'spring', stiffness: 100 },
+      transition: { ...primaryTransition },
     },
     workCardHover: {
       ...transitionOffset,
       height: '4rem',
       width: '4rem',
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
   };
@@ -59,7 +59,7 @@ export default function DotRing() {
       opacity: 0,
       scale: 0.5,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
 
@@ -70,7 +70,7 @@ export default function DotRing() {
       opacity: 1,
       scale: 1,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
   };

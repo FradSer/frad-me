@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 
 import useMouseContext from '../../../hooks/useMouseContext';
+import { primaryTransition } from '../../../utils/motion/springTransitions';
 
 type IWorkCardProps = {
   title: string;
@@ -29,8 +30,6 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   const backgroundMaskControls = useAnimation();
   const textControls = useAnimation();
 
-  const transition = { type: 'spring', stiffness: 50 };
-
   const backgroundMaskVariants = {
     initial: {
       opacity: 0,
@@ -39,7 +38,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
       opacity: 1,
     },
     transition: {
-      ...transition,
+      ...primaryTransition,
     },
   };
 
@@ -51,7 +50,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
       scale: 1.2,
     },
     transition: {
-      ...transition,
+      ...primaryTransition,
     },
   };
 
@@ -64,7 +63,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
       opacity: 1,
       y: 0,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
   };
