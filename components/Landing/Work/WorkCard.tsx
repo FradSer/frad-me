@@ -1,7 +1,8 @@
-import Link from 'next/link';
 import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
-import useMouseContext from '../../hooks/useMouseContext';
+import Link from 'next/link';
+
+import useMouseContext from '../../../hooks/useMouseContext';
 
 type IWorkCardProps = {
   title: string;
