@@ -1,4 +1,5 @@
 import { motion, useAnimation } from 'framer-motion';
+import useMouseContext from '../../../hooks/useMouseContext';
 
 import {
   primaryTransition,
@@ -7,6 +8,7 @@ import {
 
 export default function DotCircle() {
   const controls = useAnimation();
+  const mouseContext = useMouseContext();
 
   const arrowVariants = {
     initial: {
@@ -28,11 +30,13 @@ export default function DotCircle() {
       onViewportEnter={() => controls.start(arrowVariants.initial)}
       onHoverStart={() => {
         controls.start(arrowVariants.hoverAnim);
+        mouseContext.cursorChangeHandler('header-link-hovered');
       }}
       onHoverEnd={() => {
         controls.start(arrowVariants.hoverInit);
+        mouseContext.cursorChangeHandler('default');
       }}
-      className="absolute bottom-4 right-0 z-30"
+      className="absolute bottom-4 right-0 z-30 hover:cursor-pointer"
     >
       <motion.div
         animate={controls}

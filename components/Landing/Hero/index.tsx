@@ -5,7 +5,7 @@ import Triangle from './Triangle';
 export default function Hero() {
   return (
     <section className="m-auto flex h-auto items-center justify-center">
-      <h1 className="flex flex-col items-start justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-left">
+      <h1 className="flex flex-col items-start justify-center font-bold text-left text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-default">
         <div className="relative">
           <div className="absolute bottom-24 -left-24 z-30">
             <Triangle />

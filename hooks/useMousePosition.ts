@@ -16,7 +16,7 @@ export default function useMousePosition(): MousePosition {
     const updateMousePosition = throttle((event: MouseEvent) => {
       const { clientX, clientY } = event;
       setMousePosition({ x: clientX, y: clientY });
-    }, 8);
+    }, 50);
     document.addEventListener('mousemove', updateMousePosition);
     return () => {
       document.removeEventListener('mousemove', updateMousePosition);

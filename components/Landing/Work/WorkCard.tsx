@@ -88,7 +88,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
           backgroundMaskControls.start(backgroundMaskVariants.initial);
           textControls.start(textVariants.initial);
         }}
-        className={`relative flex items-center justify-center overflow-hidden w-full ${
+        className={`relative flex items-center justify-center overflow-hidden w-full hover:cursor-pointer ${
           props.isFullScreen
             ? 'aspect-100/62 sm:aspect-100/31 col-span-2'
             : 'aspect-100/62 col-span-2 sm:col-span-1'

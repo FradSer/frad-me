@@ -15,7 +15,7 @@ export default function HeaderLink<T extends IHeaderLinkProps>(props: T) {
 
   // * Styles
   const headerLinkClass = classNames(
-    'hover:cursor-none hover:underline hover:ecoration-4 hover:delay-1000'
+    'hover:underline hover:ecoration-4 hover:delay-1000'
   );
 
   // * Reander

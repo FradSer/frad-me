@@ -12,11 +12,11 @@ export default function DotRing() {
 
   // * Styling
   const textClass = classNames(
-    'fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50'
+    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50'
   );
 
   const backgroundClass = classNames(
-    'fixed duration-50 rounded-full bg-white pointer-events-none z-40',
+    'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
       'mix-blend-difference': mouseContext.cursorType != 'work-card-hovered',
     }
@@ -30,8 +30,8 @@ export default function DotRing() {
   const backgroundVariants = {
     initial: {
       ...transitionOffset,
-      height: '2rem',
-      width: '2rem',
+      height: '1rem',
+      width: '1rem',
       opacity: 1,
       transition: {
         ...primaryTransition,
