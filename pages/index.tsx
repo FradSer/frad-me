@@ -11,7 +11,7 @@ export default function Home() {
         <title>Frad LEE</title>
       </Head>
 
-      <main className="bg-white dark:bg-black flex flex-col w-full min-h-screen items-center justify-center  py-2 text-center">
+      <main className="bg-white dark:bg-black flex flex-col w-full min-h-screen items-center justify-center py-2 text-center">
         <div className="min-h-screen w-full flex flex-col">
           <Header />
           <Hero />
