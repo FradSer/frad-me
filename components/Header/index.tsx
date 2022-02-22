@@ -18,7 +18,7 @@ export default function Header() {
       </div>
       <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8">
         {headerLinks.map((headerLink) => (
-          <li key={headerLink.id}>
+          <li key={headerLink.title}>
             <HeaderLink title={headerLink.title} href={headerLink.href} />
           </li>
         ))}
