@@ -6,7 +6,7 @@ import {
   primaryTransition,
   secondaryTransition,
 } from '../../utils/motion/springTransitions';
-import CursorProvider from '../common/CursorProvider';
+import { CursorProvider, CursorType } from '../common/CursorProvider';
 
 export default function ThemeSwitcher() {
   // * Hooks
@@ -35,7 +35,7 @@ export default function ThemeSwitcher() {
 
   // * Reander
   return (
-    <CursorProvider>
+    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
       <motion.button
         aria-label="Toggle Dark Mode"
         type="button"

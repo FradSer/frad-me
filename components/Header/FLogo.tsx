@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 
-import CursorProvider from '../common/CursorProvider';
+import { CursorProvider, CursorType } from '../common/CursorProvider';
 
 export default function FLogo() {
   return (
-    <CursorProvider>
+    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
       <svg
         viewBox="0 0 1024 1024"
         className="h-12 w-12 fill-black hover:cursor-pointer dark:fill-white"

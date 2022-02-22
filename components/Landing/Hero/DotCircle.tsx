@@ -4,7 +4,7 @@ import {
   primaryTransition,
   secondaryTransition,
 } from '../../../utils/motion/springTransitions';
-import CursorProvider from '../../common/CursorProvider';
+import { CursorProvider, CursorType } from '../../common/CursorProvider';
 
 export default function DotCircle() {
   const controls = useAnimation();
@@ -25,7 +25,7 @@ export default function DotCircle() {
   };
 
   return (
-    <CursorProvider>
+    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
       <motion.div
         onViewportEnter={() => controls.start(arrowVariants.initial)}
         onHoverStart={() => {

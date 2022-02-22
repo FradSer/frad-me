@@ -4,11 +4,16 @@ import useMouseContext from '../../hooks/useMouseContext';
 
 type ICursorProviderProps = {
   children: React.ReactNode;
+  targetCursorType: CursorType;
 };
 
-export default function CursorProvider<T extends ICursorProviderProps>(
-  props: T
-) {
+enum CursorType {
+  default = 'default',
+  headerLinkHovered = 'header-link-hovered',
+  workCardHovered = 'work-card-hovered',
+}
+
+function CursorProvider<T extends ICursorProviderProps>(props: T) {
   // * Hooks
   const mouseContext = useMouseContext();
 
@@ -16,13 +21,15 @@ export default function CursorProvider<T extends ICursorProviderProps>(
   return (
     <motion.div
       onHoverStart={() => {
-        mouseContext.cursorChangeHandler('header-link-hovered');
+        mouseContext.cursorChangeHandler(props.targetCursorType);
       }}
       onHoverEnd={() => {
-        mouseContext.cursorChangeHandler('default');
+        mouseContext.cursorChangeHandler(CursorType.default);
       }}
     >
       {props.children}
     </motion.div>
   );
 }
+
+export { CursorProvider, CursorType };
