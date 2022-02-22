@@ -8,7 +8,7 @@ const MAX_DISPLAY_WORKS = 5;
 
 export default function Work() {
   return (
-    <section className="w-screen grid gap-4 grid-cols-2">
+    <section className="grid w-screen grid-cols-2 gap-4">
       <WorkTitle />
       {workLinks.slice(0, MAX_DISPLAY_WORKS).map((link) => (
         <WorkCard

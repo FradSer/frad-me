@@ -1,8 +1,8 @@
 import Head from 'next/head';
 
+import Header from '../components/Header';
 import Hero from '../components/Landing/Hero';
 import Work from '../components/Landing/Work';
-import Header from '../components/Header';
 
 export default function Home() {
   return (
@@ -11,15 +11,15 @@ export default function Home() {
         <title>Frad LEE</title>
       </Head>
 
-      <main className="bg-white dark:bg-black flex flex-col w-full min-h-screen items-center justify-center py-2 text-center">
-        <div className="min-h-screen w-full flex flex-col">
+      <main className="flex min-h-screen w-full flex-col items-center justify-center bg-white py-2 text-center dark:bg-black">
+        <div className="flex min-h-screen w-full flex-col">
           <Header />
           <Hero />
         </div>
         <Work />
       </main>
 
-      <footer className="flex items-center justify-center w-full h-24"></footer>
+      <footer className="flex h-24 w-full items-center justify-center"></footer>
     </>
   );
 }

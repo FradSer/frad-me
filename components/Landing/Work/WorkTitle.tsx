@@ -1,4 +1,4 @@
-import { motion, useViewportScroll, useTransform } from 'framer-motion';
+import { motion, useTransform, useViewportScroll } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
 export default function WorkTitle() {
@@ -15,7 +15,7 @@ export default function WorkTitle() {
         scale: scale,
         scrollMarginLeft: '0',
       }}
-      className="px-40 col-span-2 pt-16 text-[7rem] lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem] hover:cursor-defaul"
+      className="hover:cursor-defaul col-span-2 px-40 pt-16 text-[7rem] lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]"
     >
       work
     </motion.h2>

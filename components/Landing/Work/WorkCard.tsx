@@ -88,10 +88,10 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
           backgroundMaskControls.start(backgroundMaskVariants.initial);
           textControls.start(textVariants.initial);
         }}
-        className={`relative flex items-center justify-center overflow-hidden w-full hover:cursor-pointer ${
+        className={`relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer ${
           props.isFullScreen
-            ? 'aspect-100/62 sm:aspect-100/31 col-span-2'
-            : 'aspect-100/62 col-span-2 sm:col-span-1'
+            ? 'col-span-2 aspect-100/62 sm:aspect-100/31'
+            : 'col-span-2 aspect-100/62 sm:col-span-1'
         }`}
       >
         <motion.div // Background Image
@@ -104,21 +104,21 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
           animate={backgroundMaskControls}
           initial="initial"
           variants={backgroundMaskVariants}
-          className="absolute w-full h-full bg-black bg-opacity-50"
+          className="absolute h-full w-full bg-black bg-opacity-50"
         ></motion.div>
         <motion.div // Text
           animate={textControls}
           initial="initial"
           variants={textVariants}
-          className={`absolute space-y-4 w-4/6 ${
+          className={`absolute w-4/6 space-y-4 ${
             props.isCenter ? 'text-center' : 'text-left'
           }`}
         >
-          <div className="text-sm xl:text-lg 2xl:text-2xl text-gray-500">
+          <div className="text-sm text-gray-500 xl:text-lg 2xl:text-2xl">
             {props.subTitle}
           </div>
           <div
-            className={`text-white font-bold ${
+            className={`font-bold text-white ${
               props.isCenter
                 ? 'text-3xl xl:text-5xl 2xl:text-7xl'
                 : 'text-xl xl:text-3xl 2xl:text-5xl'

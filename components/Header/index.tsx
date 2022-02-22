@@ -8,7 +8,7 @@ import ThemeSwitcher from './ThemeSwitcher';
 export default function Header() {
   // * Reader
   return (
-    <nav className="fixed top-0 w-full flex items-center justify-between px-40 h-24 z-50">
+    <nav className="fixed top-0 z-50 flex h-24 w-full items-center justify-between px-40">
       <div className="flex h-full items-center ">
         <Link href="/">
           <a className="hover:cursor-none">
@@ -16,7 +16,7 @@ export default function Header() {
           </a>
         </Link>
       </div>
-      <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8">
+      <ul className="hidden h-full flex-row items-center space-x-8 text-2xl sm:flex">
         {headerLinks.map((headerLink) => (
           <li key={headerLink.title}>
             <HeaderLink title={headerLink.title} href={headerLink.href} />
