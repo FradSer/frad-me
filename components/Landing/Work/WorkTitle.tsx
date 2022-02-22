@@ -1,8 +1,6 @@
 import { motion, useTransform, useViewportScroll } from 'framer-motion';
-import { useEffect, useRef } from 'react';
 
 export default function WorkTitle() {
-  const ref = useRef(null);
   const { scrollYProgress } = useViewportScroll();
 
   const offsetY = useTransform(scrollYProgress, [0.3, 0.6], [-100, 0]);
