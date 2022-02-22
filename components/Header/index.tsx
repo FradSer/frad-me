@@ -1,6 +1,6 @@
-import classNames from 'classnames';
 import Link from 'next/link';
 
+import headerLinks from '../../content/headerLinks';
 import FLogo from './FLogo';
 import HeaderLink from './HeaderLink';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -17,18 +17,11 @@ export default function Header() {
         </Link>
       </div>
       <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8">
-        <li>
-          <HeaderLink title="work" href="/work" />
-        </li>
-        <li>
-          <HeaderLink title="blog" href="/blog" />
-        </li>
-        <li>
-          <HeaderLink title="side" href="/side" />
-        </li>
-        <li className="flex justify-end">
-          <HeaderLink title="resume" href="/resume" />
-        </li>
+        {headerLinks.map((headerLink) => (
+          <li key={headerLink.id}>
+            <HeaderLink title={headerLink.title} href={headerLink.href} />
+          </li>
+        ))}
         <li>
           <ThemeSwitcher />
         </li>
