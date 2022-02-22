@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-import useMouseContext from '../../hooks/useMouseContext';
+import CursorProvider from '../common/CursorProvider';
 
 type IHeaderLinkProps = {
   title: string;
@@ -10,9 +10,6 @@ type IHeaderLinkProps = {
 };
 
 export default function HeaderLink<T extends IHeaderLinkProps>(props: T) {
-  // * Hooks
-  const mouseContext = useMouseContext();
-
   // * Styles
   const headerLinkClass = classNames(
     'hover:underline hover:ecoration-4 hover:delay-1000'
@@ -20,17 +17,10 @@ export default function HeaderLink<T extends IHeaderLinkProps>(props: T) {
 
   // * Reander
   return (
-    <motion.div
-      onHoverStart={() => {
-        mouseContext.cursorChangeHandler('header-link-hovered');
-      }}
-      onHoverEnd={() => {
-        mouseContext.cursorChangeHandler('default');
-      }}
-    >
+    <CursorProvider>
       <Link href={props.href}>
         <a className={headerLinkClass}>{props.title}</a>
       </Link>
-    </motion.div>
+    </CursorProvider>
   );
 }
