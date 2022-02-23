@@ -1,34 +1,31 @@
 import Link from 'next/link';
-import classNames from 'classnames';
 
+import headerLinks from '../../content/headerLinks';
 import FLogo from './FLogo';
-import HeaderLink from './HeaderLink';
+import { HeaderLink } from './HeaderLink';
 import ThemeSwitcher from './ThemeSwitcher';
 
 export default function Header() {
   // * Reader
   return (
-    <nav className="sticky top-0 flex w-full px-40 h-24 z-50">
-      <div className="flex grow h-full items-center fill-black dark:fill-white">
+    <nav className="fixed top-0 z-50 flex h-24 w-full items-center justify-between px-40">
+      <div className="flex h-full items-center ">
         <Link href="/">
           <a className="hover:cursor-none">
             <FLogo />
           </a>
         </Link>
       </div>
-      <ul className="hidden sm:flex flex-row items-center h-full text-2xl space-x-8 ">
-        <li>
-          <HeaderLink title="work" href="/work" />
-        </li>
-        <li>
-          <HeaderLink title="blog" href="/blog" />
-        </li>
-        <li>
-          <HeaderLink title="side" href="/side" />
-        </li>
-        <li className="flex justify-end">
-          <HeaderLink title="resume" href="/resume" />
-        </li>
+      <ul className="hidden h-full flex-row items-center space-x-8 text-2xl sm:flex">
+        {headerLinks.map((headerLink) => (
+          <li key={headerLink.title}>
+            <HeaderLink
+              title={headerLink.title}
+              href={headerLink.href}
+              destinationType={headerLink.destinationType}
+            />
+          </li>
+        ))}
         <li>
           <ThemeSwitcher />
         </li>

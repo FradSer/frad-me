@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 
-import useMousePosition from '../../hooks/useMousePosition';
 import useMouseContext from '../../hooks/useMouseContext';
+import useMousePosition from '../../hooks/useMousePosition';
+import { primaryTransition } from '../../utils/motion/springTransitions';
 
 export default function DotRing() {
   // * Hooks
@@ -11,11 +12,11 @@ export default function DotRing() {
 
   // * Styling
   const textClass = classNames(
-    'fixed flex items-center justify-center duration-100 pointer-events-none text-black font-bold text-xl z-50'
+    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50'
   );
 
   const backgroundClass = classNames(
-    'fixed duration-50 rounded-full bg-white pointer-events-none z-40',
+    'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
       'mix-blend-difference': mouseContext.cursorType != 'work-card-hovered',
     }
@@ -23,48 +24,53 @@ export default function DotRing() {
 
   // * Animation
   const controls = useAnimation();
-  const transition = { type: 'spring', stiffness: 100 };
+
+  const transitionOffset = { x: '-50%', y: '-50%' };
 
   const backgroundVariants = {
     initial: {
-      height: '2rem',
-      width: '2rem',
+      ...transitionOffset,
+      height: '1rem',
+      width: '1rem',
       opacity: 1,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
     headerLinkHovered: {
       opacity: 0,
-      transition: { type: 'spring', stiffness: 100 },
+      transition: { ...primaryTransition },
     },
     workCardHover: {
+      ...transitionOffset,
       height: '4rem',
       width: '4rem',
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
   };
 
   const textVariants = {
     initial: {
+      ...transitionOffset,
       height: '2rem',
       width: '2rem',
       opacity: 0,
       scale: 0.5,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
 
     workCardHover: {
+      ...transitionOffset,
       height: '4rem',
       width: '4rem',
       opacity: 1,
       scale: 1,
       transition: {
-        ...transition,
+        ...primaryTransition,
       },
     },
   };

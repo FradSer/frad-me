@@ -1,20 +1,25 @@
+import { ThemeProvider } from 'next-themes';
+import { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+
+import Loading from '../components/common/Loading';
+import Header from '../components/Header';
+import DotRing from '../components/Mouse/DotRing';
+import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
+import useXRDetect from '../hooks/useXRDetect';
+
 import '../styles/globals.css';
 
-import { useState, useEffect } from 'react';
-import { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
-
-import { ThemeProvider } from 'next-themes';
-
-import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
-
-import Loading from './loading';
-
-import DotRing from '../components/Mouse/DotRing';
+const WebXR = dynamic(() => import('./webxr'), { ssr: false });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // * Hooks
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const xrDetect = useXRDetect();
 
   useEffect(() => {
     const handleStart = (url: string) => {
@@ -27,7 +32,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.events.on('routeChangeError', handleComplete);
   }, [router]);
 
-  return (
+  // * Render
+  return xrDetect.isVR ? (
+    <WebXR />
+  ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />

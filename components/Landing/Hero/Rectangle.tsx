@@ -1,9 +1,8 @@
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { useState } from 'react';
 
-import useMousePosition from '../../hooks/useMousePosition';
-import useWindowSize from '../../hooks/useWindowSize';
-
-import { motion, useTransform, useMotionValue } from 'framer-motion';
+import useMousePosition from '../../../hooks/useMousePosition';
+import useWindowSize from '../../../hooks/useWindowSize';
 
 // https://github.com/brunob/leaflet.fullscreen/issues/52
 
@@ -39,9 +38,9 @@ export default function Rectangle() {
 
   // * Render
   return (
-    <div className="flex grow ml-2 lg:ml-8">
+    <div className="ml-2 flex grow lg:ml-8">
       <motion.div
-        className="bg-black dark:bg-white w-full h-full"
+        className="h-full w-full bg-black dark:bg-white"
         style={{
           skewX: skewX,
           skewY: skewY,

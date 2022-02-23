@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
+import { useEffect, useState } from 'react';
 
 type MousePosition = { x: number; y: number };
 
@@ -16,7 +16,7 @@ export default function useMousePosition(): MousePosition {
     const updateMousePosition = throttle((event: MouseEvent) => {
       const { clientX, clientY } = event;
       setMousePosition({ x: clientX, y: clientY });
-    }, 8);
+    }, 50);
     document.addEventListener('mousemove', updateMousePosition);
     return () => {
       document.removeEventListener('mousemove', updateMousePosition);

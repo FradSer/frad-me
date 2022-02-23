@@ -1,36 +1,42 @@
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import ScrollLink from '../common/ScrollLink';
 import classNames from 'classnames';
 
-import useMouseContext from '../../hooks/useMouseContext';
+import { CursorProvider, CursorType } from '../common/CursorProvider';
 
 type IHeaderLinkProps = {
   title: string;
   href: string;
+  destinationType?: DestinationType;
 };
 
-export default function HeaderLink<T extends IHeaderLinkProps>(props: T) {
-  // * Hooks
-  const mouseContext = useMouseContext();
+enum DestinationType {
+  link = 'link',
+  section = 'section',
+}
 
-  // * Styles
-  const headerLinkClass = classNames(
-    'hover:cursor-none hover:underline hover:ecoration-4 hover:delay-1000'
+function HeaderLink<T extends IHeaderLinkProps>(props: T) {
+  const destinationType = props.destinationType || DestinationType.link;
+
+  const titleClass = classNames(
+    'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer'
   );
+
+  const title = <a className={titleClass}>{props.title}</a>;
+
+  let link;
+  if (destinationType === DestinationType.link) {
+    link = <Link href={props.href}>{title}</Link>;
+  } else if (destinationType === DestinationType.section) {
+    link = <ScrollLink destination={props.href}>{title}</ScrollLink>;
+  }
 
   // * Reander
   return (
-    <motion.div
-      onHoverStart={() => {
-        mouseContext.cursorChangeHandler('header-link-hovered');
-      }}
-      onHoverEnd={() => {
-        mouseContext.cursorChangeHandler('default');
-      }}
-    >
-      <Link href={props.href}>
-        <a className={headerLinkClass}>{props.title}</a>
-      </Link>
-    </motion.div>
+    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
+      {link}
+    </CursorProvider>
   );
 }
+
+export { HeaderLink, DestinationType };
