@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Element } from 'react-scroll';
 
 import workLinks from '../../../content/workLinks';
 import WorkCard from './WorkCard';
@@ -8,7 +9,7 @@ const MAX_DISPLAY_WORKS = 5;
 
 export default function Work() {
   return (
-    <section className="grid w-screen grid-cols-2 gap-4">
+    <Element name="work" className="grid w-screen grid-cols-2 gap-4">
       <WorkTitle />
       {workLinks.slice(0, MAX_DISPLAY_WORKS).map((link) => (
         <WorkCard
@@ -21,6 +22,6 @@ export default function Work() {
           isCenter={link.isCenter}
         />
       ))}
-    </section>
+    </Element>
   );
 }

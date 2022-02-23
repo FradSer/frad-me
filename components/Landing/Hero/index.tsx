@@ -1,3 +1,5 @@
+import { Link } from 'react-scroll';
+
 import DotCircle from './DotCircle';
 import Rectangle from './Rectangle';
 import Triangle from './Triangle';
@@ -29,7 +31,9 @@ export default function Hero() {
         <div className="relative">
           <span className="text-gray-500">or building a </span>
           startup
-          <DotCircle />
+          <Link to="work" spy={true} smooth={true} duration={500}>
+            <DotCircle />
+          </Link>
         </div>
       </h1>
     </section>
