@@ -1,7 +1,10 @@
+import { DestinationType } from '../components/Header/HeaderLink';
+
 const headerLinks = [
   {
     title: 'work',
-    href: '/work',
+    href: 'work',
+    destinationType: DestinationType.section,
   },
   {
     title: 'blog',
