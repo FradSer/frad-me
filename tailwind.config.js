@@ -20,6 +20,12 @@ module.exports = {
         '100/62': '100 / 62',
         '100/31': '100 / 31',
       },
+      gridTemplateColumns: {
+        '16': 'repeat(16, minmax(0, 1fr))',
+      },
+      gridColumn: {
+        'span-16': 'span 16 / span 16',
+      },
     },
   },
   variants: {
