@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 type ICommonProps = {
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 function H1(props: ICommonProps) {
@@ -25,11 +25,7 @@ function P(props: ICommonProps) {
 }
 
 function HR() {
-  return (
-    <>
-      <hr className="col-span-16 h-1 bg-black dark:bg-white"></hr>
-    </>
-  );
+  return <hr className="col-span-16 h-1 bg-black dark:bg-white"></hr>;
 }
 
 export { H1, H2, HR, P };

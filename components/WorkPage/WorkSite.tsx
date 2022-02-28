@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-export default function WorkSite(props: { href: string }) {
+export default function WorkSite(props: { href?: string }) {
+  if (!props.href) return null;
   return (
     <div className="col-span-3">
       <p className="uppercase">site</p>
