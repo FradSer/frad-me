@@ -37,7 +37,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
         <title>{frontmatter.title} | Work by Frad</title>
       </Head>
 
-      <div className="mt-24 flex items-center justify-center bg-white dark:bg-black">
+      <div className="mt-24 flex items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0">
         <div className="center grid w-full grid-cols-16 gap-y-4 md:gap-y-8">
           <p className="col-span-16 mt-24 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
             <strong className="font-black text-black dark:text-white">

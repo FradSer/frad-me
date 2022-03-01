@@ -10,7 +10,7 @@ export default function Home() {
         <title>Frad LEE</title>
       </Head>
 
-      <main className="flex flex-col items-center justify-center bg-white dark:bg-black">
+      <main className="flex flex-col bg-white dark:bg-black items-center justify-center">
         <div className="flex min-h-screen w-screen">
           <Hero />
         </div>
