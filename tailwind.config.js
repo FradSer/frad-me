@@ -26,6 +26,9 @@ module.exports = {
       gridColumn: {
         'span-16': 'span 16 / span 16',
       },
+      maxWidth: {
+        wrapper: '64rem',
+      },
     },
   },
   variants: {

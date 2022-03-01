@@ -1,6 +1,5 @@
 import Head from 'next/head';
 
-import Header from '../components/Header';
 import Hero from '../components/Landing/Hero';
 import Work from '../components/Landing/Work';
 

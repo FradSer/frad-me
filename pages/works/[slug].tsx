@@ -2,7 +2,6 @@ import { getMDXComponent } from 'mdx-bundler/client';
 import Head from 'next/head';
 import { useMemo } from 'react';
 
-import Header from '../../components/Header';
 import { H1, H2, HR, P } from '../../components/WorkPage/WorkComponents';
 import WorkInfomation from '../../components/WorkPage/WorkInfomation';
 import WorkSite from '../../components/WorkPage/WorkSite';
@@ -37,7 +36,7 @@ export default function Work({ code, frontmatter }: IWorkProps) {
       </Head>
 
       <div className="mt-24 flex items-center justify-center bg-white dark:bg-black">
-        <div className="center grid w-[62%] grid-cols-16 gap-y-8">
+        <div className="center grid w-full grid-cols-16 gap-y-8">
           <p className="col-span-12 mt-24 text-3xl text-gray-500 dark:text-gray-700">
             <strong className="font-black text-black dark:text-white">
               {frontmatter.title}
