@@ -4,7 +4,7 @@ export default function WorkInfomation(props: {
 }) {
   if (!props.data) return null;
   return (
-    <div className="col-span-3">
+    <div className="col-span-8 md:col-span-3">
       <p className="uppercase">{props.title}</p>
       {props.data.map((item) => (
         <p key={item} className="text-gray-500 dark:text-gray-700">

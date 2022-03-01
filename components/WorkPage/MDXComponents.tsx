@@ -1,8 +1,13 @@
 import { ReactNode } from 'react';
+import classNames from 'classnames';
 
 type ICommonProps = {
   children?: ReactNode;
 };
+
+const wrapperClass = classNames(
+  'col-span-16 col-start-1 md:col-span-10 md:col-start-7'
+);
 
 function H1(props: ICommonProps) {
   return (
@@ -13,15 +18,16 @@ function H1(props: ICommonProps) {
 }
 
 function H2(props: ICommonProps) {
-  return (
-    <h2 className="col-span-10 col-start-7 -mb-2 text-xl font-bold">
-      {props.children}
-    </h2>
+  const h2Class = classNames(
+    'text-xl font-bold text-gray-500 dark:text-gray-700',
+    wrapperClass
   );
+  return <h2 className={h2Class}>{props.children}</h2>;
 }
 
 function P(props: ICommonProps) {
-  return <p className="col-span-10 col-start-7 text-lg">{props.children}</p>;
+  const pClass = classNames('text-lg', wrapperClass);
+  return <p className={pClass}>{props.children}</p>;
 }
 
 function HR() {
