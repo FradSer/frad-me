@@ -40,7 +40,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
         <Loading loading={loading} />
-        <Component {...pageProps} />
+        {/* TODO: Replace this to layout */}
+        <div className="flex flex-col">
+          <Header />
+          <Component {...pageProps} />
+        </div>
       </ThemeProvider>
     </MouseContextProvider>
   );
