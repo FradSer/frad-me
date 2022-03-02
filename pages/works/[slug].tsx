@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { getMDXComponent } from 'mdx-bundler/client';
 import Head from 'next/head';
 import { useMemo } from 'react';
@@ -31,6 +32,8 @@ const mdxComponents = {
 export default function WorkPage({ code, frontmatter }: IWorkProps) {
   const Component = useMemo(() => getMDXComponent(code), [code]);
 
+  const girdClass = classNames('grid grid-cols-16 gap-y-4 md:gap-y-8');
+
   return (
     <>
       <Head>
@@ -38,23 +41,29 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
       </Head>
 
       <div className="mt-24 flex items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0">
-        <div className="center grid w-full grid-cols-16 gap-y-4 md:gap-y-8">
-          <p className="col-span-16 mt-24 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
-            <strong className="font-black text-black dark:text-white">
-              {frontmatter.title}
-            </strong>{' '}
-            {frontmatter.description}
-          </p>
-          <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
+        <div className="flex w-full flex-col gap-y-4 md:gap-y-8">
+          <article className={girdClass}>
+            <h1 className="col-span-16 mt-24 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
+              <strong className="font-black text-black dark:text-white">
+                {frontmatter.title}
+              </strong>{' '}
+              {frontmatter.description}
+            </h1>
+            <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
+          </article>
 
-          <WorkInfomation title="platforms" data={frontmatter.platforms} />
-          <WorkInfomation
-            title="contributors"
-            data={frontmatter.contributors}
-          />
-          <WorkSite href={frontmatter.site} />
+          <div className={girdClass}>
+            <WorkInfomation title="platforms" data={frontmatter.platforms} />
+            <WorkInfomation
+              title="contributors"
+              data={frontmatter.contributors}
+            />
+            <WorkSite href={frontmatter.site} />
+          </div>
 
-          <Component components={mdxComponents} />
+          <article className={girdClass}>
+            <Component components={mdxComponents} />
+          </article>
           <span className="col-span-16 h-16"></span>
         </div>
       </div>
