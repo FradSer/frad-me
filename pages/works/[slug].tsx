@@ -63,8 +63,8 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
 
           <article className={girdClass}>
             <Component components={mdxComponents} />
+            <span className="col-span-16 h-16"></span>
           </article>
-          <span className="col-span-16 h-16"></span>
         </div>
       </div>
     </>
