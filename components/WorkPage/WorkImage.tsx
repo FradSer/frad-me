@@ -12,6 +12,7 @@ enum ImagePosition {
 }
 
 function WorkImage({ position }: IWorkImageProps) {
+  // * Styling
   const workImageClass = classNames({
     'col-span-16 mt-0 h-32 bg-black md:col-span-5':
       position === ImagePosition.inline,
@@ -21,21 +22,31 @@ function WorkImage({ position }: IWorkImageProps) {
       position === ImagePosition.underH2,
   });
 
+  // * Animation
+  const imageVariants = {
+    hidden: {
+      opacity: 0,
+      y: '20%',
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: 'linear',
+      },
+    },
+  };
+
+  // * Render
   return (
     <motion.div
-      initial={{ opacity: 0, y: '38%' }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-        transition: {
-          duration: 0.6,
-          delay: 0.2,
-          ease: 'easeIn',
-        },
-      }}
+      initial="hidden"
+      whileInView="visible"
+      variants={imageVariants}
       viewport={{ once: true }}
       className={workImageClass}
-    ></motion.div>
+    />
   );
 }
 

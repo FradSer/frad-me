@@ -40,7 +40,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
         <title>{frontmatter.title} | Work by Frad</title>
       </Head>
 
-      <div className="mt-24 flex items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0">
+      <section className="mt-24 flex items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0">
         <div className="flex w-full flex-col gap-y-4 md:gap-y-8">
           <article className={girdClass}>
             <h1 className="col-span-16 mt-24 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
@@ -66,7 +66,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
             <span className="col-span-16 h-16"></span>
           </article>
         </div>
-      </div>
+      </section>
     </>
   );
 }
