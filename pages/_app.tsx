@@ -33,13 +33,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   // * Render
+  // TODO: Add loading animation
   return xrDetect.isVR ? (
     <WebXR />
   ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
-        <Loading loading={loading} />
         <LayoutWrapper>
           <Component {...pageProps} />
         </LayoutWrapper>
