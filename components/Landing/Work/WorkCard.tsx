@@ -88,6 +88,9 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
           backgroundMaskControls.start(backgroundMaskVariants.initial);
           textControls.start(textVariants.initial);
         }}
+        onClick={() => {
+          mouseContext.cursorChangeHandler('default');
+        }}
         className={`relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer ${
           props.isFullScreen
             ? 'col-span-2 aspect-100/62 sm:aspect-100/31'
