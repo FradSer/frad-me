@@ -9,7 +9,6 @@ type IWorkCardProps = {
   title: string;
   subTitle: string;
   slug: string;
-  background?: string;
   isFullScreen?: boolean;
   isCenter?: boolean;
 };
@@ -19,8 +18,10 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
   const backgroundImageClass = classNames(
     'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll',
     {
-      'bg-pachino bg-red-600': props.background === 'pachino',
-      'bg-black': props.background == null,
+      'bg-orange-600': props.slug === 'eye-protection-design-handbook',
+      'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
+      'bg-pachino bg-red-600': props.slug === 'pachino',
+      'bg-green-600': props.slug === 'bearychat',
     }
   );
 
@@ -93,8 +94,8 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
         }}
         className={`relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer ${
           props.isFullScreen
-            ? 'col-span-2 aspect-100/62 sm:aspect-100/31'
-            : 'col-span-2 aspect-100/62 sm:col-span-1'
+            ? 'col-span-2 aspect-100/62 md:aspect-100/31'
+            : 'col-span-2 aspect-100/62 md:col-span-1'
         }`}
       >
         <motion.div // Background Image
@@ -102,7 +103,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
           initial="initial"
           variants={backgroundImageVariants}
           className={backgroundImageClass}
-        ></motion.div>
+        />
         <motion.div // Background Image Mask
           animate={backgroundMaskControls}
           initial="initial"
