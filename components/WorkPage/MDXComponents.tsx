@@ -22,6 +22,20 @@ function H2(props: ICommonProps) {
   return <h2 className={h2Class}>{props.children}</h2>;
 }
 
+const listWrapperClass = classNames(
+  'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4'
+);
+
+function OL(props: ICommonProps) {
+  const olClass = classNames('list-decimal', listWrapperClass);
+  return <ol className={olClass}>{props.children}</ol>;
+}
+
+function UL(props: ICommonProps) {
+  const ulClass = classNames('list-disc', listWrapperClass);
+  return <ul className={ulClass}>{props.children}</ul>;
+}
+
 function P(props: ICommonProps) {
   const pClass = classNames('text-lg', wrapperClass);
   return <p className={pClass}>{props.children}</p>;
@@ -31,4 +45,4 @@ function HR() {
   return <hr className="col-span-16 my-4 h-1 bg-black dark:bg-white"></hr>;
 }
 
-export { H1, H2, HR, P, wrapperClass };
+export { H1, H2, HR, P, OL, UL, wrapperClass };
