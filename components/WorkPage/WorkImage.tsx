@@ -1,7 +1,12 @@
 import classNames from 'classnames';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 type IWorkImageProps = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
   position: ImagePosition;
 };
 
@@ -11,22 +16,20 @@ enum ImagePosition {
   fullScreen = 'fullScreen',
 }
 
-function WorkImage({ position }: IWorkImageProps) {
+function WorkImage(props: IWorkImageProps) {
   // * Styling
   const workImageClass = classNames({
-    'col-span-16 mt-0 h-32 bg-black md:col-span-5':
-      position === ImagePosition.inline,
-    'col-span-16 w-full h-screen bg-black':
-      position === ImagePosition.fullScreen,
-    'col-span-16 mt-0 h-32 bg-black md:col-span-5 md:mt-[-3.25rem]':
-      position === ImagePosition.underH2,
+    'col-span-16 mt-0 md:col-span-5': props.position === ImagePosition.inline,
+    'col-span-16 w-full mt-0': props.position === ImagePosition.fullScreen,
+    'col-span-16 mt-0 md:col-span-5 md:mt-[-3.25rem]':
+      props.position === ImagePosition.underH2,
   });
 
   // * Animation
   const imageVariants = {
     hidden: {
       opacity: 0,
-      y: '20%',
+      y: 200,
     },
     visible: {
       opacity: 1,
@@ -46,7 +49,17 @@ function WorkImage({ position }: IWorkImageProps) {
       variants={imageVariants}
       viewport={{ once: true }}
       className={workImageClass}
-    />
+    >
+      <Image
+        src={props.src}
+        width={props.width}
+        height={props.height}
+        alt={props.alt}
+      />
+      <span className="text-xs text-gray-500 dark:text-gray-400">
+        {props.alt}
+      </span>
+    </motion.div>
   );
 }
 

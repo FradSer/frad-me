@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useMemo } from 'react';
 
 import { H1, H2, HR, P } from '../../components/WorkPage/MDXComponents';
+import WorkCover from '../../components/WorkPage/WorkCover';
 import WorkImage from '../../components/WorkPage/WorkImage';
 import WorkInfomation from '../../components/WorkPage/WorkInfomation';
 import WorkSite from '../../components/WorkPage/WorkSite';
@@ -13,6 +14,7 @@ type IWorkProps = {
   slug: string;
   code: string;
   frontmatter: {
+    cover?: string;
     title: string;
     description: string;
     platforms?: [string];
@@ -40,10 +42,11 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
         <title>{frontmatter.title} | Work by Frad</title>
       </Head>
 
-      <section className="mt-24 flex items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0">
+      <WorkCover src={frontmatter.cover} title={frontmatter.title} />
+      <section className="flex max-w-wrapper items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0 ">
         <div className="flex w-full flex-col gap-y-4 md:gap-y-8">
           <article className={girdClass}>
-            <h1 className="col-span-16 mt-24 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
+            <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
               <strong className="font-black text-black dark:text-white">
                 {frontmatter.title}
               </strong>{' '}
