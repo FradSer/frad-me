@@ -11,7 +11,7 @@ const wrapperClass = classNames(
 
 function H1(props: ICommonProps) {
   return (
-    <h1 className="col-span-16 col-start-1 my-2 text-4xl font-bold md:col-span-10 md:my-4">
+    <h1 className="col-span-16 col-start-1 mt-4 mb-2 text-5xl font-bold md:col-span-10 md:mt-8 md:mb-4">
       {props.children}
     </h1>
   );
@@ -28,7 +28,7 @@ function P(props: ICommonProps) {
 }
 
 function HR() {
-  return <hr className="col-span-16 h-1 bg-black dark:bg-white"></hr>;
+  return <hr className="col-span-16 my-4 h-1 bg-black dark:bg-white"></hr>;
 }
 
 export { H1, H2, HR, P, wrapperClass };
