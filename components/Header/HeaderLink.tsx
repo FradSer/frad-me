@@ -1,10 +1,9 @@
-import Link from 'next/link';
-import ScrollLink from '../common/ScrollLink';
 import classNames from 'classnames';
-
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { CursorProvider, CursorType } from '../common/CursorProvider';
+import ScrollLink from '../common/ScrollLink';
 
 type IHeaderLinkProps = {
   title: string;
