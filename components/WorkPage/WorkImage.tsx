@@ -18,10 +18,10 @@ enum ImagePosition {
 
 function WorkImage(props: IWorkImageProps) {
   // * Styling
-  const workImageClass = classNames({
-    'col-span-16 mt-0 md:col-span-5': props.position === ImagePosition.inline,
-    'col-span-16 w-full mt-0': props.position === ImagePosition.fullScreen,
-    'col-span-16 mt-0 md:col-span-5 md:mt-[-3.25rem]':
+  const workImageClass = classNames('w-full', {
+    'col-span-16 md:col-span-5': props.position === ImagePosition.inline,
+    'col-span-16': props.position === ImagePosition.fullScreen,
+    'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
       props.position === ImagePosition.underH2,
   });
 
@@ -50,15 +50,17 @@ function WorkImage(props: IWorkImageProps) {
       viewport={{ once: true }}
       className={workImageClass}
     >
-      <Image
-        src={props.src}
-        width={props.width}
-        height={props.height}
-        alt={props.alt}
-      />
-      <span className="text-xs text-gray-500 dark:text-gray-400">
-        {props.alt}
-      </span>
+      <div className="flex flex-col gap-y-1 md:gap-y-2">
+        <Image
+          src={props.src}
+          width={props.width}
+          height={props.height}
+          alt={props.alt}
+        />
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {props.alt}
+        </span>
+      </div>
     </motion.div>
   );
 }
