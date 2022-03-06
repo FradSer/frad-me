@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="m-auto flex h-auto items-center justify-center">
       <h1 className="flex flex-col items-start justify-center text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
         <div className="relative">
-          <div className="absolute bottom-20 -left-24 z-30">
+          <div className="absolute bottom-10 -left-12 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20">
             <Triangle />
           </div>
           Frad LEE

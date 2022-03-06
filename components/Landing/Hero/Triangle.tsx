@@ -38,7 +38,7 @@ export default function Triangle() {
     >
       <svg
         viewBox="0 0 149 129"
-        className="h-32 w-32 fill-black dark:fill-white"
+        className="h-20 w-20 fill-black dark:fill-white sm:h-24 sm:w-24 lg:h-28 lg:w-28 2xl:h-32 2xl:w-32"
       >
         <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
       </svg>

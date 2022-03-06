@@ -34,7 +34,7 @@ export default function DotCircle() {
         onHoverEnd={() => {
           controls.start(arrowVariants.hoverInit);
         }}
-        className="absolute bottom-4 right-0 z-30 hover:cursor-pointer"
+        className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100"
       >
         <motion.div
           animate={controls}
@@ -45,9 +45,9 @@ export default function DotCircle() {
           </svg>
         </motion.div>
         <motion.div
-          animate={{ height: ['1rem', '6rem'], width: ['1rem', '6rem'] }}
+          animate={{ height: ['20%', '100%'], width: ['20%', '100%'] }}
           transition={{ ...primaryTransition, delay: 2 }}
-          className="absolute z-0 "
+          className="absolute z-0 h-full w-full"
         >
           <svg viewBox="0 0 96 96" className="fill-black dark:fill-white">
             <circle cx="48" cy="48" r="48" />
