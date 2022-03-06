@@ -7,7 +7,7 @@ export default function WorkInfomation(props: {
     <div className="col-span-8 md:col-span-3">
       <p className="uppercase">{props.title}</p>
       {props.data.map((item) => (
-        <p key={item} className="text-gray-500 dark:text-gray-700">
+        <p key={item} className="text-gray-500 dark:text-gray-400">
           {item}
         </p>
       ))}

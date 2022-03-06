@@ -11,17 +11,14 @@ const wrapperClass = classNames(
 
 function H1(props: ICommonProps) {
   return (
-    <h1 className="col-span-16 col-start-1 my-2 text-2xl font-bold md:col-span-10">
+    <h1 className="col-span-16 col-start-1 my-2 text-4xl font-bold md:col-span-10 md:my-4">
       {props.children}
     </h1>
   );
 }
 
 function H2(props: ICommonProps) {
-  const h2Class = classNames(
-    'text-xl font-bold text-gray-500 dark:text-gray-700',
-    wrapperClass
-  );
+  const h2Class = classNames('text-2xl font-bold my-1 md:my-2', wrapperClass);
   return <h2 className={h2Class}>{props.children}</h2>;
 }
 

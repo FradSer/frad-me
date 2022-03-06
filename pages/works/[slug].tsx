@@ -46,7 +46,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
       <section className="flex max-w-wrapper items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0 ">
         <div className="flex w-full flex-col gap-y-4 md:gap-y-8">
           <article className={girdClass}>
-            <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-700 md:col-span-12">
+            <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
               <strong className="font-black text-black dark:text-white">
                 {frontmatter.title}
               </strong>{' '}
