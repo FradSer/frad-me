@@ -118,7 +118,7 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
             props.isCenter ? 'text-center' : 'text-left'
           }`}
         >
-          <div className="text-sm text-gray-500 xl:text-lg 2xl:text-2xl">
+          <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
             {props.subTitle}
           </div>
           <div
