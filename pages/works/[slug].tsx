@@ -3,7 +3,8 @@ import { getMDXComponent } from 'mdx-bundler/client';
 import Head from 'next/head';
 import { useMemo } from 'react';
 
-import { H1, H2, HR, P, OL, UL } from '../../components/WorkPage/MDXComponents';
+import Topography from '../../components/WorkPage/BearyChat/Topography';
+import { H1, H2, HR, OL, P, UL } from '../../components/WorkPage/MDXComponents';
 import WorkCover from '../../components/WorkPage/WorkCover';
 import WorkImage from '../../components/WorkPage/WorkImage';
 import WorkInfomation from '../../components/WorkPage/WorkInfomation';
@@ -31,6 +32,7 @@ const mdxComponents = {
   ol: OL,
   ul: UL,
   WorkImage,
+  Topography,
 };
 
 export default function WorkPage({ code, frontmatter }: IWorkProps) {
