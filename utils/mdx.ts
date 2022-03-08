@@ -1,7 +1,7 @@
 import fs from 'fs';
-import path from 'path';
 import matter from 'gray-matter';
 import { bundleMDX } from 'mdx-bundler';
+import path from 'path';
 
 export const ROOT = process.cwd();
 export const POSTS_PATH = path.join(process.cwd(), '/content/works');
