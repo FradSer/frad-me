@@ -22,7 +22,7 @@ function TopographyImage(props: ITopographyImageProps) {
         translateY: props.translateY,
         opacity: props.opacity,
       }}
-      transition={{ duration: 1.6, delay: 1.6 }}
+      transition={{ duration: 1.6, delay: 3.2 }}
       viewport={{ once: true }}
       className={classNames(
         'absolute h-auto w-full border border-gray-200 md:border-2',
@@ -52,7 +52,7 @@ function Topography() {
       <motion.div
         initial={{ scale: 0.98 }}
         whileInView={{ scale: 0.8 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
+        transition={{ duration: 0.8, delay: 2.4 }}
         className="aspect-[1135/680] w-full"
         viewport={{ once: true }}
       >
