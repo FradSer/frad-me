@@ -1,6 +1,5 @@
 import Head from 'next/head';
 
-import Header from '../components/Header';
 import Hero from '../components/Landing/Hero';
 import Work from '../components/Landing/Work';
 
@@ -11,9 +10,8 @@ export default function Home() {
         <title>Frad LEE</title>
       </Head>
 
-      <main className="flex min-h-screen w-full flex-col items-center justify-center bg-white py-2 text-center dark:bg-black">
-        <div className="flex min-h-screen w-full flex-col">
-          <Header />
+      <main className="flex flex-col bg-white dark:bg-black items-center justify-center">
+        <div className="flex min-h-screen w-screen">
           <Hero />
         </div>
         <Work />

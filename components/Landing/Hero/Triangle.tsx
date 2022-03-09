@@ -1,40 +1,44 @@
-import { motion, useTransform, useViewportScroll } from 'framer-motion';
-
-import { primaryTransition } from '../../../utils/motion/springTransitions';
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  useViewportScroll,
+} from 'framer-motion';
+import { useEffect } from 'react';
 
 export default function Triangle() {
-  const initialRotate = Math.random() * 360;
-
-  const glowVariants = {
-    initial: {
-      rotate: initialRotate,
-    },
-    hover: {
-      rotate: initialRotate + 45,
-      transition: { ...primaryTransition },
-    },
-  };
-
   const { scrollYProgress } = useViewportScroll();
 
-  const triangleOffsetX = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
-  const triangleOffsetY = useTransform(scrollYProgress, [0, 0.3], [0, 400]);
-  const triangleRotate = useTransform(scrollYProgress, [0, 0.3], [0, 45]);
+  const x = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
+  const y = useTransform(scrollYProgress, [0, 0.3], [0, 400]);
+
+  const initialRotate = Math.random() * 360;
+  const rotate = useMotionValue(0);
+  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90]);
+
+  useEffect(() => {
+    function updateRotate() {
+      const newRotate = rotateOffset.get() + initialRotate;
+      rotate.set(newRotate);
+    }
+    const unsubscribe = rotateOffset.onChange(updateRotate);
+    return () => {
+      unsubscribe();
+    };
+  }, [scrollYProgress, initialRotate, rotate, rotateOffset]);
 
   return (
     <motion.div
-      initial="initial"
-      whileHover="hover"
-      variants={glowVariants}
+      initial={{ rotate: initialRotate }}
       style={{
-        x: triangleOffsetX,
-        y: triangleOffsetY,
-        rotate: triangleRotate,
+        x,
+        y,
+        rotate,
       }}
     >
       <svg
         viewBox="0 0 149 129"
-        className="h-32 w-32 fill-black dark:fill-white"
+        className="h-20 w-20 fill-black dark:fill-white sm:h-24 sm:w-24 lg:h-28 lg:w-28 2xl:h-32 2xl:w-32"
       >
         <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
       </svg>

@@ -13,7 +13,6 @@ const workLinks = [
     title: 'Pachino',
     subTitle: 'Product Design / Development',
     slug: 'pachino',
-    background: 'pachino',
     isFullScreen: true,
     isCenter: true,
   },

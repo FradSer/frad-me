@@ -55,6 +55,12 @@
         "options": {
           "parser": "json"
         }
+      },
+      {
+        "files": ["*.mdx"],
+        "options": {
+          "parser": "mdx"
+        }
       }
     ]
   },

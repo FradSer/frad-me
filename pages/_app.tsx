@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import LayoutWrapper from '../components/common/LayoutWrapper';
 import Loading from '../components/common/Loading';
-import Header from '../components/Header';
 import DotRing from '../components/Mouse/DotRing';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 import useXRDetect from '../hooks/useXRDetect';
@@ -33,14 +33,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   // * Render
+  // TODO: Add loading animation
   return xrDetect.isVR ? (
     <WebXR />
   ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
-        <Loading loading={loading} />
-        <Component {...pageProps} />
+        <LayoutWrapper>
+          <Component {...pageProps} />
+        </LayoutWrapper>
       </ThemeProvider>
     </MouseContextProvider>
   );
