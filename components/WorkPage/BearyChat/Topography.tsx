@@ -35,6 +35,7 @@ function TopographyImage(props: ITopographyImageProps) {
         height={680}
         layout="responsive"
         alt={props.alt}
+        loading="eager"
       />
     </motion.div>
   );

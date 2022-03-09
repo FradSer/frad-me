@@ -5,7 +5,13 @@ export default function WorkCover(props: { src?: string; title?: string }) {
   const imageAlt = 'Cover for' + props.title;
   return (
     <div className="w-screen">
-      <Image src={props.src} width={1920} height={1080} alt={imageAlt} />
+      <Image
+        src={props.src}
+        width={1920}
+        height={1080}
+        alt={imageAlt}
+        loading="eager"
+      />
     </div>
   );
 }
