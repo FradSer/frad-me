@@ -25,7 +25,7 @@ function TopographyImage(props: ITopographyImageProps) {
       transition={{ duration: 1.6, delay: 1.6 }}
       viewport={{ once: true }}
       className={classNames(
-        'absolute aspect-[1135/680] w-full border-[1px] border-gray-100 md:border-2',
+        'absolute h-auto w-full border border-gray-200 md:border-2',
         props.className
       )}
     >
@@ -47,13 +47,10 @@ TopographyImage.defaultProps = {
 function Topography() {
   return (
     <div
-      className={classNames(
-        'col-span-16 col-start-1 h-full w-full',
-        withCaptionLayoutClass
-      )}
+      className={classNames('col-span-16 col-start-1', withCaptionLayoutClass)}
     >
       <motion.div
-        initial={{ scale: 1.0 }}
+        initial={{ scale: 0.98 }}
         whileInView={{ scale: 0.8 }}
         transition={{ duration: 0.8, delay: 0.8 }}
         className="aspect-[1135/680] w-full"
