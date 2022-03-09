@@ -23,12 +23,19 @@ function TopographyImage(props: ITopographyImageProps) {
         opacity: props.opacity,
       }}
       transition={{ duration: 1.6, delay: 1.6 }}
+      viewport={{ once: true }}
       className={classNames(
-        'absolute h-full w-full border-2 border-gray-100',
+        'absolute aspect-[1135/680] w-full border-[1px] border-gray-100 md:border-2',
         props.className
       )}
     >
-      <Image src={props.src} width={1135} height={680} alt={props.alt} />
+      <Image
+        src={props.src}
+        width={1135}
+        height={680}
+        layout="responsive"
+        alt={props.alt}
+      />
     </motion.div>
   );
 }
@@ -46,12 +53,11 @@ function Topography() {
       )}
     >
       <motion.div
+        initial={{ scale: 1.0 }}
         whileInView={{ scale: 0.8 }}
         transition={{ duration: 0.8, delay: 0.8 }}
-        style={{
-          width: 1135,
-          height: 680,
-        }}
+        className="aspect-[1135/680] w-full"
+        viewport={{ once: true }}
       >
         <TopographyImage
           src="/works/bearychat/figure-5.png"
@@ -62,8 +68,8 @@ function Topography() {
         <TopographyImage
           src="/works/bearychat/figure-5-1.png"
           alt="bearychat-logo"
-          translateX="-5%"
-          translateY="-5%"
+          translateX="-8%"
+          translateY="-4%"
         />
         <TopographyImage
           src="/works/bearychat/figure-5-2.png"
@@ -74,8 +80,8 @@ function Topography() {
         <TopographyImage
           src="/works/bearychat/figure-5-3.png"
           alt="bearychat-logo"
-          translateX="5%"
-          translateY="5%"
+          translateX="8%"
+          translateY="4%"
         />
       </motion.div>
       <span className={captionClass}>
