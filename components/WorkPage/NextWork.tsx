@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 function NextWork(props: { href?: string }) {
   const linkClass = classNames(
-    'col-span-16 col-start-1 text-center text-black dark:text-white text-5xl my-16 font-bold'
+    'col-span-16 col-start-1 text-center text-black dark:text-white text-4xl my-8 font-bold'
   );
 
   if (!props.href) {
