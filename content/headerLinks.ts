@@ -1,4 +1,4 @@
-import { DestinationType } from '../components/Header/HeaderLink';
+import { DestinationType } from '../components/common/CommonLink';
 
 const headerLinks = [
   {

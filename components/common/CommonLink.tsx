@@ -2,39 +2,37 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { CursorProvider, CursorType } from '../common/CursorProvider';
-import ScrollLink from '../common/ScrollLink';
+import { CursorProvider, CursorType } from './CursorProvider';
+import ScrollLink from './ScrollLink';
 
-type IHeaderLinkProps = {
+interface ICommonLinkProps {
   title: string;
   href: string;
   destinationType?: DestinationType;
-};
+}
 
 enum DestinationType {
   link = 'link',
   section = 'section',
 }
 
-function HeaderLink<T extends IHeaderLinkProps>(props: T) {
+function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
   const { pathname } = useRouter();
-
-  const destinationType = props.destinationType || DestinationType.link;
 
   const titleClass = classNames(
     'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer'
   );
 
-  const title = <a className={titleClass}>{props.title}</a>;
+  const titleAnchor = <a className={titleClass}>{title}</a>;
 
   let link;
   if (destinationType === DestinationType.link) {
-    link = <Link href={props.href}>{title}</Link>;
+    link = <Link href={href}>{titleAnchor}</Link>;
   } else if (destinationType === DestinationType.section) {
     if (pathname === '/') {
-      link = <ScrollLink destination={props.href}>{title}</ScrollLink>;
+      link = <ScrollLink destination={href}>{titleAnchor}</ScrollLink>;
     } else {
-      link = <Link href={'/#' + props.href}>{title}</Link>;
+      link = <Link href={'/#' + href}>{titleAnchor}</Link>;
     }
   }
 
@@ -46,4 +44,8 @@ function HeaderLink<T extends IHeaderLinkProps>(props: T) {
   );
 }
 
-export { HeaderLink, DestinationType };
+CommonLink.defaultProps = {
+  destinationType: DestinationType.link,
+};
+
+export { CommonLink, DestinationType };

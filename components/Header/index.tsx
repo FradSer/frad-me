@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import headerLinks from '../../content/headerLinks';
 import FLogo from './FLogo';
-import { HeaderLink } from './HeaderLink';
+import { CommonLink } from '../common/CommonLink';
 import ThemeSwitcher from './ThemeSwitcher';
 
 function Header() {
@@ -18,7 +18,7 @@ function Header() {
       <ul className="hidden h-full flex-row items-center space-x-8 text-2xl sm:flex">
         {headerLinks.map((headerLink) => (
           <li key={headerLink.title}>
-            <HeaderLink
+            <CommonLink
               title={headerLink.title}
               href={headerLink.href}
               destinationType={headerLink.destinationType}
