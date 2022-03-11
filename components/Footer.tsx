@@ -3,7 +3,7 @@ import { CommonLink } from './common/CommonLink';
 
 function Footer() {
   return (
-    <footer className="layout-wrapper my-12 flex h-24 flex-col items-center justify-between text-2xl md:flex-row">
+    <footer className="layout-wrapper my-12 flex h-24 flex-col items-center justify-between text-xl md:flex-row">
       <ul className="flex h-full flex-row items-center space-x-8">
         {footerLinks.map((footerLink) => (
           <li key={footerLink.title}>
@@ -11,7 +11,9 @@ function Footer() {
           </li>
         ))}
       </ul>
-      <span className="text-gray-400">Made by Frad © 2022</span>
+      <span className="text-gray-400 hover:cursor-none">
+        Made by Frad © 2022
+      </span>
     </footer>
   );
 }
