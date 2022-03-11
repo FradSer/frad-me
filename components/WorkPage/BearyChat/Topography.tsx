@@ -2,8 +2,6 @@ import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-import { captionClass, withCaptionLayoutClass } from '../styles';
-
 interface ITopographyImageProps {
   className?: string;
   src: string;
@@ -47,9 +45,7 @@ TopographyImage.defaultProps = {
 
 function Topography() {
   return (
-    <div
-      className={classNames('col-span-16 col-start-1', withCaptionLayoutClass)}
-    >
+    <div className="work-component-layout col-span-16 col-start-1">
       <motion.div
         initial={{ scale: 0.98, opacity: 0, y: 200 }}
         whileInView={{ scale: 0.8, opacity: 1, y: 0 }}
@@ -86,7 +82,7 @@ function Topography() {
           translateY="4%"
         />
       </motion.div>
-      <span className={captionClass}>
+      <span className="work-caption">
         BearChat is based with three-column layout topography.
       </span>
     </div>
