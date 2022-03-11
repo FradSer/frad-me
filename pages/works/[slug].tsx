@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import Topography from '../../components/WorkPage/BearyChat/Topography';
 import { H1, H2, HR, OL, P, UL } from '../../components/WorkPage/MDXComponents';
+import NextWork from '../../components/WorkPage/NextWork';
 import WorkCover from '../../components/WorkPage/WorkCover';
 import WorkImage from '../../components/WorkPage/WorkImage';
 import WorkInfomation from '../../components/WorkPage/WorkInfomation';
@@ -21,6 +22,7 @@ type IWorkProps = {
     platforms?: [string];
     contributors?: [string];
     site?: string;
+    nextWork?: string;
   };
 };
 
@@ -68,10 +70,17 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
             <WorkSite href={frontmatter.site} />
           </div>
 
+          <HR />
+
           <article className={girdClass}>
             <Component components={mdxComponents} />
-            <span className="col-span-16 h-16"></span>
           </article>
+
+          <HR />
+
+          <NextWork href={frontmatter.nextWork} />
+
+          <span className="col-span-16 h-16" />
         </div>
       </section>
     </>

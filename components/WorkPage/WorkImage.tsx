@@ -58,6 +58,7 @@ function WorkImage(props: IWorkImageProps) {
           width={props.width}
           height={props.height}
           alt={props.alt}
+          loading="eager"
         />
         <span className={captionClass}>{props.alt}</span>
       </div>
