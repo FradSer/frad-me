@@ -27,9 +27,6 @@ module.exports = {
         'span-15': 'span 15 / span 15',
         'span-16': 'span 16 / span 16',
       },
-      maxWidth: {
-        wrapper: '64rem',
-      },
     },
   },
   variants: {

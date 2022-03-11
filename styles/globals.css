@@ -45,3 +45,9 @@
     src: url(/fonts/GT-Eesti-Text-Bold-Trial.woff2) format("woff2");
   }
 }
+
+@layer components {
+  .layout-wrapper {
+    @apply max-w-[64rem] px-4 md:px-8 xl:px-0 w-full
+  }
+}

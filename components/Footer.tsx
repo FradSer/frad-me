@@ -3,7 +3,7 @@ import { CommonLink } from './common/CommonLink';
 
 function Footer() {
   return (
-    <footer className="my-12 flex h-24 w-full max-w-wrapper flex-col items-center justify-between px-4 text-2xl md:flex-row md:px-8 xl:px-0">
+    <footer className="layout-wrapper my-12 flex h-24 flex-col items-center justify-between text-2xl md:flex-row">
       <ul className="flex h-full flex-row items-center space-x-8">
         {footerLinks.map((footerLink) => (
           <li key={footerLink.title}>

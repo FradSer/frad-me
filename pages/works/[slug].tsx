@@ -49,39 +49,37 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
       </Head>
 
       <WorkCover src={frontmatter.cover} title={frontmatter.title} />
-      <section className="flex max-w-wrapper items-center justify-center bg-white px-4 dark:bg-black md:px-8 xl:px-0 ">
-        <div className="flex w-full flex-col gap-y-3 md:gap-y-6">
-          <article className={girdClass}>
-            <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
-              <strong className="font-black text-black dark:text-white">
-                {frontmatter.title}
-              </strong>{' '}
-              {frontmatter.description}
-            </h1>
-            <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
-          </article>
+      <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
+        <article className={girdClass}>
+          <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
+            <strong className="font-black text-black dark:text-white">
+              {frontmatter.title}
+            </strong>{' '}
+            {frontmatter.description}
+          </h1>
+          <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
+        </article>
 
-          <div className={girdClass}>
-            <WorkInfomation title="platforms" data={frontmatter.platforms} />
-            <WorkInfomation
-              title="contributors"
-              data={frontmatter.contributors}
-            />
-            <WorkSite href={frontmatter.site} />
-          </div>
-
-          <HR />
-
-          <article className={girdClass}>
-            <Component components={mdxComponents} />
-          </article>
-
-          <HR />
-
-          <NextWork href={frontmatter.nextWork} />
-
-          <span className="col-span-16 h-16" />
+        <div className={girdClass}>
+          <WorkInfomation title="platforms" data={frontmatter.platforms} />
+          <WorkInfomation
+            title="contributors"
+            data={frontmatter.contributors}
+          />
+          <WorkSite href={frontmatter.site} />
         </div>
+
+        <HR />
+
+        <article className={girdClass}>
+          <Component components={mdxComponents} />
+        </article>
+
+        <HR />
+
+        <NextWork href={frontmatter.nextWork} />
+
+        <span className="col-span-16 h-16" />
       </section>
     </>
   );
