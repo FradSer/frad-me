@@ -2,30 +2,42 @@ import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
+const IN_VIEW_DELAY = 0.4;
+const IN_VIEW_DURATION = 0.8;
+
 interface ITopographyImageProps {
-  className?: string;
+  isTop?: boolean;
   src: string;
   alt: string;
   translateX?: string;
   translateY?: string;
-  opacity?: number;
 }
 
 function TopographyImage(props: ITopographyImageProps) {
+  const topographyClass = classNames('absolute h-auto w-full border-gray-200', {
+    'z-50': props.isTop,
+  });
+
+  const opacity = props.isTop ? 0 : 1;
+  const borderWidth = props.isTop ? '0' : '1px';
+
+  const duration = props.isTop ? 0.8 : 1.6;
+
   return (
     <motion.div
       whileInView={{
         skewY: -5,
         translateX: props.translateX,
         translateY: props.translateY,
-        opacity: props.opacity,
+        opacity: opacity,
+        borderWidth: borderWidth,
       }}
-      transition={{ duration: 1.6, delay: 2 }}
+      transition={{
+        duration: duration,
+        delay: IN_VIEW_DURATION + IN_VIEW_DELAY,
+      }}
       viewport={{ once: true }}
-      className={classNames(
-        'absolute h-auto w-full border border-gray-200 md:border-2',
-        props.className
-      )}
+      className={topographyClass}
     >
       <Image
         src={props.src}
@@ -40,6 +52,7 @@ function TopographyImage(props: ITopographyImageProps) {
 }
 
 TopographyImage.defaultProps = {
+  isTop: false,
   opacity: 1,
 };
 
@@ -50,7 +63,7 @@ function Topography() {
         initial={{ scale: 0.98, opacity: 0, y: 200 }}
         whileInView={{ scale: 0.8, opacity: 1, y: 0 }}
         transition={{
-          scale: { duration: 0.8, delay: 1.2 },
+          scale: { duration: IN_VIEW_DURATION, delay: IN_VIEW_DELAY },
           opacity: { duration: 0.4, ease: 'linear' },
           y: { duration: 0.4, ease: 'linear' },
         }}
@@ -58,10 +71,9 @@ function Topography() {
         viewport={{ once: true }}
       >
         <TopographyImage
+          isTop={true}
           src="/works/bearychat/figure-5.png"
           alt="bearychat-logo"
-          opacity={0}
-          className="z-50"
         />
         <TopographyImage
           src="/works/bearychat/figure-5-1.png"
