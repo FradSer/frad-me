@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 import headerLinks from '../../content/headerLinks';
-import FLogo from './FLogo';
 import { CommonLink } from '../common/CommonLink';
+import FLogo from './FLogo';
 import ThemeSwitcher from './ThemeSwitcher';
 
 function Header() {

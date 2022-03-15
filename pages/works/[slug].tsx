@@ -43,12 +43,13 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
   const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6');
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center">
       <Head>
         <title>{frontmatter.title} | Work by Frad</title>
       </Head>
 
       <WorkCover src={frontmatter.cover} title={frontmatter.title} />
+
       <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
         <article className={girdClass}>
           <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
@@ -81,7 +82,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
 
         <span className="col-span-16 h-16" />
       </section>
-    </>
+    </div>
   );
 }
 
