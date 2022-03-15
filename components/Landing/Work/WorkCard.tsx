@@ -1,29 +1,47 @@
 import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import useMouseContext from '../../../hooks/useMouseContext';
 import { primaryTransition } from '../../../utils/motion/springTransitions';
 
-type IWorkCardProps = {
+interface IWorkCardProps {
   title: string;
   subTitle: string;
   slug: string;
+  cover: string;
   isFullScreen?: boolean;
   isCenter?: boolean;
-};
+}
 
-export default function WorkCard<T extends IWorkCardProps>(props: T) {
+function WorkCard(props: IWorkCardProps) {
   // * Styling
-  const backgroundImageClass = classNames(
-    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll',
+  const linkClass = classNames(
+    'relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer',
     {
-      'bg-orange-600': props.slug === 'eye-protection-design-handbook',
-      'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
-      'bg-pachino bg-red-600': props.slug === 'pachino',
-      'bg-green-600': props.slug === 'bearychat',
+      'col-span-2 aspect-100/62 md:aspect-100/31': props.isFullScreen,
+      'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
     }
   );
+
+  const backgroundImageClass = classNames('absolute w-full h-full', {
+    'bg-orange-600': props.slug === 'eye-protection-design-handbook',
+    'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
+    'bg-red-600': props.slug === 'pachino',
+    'bg-green-600': props.slug === 'bearychat',
+    'bg-white': props.slug == null,
+  });
+
+  const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
+    'text-left md:text-center': props.isCenter,
+    'text-left': !props.isCenter,
+  });
+
+  const textTitleClass = classNames('font-bold text-white', {
+    'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
+    'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
+  });
 
   // * Animation
 
@@ -92,46 +110,41 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
         onClick={() => {
           mouseContext.cursorChangeHandler('default');
         }}
-        className={`relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer ${
-          props.isFullScreen
-            ? 'col-span-2 aspect-100/62 md:aspect-100/31'
-            : 'col-span-2 aspect-100/62 md:col-span-1'
-        }`}
+        className={linkClass}
       >
         <motion.div // Background Image
           animate={backgroundImageControls}
           initial="initial"
           variants={backgroundImageVariants}
           className={backgroundImageClass}
-        />
+        >
+          <Image
+            src={props.cover}
+            alt={'Cover for ' + props.title}
+            layout="fill"
+            objectFit="cover"
+          />
+        </motion.div>
         <motion.div // Background Image Mask
           animate={backgroundMaskControls}
           initial="initial"
           variants={backgroundMaskVariants}
           className="absolute h-full w-full bg-black bg-opacity-50"
-        ></motion.div>
+        />
         <motion.div // Text
           animate={textControls}
           initial="initial"
           variants={textVariants}
-          className={`absolute w-4/6 space-y-4 ${
-            props.isCenter ? 'text-center' : 'text-left'
-          }`}
+          className={textLayoutClass}
         >
           <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
             {props.subTitle}
           </div>
-          <div
-            className={`font-bold text-white ${
-              props.isCenter
-                ? 'text-3xl xl:text-5xl 2xl:text-7xl'
-                : 'text-xl xl:text-3xl 2xl:text-5xl'
-            }`}
-          >
-            {props.title}
-          </div>
+          <div className={textTitleClass}>{props.title}</div>
         </motion.div>
       </motion.div>
     </Link>
   );
 }
+
+export default WorkCard;

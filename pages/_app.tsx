@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react';
 
 import LayoutWrapper from '../components/common/LayoutWrapper';
 import Loading from '../components/common/Loading';
+import Header from '../components/Header';
 import DotRing from '../components/Mouse/DotRing';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 import useXRDetect from '../hooks/useXRDetect';
+import Footer from '../components/Footer';
 
 import '../styles/globals.css';
 
@@ -41,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
         <LayoutWrapper>
+          <Header />
           <Component {...pageProps} />
         </LayoutWrapper>
       </ThemeProvider>

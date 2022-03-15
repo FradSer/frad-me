@@ -2,8 +2,6 @@ import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-import { captionClass, withCaptionLayoutClass } from './styles';
-
 type IWorkImageProps = {
   src: string;
   width: number;
@@ -52,7 +50,7 @@ function WorkImage(props: IWorkImageProps) {
       viewport={{ once: true }}
       className={workImageClass}
     >
-      <div className={withCaptionLayoutClass}>
+      <div className="work-component-layout">
         <Image
           src={props.src}
           width={props.width}
@@ -60,7 +58,7 @@ function WorkImage(props: IWorkImageProps) {
           alt={props.alt}
           loading="eager"
         />
-        <span className={captionClass}>{props.alt}</span>
+        <span className="work-caption">{props.alt}</span>
       </div>
     </motion.div>
   );

@@ -12,7 +12,7 @@ export default function Work() {
     <section id="work">
       <Element
         name="work"
-        className="grid w-screen grid-cols-2 gap-4 text-center"
+        className="grid w-screen grid-cols-2 gap-4 text-center hover:cursor-none"
       >
         <WorkTitle />
         {workLinks.slice(0, MAX_DISPLAY_WORKS).map((link) => (
@@ -21,6 +21,7 @@ export default function Work() {
             title={link.title}
             subTitle={link.subTitle}
             slug={link.slug}
+            cover={link.cover}
             isFullScreen={link.isFullScreen}
             isCenter={link.isCenter}
           />
