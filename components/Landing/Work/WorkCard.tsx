@@ -33,6 +33,16 @@ function WorkCard(props: IWorkCardProps) {
     'bg-white': props.slug == null,
   });
 
+  const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
+    'text-left md:text-center': props.isCenter,
+    'text-left': !props.isCenter,
+  });
+
+  const textTitleClass = classNames('font-bold text-white', {
+    'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
+    'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
+  });
+
   // * Animation
 
   const backgroundImageControls = useAnimation();
@@ -125,22 +135,12 @@ function WorkCard(props: IWorkCardProps) {
           animate={textControls}
           initial="initial"
           variants={textVariants}
-          className={`absolute w-4/6 space-y-4 ${
-            props.isCenter ? 'text-center' : 'text-left'
-          }`}
+          className={textLayoutClass}
         >
           <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
             {props.subTitle}
           </div>
-          <div
-            className={`font-bold text-white ${
-              props.isCenter
-                ? 'text-3xl xl:text-5xl 2xl:text-7xl'
-                : 'text-xl xl:text-3xl 2xl:text-5xl'
-            }`}
-          >
-            {props.title}
-          </div>
+          <div className={textTitleClass}>{props.title}</div>
         </motion.div>
       </motion.div>
     </Link>
