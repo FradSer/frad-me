@@ -9,9 +9,6 @@ module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
-      backgroundImage: {
-        pachino: "url('/img/pachino-background.png')",
-      },
       fontFamily: {
         sans: ['GT Eesti Text Trial', ...defaultTheme.fontFamily.sans],
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],

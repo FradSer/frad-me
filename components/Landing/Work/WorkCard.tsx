@@ -1,29 +1,37 @@
 import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import useMouseContext from '../../../hooks/useMouseContext';
 import { primaryTransition } from '../../../utils/motion/springTransitions';
 
-type IWorkCardProps = {
+interface IWorkCardProps {
   title: string;
   subTitle: string;
   slug: string;
+  cover: string;
   isFullScreen?: boolean;
   isCenter?: boolean;
-};
+}
 
-export default function WorkCard<T extends IWorkCardProps>(props: T) {
+function WorkCard(props: IWorkCardProps) {
   // * Styling
-  const backgroundImageClass = classNames(
-    'absolute w-full h-full bg-center bg-origin-border bg-cover bg-scroll',
+  const linkClass = classNames(
+    'relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer',
     {
-      'bg-orange-600': props.slug === 'eye-protection-design-handbook',
-      'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
-      'bg-pachino bg-red-600': props.slug === 'pachino',
-      'bg-green-600': props.slug === 'bearychat',
+      'col-span-2 aspect-100/62 md:aspect-100/31': props.isFullScreen,
+      'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
     }
   );
+
+  const backgroundImageClass = classNames('absolute w-full h-full', {
+    'bg-orange-600': props.slug === 'eye-protection-design-handbook',
+    'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
+    'bg-red-600': props.slug === 'pachino',
+    'bg-green-600': props.slug === 'bearychat',
+    'bg-white': props.slug == null,
+  });
 
   // * Animation
 
@@ -92,24 +100,27 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
         onClick={() => {
           mouseContext.cursorChangeHandler('default');
         }}
-        className={`relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer ${
-          props.isFullScreen
-            ? 'col-span-2 aspect-100/62 md:aspect-100/31'
-            : 'col-span-2 aspect-100/62 md:col-span-1'
-        }`}
+        className={linkClass}
       >
         <motion.div // Background Image
           animate={backgroundImageControls}
           initial="initial"
           variants={backgroundImageVariants}
           className={backgroundImageClass}
-        />
+        >
+          <Image
+            src={props.cover}
+            alt={'Cover for ' + props.title}
+            layout="fill"
+            objectFit="cover"
+          />
+        </motion.div>
         <motion.div // Background Image Mask
           animate={backgroundMaskControls}
           initial="initial"
           variants={backgroundMaskVariants}
           className="absolute h-full w-full bg-black bg-opacity-50"
-        ></motion.div>
+        />
         <motion.div // Text
           animate={textControls}
           initial="initial"
@@ -135,3 +146,5 @@ export default function WorkCard<T extends IWorkCardProps>(props: T) {
     </Link>
   );
 }
+
+export default WorkCard;

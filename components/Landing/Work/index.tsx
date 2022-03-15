@@ -21,6 +21,7 @@ export default function Work() {
             title={link.title}
             subTitle={link.subTitle}
             slug={link.slug}
+            cover={link.cover}
             isFullScreen={link.isFullScreen}
             isCenter={link.isCenter}
           />
