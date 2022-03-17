@@ -4,7 +4,16 @@ import Head from 'next/head';
 import { useMemo } from 'react';
 
 import Topography from '../../components/WorkPage/BearyChat/Topography';
-import { H1, H2, HR, OL, P, UL } from '../../components/WorkPage/MDXComponents';
+import {
+  Blockquote,
+  H1,
+  H2,
+  H3,
+  HR,
+  OL,
+  P,
+  UL,
+} from '../../components/WorkPage/MDXComponents';
 import NextWork from '../../components/WorkPage/NextWork';
 import WorkCover from '../../components/WorkPage/WorkCover';
 import WorkImage from '../../components/WorkPage/WorkImage';
@@ -27,8 +36,10 @@ type IWorkProps = {
 };
 
 const mdxComponents = {
+  blockquote: Blockquote,
   h1: H1,
   h2: H2,
+  h3: H3,
   hr: HR,
   p: P,
   ol: OL,
@@ -72,7 +83,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
 
         <HR />
 
-        <article className={girdClass}>
+        <article className={classNames('text-lg', girdClass)}>
           <Component components={mdxComponents} />
         </article>
 
