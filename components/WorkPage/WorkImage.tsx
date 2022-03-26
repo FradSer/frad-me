@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
+
+import MDXComponentProvider from './MDXComponentProvider';
 
 type IWorkImageProps = {
   src: string;
@@ -25,31 +26,9 @@ function WorkImage(props: IWorkImageProps) {
       props.position === ImagePosition.underH2,
   });
 
-  // * Animation
-  const imageVariants = {
-    hidden: {
-      opacity: 0,
-      y: 200,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: 'linear',
-      },
-    },
-  };
-
   // * Render
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      variants={imageVariants}
-      viewport={{ once: true }}
-      className={workImageClass}
-    >
+    <MDXComponentProvider className={workImageClass}>
       <div className="work-component-layout">
         <Image
           src={props.src}
@@ -60,7 +39,7 @@ function WorkImage(props: IWorkImageProps) {
         />
         <span className="work-caption">{props.alt}</span>
       </div>
-    </motion.div>
+    </MDXComponentProvider>
   );
 }
 
