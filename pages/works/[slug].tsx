@@ -16,7 +16,10 @@ import {
 } from '../../components/WorkPage/MDXComponents';
 import NextWork from '../../components/WorkPage/NextWork';
 import WorkCover from '../../components/WorkPage/WorkCover';
-import WorkImage from '../../components/WorkPage/WorkImage';
+import {
+  WorkSingleImage,
+  WorkBeforeAfterImages,
+} from '../../components/WorkPage/WorkImage';
 import WorkInfomation from '../../components/WorkPage/WorkInfomation';
 import WorkSite from '../../components/WorkPage/WorkSite';
 import { getAllPosts, getSinglePost } from '../../utils/mdx';
@@ -41,11 +44,12 @@ const mdxComponents = {
   h2: H2,
   h3: H3,
   hr: HR,
-  p: P,
   ol: OL,
-  ul: UL,
-  WorkImage,
+  p: P,
   Topography,
+  ul: UL,
+  WorkSingleImage,
+  WorkBeforeAfterImages,
 };
 
 export default function WorkPage({ code, frontmatter }: IWorkProps) {

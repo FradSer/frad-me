@@ -17,10 +17,11 @@ enum ImagePosition {
   fullScreen = 'fullScreen',
 }
 
-function WorkImage(props: IWorkImageProps) {
+function WorkSingleImage(props: IWorkImageProps) {
   // * Styling
   const workImageClass = classNames('w-full', {
-    'col-span-16 md:col-span-5': props.position === ImagePosition.inline,
+    'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
+      props.position === ImagePosition.inline,
     'col-span-16': props.position === ImagePosition.fullScreen,
     'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
       props.position === ImagePosition.underH2,
@@ -43,8 +44,42 @@ function WorkImage(props: IWorkImageProps) {
   );
 }
 
-WorkImage.defaultProps = {
+WorkSingleImage.defaultProps = {
   position: ImagePosition.inline,
 };
 
-export default WorkImage;
+interface IWorkBeforeAfterImagesProps {
+  beforeSrc: string;
+  afterSrc: string;
+  width: number;
+  height: number;
+  description: string;
+}
+
+function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
+  return (
+    <MDXComponentProvider className="work-component-layout col-span-16">
+      <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
+        <span>Befor:</span>
+        <Image
+          src={props.beforeSrc}
+          width={props.width}
+          height={props.height}
+          alt={props.alt}
+          loading="eager"
+        />
+        <span>After:</span>
+        <Image
+          src={props.afterSrc}
+          width={props.width}
+          height={props.height}
+          alt={props.alt}
+          loading="eager"
+        />
+      </div>
+      <span className="work-caption">{props.description}</span>
+    </MDXComponentProvider>
+  );
+}
+
+export { WorkSingleImage, WorkBeforeAfterImages };
