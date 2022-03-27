@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
+
+import MDXComponentProvider from './MDXComponentProvider';
 
 type IWorkImageProps = {
   src: string;
@@ -16,40 +17,19 @@ enum ImagePosition {
   fullScreen = 'fullScreen',
 }
 
-function WorkImage(props: IWorkImageProps) {
+function WorkSingleImage(props: IWorkImageProps) {
   // * Styling
   const workImageClass = classNames('w-full', {
-    'col-span-16 md:col-span-5': props.position === ImagePosition.inline,
+    'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
+      props.position === ImagePosition.inline,
     'col-span-16': props.position === ImagePosition.fullScreen,
     'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
       props.position === ImagePosition.underH2,
   });
 
-  // * Animation
-  const imageVariants = {
-    hidden: {
-      opacity: 0,
-      y: 200,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: 'linear',
-      },
-    },
-  };
-
   // * Render
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      variants={imageVariants}
-      viewport={{ once: true }}
-      className={workImageClass}
-    >
+    <MDXComponentProvider className={workImageClass}>
       <div className="work-component-layout">
         <Image
           src={props.src}
@@ -60,12 +40,46 @@ function WorkImage(props: IWorkImageProps) {
         />
         <span className="work-caption">{props.alt}</span>
       </div>
-    </motion.div>
+    </MDXComponentProvider>
   );
 }
 
-WorkImage.defaultProps = {
+WorkSingleImage.defaultProps = {
   position: ImagePosition.inline,
 };
 
-export default WorkImage;
+interface IWorkBeforeAfterImagesProps {
+  beforeSrc: string;
+  afterSrc: string;
+  width: number;
+  height: number;
+  description: string;
+}
+
+function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
+  return (
+    <MDXComponentProvider className="work-component-layout col-span-16">
+      <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
+        <span>Befor:</span>
+        <Image
+          src={props.beforeSrc}
+          width={props.width}
+          height={props.height}
+          alt={props.description}
+          loading="eager"
+        />
+        <span>After:</span>
+        <Image
+          src={props.afterSrc}
+          width={props.width}
+          height={props.height}
+          alt={props.description}
+          loading="eager"
+        />
+      </div>
+      <span className="work-caption">{props.description}</span>
+    </MDXComponentProvider>
+  );
+}
+
+export { WorkSingleImage, WorkBeforeAfterImages };

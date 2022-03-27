@@ -5,7 +5,11 @@ import DotCircle from './DotCircle';
 import Rectangle from './Rectangle';
 import Triangle from './Triangle';
 
-export default function Hero() {
+interface IHeroProps {
+  isWebXR?: boolean;
+}
+
+function Hero({ isWebXR }: IHeroProps) {
   const heroH1 = classNames(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl'
   );
@@ -42,10 +46,16 @@ export default function Hero() {
           <span className="text-gray-400">or building a </span>
           startup
           <ScrollLink destination="work">
-            <DotCircle />
+            <DotCircle isInteractive={isWebXR ? false : true} />
           </ScrollLink>
         </div>
       </h1>
     </section>
   );
 }
+
+Hero.defaultProps = {
+  isWebXR: false,
+};
+
+export default Hero;

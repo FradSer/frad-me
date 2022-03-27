@@ -3,7 +3,7 @@ const workLinks = [
     title: 'Eye Protection Design Handbook',
     subTitle: 'Design Research',
     slug: 'eye-protection-design-handbook',
-    cover: '/works/bearychat/cover.png',
+    cover: '/works/eye-protection-design-handbook/cover.png',
   },
   {
     title: 'Usability Design for Xigua Video',

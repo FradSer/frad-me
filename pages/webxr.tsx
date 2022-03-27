@@ -1,8 +1,15 @@
-import { OrbitControls, PerspectiveCamera, Sky, Text } from '@react-three/drei';
+import {
+  Html,
+  OrbitControls,
+  PerspectiveCamera,
+  Sky,
+  Text,
+} from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { DefaultXRControllers, Interactive, useXR } from '@react-three/xr';
 import { useState } from 'react';
 
+import Hero from '../components/Landing/Hero';
 import GenericCanvas from '../components/WebXR/GeneralCanvas';
 import Model from '../components/WebXR/Model';
 import XIGLogo from '../components/WebXR/XIGLogo';
@@ -61,8 +68,18 @@ function Button(props: any) {
 }
 
 function GenericChildren() {
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
   return (
     <>
+      <Html
+        position={[-3.3, 4.2, -6.19]}
+        scale={[0.04, 0.04, 0.04]}
+        rotation={[deg2rad(0), deg2rad(26), deg2rad(0)]}
+        transform
+        occlude
+      >
+        <Hero isWebXR={true} />
+      </Html>
       <Sky sunPosition={[0, 10, 0]} />
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
