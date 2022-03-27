@@ -26,7 +26,7 @@ function WorkCard(props: IWorkCardProps) {
   );
 
   const backgroundImageClass = classNames('absolute w-full h-full', {
-    'bg-orange-600': props.slug === 'eye-protection-design-handbook',
+    'bg-gray-700': props.slug === 'eye-protection-design-handbook',
     'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
     'bg-red-600': props.slug === 'pachino',
     'bg-green-600': props.slug === 'bearychat',

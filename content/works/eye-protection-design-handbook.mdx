@@ -1,4 +1,5 @@
 ---
+cover: '/works/eye-protection-design-handbook/cover.png'
 title: Eye Protection Design Handbook
 description: is a design study for the vast majority of ByteDance’s products.
 platforms:
@@ -27,30 +28,22 @@ The most significant damage to the eyes from using screens is visual fatigue. Vi
 
 ## Causes of Visual Fatigue
 
-### Close-up View
+### Near Response
 
-When peoples watch the screen at close range, the eyes perform tonal and introverted movements. The closer the object is, the more pressure is placed on the eye muscles. The eye muscles cannot relax for a long time, thus causing visual fatigue.
+When people view a screen at close range, their eyes perform a series of actions called near response. The most acute effects on visual fatigue are Vergence movement and Accommodation of the lens. In brief, the closer people watch the object, and the more pressure is placed on the eye muscles. The eye muscles cannot relax for a long time, thus causing visual fatigue.
 
-[ ] Image Here.
-
-- **Accommodation** is When viewing objects at close distances, the ciliary muscles contract, and the lens lengthens, focusing on objects at close distances.
-- **Entropion** is the contraction of the internal rectus muscles of both eyes inward, resulting in seeing a clear image rather than a double image.
+- **Accommodation** is when viewing objects at close distances, the ciliary muscles contract, and the lens lengthens, focusing on objects at close distances.
+- **Vergence** is the contraction of the internal rectus muscles of both eyes inward, resulting in seeing a clear image rather than a double image.
 
 ### Light Intensity
 
-[ ] Image Here.
-
 When the difference between the screen brightness and the people’s ambient light intensity is significant, the pupil needs to remain contracted or dilated for a long time to make the light enter the eye appropriately. At this time, the muscles in the eye are under tension, which will increase people’s visual fatigue. Such a difference in brightness will also be more likely to distract people’s attention.
 
-### Highly saturated colors
-
-[ ] Image Here.
+### Highly Saturated Colors
 
 Each color has a different wavelength and is imaged at a different depth behind the lens. In order to focus the different wavelengths on the retina, the lens needs to change shape constantly. Viewing saturated colors can cause more eye muscle focusing movements, resulting in visual fatigue.
 
 ### Vibration
-
-[ ] Image Here.
 
 When the screen and the people are in vibration or motion, the eyes need to constantly adjust and focus, resulting in increased eye muscle movement, which causes eyestrain and triggers blurred vision and a feeling of soreness.
 
@@ -60,15 +53,13 @@ When the screen and the people are in vibration or motion, the eyes need to cons
 
 The farther the people are from the screen, the better the protection for vision. However, there are more complex factors to consider in real design scenarios. Therefore, designers should have a comprehensive expectation of the distance between the people’s eyes and the screen, called the “design viewing distance.” The design viewing distance is determined by eye hygiene, a people operating range, viewing comfort, and other conditions.
 
-[ ] Image Here.
-
 According to the Human Factors and Ergonomics Society (2007), the minimum viewing distance for eye protection is 40cm, and the typical close eye distance is 40cm. This distance needs to be considered first and is called the “**standard eye protection distance**”.
 
 People should be able to see every logical pixel when viewing the screen. Otherwise, they will not be able to recognize some details. Similar to the Snellen chart, the limit of visual angle that the eye can recognize is 1/60th of a degree. However, when designing an interface, it is more important to make it comfortable for the user. Therefore, the more widely accepted 1.5/60 degrees are used as each logical pixel's visual angle size. The distance at which people can see precisely 1.5/60 degrees is the “**eye comfort distance**”.
 
 Through some research, we have obtained the formula for calculating the eye comfort distance:
 
-[ ] Formula Here.
+<EyeComfortDFormula />
 
 - _L_ is the diagonal size of the device screen.
 - _H_ is the number of logical pixels on the device's screen height.
@@ -85,31 +76,71 @@ At the center of the eye, about 10 degrees is the most sensitive area, 10 to 20 
 
 An appropriate design viewing distance can be derived according to the scenario when these three distances are calculated. When we want to remind users not to watch too close to the screen in the product, this distance can be used as a threshold value. In addition, the design viewing distance can help us examine the interface's usability and visual effect from the user's point of view for some devices that are not used daily, such as large screens. Of course, it is also better to use this distance when doing usability testing.
 
-Take iPhone X as an example, an adult male watching a video in landscape. The three distances are as follows:
+Take iPhone X as an example, an adult watching a video in landscape. The three distances are as follows:
 
-[ ] Table Here.
+- Eye comfort distance: 38.07 cm, should be less is better.
+- Operable distance: 49.50 cm, must be less than this.
+- Presence distance: 20.77 cm, should be more is better.
+
+Combined with the standard eye protection distance, we chose to use **40 cm** as the design viewing distance in this case.
+
+**Real Cases:**
+
+After we released the handbook at ByteDance, we communicated with many of the company's teams, especially for online educational products, to facilitate their consideration of human vision protection in product design.
+
+We helped China's leading English learning apps for children, GuaGualong, upgrade their eye protection systems and helped Dali desk lamps verify that their design does protect people's vision.
+
+<WorkSingleImage
+  src="/works/eye-protection-design-handbook/figure-1.png"
+  width="1626"
+  height="750"
+  alt="There is a prompt in the Guagualong app if a child is too close to the screen."
+  position="fullScreen"
+/>
 
 ## Comfortable Font Size
 
 We also need to reconsider the font size when calculating the design viewing distance. Although in everyday devices, designers have summarized the appropriate font size through best practices. However, on the one hand, the readability of the interface can be checked by scientific theory, and on the other hand, such a calculation can be directly applied to product types with less design experience summarized, such as interfaces for large screens or TVs.
 
-Comfortable font size for body text should have a stroke thickness equal to or greater than one logical pixel in height. Take PingFang Regular as an example. When its stroke thickness equals 1pt, its font size is 14.5pt. When people sit at eye comfort distance, the 14.5pt appendix looks comfortable and eye-friendly. Keep in mind that this size also varies for different font weights of the same font family or different font families.
+<ComfortableFontYong />
 
-[ ] Image Here.
+Comfortable font size for body text should have a stroke thickness equal to or greater than one logical pixel in height. Take PingFang Regular as an example. When its stroke thickness equals 1 pt, its font size is 14.5 pt. When people sit at eye comfort distance, the 14.5 pt appendix looks comfortable and eye-friendly. Keep in mind that this size also varies for different font weights of the same font family or different font families.
 
 However, the “design viewing distance” and “eye comfort distance” are different. In order to ensure the people’s comfort at the “design viewing distance,” the font size of the text selected for our design needs to be scaled accordingly. This ratio follows the following formula:
 
-[ ] Formula Here.
+<ComfortableFontSFormula />
 
-Continuing with the iPhone X example, for a person with normal vision, with a comfortable eye distance of 38.07 cm and a design viewing distance of 40 cm, we can calculate that the font size of the text should be 15.12 pt. However, we usually set the font size to an integer and round it up to 16 pt to make the display more comfortable.
+- _Ddv_ is the design viewing distance.
+- _Dec_ is the eye comfort distance.
+- _Sec_ is font size at eye comfort distance.
 
-[ ] Calculator Here.
+Continuing with the iPhone X example, for a person with normal vision, with a comfortable eye distance of 38.07 cm and a design viewing distance of 40 cm, we can calculate that the font size of the text should be 15.12 pt. However, we usually set the font size to an integer and round it up to **16 pt** to make the display more comfortable.
 
-For different people, we also need to consider their general vision. Children and the elderly will have a weaker vision, which needs to be enlarged accordingly in equal proportion to the situation or provide various options. For example, if a 5-year-old child has a general vision of 0.71, the font size of the text should be at least 22pt.
-
-[ ] Calculator Here.
+For different people, we also need to consider their general vision. Children and the elderly will have a weaker vision, which needs to be enlarged accordingly in equal proportion to the situation or provide various options. For example, a 5-year-old child has a general vision of 0.71, the font size of the text should be at least 22pt.
 
 Of course, the color and contrast of the text also need to be taken into account, and it is recommended to refer to WCAG 2.1 and reach at least Level AA: the visual presentation of text and images of text has a contrast ratio of at least 4.5:1.
+
+**Real Cases:**
+
+Once we worked this out, we tested it in the vast majority of ByteDance's products, pushing the company to use a more scientific font size for its products and popularizing the importance of contrast.
+
+<WorkSingleImage
+  src="/works/eye-protection-design-handbook/figure-2.png"
+  width="1920"
+  height="1080"
+  alt="I helped Xigua Video create a new font system."
+  position="fullScreen"
+/>
+
+Even better, we helped ByteDance's pre-K product line create rules for body font sizes of 19 pt on iPhone, 22 pt on iPad, and 22 pt on Android devices, based on the age distribution of people using our products and the device model distribution.
+
+<WorkSingleImage
+  src="/works/eye-protection-design-handbook/figure-3.png"
+  width="1920"
+  height="1080"
+  alt="We helped to check the font size of the text in the pre-K app."
+  position="fullScreen"
+/>
 
 ### Physical Relaxation
 
@@ -127,6 +158,10 @@ Ambient light not only comes from outside the screen, but the brightness of othe
 
 Many OLED screen PWM dimming flicker frequency is about 215Hz-250Hz, that is, a second screen in the light and dark between the switch more than 200 times. Although viewing less than such a change, the pupil size is constantly fine-tuned, leading to visual fatigue. When using a phone with an OLED screen, try to turn up the brightness slightly because the lower the screen brightness, the strobe about serious.
 
+**Real Cases:**
+
+We initially thought that apps designers would not have the opportunity to care about the change of light contrast. However, in our research, we realized that many people use dark backgrounds when using reading software, so if people switch pages, the background may turn white, resulting in a short period of light solid contrast, so we suggested that we could add a background color change animation when switching pages.
+
 ### Low-saturation Colors
 
 Use highly saturated colors only on elements that need to be emphasized or attract the user's attention. Large areas in the background or other scenes need to be avoided as much as possible. Specifically, it can open the HSL color mode in the design software and check the Saturation value. If it is higher than 90, it is already very high saturation.
@@ -134,6 +169,18 @@ Use highly saturated colors only on elements that need to be emphasized or attra
 When using Dark Mode at night, the screen brightness matches the ambient light intensity, relieving visual fatigue to a certain extent. However, if people use Dark Mode in a very bright environment, the screen brightness decreases, the amount of light into the eyes decreases, the pupils dilate, and the number of blinks decreases, which will increase visual fatigue. So the dark mode must be designed to follow the system's options, or better yet, the way to switch through the ambient brightness.
 
 Design dark color mode, need to pay attention to the contrast, screen brightness change consistency. The dark color mode still needs to ensure that the text and background color align with the contrast standard. For details, please check. At the same time, the page should avoid jumping back and forth between dark and light backgrounds. This situation is more stimulating to the eyes. The amount of incoming light becomes more and less, which will lead to frequent dilatation and reduction of the pupil, which harms the eyes and user experience.
+
+**Real Cases:**
+
+Designers often prefer to use bright colors, but this is actually bad for the user's eyesight, especially in the design of products for children, and after we realized this, we actively advised the designers concerned to change the color mode from RGB to HSL and use colors that are better for eyesight.
+
+<WorkBeforeAfterImages
+  beforeSrc="/works/eye-protection-design-handbook/figure-4-1.png"
+  afterSrc="/works/eye-protection-design-handbook/figure-4-2.png"
+  width={1920}
+  height={1080}
+  description="We helped one of ByteDance's pre-K apps to reduce the bright of colors."
+/>
 
 ### Keep the Screen Still
 
@@ -155,9 +202,15 @@ Lower color temperature colors should be used in eye protection designs to reduc
 
 For image content, one can choose to overlay a color temperature layer on top of the image using "positive overlay" to reduce the amount of blue light. It is not recommended to use layers with color temperatures below 3400 K as a best practice.
 
-Of course, it is technically possible to change the color temperature of a layer directly by referring to this part of the code:
+<WorkSingleImage
+  src="/works/eye-protection-design-handbook/figure-5.png"
+  width="1080"
+  height="1080"
+  alt="I created a SwiftUI prototype of screen reduction of blue light to help understand how it works."
+  position="inline"
+/>
 
-[ ] GLSL Here.
+Of course, it is technically possible to change the color temperature of an application directly through the GPU.
 
 ### Uniform Contrast
 
@@ -165,7 +218,17 @@ The color temperature of the content changes, the contrast between elements will
 
 In the standard eye-care mode design for black-on-white (background color is brighter than foreground color) scenes, as the background color temperature decreases, the relative brightness of the background also decreases. In order to keep the contrast stable, it is necessary to reduce the brightness of the foreground color accordingly after reducing the color temperature (i.e., use HSL color mode to reduce the L value of the foreground color appropriately) to keep the contrast stable.
 
-[ ] Image Here
+**Real Cases:**
+
+We have also minded many apps attempting to reduce the blue light emitted from the screen by simply overlaying an orange layer, which can lead to lower contrast in the text, which is not suitable for either people's experience or eye protection.
+
+<WorkBeforeAfterImages
+  beforeSrc="/works/eye-protection-design-handbook/figure-6-1.png"
+  afterSrc="/works/eye-protection-design-handbook/figure-6-2.png"
+  width={1080}
+  height={1080}
+  description="Use the new blending method and change the color of the text to keep the contrast stable."
+/>
 
 ## Circadian Rhythm Compliance
 
