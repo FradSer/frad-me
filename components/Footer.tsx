@@ -11,7 +11,7 @@ function Footer() {
           </li>
         ))}
       </ul>
-      <span className="text-gray-400 hover:cursor-none">
+      <span className="text-gray-400 hover:cursor-default">
         Made by Frad © 2022
       </span>
     </footer>
