@@ -26,7 +26,7 @@ function ComfortableFontYong() {
           className="fill-black dark:fill-white"
         />
         <line
-          xx1="512"
+          x1="512"
           y1="233"
           x2="544"
           y2="233"

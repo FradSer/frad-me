@@ -65,7 +65,7 @@ function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
           src={props.beforeSrc}
           width={props.width}
           height={props.height}
-          alt={props.alt}
+          alt={props.description}
           loading="eager"
         />
         <span>After:</span>
@@ -73,7 +73,7 @@ function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
           src={props.afterSrc}
           width={props.width}
           height={props.height}
-          alt={props.alt}
+          alt={props.description}
           loading="eager"
         />
       </div>
