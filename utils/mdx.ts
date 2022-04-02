@@ -4,7 +4,7 @@ import { bundleMDX } from 'mdx-bundler';
 import path from 'path';
 
 export const ROOT = process.cwd();
-export const POSTS_PATH = path.join(process.cwd(), '/content/works');
+export const POSTS_PATH = path.join(ROOT, '/content/works');
 
 export const getFileContent = (filename: string) => {
   return fs.readFileSync(path.join(POSTS_PATH, filename), 'utf8');
@@ -34,7 +34,7 @@ const getCompiledMDX = async (content: string) => {
   try {
     return await bundleMDX({
       source: content,
-      xdmOptions(options) {
+      mdxOptions(options, frontmatter) {
         options.remarkPlugins = [
           ...(options.remarkPlugins ?? []),
           ...remarkPlugins,
