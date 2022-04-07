@@ -1,9 +1,11 @@
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { CursorProvider, CursorType } from './CursorProvider';
-import ScrollLink from './ScrollLink';
+
+const ScrollLink = dynamic(() => import('./ScrollLink'), { ssr: false });
 
 interface ICommonLinkProps {
   title: string;
