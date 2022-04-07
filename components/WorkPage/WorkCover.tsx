@@ -1,10 +1,23 @@
+import classNames from 'classnames';
 import Image from 'next/image';
 
-export default function WorkCover(props: { src?: string; title?: string }) {
+interface IWorkCoverProps {
+  src?: string;
+  title?: string;
+  coverBackground?: string;
+}
+
+function WorkCover(props: IWorkCoverProps) {
   if (!props.src) return null;
+
   const imageAlt = 'Cover for ' + props.title;
+  const workCoverClass = classNames(
+    'flex h-[75vh] w-screen items-center justify-center',
+    props.coverBackground
+  );
+
   return (
-    <div className="flex h-[75vh] w-screen items-center justify-center">
+    <div className={workCoverClass}>
       <div className="relative h-full w-screen">
         <Image
           src={props.src}
@@ -17,3 +30,5 @@ export default function WorkCover(props: { src?: string; title?: string }) {
     </div>
   );
 }
+
+export default WorkCover;
