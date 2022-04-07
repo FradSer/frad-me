@@ -115,6 +115,49 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     }
   );
 
+  function LoadingDots() {
+    const loadingDotsVariants = {
+      start: {
+        transition: {
+          staggerChildren: 0.4,
+        },
+      },
+      end: {
+        transition: {
+          staggerChildren: 0.4,
+        },
+      },
+    };
+
+    const loadingDotTransition = {
+      duration: 0.8,
+      yoyo: Infinity,
+      ease: 'easeInOut',
+    };
+
+    const loadingDotVariants = {
+      start: {
+        opacity: 0,
+      },
+      end: {
+        opacity: 1,
+      },
+    };
+
+    return (
+      <motion.span variants={loadingDotsVariants} initial="start" animate="end">
+        {Array.from({ length: 3 }, (_, i) => (
+          <motion.span
+            variants={loadingDotVariants}
+            transition={loadingDotTransition}
+          >
+            .
+          </motion.span>
+        ))}
+      </motion.span>
+    );
+  }
+
   return (
     <>
       <motion.div
@@ -132,7 +175,8 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
           loadingClass
         )}
       >
-        loading...
+        loading
+        <LoadingDots />
       </motion.span>
       <motion.div
         initial="initial"
