@@ -109,7 +109,6 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     'fixed flex h-screen w-screen items-center justify-center overflow-hidden',
     {
       'z-50': loading.isLoading,
-      '-z-50': !loading.isLoading,
     }
   );
 
@@ -177,14 +176,16 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         loading
         <LoadingDots />
       </motion.span>
-      <motion.div
-        initial="initial"
-        animate={childrenControls}
-        variants={childrenVariants}
-        className="flex flex-col items-center justify-center bg-white dark:bg-black"
-      >
-        {children}
-      </motion.div>
+      <div className="flex flex-col items-center justify-center bg-white dark:bg-black">
+        <motion.div
+          initial="initial"
+          animate={childrenControls}
+          variants={childrenVariants}
+          className="w-full"
+        >
+          {children}
+        </motion.div>
+      </div>
     </>
   );
 }
