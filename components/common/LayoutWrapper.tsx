@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 import { ReactNode, useEffect } from 'react';
 
+import Header from '../../components/Header';
 import useLoading from '../../hooks/useLoading';
 
 interface ILayoutWrapperProps {
@@ -13,7 +14,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
 
   const loadingBackgroundControls = useAnimation();
   const loadingContentControls = useAnimation();
-  const childrenControls = useAnimation();
+  const contentControls = useAnimation();
 
   const linearTransition = {
     type: 'linear',
@@ -64,10 +65,34 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     },
   };
 
+  const headerVariants = {
+    initial: {
+      opacity: 0,
+      y: '-10vh',
+    },
+    hidden: {
+      opacity: 0,
+      y: '-10vh',
+      transition: {
+        ...linearTransition,
+        duration: 0.4,
+      },
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ...linearTransition,
+        duration: 0.8,
+        delay: 0.4,
+      },
+    },
+  };
+
   const childrenVariants = {
     initial: {
       opacity: 0,
-      y: 0,
+      y: '20vh',
     },
     hidden: {
       opacity: 0,
@@ -92,15 +117,15 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     if (loading.isLoading) {
       loadingBackgroundControls.start('show');
       loadingContentControls.start('show');
-      childrenControls.start('hidden');
+      contentControls.start('hidden');
     } else {
       loadingBackgroundControls.start('hidden');
       loadingContentControls.start('hidden');
-      childrenControls.start('show');
+      contentControls.start('show');
     }
   }, [
     loading,
-    childrenControls,
+    contentControls,
     loadingBackgroundControls,
     loadingContentControls,
   ]);
@@ -176,16 +201,28 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         loading
         <LoadingDots />
       </motion.span>
-      <div className="flex flex-col items-center justify-center bg-white dark:bg-black">
+      <motion.div
+        onViewportEnter={() => {
+          contentControls.start('show');
+        }}
+        className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
+      >
         <motion.div
           initial="initial"
-          animate={childrenControls}
+          animate={contentControls}
+          variants={headerVariants}
+          className="layout-wrapper fixed top-0 z-50"
+        >
+          <Header />
+        </motion.div>
+        <motion.div
+          initial="initial"
+          animate={contentControls}
           variants={childrenVariants}
-          className="w-full"
         >
           {children}
         </motion.div>
-      </div>
+      </motion.div>
     </>
   );
 }

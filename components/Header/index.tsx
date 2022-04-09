@@ -7,7 +7,7 @@ import ThemeSwitcher from './ThemeSwitcher';
 
 function Header() {
   return (
-    <nav className="layout-wrapper fixed top-0 z-50 flex h-24 flex-row items-center justify-between">
+    <nav className="flex h-24 flex-row items-center justify-between">
       <div className="flex items-center justify-center ">
         <Link href="/">
           <a className="hover:cursor-none">
