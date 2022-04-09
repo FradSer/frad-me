@@ -44,15 +44,13 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
 
   const loadingBackgroundVariants = {
     initial: {
-      opacity: 0,
       y: '-100vh',
     },
     show: {
-      opacity: 1,
       y: 0,
       transition: {
         ...linearTransition,
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.2,
       },
     },
@@ -76,7 +74,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       y: '20vh',
       transition: {
         ...linearTransition,
-        duration: 0.4,
+        duration: 0.8,
       },
     },
     show: {
