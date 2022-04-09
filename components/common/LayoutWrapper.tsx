@@ -146,6 +146,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       <motion.span variants={loadingDotsVariants} initial="start" animate="end">
         {Array.from({ length: 3 }, (_, i) => (
           <motion.span
+            key={i}
             variants={loadingDotVariants}
             transition={loadingDotTransition}
           >
