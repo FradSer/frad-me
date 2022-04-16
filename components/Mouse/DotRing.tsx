@@ -18,7 +18,7 @@ export default function DotRing() {
   const backgroundClass = classNames(
     'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
-      'mix-blend-difference': mouseContext.cursorType != 'work-card-hovered',
+      'mix-blend-difference': mouseContext.cursorType == 'default',
     }
   );
 
@@ -75,15 +75,23 @@ export default function DotRing() {
     },
   };
 
+  let dotRingTitle;
+
   switch (mouseContext.cursorType) {
     case 'header-link-hovered':
       controls.start('headerLinkHovered');
       break;
     case 'work-card-hovered':
       controls.start('workCardHover');
+      dotRingTitle = 'READ';
+      break;
+    case 'work-card-hovered-wip':
+      controls.start('workCardHover');
+      dotRingTitle = 'WIP';
       break;
     default:
       controls.start('initial');
+      dotRingTitle = '';
   }
 
   // * Render
@@ -96,7 +104,7 @@ export default function DotRing() {
         className={textClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       >
-        READ
+        {dotRingTitle}
       </motion.div>
       <motion.div
         animate={controls}

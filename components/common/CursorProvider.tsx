@@ -11,6 +11,7 @@ enum CursorType {
   default = 'default',
   headerLinkHovered = 'header-link-hovered',
   workCardHovered = 'work-card-hovered',
+  workCardHoveredWIP = 'work-card-hovered-wip',
 }
 
 function CursorProvider<T extends ICursorProviderProps>(props: T) {

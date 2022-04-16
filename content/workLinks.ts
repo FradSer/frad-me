@@ -6,9 +6,10 @@ const workLinks = [
     cover: '/works/eye-protection-design-handbook/cover.png',
   },
   {
-    title: 'Usability Design for Xigua Video',
-    subTitle: 'Design Research / Product Design',
-    slug: 'usability-design-for-xigua-video',
+    title: 'BearyChat',
+    subTitle: 'Product Management / Strategy',
+    slug: 'bearychat',
+    isCenter: true,
     cover: '/works/bearychat/cover.png',
   },
   {
@@ -24,13 +25,14 @@ const workLinks = [
     subTitle: 'Design Research',
     slug: 'eye-protection-design-handbook',
     cover: '/works/bearychat/cover.png',
+    isWIP: true,
   },
   {
-    title: 'BearyChat',
-    subTitle: 'Product Management / Strategy',
-    slug: 'bearychat',
-    isCenter: true,
+    title: 'Usability Design for Xigua Video',
+    subTitle: 'Design Research / Product Design',
+    slug: 'usability-design-for-xigua-video',
     cover: '/works/bearychat/cover.png',
+    isWIP: true,
   },
 ];
 
