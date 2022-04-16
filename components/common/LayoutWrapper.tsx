@@ -219,6 +219,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
           initial="initial"
           animate={contentControls}
           variants={childrenVariants}
+          className="flex flex-col items-center justify-center"
         >
           {children}
         </motion.div>
