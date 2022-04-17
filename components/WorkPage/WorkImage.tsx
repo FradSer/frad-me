@@ -19,7 +19,7 @@ enum ImagePosition {
 
 function WorkSingleImage(props: IWorkImageProps) {
   // * Styling
-  const workImageClass = classNames('w-full', {
+  const workImageClass = classNames('w-full overflow-hidden', {
     'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
       props.position === ImagePosition.inline,
     'col-span-16': props.position === ImagePosition.fullScreen,
