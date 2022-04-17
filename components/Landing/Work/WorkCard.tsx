@@ -13,15 +13,18 @@ interface IWorkCardProps {
   cover: string;
   isFullScreen?: boolean;
   isCenter?: boolean;
+  isWIP?: boolean;
 }
 
 function WorkCard(props: IWorkCardProps) {
   // * Styling
   const linkClass = classNames(
-    'relative flex w-full items-center justify-center overflow-hidden hover:cursor-pointer',
+    'relative flex w-full items-center justify-center overflow-hidden',
     {
       'col-span-2 aspect-100/62 md:aspect-100/31': props.isFullScreen,
       'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
+      'hover:cursor-not-allowed': props.isWIP,
+      'hover:cursor-pointer': !props.isWIP,
     }
   );
 
@@ -90,61 +93,74 @@ function WorkCard(props: IWorkCardProps) {
   // * Hooks
   const mouseContext = useMouseContext();
 
-  // * Render
-
-  return (
-    <Link href={`/works/${props.slug}`} passHref>
-      <motion.div
-        onHoverStart={() => {
+  const workCard = (
+    <motion.div
+      onHoverStart={() => {
+        if (props.isWIP) {
+          mouseContext.cursorChangeHandler('work-card-hovered-wip');
+        } else {
           mouseContext.cursorChangeHandler('work-card-hovered');
-          backgroundImageControls.start(backgroundImageVariants.hover);
-          backgroundMaskControls.start(backgroundMaskVariants.hover);
-          textControls.start(textVariants.hover);
-        }}
-        onHoverEnd={() => {
+        }
+        backgroundImageControls.start(backgroundImageVariants.hover);
+        backgroundMaskControls.start(backgroundMaskVariants.hover);
+        textControls.start(textVariants.hover);
+      }}
+      onHoverEnd={() => {
+        mouseContext.cursorChangeHandler('default');
+        backgroundImageControls.start(backgroundImageVariants.initial);
+        backgroundMaskControls.start(backgroundMaskVariants.initial);
+        textControls.start(textVariants.initial);
+      }}
+      onClick={() => {
+        if (!props.isWIP) {
           mouseContext.cursorChangeHandler('default');
-          backgroundImageControls.start(backgroundImageVariants.initial);
-          backgroundMaskControls.start(backgroundMaskVariants.initial);
-          textControls.start(textVariants.initial);
-        }}
-        onClick={() => {
-          mouseContext.cursorChangeHandler('default');
-        }}
-        className={linkClass}
+        }
+      }}
+      className={linkClass}
+    >
+      <motion.div // Background Image
+        animate={backgroundImageControls}
+        initial="initial"
+        variants={backgroundImageVariants}
+        className={backgroundImageClass}
       >
-        <motion.div // Background Image
-          animate={backgroundImageControls}
-          initial="initial"
-          variants={backgroundImageVariants}
-          className={backgroundImageClass}
-        >
-          <Image
-            src={props.cover}
-            alt={'Cover for ' + props.title}
-            layout="fill"
-            objectFit="cover"
-          />
-        </motion.div>
-        <motion.div // Background Image Mask
-          animate={backgroundMaskControls}
-          initial="initial"
-          variants={backgroundMaskVariants}
-          className="absolute h-full w-full bg-black bg-opacity-50"
+        <Image
+          src={props.cover}
+          alt={'Cover for ' + props.title}
+          layout="fill"
+          objectFit="cover"
         />
-        <motion.div // Text
-          animate={textControls}
-          initial="initial"
-          variants={textVariants}
-          className={textLayoutClass}
-        >
-          <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
-            {props.subTitle}
-          </div>
-          <div className={textTitleClass}>{props.title}</div>
-        </motion.div>
       </motion.div>
-    </Link>
+      <motion.div // Background Image Mask
+        animate={backgroundMaskControls}
+        initial="initial"
+        variants={backgroundMaskVariants}
+        className="absolute h-full w-full bg-black bg-opacity-50"
+      />
+      <motion.div // Text
+        animate={textControls}
+        initial="initial"
+        variants={textVariants}
+        className={textLayoutClass}
+      >
+        <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
+          {props.subTitle}
+        </div>
+        <div className={textTitleClass}>{props.title}</div>
+      </motion.div>
+    </motion.div>
   );
+
+  // * Render
+  if (props.isWIP) {
+    return workCard;
+  } else {
+    return (
+      <Link href={`/works/${props.slug}`} passHref>
+        {workCard}
+      </Link>
+    );
+  }
 }
 
 export default WorkCard;

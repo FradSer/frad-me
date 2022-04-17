@@ -11,12 +11,11 @@ export default function Home() {
         <title>Frad LEE</title>
       </Head>
 
-      <main className="flex flex-col items-center justify-center bg-white dark:bg-black">
-        <div className="flex min-h-screen w-screen">
-          <Hero />
-        </div>
+      <main>
+        <Hero />
         <Work />
       </main>
+
       <Footer />
     </>
   );

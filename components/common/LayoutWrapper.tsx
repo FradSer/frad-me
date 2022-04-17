@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { motion, useAnimation } from 'framer-motion';
 import { ReactNode, useEffect } from 'react';
 
+import Header from '../../components/Header';
 import useLoading from '../../hooks/useLoading';
 
 interface ILayoutWrapperProps {
@@ -13,7 +14,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
 
   const loadingBackgroundControls = useAnimation();
   const loadingContentControls = useAnimation();
-  const childrenControls = useAnimation();
+  const contentControls = useAnimation();
 
   const linearTransition = {
     type: 'linear',
@@ -44,15 +45,13 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
 
   const loadingBackgroundVariants = {
     initial: {
-      opacity: 0,
       y: '-100vh',
     },
     show: {
-      opacity: 1,
       y: 0,
       transition: {
         ...linearTransition,
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.2,
       },
     },
@@ -66,17 +65,41 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     },
   };
 
+  const headerVariants = {
+    initial: {
+      opacity: 0,
+      y: '-10vh',
+    },
+    hidden: {
+      opacity: 0,
+      y: '-10vh',
+      transition: {
+        ...linearTransition,
+        duration: 0.4,
+      },
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ...linearTransition,
+        duration: 0.8,
+        delay: 0.4,
+      },
+    },
+  };
+
   const childrenVariants = {
     initial: {
       opacity: 0,
-      y: 0,
+      y: '20vh',
     },
     hidden: {
       opacity: 0,
       y: '20vh',
       transition: {
         ...linearTransition,
-        duration: 0.4,
+        duration: 0.8,
       },
     },
     show: {
@@ -94,15 +117,15 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     if (loading.isLoading) {
       loadingBackgroundControls.start('show');
       loadingContentControls.start('show');
-      childrenControls.start('hidden');
+      contentControls.start('hidden');
     } else {
       loadingBackgroundControls.start('hidden');
       loadingContentControls.start('hidden');
-      childrenControls.start('show');
+      contentControls.start('show');
     }
   }, [
     loading,
-    childrenControls,
+    contentControls,
     loadingBackgroundControls,
     loadingContentControls,
   ]);
@@ -111,7 +134,6 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     'fixed flex h-screen w-screen items-center justify-center overflow-hidden',
     {
       'z-50': loading.isLoading,
-      '-z-50': !loading.isLoading,
     }
   );
 
@@ -148,6 +170,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       <motion.span variants={loadingDotsVariants} initial="start" animate="end">
         {Array.from({ length: 3 }, (_, i) => (
           <motion.span
+            key={i}
             variants={loadingDotVariants}
             transition={loadingDotTransition}
           >
@@ -179,12 +202,27 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         <LoadingDots />
       </motion.span>
       <motion.div
-        initial="initial"
-        animate={childrenControls}
-        variants={childrenVariants}
-        className="flex flex-col items-center justify-center bg-white dark:bg-black"
+        onViewportEnter={() => {
+          contentControls.start('show');
+        }}
+        className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
       >
-        {children}
+        <motion.div
+          initial="initial"
+          animate={contentControls}
+          variants={headerVariants}
+          className="layout-wrapper fixed top-0 z-50"
+        >
+          <Header />
+        </motion.div>
+        <motion.div
+          initial="initial"
+          animate={contentControls}
+          variants={childrenVariants}
+          className="flex flex-col items-center justify-center"
+        >
+          {children}
+        </motion.div>
       </motion.div>
     </>
   );

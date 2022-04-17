@@ -24,6 +24,7 @@ export default function Work() {
             cover={link.cover}
             isFullScreen={link.isFullScreen}
             isCenter={link.isCenter}
+            isWIP={link.isWIP}
           />
         ))}
       </Element>

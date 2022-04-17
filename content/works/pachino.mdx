@@ -1,5 +1,112 @@
 ---
+cover: /works/pachino/cover.png
 title: Pachino
+coverBackground: bg-red-600
+description: is yet another Pomodoro Technique timer app written in SwiftUI.
+platforms:
+  - iOS
+  - macOS
+contributors:
+  - Developer
+site: https://apple.co/3xjqO5K
 ---
 
-This is an example post.
+As a self-taught creator, I have always believed that I should learn by creating, and this is the guideline I have always practiced, which I call it：
+
+> Effectively make stuff.
+
+There is no need to limit the tools you will use; think of what you will create first, and then you can start building. But then came the challenge: which one of my many ideas should I begin. From experience at work, you should create something you use every day and start with the most uncomfortable point from what others have already done.
+
+Like many other creators, I'm a heavy Apple user, iPhone and Mac are almost part of my life, and I'm a very daily user of efficient apps, tools that can make my life better. After thinking about it, I decided to start with the Pomodoro Technique timer, which I find the most useless among efficiency apps.
+
+# Designing an Accurate Timer
+
+Before creating some stuff, the most important thing is to decide what kind of atmosphere it should have, or in other words, how people should feel when they use it. A good tool should be "unimportant" initially; it's there, and it becomes important when people use it. So from the first version of Pachino, I thought it should be minimalist, with all the buttons fixed in one place, as if I were designing an accurate timer, which is the basic principle.
+
+After deciding on the most basic principles, I spent some time deciding on a name for this app, just as every child needs a name. In the end, I called this child Pachino, a kind of tomato from the southeast coast of Sicily, Italy.
+
+Pomodoro Technique timer is an app that requires people to be focused for a certain period, say 25 minutes, but a common situation at work is that people are already booked for a meeting at a specific time. It would be terrible for the user if the focus were interrupted by the start time of the meeting, so I added a time indicator to Pachino to let people know when the focus period will end and that the priority is low, just like above: it becomes essential when people are using it.
+
+<WorkSingleImage
+  src="/works/pachino/figure-1.gif"
+  width="800"
+  height="500"
+  alt="When people accomplish their daily goals."
+  position="underH2"
+/>
+
+In addition, people often do not get instant pleasure from using an efficient app, so the design should also consider some incentives. So by designing daily goals, Pachino gives a valuable and straightforward incentive to the people who use it.
+
+<WorkSingleImage
+  src="/works/pachino/figure-2.png"
+  width="1920"
+  height="1080"
+  alt="Timer screenshot of iOS and macOS."
+  position="fullScreen"
+/>
+
+## Beyond the Timer
+
+<WorkSingleImage
+  src="/works/pachino/figure-3.gif"
+  width="888"
+  height="1920"
+  alt="Timer screenshot of iOS and macOS."
+  position="underH2"
+/>
+
+In Pomodoro Technique, the idea is that people should have some relaxation after concentrating, and it is a new challenge to exhibit in Pachino. People often get a sense of peace from repetitive and changing graphics, so experimenting with Generative art may be a fun and valuable practice. Once an idea is in your head, it can be impossible to resist the desire to try it. After experimenting with low-level languages like Metal and GLSL, I realized that there are many ways to implement this idea and that the most crucial challenge is the most efficient way to do it. Thanks to p5.js, I quickly implemented Generative art on the browser and achieved very nice results. Finally, to gain an immersive experience, the design removes the status bar in iOS and uses a more unobtrusive color to display the remaining time, a page called zen mode.
+
+# Integrate into Electronics
+
+An app needs to depend on a device, and a device needs to rely on a runtime environment, so the app should adapt to the runtime environment. When I decided that Pachino should be cross-platform, a considerable temptation arose to make it easy to make Pachino run like it was on macOS via Catalyst if you develop apps using SwiftUI. However, this was only a stopgap measure and not a required step, so I chose to create a dedicated macOS version, which was also a considerable challenge. To solve this challenge, I split Pachino into two virtual parts: the content and the container that hosts the range, I summarized the basic concept of cross-platform design, where the container is different for each platform, but you want to keep the content inside the container the same.
+
+<WorkSingleImage
+  src="/works/pachino/figure-4.png"
+  width="1920"
+  height="1080"
+  alt="The in-app purchase page uses the same view and code in a different container."
+  position="fullScreen"
+/>
+
+There are undoubtedly many benefits to designing for cross-platform. macOS offers many exciting features and presents a new challenge: which ones should I choose? While reading through Apple's documentation, I thought about which parts I should select. Multi-window support is the most essential, and displaying one page at a time on large screen size is a wasteful and inefficient approach. And as stressed at the beginning, good tools are there when needed, and the menu bar extra provides a way for Pachino to provide users with the full functionality of the device without having to display a specific page in most cases.
+
+<WorkSingleImage
+  src="/works/pachino/figure-5.png"
+  width="1920"
+  height="1080"
+  alt="Designed for features of macOS."
+  position="fullScreen"
+/>
+
+# Make Life Better
+
+Noise can be an essential distracting factor when people are concentrating, and to avoid outside noise, playing some expected repetitive sound during concentration proved to be an effective way to go very naturally. Pachino should also provide a similar feature, and choosing what kind of background sound became the next challenge. I wanted the final choice of background sound to be warm and not simply repetitive white noise. After discussing and testing with my friends, I finally added a Café, subway, ocean, rain, metronome, and seasons to the white noise.
+
+<WorkSingleImage
+  src="/works/pachino/figure-6.png"
+  width="1920"
+  height="1080"
+  alt="Screenshots of backgound sound options."
+  position="fullScreen"
+/>
+
+Since the new crown virus also plagued 2021, many people like me were unable to travel, and adding the sounds of Cafés in different countries was a great option, so I found the sounds of the varying Cafés in 11 countries. I developed Pachino mainly in the winter when I missed the birdsong of spring, so I added Songs of the Seasons, but eventually, my cat became the biggest fan of the sound.
+
+<WorkSingleImage
+  src="/works/pachino/figure-7.png"
+  width="1920"
+  height="1080"
+  alt="Café sound from 11 different countries and four season songs."
+  position="inline"
+/>
+
+In addition, if people are accustomed to using loud background sounds after a long time, it will damage their hearing. I added an indication when the volume is too high to avoid this thing.
+
+<WorkSingleImage
+  src="/works/pachino/figure-8.png"
+  width="1920"
+  height="1080"
+  alt="A simple but effective alert for excessive volume."
+  position="inline"
+/>

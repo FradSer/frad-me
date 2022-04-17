@@ -3,7 +3,6 @@ import { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 
 import LayoutWrapper from '../components/common/LayoutWrapper';
-import Header from '../components/Header';
 import DotRing from '../components/Mouse/DotRing';
 import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
 import useXRDetect from '../hooks/useXRDetect';
@@ -24,7 +23,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
         <LayoutWrapper>
-          <Header />
           <Component {...pageProps} />
         </LayoutWrapper>
       </ThemeProvider>
