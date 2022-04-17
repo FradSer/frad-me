@@ -21,17 +21,18 @@ const workLinks = [
     cover: '/works/pachino/cover.png',
   },
   {
-    title: 'Eye Protection Design Handbook',
-    subTitle: 'Design Research',
-    slug: 'eye-protection-design-handbook',
-    cover: '/works/bearychat/cover.png',
+    title: 'Interactive Cross-platform Mixed Reality Video Player',
+    subTitle: 'Design Research / XR Prototyper',
+    slug: 'interactive-cross-platform-mixed-reality-video-player',
+    cover:
+      '/works/interactive-cross-iplatform-mixed-reality-video-player/cover.png',
     isWIP: true,
   },
   {
     title: 'Usability Design for Xigua Video',
     subTitle: 'Design Research / Product Design',
     slug: 'usability-design-for-xigua-video',
-    cover: '/works/bearychat/cover.png',
+    cover: '/works/usability-design-for-xigua-video/cover.png',
     isWIP: true,
   },
 ];
