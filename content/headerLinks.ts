@@ -16,7 +16,7 @@ const headerLinks = [
   // },
   {
     title: 'resume',
-    href: 'https://read.cv/frads',
+    href: 'https://read.cv/fradser',
   },
 ];
 
