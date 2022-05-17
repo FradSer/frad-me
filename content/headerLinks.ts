@@ -18,6 +18,10 @@ const headerLinks = [
     title: 'resume',
     href: 'https://read.cv/fradser',
   },
+  {
+    title: 'calendly',
+    href: 'https://calendly.com/fradser',
+  },
 ];
 
 export default headerLinks;
