@@ -27,20 +27,20 @@ function Hero({ isWebXR }: IHeroProps) {
             <Triangle />
           </div>
           Frad LEE
-          <span className="text-gray-400"> is a self-taught crafter</span>
+          <span className="text-gray-400"> is a self-taught craftier</span>
         </div>
         <div className="flex w-full">
-          <span className="text-gray-400">who eager to learn for</span>
+          <span className="text-gray-400">who is eager to learn for</span>
           <Rectangle />
         </div>
         <span className="text-gray-400">advancement. Whether it&apos;s </span>
         <div>
           coding
-          <span className="text-gray-400"> with a new language, </span>
+          <span className="text-gray-400"> in a new language, </span>
         </div>
         <div>
           design
-          <span className="text-gray-400"> with any tools whatsoever</span>
+          <span className="text-gray-400"> with any tool whatsoever</span>
         </div>
         <div className="relative">
           <span className="text-gray-400">or building a </span>
