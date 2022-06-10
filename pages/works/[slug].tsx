@@ -3,10 +3,6 @@ import { getMDXComponent } from 'mdx-bundler/client';
 import Head from 'next/head';
 import { useMemo } from 'react';
 
-import Topography from '../../components/WorkPage/BearyChat/Topography';
-import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula';
-import ComfortableFontYong from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong';
-import EyeComfortDFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula';
 import {
   Blockquote,
   H1,
@@ -50,11 +46,7 @@ const mdxComponents = {
   hr: HR,
   ol: OL,
   p: P,
-  Topography,
   ul: UL,
-  ComfortableFontSFormula,
-  ComfortableFontYong,
-  EyeComfortDFormula,
   WorkSingleImage,
   WorkBeforeAfterImages,
 };

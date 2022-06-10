@@ -43,9 +43,28 @@ const getCompiledMDX = async (content: string) => {
           ...(options.rehypePlugins ?? []),
           ...rehypePlugins,
         ];
-
         return options;
       },
+      esbuildOptions: (options) => {
+        options.minify = true;
+        options.target = ['es2020'];
+        options.define = {
+          'process.env.__NEXT_TRAILING_SLASH': JSON.stringify(
+            process.env.__NEXT_TRAILING_SLASH
+          ),
+          'process.env.__NEXT_IMAGE_OPTS': JSON.stringify(
+            process.env.__NEXT_IMAGE_OPTS
+          ),
+          'process.env.__NEXT_REACT_ROOT': JSON.stringify(
+            process.env.__NEXT_REACT_ROOT
+          ),
+          'process.env.__NEXT_OPTIMIZE_FONTS': JSON.stringify(
+            process.env.__NEXT_OPTIMIZE_FONTS
+          ),
+        };
+        return options;
+      },
+      cwd: POSTS_PATH,
     });
   } catch (error: any) {
     throw new Error(error);
