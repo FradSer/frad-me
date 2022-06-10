@@ -46,6 +46,8 @@ const getCompiledMDX = async (content: string) => {
         return options;
       },
       esbuildOptions: (options) => {
+        options.minify = true;
+        options.target = ['es2020'];
         options.define = {
           'process.env.__NEXT_TRAILING_SLASH': JSON.stringify(
             process.env.__NEXT_TRAILING_SLASH
