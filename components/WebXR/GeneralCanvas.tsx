@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { VRCanvas } from '@react-three/xr';
+import { XR } from '@react-three/xr';
 import { ReactNode } from 'react';
 
 import useXRDetect from '../../hooks/useXRDetect';
@@ -18,10 +18,12 @@ export default function GenericCanvas({
   const xrDetect = useXRDetect();
 
   return xrDetect.isVR ? (
-    <VRCanvas>
-      {vrCanvasChildren}
-      {genericChildren}
-    </VRCanvas>
+    <Canvas>
+      <XR>
+        {vrCanvasChildren}
+        {genericChildren}
+      </XR>
+    </Canvas>
   ) : (
     <Canvas>
       {canvasChildren}
