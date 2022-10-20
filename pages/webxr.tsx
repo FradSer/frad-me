@@ -6,7 +6,7 @@ import {
   Text,
 } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { DefaultXRControllers, Interactive, useXR } from '@react-three/xr';
+import { Controllers, Interactive, useXR } from '@react-three/xr';
 import { useState } from 'react';
 
 import Hero from '../components/Landing/Hero';
@@ -119,7 +119,7 @@ function Player() {
 function VRCanvasChildren() {
   return (
     <>
-      <DefaultXRControllers />
+      <Controllers rayMaterial={{ color: 'blue' }} hideRaysOnBlur={false} />
       <Player />
     </>
   );
