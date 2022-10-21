@@ -112,23 +112,10 @@ function CanvasChildren() {
   );
 }
 
-function Player() {
-  const { player } = useXR();
-
-  useFrame(() => {
-    player.position.x = -1;
-    player.position.y = 4;
-    player.position.z = -3;
-  });
-
-  return null;
-}
-
 function VRCanvasChildren() {
   return (
     <>
       <Controllers rayMaterial={{ color: 'blue' }} hideRaysOnBlur={false} />
-      <Player />
     </>
   );
 }
