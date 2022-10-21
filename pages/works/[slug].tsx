@@ -13,6 +13,10 @@ import {
   P,
   UL,
 } from '../../components/WorkPage/MDXComponents';
+import Topography from '../../components/WorkPage/BearyChat/Topography';
+import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula';
+import ComfortableFontYong from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong';
+import EyeComfortDFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula';
 import NextWork from '../../components/WorkPage/NextWork';
 import WorkCover from '../../components/WorkPage/WorkCover';
 import {
@@ -49,6 +53,10 @@ const mdxComponents = {
   ul: UL,
   WorkSingleImage,
   WorkBeforeAfterImages,
+  Topography,
+  ComfortableFontSFormula,
+  ComfortableFontYong,
+  EyeComfortDFormula,
 };
 
 export default function WorkPage({ code, frontmatter }: IWorkProps) {
