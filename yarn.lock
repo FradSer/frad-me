@@ -3131,13 +3131,13 @@ react-composer@^5.0.3:
   dependencies:
     prop-types "^15.6.0"
 
-react-dom@18.0.0:
-  version "18.0.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.0.0.tgz#26b88534f8f1dbb80853e1eabe752f24100d8023"
-  integrity sha512-XqX7uzmFo0pUceWFCt7Gff6IyIMzFUn7QMZrbrQfGxtaxXZIcGQzoNpRLE3fQLnS4XzLLPMZX2T9TRcSrasicw==
+react-dom@18.2.0:
+  version "18.2.0"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
+  integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
   dependencies:
     loose-envify "^1.1.0"
-    scheduler "^0.21.0"
+    scheduler "^0.23.0"
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -3157,10 +3157,10 @@ react-reconciler@^0.27.0:
     loose-envify "^1.1.0"
     scheduler "^0.21.0"
 
-react-scroll@1.8.4:
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/react-scroll/-/react-scroll-1.8.4.tgz#7cc882d7058d5b5aedcd362b1de13c88d64ebe4c"
-  integrity sha512-J9rFqmdzularCXJoK2vleHVg2//y9Fs6zh7K13x7Yz3Y1kHPfQ/TTq029L09q1Gr5/5JjFLBOB2Sa3yYIqyTyQ==
+react-scroll@1.8.8:
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/react-scroll/-/react-scroll-1.8.8.tgz#445c6137174d6f2ed02352af408a48d160959e22"
+  integrity sha512-RnU0wLaLozKIhLNAfoz6yxMus+PMypk7eBRfOitalYd2+qCiHrZdJ0MSDBs1Y23IFSfqSCdCEmENMJeSh0KoHA==
   dependencies:
     lodash.throttle "^4.1.1"
     prop-types "^15.7.2"
@@ -3331,6 +3331,13 @@ scheduler@^0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.21.0.tgz#6fd2532ff5a6d877b6edb12f00d8ab7e8f308820"
   integrity sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==
+  dependencies:
+    loose-envify "^1.1.0"
+
+scheduler@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.23.0.tgz#ba8041afc3d30eb206a487b6b384002e4e61fdfe"
+  integrity sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==
   dependencies:
     loose-envify "^1.1.0"
 
@@ -3578,10 +3585,10 @@ three-stdlib@^2.10.2, three-stdlib@^2.12.1, three-stdlib@^2.17.3:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three@^0.144.0:
-  version "0.144.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.144.0.tgz#2818517169f8ff94eea5f664f6ff1fcdcd436cc8"
-  integrity sha512-R8AXPuqfjfRJKkYoTQcTK7A6i3AdO9++2n8ubya/GTU+fEHhYKu1ZooRSCPkx69jbnzT7dD/xEo6eROQTt2lJw==
+three@^0.145.0:
+  version "0.145.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.145.0.tgz#a613d71e75effc2aed88be630027ca01e2b6502e"
+  integrity sha512-EKoHQEtEJ4CB6b2BGMBgLZrfwLjXcSUfoI/MiIXUuRpeYsfK5aPWbYhdtIVWOH+x6X0TouldHKHBuc/LAiFzAw==
 
 tiny-inflate@^1.0.3:
   version "1.0.3"
