@@ -17,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // * Render
   return xrDetect.isVR ? (
-    <WebXR />
+    <div className="flex h-screen w-screen flex-col">
+      <WebXR />
+    </div>
   ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
