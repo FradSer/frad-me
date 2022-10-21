@@ -2,7 +2,7 @@ import {
   Html,
   OrbitControls,
   PerspectiveCamera,
-  Sky,
+  Stars,
   Text,
 } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -72,19 +72,27 @@ function GenericChildren() {
   return (
     <>
       <Html
-        position={[-3.3, 4.2, -6.19]}
-        scale={[0.04, 0.04, 0.04]}
-        rotation={[deg2rad(0), deg2rad(26), deg2rad(0)]}
+        position={[0, 0, 0]}
+        scale={[1, 1, 1]}
+        rotation={[deg2rad(0), deg2rad(0), deg2rad(0)]}
         transform
         occlude
       >
         <Hero isWebXR={true} />
       </Html>
-      <Sky sunPosition={[0, 10, 0]} />
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Model />
-      <XIGLogo />
+      <Stars
+        radius={5}
+        depth={50}
+        count={500}
+        factor={10}
+        saturation={0}
+        fade
+        speed={2}
+      />
+      {/* <ambientLight /> */}
+      {/* <pointLight position={[10, 10, 10]} /> */}
+      {/* <Model />
+      <XIGLogo /> */}
     </>
   );
 }
