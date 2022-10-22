@@ -4,13 +4,14 @@ import {
   Stars,
   Text,
 } from '@react-three/drei';
+import dynamic from 'next/dynamic';
 import { useFrame, Canvas } from '@react-three/fiber';
 import { Controllers, Interactive, useXR, XR, XRButton } from '@react-three/xr';
 import { useState } from 'react';
 import { useControls } from 'leva';
 
 import GenericCanvas from '../components/WebXR/GeneralCanvas';
-import Html from '../components/WebXR/Html';
+const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false });
 
 import Hero from '../components/Landing/Hero';
 import Model from '../components/WebXR/Model';
