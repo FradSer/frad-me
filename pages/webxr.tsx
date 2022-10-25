@@ -30,25 +30,31 @@ const WebXR = () => {
     });
 
   return (
-    <GenericCanvas>
-      <mesh
-        position={[positionX, positionY, positionZ]}
-        rotation={[deg2rad(rotationX), deg2rad(rotationY), deg2rad(rotationZ)]}
-      >
-        <Html width={1} height={1}>
-          <Hero isWebXR={true} />
-        </Html>
-      </mesh>
+    <div className="h-screen w-screen">
+      <GenericCanvas>
+        <mesh
+          position={[positionX, positionY, positionZ]}
+          rotation={[
+            deg2rad(rotationX),
+            deg2rad(rotationY),
+            deg2rad(rotationZ),
+          ]}
+        >
+          <Html width={1} height={1}>
+            <Hero isWebXR={true} />
+          </Html>
+        </mesh>
 
-      <Stars
-        radius={5}
-        depth={50}
-        count={500}
-        factor={10}
-        saturation={0}
-        fade
-      />
-    </GenericCanvas>
+        <Stars
+          radius={5}
+          depth={50}
+          count={500}
+          factor={10}
+          saturation={0}
+          fade
+        />
+      </GenericCanvas>
+    </div>
   );
 };
 
