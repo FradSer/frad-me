@@ -127,8 +127,8 @@ function WorkCard(props: IWorkCardProps) {
         <Image
           src={props.cover}
           alt={'Cover for ' + props.title}
-          layout="fill"
-          objectFit="cover"
+          fill
+          className="object-cover"
         />
       </motion.div>
       <motion.div // Background Image Mask
