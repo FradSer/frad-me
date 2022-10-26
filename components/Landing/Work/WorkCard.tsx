@@ -156,7 +156,7 @@ function WorkCard(props: IWorkCardProps) {
     return workCard;
   } else {
     return (
-      <Link href={`/works/${props.slug}`} passHref>
+      <Link href={`/works/${props.slug}`} passHref legacyBehavior>
         {workCard}
       </Link>
     );
