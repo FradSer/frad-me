@@ -8,14 +8,14 @@ function NextWork(props: { href?: string }) {
 
   if (!props.href) {
     return (
-      <Link href="/#work">
-        <a className={linkClass}>back to all works</a>
+      <Link href="/#work" className={linkClass}>
+        back to all works
       </Link>
     );
   } else {
     return (
-      <Link href="/work/[slug]" as={`/work/${props.href}`}>
-        <a className={linkClass}>next work</a>
+      <Link href="/work/[slug]" as={`/work/${props.href}`} className={linkClass}>
+        next work
       </Link>
     );
   }

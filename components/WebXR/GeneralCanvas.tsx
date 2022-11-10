@@ -1,31 +1,36 @@
 import { Canvas } from '@react-three/fiber';
-import { VRCanvas } from '@react-three/xr';
+import { PerspectiveCamera, OrbitControls } from '@react-three/drei';
+import { Controllers, XR, XRButton } from '@react-three/xr';
 import { ReactNode } from 'react';
 
 import useXRDetect from '../../hooks/useXRDetect';
 
 type IGenericCanvasProps = {
-  genericChildren: ReactNode;
-  vrCanvasChildren: ReactNode;
-  canvasChildren: ReactNode;
+  children: ReactNode;
 };
 
-export default function GenericCanvas({
-  genericChildren,
-  vrCanvasChildren,
-  canvasChildren,
-}: IGenericCanvasProps) {
+function GenericCanvas({ children }: IGenericCanvasProps) {
   const xrDetect = useXRDetect();
 
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+
   return xrDetect.isVR ? (
-    <VRCanvas>
-      {vrCanvasChildren}
-      {genericChildren}
-    </VRCanvas>
+    <>
+      <XRButton mode="VR" />
+      <Canvas>
+        <XR>
+          <Controllers />
+          {children}
+        </XR>
+      </Canvas>
+    </>
   ) : (
     <Canvas>
-      {canvasChildren}
-      {genericChildren}
+      <PerspectiveCamera />
+      <OrbitControls makeDefault />
+      {children}
     </Canvas>
   );
 }
+
+export default GenericCanvas;

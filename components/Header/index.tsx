@@ -9,10 +9,10 @@ function Header() {
   return (
     <nav className="flex h-24 flex-row items-center justify-between">
       <div className="flex items-center justify-center ">
-        <Link href="/">
-          <a className="hover:cursor-none">
-            <FLogo />
-          </a>
+        <Link href="/" className="hover:cursor-none">
+
+          <FLogo />
+
         </Link>
       </div>
       <ul className="hidden h-full flex-row items-center space-x-8 text-2xl sm:flex">

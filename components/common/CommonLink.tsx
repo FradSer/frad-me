@@ -29,12 +29,12 @@ function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
 
   let link;
   if (destinationType === DestinationType.link) {
-    link = <Link href={href}>{titleAnchor}</Link>;
+    link = <Link href={href} legacyBehavior>{titleAnchor}</Link>;
   } else if (destinationType === DestinationType.section) {
     if (pathname === '/') {
       link = <ScrollLink destination={href}>{titleAnchor}</ScrollLink>;
     } else {
-      link = <Link href={'/#' + href}>{titleAnchor}</Link>;
+      link = <Link href={'/#' + href} legacyBehavior>{titleAnchor}</Link>;
     }
   }
 

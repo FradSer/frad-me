@@ -127,8 +127,8 @@ function WorkCard(props: IWorkCardProps) {
         <Image
           src={props.cover}
           alt={'Cover for ' + props.title}
-          layout="fill"
-          objectFit="cover"
+          fill
+          className="object-cover"
         />
       </motion.div>
       <motion.div // Background Image Mask
@@ -156,7 +156,7 @@ function WorkCard(props: IWorkCardProps) {
     return workCard;
   } else {
     return (
-      <Link href={`/works/${props.slug}`} passHref>
+      <Link href={`/works/${props.slug}`} passHref legacyBehavior>
         {workCard}
       </Link>
     );

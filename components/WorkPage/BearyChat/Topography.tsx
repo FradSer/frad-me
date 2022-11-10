@@ -43,7 +43,6 @@ function TopographyImage(props: ITopographyImageProps) {
         src={props.src}
         width={1135}
         height={680}
-        layout="responsive"
         alt={props.alt}
         loading="eager"
       />
