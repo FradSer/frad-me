@@ -1,7 +1,10 @@
 {
   "name": "frad-me",
   "version": "0.1.5",
+  "author": "Frad LEE <hey@frad.me> (http://frad.me)",
   "private": false,
+  "homepage": "https://github.com/FradSer/frad-me",
+  "license": "MIT",
   "engines": {
     "node": ">=16.x <19"
   },
