@@ -1,13 +1,8 @@
-import {
-  motion,
-  useMotionValue,
-  useTransform,
-  useViewportScroll,
-} from 'framer-motion';
+import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import { useEffect } from 'react';
 
 export default function Triangle() {
-  const { scrollYProgress } = useViewportScroll();
+  const { scrollYProgress } = useScroll();
 
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
   const y = useTransform(scrollYProgress, [0, 0.3], [0, 400]);
