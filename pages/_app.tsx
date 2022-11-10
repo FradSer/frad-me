@@ -1,6 +1,7 @@
 import { ThemeProvider } from 'next-themes';
 import { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import { Analytics } from '@vercel/analytics/react';
 
 import LayoutWrapper from '../components/common/LayoutWrapper';
 import DotRing from '../components/Mouse/DotRing';
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return xrDetect.isVR ? (
     <div className="flex h-screen w-screen flex-col">
       <WebXR />
+      <Analytics />
     </div>
   ) : (
     <MouseContextProvider>
@@ -26,6 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <DotRing />
         <LayoutWrapper>
           <Component {...pageProps} />
+          <Analytics />
         </LayoutWrapper>
       </ThemeProvider>
     </MouseContextProvider>
