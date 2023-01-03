@@ -1,28 +1,19 @@
-import {
-  OrbitControls,
-  PerspectiveCamera,
-  Stars,
-  Text,
-} from '@react-three/drei';
-import dynamic from 'next/dynamic';
-import { useFrame, Canvas } from '@react-three/fiber';
-import { Controllers, Interactive, useXR, XR, XRButton } from '@react-three/xr';
-import { useState } from 'react';
+import { Stars } from '@react-three/drei';
 import { useControls } from 'leva';
+import dynamic from 'next/dynamic';
 
 import GenericCanvas from '../components/WebXR/GeneralCanvas';
 const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false });
 
 import Hero from '../components/Landing/Hero';
-import Model from '../components/WebXR/Model';
 
 const WebXR = () => {
   const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
   const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ } =
     useControls({
       positionX: 0,
-      positionY: 1,
-      positionZ: -1,
+      positionY: 0,
+      positionZ: 4.5,
       rotationX: 0,
       rotationY: 0,
       rotationZ: 0,
