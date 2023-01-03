@@ -6,8 +6,9 @@ const withTM = require('next-transpile-modules')([
   'three-stdlib',
 ]);
 
-module.exports = {
+const nextConfig = {
   reactStrictMode: true,
 };
 
 module.exports = withTM();
+module.exports = nextConfig;

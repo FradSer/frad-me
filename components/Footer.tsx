@@ -12,7 +12,7 @@ function Footer() {
         ))}
       </ul>
       <span className="text-gray-400 hover:cursor-default">
-        Made by Frad © 2022
+        Made by Frad © 2023
       </span>
     </footer>
   );
