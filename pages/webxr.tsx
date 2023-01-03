@@ -15,7 +15,6 @@ const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false });
 
 import Hero from '../components/Landing/Hero';
 import Model from '../components/WebXR/Model';
-import XIGLogo from '../components/WebXR/XIGLogo';
 
 const WebXR = () => {
   const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
