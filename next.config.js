@@ -1,3 +1,7 @@
+/**
+ * @type {import('next').NextConfig}
+ */
+
 const withTM = require('next-transpile-modules')([
   '@react-three/fiber',
   '@react-three/xr',
@@ -10,5 +14,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-module.exports = withTM();
-module.exports = nextConfig;
+module.exports = withTM(nextConfig);
