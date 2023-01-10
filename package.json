@@ -1,6 +1,6 @@
 {
   "name": "frad-me",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "Frad LEE <hey@frad.me> (http://frad.me)",
   "private": false,
   "homepage": "https://github.com/FradSer/frad-me",
@@ -12,7 +12,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "release": "release-it"
   },
   "dependencies": {
     "@react-three/drei": "^9.50.3",
@@ -37,6 +38,7 @@
     "three-stdlib": "^2.21.5"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^5.1.1",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
@@ -50,6 +52,7 @@
     "postcss": "^8.4.20",
     "prettier": "^2.8.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
+    "release-it": "^15.6.0",
     "tailwindcss": "^3.2.4",
     "typescript": "^4.9.4"
   },
@@ -61,13 +64,17 @@
     "semi": true,
     "overrides": [
       {
-        "files": ["*.json"],
+        "files": [
+          "*.json"
+        ],
         "options": {
           "parser": "json"
         }
       },
       {
-        "files": ["*.mdx"],
+        "files": [
+          "*.mdx"
+        ],
         "options": {
           "parser": "mdx"
         }
@@ -75,7 +82,10 @@
     ]
   },
   "eslintConfig": {
-    "extends": ["next", "next/core-web-vitals"],
+    "extends": [
+      "next",
+      "next/core-web-vitals"
+    ],
     "rules": {
       "@next/next/no-img-element": "off"
     }

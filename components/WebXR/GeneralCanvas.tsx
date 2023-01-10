@@ -1,18 +1,36 @@
-import { Canvas } from '@react-three/fiber';
-import { PerspectiveCamera, OrbitControls } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Controllers, XR, XRButton } from '@react-three/xr';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 
+import useMousePosition from '../../hooks/useMousePosition';
+import useWindowSize from '../../hooks/useWindowSize';
 import useXRDetect from '../../hooks/useXRDetect';
 
 type IGenericCanvasProps = {
   children: ReactNode;
 };
 
+function MouseMove({ children }: IGenericCanvasProps) {
+  const mousePosition = useMousePosition();
+  const windowSize = useWindowSize();
+
+  const ref = useRef<any>();
+
+  useFrame(() => {
+    const positionX = mousePosition.x / windowSize.width;
+    const positionY = mousePosition.y / windowSize.height;
+
+    const delta = 0.1;
+
+    ref.current.position.x = positionX * delta;
+    ref.current.position.y = positionY * delta;
+  });
+
+  return <mesh ref={ref}>{children}</mesh>;
+}
+
 function GenericCanvas({ children }: IGenericCanvasProps) {
   const xrDetect = useXRDetect();
-
-  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
 
   return xrDetect.isVR ? (
     <>
@@ -26,9 +44,7 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
     </>
   ) : (
     <Canvas>
-      <PerspectiveCamera />
-      <OrbitControls makeDefault />
-      {children}
+      <MouseMove>{children}</MouseMove>
     </Canvas>
   );
 }
