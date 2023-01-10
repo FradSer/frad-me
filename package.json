@@ -1,6 +1,6 @@
 {
   "name": "frad-me",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "Frad LEE <hey@frad.me> (http://frad.me)",
   "private": false,
   "homepage": "https://github.com/FradSer/frad-me",
@@ -64,13 +64,17 @@
     "semi": true,
     "overrides": [
       {
-        "files": ["*.json"],
+        "files": [
+          "*.json"
+        ],
         "options": {
           "parser": "json"
         }
       },
       {
-        "files": ["*.mdx"],
+        "files": [
+          "*.mdx"
+        ],
         "options": {
           "parser": "mdx"
         }
@@ -78,7 +82,10 @@
     ]
   },
   "eslintConfig": {
-    "extends": ["next", "next/core-web-vitals"],
+    "extends": [
+      "next",
+      "next/core-web-vitals"
+    ],
     "rules": {
       "@next/next/no-img-element": "off"
     }
