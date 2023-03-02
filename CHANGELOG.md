@@ -1,3 +1,15 @@
+# Changelog
+
+## [0.5.0](https://github.com/FradSer/frad-me/compare/v0.4.0...v0.5.0) (2023-03-02)
+
+
+### Features
+
+* **deps:** update deps ([c98aad7](https://github.com/FradSer/frad-me/commit/c98aad792968f4238ff7cebab4b3175ab8c1a358))
+* **yarn:** split configs, update prettier config ([d844d0b](https://github.com/FradSer/frad-me/commit/d844d0b55a8489d17621056c61a0dfe54014d2ca))
+* **yarn:** update release-it config ([db31b40](https://github.com/FradSer/frad-me/commit/db31b40f7e501096007bcac04231d15431c471c7))
+* **yarn:** update release-it config ([f1d0475](https://github.com/FradSer/frad-me/commit/f1d04753989aae482fb5cf8e40210a39239c5f83))
+
 ## [0.4.0](https://github.com/FradSer/frad-me/compare/v0.3.1...v0.4.0) (2023-01-10)
 
 ### Features
