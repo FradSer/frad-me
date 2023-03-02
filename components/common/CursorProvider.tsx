@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'
 
-import useMouseContext from '../../hooks/useMouseContext';
+import useMouseContext from '../../hooks/useMouseContext'
 
 type ICursorProviderProps = {
-  children: React.ReactNode;
-  targetCursorType: CursorType;
-};
+  children: React.ReactNode
+  targetCursorType: CursorType
+}
 
 enum CursorType {
   default = 'default',
@@ -16,21 +16,21 @@ enum CursorType {
 
 function CursorProvider<T extends ICursorProviderProps>(props: T) {
   // * Hooks
-  const mouseContext = useMouseContext();
+  const mouseContext = useMouseContext()
 
   // * Reander
   return (
     <motion.div
       onHoverStart={() => {
-        mouseContext.cursorChangeHandler(props.targetCursorType);
+        mouseContext.cursorChangeHandler(props.targetCursorType)
       }}
       onHoverEnd={() => {
-        mouseContext.cursorChangeHandler(CursorType.default);
+        mouseContext.cursorChangeHandler(CursorType.default)
       }}
     >
       {props.children}
     </motion.div>
-  );
+  )
 }
 
-export { CursorProvider, CursorType };
+export { CursorProvider, CursorType }

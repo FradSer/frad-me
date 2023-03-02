@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'
 
 interface IMDXComponentProviderProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 function MDXComponentProvider(props: IMDXComponentProviderProps) {
@@ -20,7 +20,7 @@ function MDXComponentProvider(props: IMDXComponentProviderProps) {
         ease: 'linear',
       },
     },
-  };
+  }
   return (
     <motion.div
       initial="hidden"
@@ -31,7 +31,7 @@ function MDXComponentProvider(props: IMDXComponentProviderProps) {
     >
       {props.children}
     </motion.div>
-  );
+  )
 }
 
-export default MDXComponentProvider;
+export default MDXComponentProvider

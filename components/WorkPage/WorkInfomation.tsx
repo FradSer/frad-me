@@ -1,8 +1,8 @@
 export default function WorkInfomation(props: {
-  title: string;
-  data?: [string];
+  title: string
+  data?: [string]
 }) {
-  if (!props.data) return null;
+  if (!props.data) return null
   return (
     <div className="col-span-8 md:col-span-3">
       <p className="uppercase">{props.title}</p>
@@ -12,5 +12,5 @@ export default function WorkInfomation(props: {
         </p>
       ))}
     </div>
-  );
+  )
 }

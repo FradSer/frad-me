@@ -1,17 +1,17 @@
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimationControls } from 'framer-motion'
 
 import {
   primaryTransition,
   secondaryTransition,
-} from '../../../utils/motion/springTransitions';
-import { CursorProvider, CursorType } from '../../common/CursorProvider';
+} from '../../../utils/motion/springTransitions'
+import { CursorProvider, CursorType } from '../../common/CursorProvider'
 
 interface IDotCircleProps {
-  isInteractive?: boolean;
+  isInteractive?: boolean
 }
 
 function DotCircle({ isInteractive }: IDotCircleProps) {
-  const controls = useAnimation();
+  const controls = useAnimationControls()
 
   const arrowVariants = {
     initial: {
@@ -26,10 +26,10 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
       y: [6, -6, 6],
       transition: { ...secondaryTransition, repeat: Infinity },
     },
-  };
+  }
 
   function Arrow() {
-    if (!isInteractive) return null;
+    if (!isInteractive) return null
     return (
       <motion.div
         animate={controls}
@@ -39,7 +39,7 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
           <path d="M0.439999 31.768C1.54933 32.1947 2.57333 32.664 3.512 33.176C4.49333 33.688 5.41067 34.264 6.264 34.904L6.264 0.599999L11.512 0.599999L11.512 34.904C12.3653 34.3067 13.2613 33.752 14.2 33.24C15.1813 32.728 16.2267 32.2587 17.336 31.832L17.336 36.696C14.2213 39.3413 11.8533 42.2427 10.232 45.4L7.48 45.4C5.944 42.2427 3.59733 39.3413 0.439999 36.696L0.439999 31.768Z" />
         </svg>
       </motion.div>
-    );
+    )
   }
 
   return (
@@ -47,10 +47,10 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
       <motion.div
         onViewportEnter={() => controls.start(arrowVariants.initial)}
         onHoverStart={() => {
-          controls.start(arrowVariants.hoverAnim);
+          controls.start(arrowVariants.hoverAnim)
         }}
         onHoverEnd={() => {
-          controls.start(arrowVariants.hoverInit);
+          controls.start(arrowVariants.hoverInit)
         }}
         className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100"
       >
@@ -66,11 +66,11 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
         </motion.div>
       </motion.div>
     </CursorProvider>
-  );
+  )
 }
 
 DotCircle.defaultProps = {
   isInteractive: true,
-};
+}
 
-export default DotCircle;
+export default DotCircle

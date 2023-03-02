@@ -1,27 +1,27 @@
-import classNames from 'classnames';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import classNames from 'classnames'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
 
-const IN_VIEW_DELAY = 0.4;
-const IN_VIEW_DURATION = 0.8;
+const IN_VIEW_DELAY = 0.4
+const IN_VIEW_DURATION = 0.8
 
 interface ITopographyImageProps {
-  isTop?: boolean;
-  src: string;
-  alt: string;
-  translateX?: string;
-  translateY?: string;
+  isTop?: boolean
+  src: string
+  alt: string
+  translateX?: string
+  translateY?: string
 }
 
 function TopographyImage(props: ITopographyImageProps) {
   const topographyClass = classNames('absolute h-auto w-full border-gray-200', {
     'z-50': props.isTop,
-  });
+  })
 
-  const opacity = props.isTop ? 0 : 1;
-  const borderWidth = props.isTop ? '0' : '1px';
+  const opacity = props.isTop ? 0 : 1
+  const borderWidth = props.isTop ? '0' : '1px'
 
-  const duration = props.isTop ? 0.8 : 1.6;
+  const duration = props.isTop ? 0.8 : 1.6
 
   return (
     <motion.div
@@ -47,13 +47,13 @@ function TopographyImage(props: ITopographyImageProps) {
         loading="eager"
       />
     </motion.div>
-  );
+  )
 }
 
 TopographyImage.defaultProps = {
   isTop: false,
   opacity: 1,
-};
+}
 
 function Topography() {
   return (
@@ -97,7 +97,7 @@ function Topography() {
         BearChat is based with three-column layout topography.
       </span>
     </div>
-  );
+  )
 }
 
-export default Topography;
+export default Topography

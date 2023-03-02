@@ -35,6 +35,6 @@ const workLinks = [
     cover: '/works/usability-design-for-xigua-video/cover.png',
     isWIP: true,
   },
-];
+]
 
-export default workLinks;
+export default workLinks

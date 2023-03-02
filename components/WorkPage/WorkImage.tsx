@@ -1,15 +1,15 @@
-import classNames from 'classnames';
-import Image from 'next/image';
+import classNames from 'classnames'
+import Image from 'next/image'
 
-import MDXComponentProvider from './MDXComponentProvider';
+import MDXComponentProvider from './MDXComponentProvider'
 
 type IWorkImageProps = {
-  src: string;
-  width: number;
-  height: number;
-  alt: string;
-  position: ImagePosition;
-};
+  src: string
+  width: number
+  height: number
+  alt: string
+  position: ImagePosition
+}
 
 enum ImagePosition {
   inline = 'inline',
@@ -25,7 +25,7 @@ function WorkSingleImage(props: IWorkImageProps) {
     'col-span-16': props.position === ImagePosition.fullScreen,
     'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
       props.position === ImagePosition.underH2,
-  });
+  })
 
   // * Render
   return (
@@ -41,19 +41,19 @@ function WorkSingleImage(props: IWorkImageProps) {
         <span className="work-caption">{props.alt}</span>
       </div>
     </MDXComponentProvider>
-  );
+  )
 }
 
 WorkSingleImage.defaultProps = {
   position: ImagePosition.inline,
-};
+}
 
 interface IWorkBeforeAfterImagesProps {
-  beforeSrc: string;
-  afterSrc: string;
-  width: number;
-  height: number;
-  description: string;
+  beforeSrc: string
+  afterSrc: string
+  width: number
+  height: number
+  description: string
 }
 
 function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
@@ -79,7 +79,7 @@ function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
       </div>
       <span className="work-caption">{props.description}</span>
     </MDXComponentProvider>
-  );
+  )
 }
 
-export { WorkSingleImage, WorkBeforeAfterImages };
+export { WorkSingleImage, WorkBeforeAfterImages }

@@ -1,18 +1,18 @@
-import classNames from 'classnames';
+import classNames from 'classnames'
 
-import ScrollLink from '../../common/ScrollLink';
-import DotCircle from './DotCircle';
-import Rectangle from './Rectangle';
-import Triangle from './Triangle';
+import ScrollLink from '../../common/ScrollLink'
+import DotCircle from './DotCircle'
+import Rectangle from './Rectangle'
+import Triangle from './Triangle'
 
 interface IHeroProps {
-  isWebXR?: boolean;
+  isWebXR?: boolean
 }
 
 function Hero({ isWebXR }: IHeroProps) {
   const heroH1 = classNames(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl'
-  );
+  )
 
   return (
     <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
@@ -51,11 +51,11 @@ function Hero({ isWebXR }: IHeroProps) {
         </div>
       </h1>
     </section>
-  );
+  )
 }
 
 Hero.defaultProps = {
   isWebXR: false,
-};
+}
 
-export default Hero;
+export default Hero

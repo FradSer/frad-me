@@ -1,4 +1,4 @@
-import MDXComponentProvider from '../MDXComponentProvider';
+import MDXComponentProvider from '../MDXComponentProvider'
 
 function ComfortableFontYong() {
   return (
@@ -47,7 +47,7 @@ function ComfortableFontYong() {
         />
       </svg>
     </MDXComponentProvider>
-  );
+  )
 }
 
-export default ComfortableFontYong;
+export default ComfortableFontYong

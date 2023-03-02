@@ -16,6 +16,6 @@ const footerLinks = [
     title: 'E-mail',
     href: 'mailto:hey@frad.me',
   },
-];
+]
 
-export default footerLinks;
+export default footerLinks

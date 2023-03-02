@@ -1,5 +1,5 @@
-import footerLinks from '../content/footerLinks';
-import { CommonLink } from './common/CommonLink';
+import footerLinks from '../content/footerLinks'
+import { CommonLink } from './common/CommonLink'
 
 function Footer() {
   return (
@@ -15,7 +15,7 @@ function Footer() {
         Made by Frad © 2023
       </span>
     </footer>
-  );
+  )
 }
 
-export default Footer;
+export default Footer

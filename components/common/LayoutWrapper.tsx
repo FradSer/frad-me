@@ -1,24 +1,25 @@
-import classNames from 'classnames';
-import { motion, useAnimation } from 'framer-motion';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react'
 
-import Header from '../../components/Header';
-import useLoading from '../../hooks/useLoading';
+import classNames from 'classnames'
+import { motion, useAnimationControls } from 'framer-motion'
+
+import Header from '../../components/Header'
+import useLoading from '../../hooks/useLoading'
 
 interface ILayoutWrapperProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 function LayoutWrapper({ children }: ILayoutWrapperProps) {
-  const loading = useLoading();
+  const loading = useLoading()
 
-  const loadingBackgroundControls = useAnimation();
-  const loadingContentControls = useAnimation();
-  const contentControls = useAnimation();
+  const loadingBackgroundControls = useAnimationControls()
+  const loadingContentControls = useAnimationControls()
+  const contentControls = useAnimationControls()
 
   const linearTransition = {
     type: 'linear',
-  };
+  }
 
   const loadingContentVariants = {
     initial: {
@@ -41,7 +42,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         duration: 0.4,
       },
     },
-  };
+  }
 
   const loadingBackgroundVariants = {
     initial: {
@@ -63,7 +64,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         duration: 0.4,
       },
     },
-  };
+  }
 
   const headerVariants = {
     initial: {
@@ -87,7 +88,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         delay: 0.4,
       },
     },
-  };
+  }
 
   const childrenVariants = {
     initial: {
@@ -111,31 +112,31 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         delay: 0.2,
       },
     },
-  };
+  }
 
   useEffect(() => {
     if (loading.isLoading) {
-      loadingBackgroundControls.start('show');
-      loadingContentControls.start('show');
-      contentControls.start('hidden');
+      loadingBackgroundControls.start('show')
+      loadingContentControls.start('show')
+      contentControls.start('hidden')
     } else {
-      loadingBackgroundControls.start('hidden');
-      loadingContentControls.start('hidden');
-      contentControls.start('show');
+      loadingBackgroundControls.start('hidden')
+      loadingContentControls.start('hidden')
+      contentControls.start('show')
     }
   }, [
     loading,
     contentControls,
     loadingBackgroundControls,
     loadingContentControls,
-  ]);
+  ])
 
   const loadingClass = classNames(
     'fixed flex h-screen w-screen items-center justify-center overflow-hidden',
     {
       'z-50': loading.isLoading,
     }
-  );
+  )
 
   function LoadingDots() {
     const loadingDotsVariants = {
@@ -149,13 +150,13 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
           staggerChildren: 0.4,
         },
       },
-    };
+    }
 
     const loadingDotTransition = {
       duration: 0.8,
       yoyo: Infinity,
       ease: 'easeInOut',
-    };
+    }
 
     const loadingDotVariants = {
       start: {
@@ -164,7 +165,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       end: {
         opacity: 1,
       },
-    };
+    }
 
     return (
       <motion.span variants={loadingDotsVariants} initial="start" animate="end">
@@ -178,7 +179,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
           </motion.span>
         ))}
       </motion.span>
-    );
+    )
   }
 
   return (
@@ -203,7 +204,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       </motion.span>
       <motion.div
         onViewportEnter={() => {
-          contentControls.start('show');
+          contentControls.start('show')
         }}
         className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
       >
@@ -225,7 +226,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         </motion.div>
       </motion.div>
     </>
-  );
+  )
 }
 
-export default LayoutWrapper;
+export default LayoutWrapper
