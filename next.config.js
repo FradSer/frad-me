@@ -8,10 +8,10 @@ const withTM = require('next-transpile-modules')([
   '@react-three/drei',
   'three',
   'three-stdlib',
-]);
+])
 
 const nextConfig = {
   reactStrictMode: true,
-};
+}
 
-module.exports = withTM(nextConfig);
+module.exports = withTM(nextConfig)

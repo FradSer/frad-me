@@ -1,4 +1,4 @@
-import { DestinationType } from '../components/common/CommonLink';
+import { DestinationType } from '../components/common/CommonLink'
 
 const headerLinks = [
   {
@@ -22,6 +22,6 @@ const headerLinks = [
     title: 'calendly',
     href: 'https://calendly.com/fradser',
   },
-];
+]
 
-export default headerLinks;
+export default headerLinks

@@ -1,26 +1,27 @@
-import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect } from 'react'
+
+import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion'
 
 export default function Triangle() {
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress } = useScroll()
 
-  const x = useTransform(scrollYProgress, [0, 0.3], [0, -50]);
-  const y = useTransform(scrollYProgress, [0, 0.3], [0, 400]);
+  const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
+  const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
 
-  const initialRotate = Math.random() * 360;
-  const rotate = useMotionValue(0);
-  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90]);
+  const initialRotate = Math.random() * 360
+  const rotate = useMotionValue(0)
+  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90])
 
   useEffect(() => {
     function updateRotate() {
-      const newRotate = rotateOffset.get() + initialRotate;
-      rotate.set(newRotate);
+      const newRotate = rotateOffset.get() + initialRotate
+      rotate.set(newRotate)
     }
-    const unsubscribe = rotateOffset.onChange(updateRotate);
+    const unsubscribe = rotateOffset.onChange(updateRotate)
     return () => {
-      unsubscribe();
-    };
-  }, [scrollYProgress, initialRotate, rotate, rotateOffset]);
+      unsubscribe()
+    }
+  }, [scrollYProgress, initialRotate, rotate, rotateOffset])
 
   return (
     <motion.div
@@ -38,5 +39,5 @@ export default function Triangle() {
         <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
       </svg>
     </motion.div>
-  );
+  )
 }

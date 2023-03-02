@@ -1,20 +1,21 @@
-import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
+
+import { motion } from 'framer-motion'
+import { useTheme } from 'next-themes'
 
 import {
   primaryTransition,
   secondaryTransition,
-} from '../../utils/motion/springTransitions';
-import { CursorProvider, CursorType } from '../common/CursorProvider';
+} from '../../utils/motion/springTransitions'
+import { CursorProvider, CursorType } from '../common/CursorProvider'
 
 export default function ThemeSwitcher() {
   // * Hooks
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme, resolvedTheme } = useTheme()
 
   // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), [])
 
   // * Animation
 
@@ -31,7 +32,7 @@ export default function ThemeSwitcher() {
         ...secondaryTransition,
       },
     },
-  };
+  }
 
   // * Reander
   return (
@@ -63,5 +64,5 @@ export default function ThemeSwitcher() {
         </svg>
       </motion.button>
     </CursorProvider>
-  );
+  )
 }

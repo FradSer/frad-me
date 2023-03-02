@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion';
-import { Element } from 'react-scroll';
+import { motion } from 'framer-motion'
+import { Element } from 'react-scroll'
 
-import workLinks from '../../../content/workLinks';
-import WorkCard from './WorkCard';
-import WorkTitle from './WorkTitle';
+import workLinks from '../../../content/workLinks'
+import WorkCard from './WorkCard'
+import WorkTitle from './WorkTitle'
 
-const MAX_DISPLAY_WORKS = 5;
+const MAX_DISPLAY_WORKS = 5
 
 export default function Work() {
   return (
@@ -29,5 +29,5 @@ export default function Work() {
         ))}
       </Element>
     </section>
-  );
+  )
 }

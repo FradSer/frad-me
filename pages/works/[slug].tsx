@@ -1,8 +1,13 @@
-import classNames from 'classnames';
-import { getMDXComponent } from 'mdx-bundler/client';
-import Head from 'next/head';
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
+import classNames from 'classnames'
+import { getMDXComponent } from 'mdx-bundler/client'
+import Head from 'next/head'
+
+import Topography from '../../components/WorkPage/BearyChat/Topography'
+import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula'
+import ComfortableFontYong from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong'
+import EyeComfortDFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula'
 import {
   Blockquote,
   H1,
@@ -12,35 +17,31 @@ import {
   OL,
   P,
   UL,
-} from '../../components/WorkPage/MDXComponents';
-import Topography from '../../components/WorkPage/BearyChat/Topography';
-import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula';
-import ComfortableFontYong from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong';
-import EyeComfortDFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula';
-import NextWork from '../../components/WorkPage/NextWork';
-import WorkCover from '../../components/WorkPage/WorkCover';
+} from '../../components/WorkPage/MDXComponents'
+import NextWork from '../../components/WorkPage/NextWork'
+import WorkCover from '../../components/WorkPage/WorkCover'
 import {
   WorkSingleImage,
   WorkBeforeAfterImages,
-} from '../../components/WorkPage/WorkImage';
-import WorkInfomation from '../../components/WorkPage/WorkInfomation';
-import WorkSite from '../../components/WorkPage/WorkSite';
-import { getAllPosts, getSinglePost } from '../../utils/mdx';
+} from '../../components/WorkPage/WorkImage'
+import WorkInfomation from '../../components/WorkPage/WorkInfomation'
+import WorkSite from '../../components/WorkPage/WorkSite'
+import { getAllPosts, getSinglePost } from '../../utils/mdx'
 
 type IWorkProps = {
-  slug: string;
-  code: string;
+  slug: string
+  code: string
   frontmatter: {
-    cover?: string;
-    coverBackground?: string;
-    title: string;
-    description: string;
-    platforms?: [string];
-    contributors?: [string];
-    site?: string;
-    nextWork?: string;
-  };
-};
+    cover?: string
+    coverBackground?: string
+    title: string
+    description: string
+    platforms?: [string]
+    contributors?: [string]
+    site?: string
+    nextWork?: string
+  }
+}
 
 const mdxComponents = {
   blockquote: Blockquote,
@@ -57,12 +58,12 @@ const mdxComponents = {
   ComfortableFontSFormula,
   ComfortableFontYong,
   EyeComfortDFormula,
-};
+}
 
 export default function WorkPage({ code, frontmatter }: IWorkProps) {
-  const Component = useMemo(() => getMDXComponent(code), [code]);
+  const Component = useMemo(() => getMDXComponent(code), [code])
 
-  const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6');
+  const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6')
 
   return (
     <>
@@ -111,20 +112,20 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
         </section>
       </main>
     </>
-  );
+  )
 }
 
 export const getStaticPaths = async () => {
-  const paths = getAllPosts().map(({ slug }) => ({ params: { slug } }));
+  const paths = getAllPosts().map(({ slug }) => ({ params: { slug } }))
   return {
     paths,
     fallback: false,
-  };
-};
+  }
+}
 
 export const getStaticProps = async ({ params }: any) => {
-  const work = await getSinglePost(params.slug);
+  const work = await getSinglePost(params.slug)
   return {
     props: { ...work },
-  };
-};
+  }
+}

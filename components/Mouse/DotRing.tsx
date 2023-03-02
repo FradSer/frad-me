@@ -1,31 +1,33 @@
-import classNames from 'classnames';
-import { motion, useAnimation } from 'framer-motion';
+import { useEffect, useState } from 'react'
 
-import useMouseContext from '../../hooks/useMouseContext';
-import useMousePosition from '../../hooks/useMousePosition';
-import { primaryTransition } from '../../utils/motion/springTransitions';
+import classNames from 'classnames'
+import { motion, useAnimationControls } from 'framer-motion'
+
+import useMouseContext from '../../hooks/useMouseContext'
+import useMousePosition from '../../hooks/useMousePosition'
+import { primaryTransition } from '../../utils/motion/springTransitions'
 
 export default function DotRing() {
   // * Hooks
-  const mousePosition = useMousePosition();
-  const mouseContext = useMouseContext();
+  const mousePosition = useMousePosition()
+  const mouseContext = useMouseContext()
 
   // * Styling
   const textClass = classNames(
     'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50'
-  );
+  )
 
   const backgroundClass = classNames(
     'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
       'mix-blend-difference': mouseContext.cursorType == 'default',
     }
-  );
+  )
 
   // * Animation
-  const controls = useAnimation();
+  const controls = useAnimationControls()
 
-  const transitionOffset = { x: '-50%', y: '-50%' };
+  const transitionOffset = { x: '-50%', y: '-50%' }
 
   const backgroundVariants = {
     initial: {
@@ -49,7 +51,7 @@ export default function DotRing() {
         ...primaryTransition,
       },
     },
-  };
+  }
 
   const textVariants = {
     initial: {
@@ -73,30 +75,34 @@ export default function DotRing() {
         ...primaryTransition,
       },
     },
-  };
-
-  let dotRingTitle;
-
-  switch (mouseContext.cursorType) {
-    case 'header-link-hovered':
-      controls.start('headerLinkHovered');
-      break;
-    case 'work-card-hovered':
-      controls.start('workCardHover');
-      dotRingTitle = 'READ';
-      break;
-    case 'work-card-hovered-wip':
-      controls.start('workCardHover');
-      dotRingTitle = 'WIP';
-      break;
-    default:
-      controls.start('initial');
-      dotRingTitle = '';
   }
+
+  // * Dot Ring Title
+  const [dotRingTitle, setDotRingTitle] = useState('')
+
+  // * Effects
+  useEffect(() => {
+    switch (mouseContext.cursorType) {
+      case 'header-link-hovered':
+        controls.start('headerLinkHovered')
+        break
+      case 'work-card-hovered':
+        controls.start('workCardHover')
+        setDotRingTitle('READ')
+        break
+      case 'work-card-hovered-wip':
+        controls.start('workCardHover')
+        setDotRingTitle('WIP')
+        break
+      default:
+        controls.start('initial')
+        setDotRingTitle('')
+    }
+  }, [mouseContext.cursorType])
 
   // * Render
   return (
-    <div>
+    <>
       <motion.div
         animate={controls}
         variants={textVariants}
@@ -104,7 +110,7 @@ export default function DotRing() {
         className={textClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       >
-        {dotRingTitle}
+        <h1>{dotRingTitle}</h1>
       </motion.div>
       <motion.div
         animate={controls}
@@ -113,6 +119,6 @@ export default function DotRing() {
         className={backgroundClass}
         style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
       ></motion.div>
-    </div>
-  );
+    </>
+  )
 }

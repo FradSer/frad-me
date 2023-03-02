@@ -1,14 +1,14 @@
-import { Stars } from '@react-three/drei';
-import { useControls } from 'leva';
-import dynamic from 'next/dynamic';
+import { Stars } from '@react-three/drei'
+import { useControls } from 'leva'
+import dynamic from 'next/dynamic'
 
-import GenericCanvas from '../components/WebXR/GeneralCanvas';
-const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false });
+import Hero from '../components/Landing/Hero'
+import GenericCanvas from '../components/WebXR/GeneralCanvas'
 
-import Hero from '../components/Landing/Hero';
+const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false })
 
 const WebXR = () => {
-  const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
+  const deg2rad = (degrees: number) => degrees * (Math.PI / 180)
   const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ } =
     useControls({
       positionX: 0,
@@ -17,7 +17,7 @@ const WebXR = () => {
       rotationX: 0,
       rotationY: 0,
       rotationZ: 0,
-    });
+    })
 
   return (
     <div className="h-screen w-screen">
@@ -45,7 +45,7 @@ const WebXR = () => {
         />
       </GenericCanvas>
     </div>
-  );
-};
+  )
+}
 
-export default WebXR;
+export default WebXR

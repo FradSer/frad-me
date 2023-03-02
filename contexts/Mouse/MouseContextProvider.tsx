@@ -1,24 +1,22 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react'
 
-import { MouseContext } from './MouseContext';
+import { MouseContext } from './MouseContext'
 
 type MouseContextProps = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 
 export default function MouseContextProvider({ children }: MouseContextProps) {
-  const [cursorType, setCursorType] = useState<string>('default');
+  const [cursorType, setCursorType] = useState<string>('default')
 
   const cursorChangeHandler = (cursorType: string) => {
-    setCursorType(cursorType);
-  };
+    setCursorType(cursorType)
+  }
 
   const value = {
     cursorType: cursorType,
     cursorChangeHandler: cursorChangeHandler,
-  };
+  }
 
-  return (
-    <MouseContext.Provider value={value}>{children}</MouseContext.Provider>
-  );
+  return <MouseContext.Provider value={value}>{children}</MouseContext.Provider>
 }

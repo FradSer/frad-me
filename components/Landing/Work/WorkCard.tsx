@@ -1,19 +1,19 @@
-import classNames from 'classnames';
-import { motion, useAnimation } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import classNames from 'classnames'
+import { motion, useAnimationControls } from 'framer-motion'
+import Image from 'next/image'
+import Link from 'next/link'
 
-import useMouseContext from '../../../hooks/useMouseContext';
-import { primaryTransition } from '../../../utils/motion/springTransitions';
+import useMouseContext from '../../../hooks/useMouseContext'
+import { primaryTransition } from '../../../utils/motion/springTransitions'
 
 interface IWorkCardProps {
-  title: string;
-  subTitle: string;
-  slug: string;
-  cover: string;
-  isFullScreen?: boolean;
-  isCenter?: boolean;
-  isWIP?: boolean;
+  title: string
+  subTitle: string
+  slug: string
+  cover: string
+  isFullScreen?: boolean
+  isCenter?: boolean
+  isWIP?: boolean
 }
 
 function WorkCard(props: IWorkCardProps) {
@@ -26,7 +26,7 @@ function WorkCard(props: IWorkCardProps) {
       'hover:cursor-not-allowed': props.isWIP,
       'hover:cursor-pointer': !props.isWIP,
     }
-  );
+  )
 
   const backgroundImageClass = classNames('absolute w-full h-full', {
     'bg-[#313131]': props.slug === 'eye-protection-design-handbook',
@@ -34,23 +34,23 @@ function WorkCard(props: IWorkCardProps) {
     'bg-red-600': props.slug === 'pachino',
     'bg-green-600': props.slug === 'bearychat',
     'bg-white': props.slug == null,
-  });
+  })
 
   const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
     'text-left md:text-center': props.isCenter,
     'text-left': !props.isCenter,
-  });
+  })
 
   const textTitleClass = classNames('font-bold text-white', {
     'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
     'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
-  });
+  })
 
   // * Animation
 
-  const backgroundImageControls = useAnimation();
-  const backgroundMaskControls = useAnimation();
-  const textControls = useAnimation();
+  const backgroundImageControls = useAnimationControls()
+  const backgroundMaskControls = useAnimationControls()
+  const textControls = useAnimationControls()
 
   const backgroundMaskVariants = {
     initial: {
@@ -62,7 +62,7 @@ function WorkCard(props: IWorkCardProps) {
     transition: {
       ...primaryTransition,
     },
-  };
+  }
 
   const backgroundImageVariants = {
     initial: {
@@ -74,7 +74,7 @@ function WorkCard(props: IWorkCardProps) {
     transition: {
       ...primaryTransition,
     },
-  };
+  }
 
   const textVariants = {
     initial: {
@@ -88,32 +88,32 @@ function WorkCard(props: IWorkCardProps) {
         ...primaryTransition,
       },
     },
-  };
+  }
 
   // * Hooks
-  const mouseContext = useMouseContext();
+  const mouseContext = useMouseContext()
 
   const workCard = (
     <motion.div
       onHoverStart={() => {
         if (props.isWIP) {
-          mouseContext.cursorChangeHandler('work-card-hovered-wip');
+          mouseContext.cursorChangeHandler('work-card-hovered-wip')
         } else {
-          mouseContext.cursorChangeHandler('work-card-hovered');
+          mouseContext.cursorChangeHandler('work-card-hovered')
         }
-        backgroundImageControls.start(backgroundImageVariants.hover);
-        backgroundMaskControls.start(backgroundMaskVariants.hover);
-        textControls.start(textVariants.hover);
+        backgroundImageControls.start(backgroundImageVariants.hover)
+        backgroundMaskControls.start(backgroundMaskVariants.hover)
+        textControls.start(textVariants.hover)
       }}
       onHoverEnd={() => {
-        mouseContext.cursorChangeHandler('default');
-        backgroundImageControls.start(backgroundImageVariants.initial);
-        backgroundMaskControls.start(backgroundMaskVariants.initial);
-        textControls.start(textVariants.initial);
+        mouseContext.cursorChangeHandler('default')
+        backgroundImageControls.start(backgroundImageVariants.initial)
+        backgroundMaskControls.start(backgroundMaskVariants.initial)
+        textControls.start(textVariants.initial)
       }}
       onClick={() => {
         if (!props.isWIP) {
-          mouseContext.cursorChangeHandler('default');
+          mouseContext.cursorChangeHandler('default')
         }
       }}
       className={linkClass}
@@ -149,18 +149,18 @@ function WorkCard(props: IWorkCardProps) {
         <div className={textTitleClass}>{props.title}</div>
       </motion.div>
     </motion.div>
-  );
+  )
 
   // * Render
   if (props.isWIP) {
-    return workCard;
+    return workCard
   } else {
     return (
       <Link href={`/works/${props.slug}`} passHref legacyBehavior>
         {workCard}
       </Link>
-    );
+    )
   }
 }
 
-export default WorkCard;
+export default WorkCard

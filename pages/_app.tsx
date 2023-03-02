@@ -1,20 +1,20 @@
-import { ThemeProvider } from 'next-themes';
-import { AppProps } from 'next/app';
-import dynamic from 'next/dynamic';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/react'
+import { ThemeProvider } from 'next-themes'
+import { AppProps } from 'next/app'
+import dynamic from 'next/dynamic'
 
-import LayoutWrapper from '../components/common/LayoutWrapper';
-import DotRing from '../components/Mouse/DotRing';
-import MouseContextProvider from '../contexts/Mouse/MouseContextProvider';
-import useXRDetect from '../hooks/useXRDetect';
+import DotRing from '../components/Mouse/DotRing'
+import LayoutWrapper from '../components/common/LayoutWrapper'
+import MouseContextProvider from '../contexts/Mouse/MouseContextProvider'
+import useXRDetect from '../hooks/useXRDetect'
 
-import '../styles/globals.css';
+import '../styles/globals.css'
 
-const WebXR = dynamic(() => import('./webxr'), { ssr: false });
+const WebXR = dynamic(() => import('./webxr'), { ssr: false })
 
 function MyApp({ Component, pageProps }: AppProps) {
   // * Hooks
-  const xrDetect = useXRDetect();
+  const xrDetect = useXRDetect()
 
   // * Render
   return xrDetect.isVR ? (
@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </LayoutWrapper>
       </ThemeProvider>
     </MouseContextProvider>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp
