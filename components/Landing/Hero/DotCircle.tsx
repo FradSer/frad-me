@@ -1,10 +1,11 @@
 import { motion, useAnimationControls } from 'framer-motion'
 
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
+
 import {
   primaryTransition,
   secondaryTransition,
-} from '../../../utils/motion/springTransitions'
-import { CursorProvider, CursorType } from '../../common/CursorProvider'
+} from '@/utils/motion/springTransitions'
 
 interface IDotCircleProps {
   isInteractive?: boolean

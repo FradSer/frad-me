@@ -1,4 +1,4 @@
-import MDXComponentProvider from '../MDXComponentProvider'
+import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
 
 function ComfortableFontYong() {
   return (

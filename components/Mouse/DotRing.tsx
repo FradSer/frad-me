@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { motion, useAnimationControls } from 'framer-motion'
 
-import useMouseContext from '../../hooks/useMouseContext'
-import useMousePosition from '../../hooks/useMousePosition'
-import { primaryTransition } from '../../utils/motion/springTransitions'
+import useMouseContext from '@/hooks/useMouseContext'
+import useMousePosition from '@/hooks/useMousePosition'
+
+import { primaryTransition } from '@/utils/motion/springTransitions'
 
 export default function DotRing() {
   // * Hooks

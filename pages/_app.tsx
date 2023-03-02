@@ -1,14 +1,18 @@
-import { Analytics } from '@vercel/analytics/react'
-import { ThemeProvider } from 'next-themes'
 import { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 
-import DotRing from '../components/Mouse/DotRing'
-import LayoutWrapper from '../components/common/LayoutWrapper'
-import MouseContextProvider from '../contexts/Mouse/MouseContextProvider'
-import useXRDetect from '../hooks/useXRDetect'
+import { Analytics } from '@vercel/analytics/react'
 
-import '../styles/globals.css'
+import { ThemeProvider } from 'next-themes'
+
+import DotRing from '@/components/Mouse/DotRing'
+import LayoutWrapper from '@/components/common/LayoutWrapper'
+
+import useXRDetect from '@/hooks/useXRDetect'
+
+import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider'
+
+import '@/styles/globals.css'
 
 const WebXR = dynamic(() => import('./webxr'), { ssr: false })
 

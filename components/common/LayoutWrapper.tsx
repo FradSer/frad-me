@@ -3,8 +3,9 @@ import { ReactNode, useEffect } from 'react'
 import classNames from 'classnames'
 import { motion, useAnimationControls } from 'framer-motion'
 
-import Header from '../../components/Header'
-import useLoading from '../../hooks/useLoading'
+import Header from '@/components/Header'
+
+import useLoading from '@/hooks/useLoading'
 
 interface ILayoutWrapperProps {
   children: ReactNode

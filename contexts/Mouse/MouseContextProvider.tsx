@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react'
 
-import { MouseContext } from './MouseContext'
+import { MouseContext } from '@/contexts/Mouse/MouseContext'
 
 type MouseContextProps = {
   children: ReactNode

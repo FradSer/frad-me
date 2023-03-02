@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
 import { Element } from 'react-scroll'
 
-import workLinks from '../../../content/workLinks'
-import WorkCard from './WorkCard'
-import WorkTitle from './WorkTitle'
+import WorkCard from '@/components/Landing/Work/WorkCard'
+import WorkTitle from '@/components/Landing/Work/WorkTitle'
+
+import workLinks from '@/content/workLinks'
 
 const MAX_DISPLAY_WORKS = 5
 

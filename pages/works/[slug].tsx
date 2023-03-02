@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 
+import Head from 'next/head'
+
 import classNames from 'classnames'
 import { getMDXComponent } from 'mdx-bundler/client'
-import Head from 'next/head'
 
 import Topography from '../../components/WorkPage/BearyChat/Topography'
 import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula'

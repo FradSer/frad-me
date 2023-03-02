@@ -1,5 +1,6 @@
-import classNames from 'classnames'
 import Image from 'next/image'
+
+import classNames from 'classnames'
 
 interface IWorkCoverProps {
   src?: string

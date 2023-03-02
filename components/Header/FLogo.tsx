@@ -1,6 +1,4 @@
-import { motion } from 'framer-motion'
-
-import { CursorProvider, CursorType } from '../common/CursorProvider'
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
 
 export default function FLogo() {
   return (
