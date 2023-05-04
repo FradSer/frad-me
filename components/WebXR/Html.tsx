@@ -7,7 +7,6 @@ import { renderToString } from 'react-dom/server'
 import * as THREE from 'three'
 
 // Prevents html2canvas warnings
-// @todo maybe remove this if it causes performance issues?
 
 HTMLCanvasElement.prototype.getContext = (function (origFn: any) {
   return function (this: any, type: any, attribs: any) {
@@ -57,7 +56,6 @@ export default function Html({
   const [image, setImage] = useState(
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
   )
-  const [textureSize, setTextureSize] = useState({ width, height })
 
   const node = useMemo(() => {
     const node = document.createElement('div')
@@ -68,7 +66,6 @@ export default function Html({
   useEffect(() => {
     container.appendChild(node)
     html2canvas(node, { backgroundColor: color }).then((canvas) => {
-      setTextureSize({ width: canvas.width, height: canvas.height })
       if (container.contains(node)) {
         container.removeChild(node)
       }
