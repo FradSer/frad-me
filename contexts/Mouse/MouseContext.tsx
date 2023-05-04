@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
 
 // https://stackoverflow.com/questions/54127650/nextjs-and-context-api
 // https://dev.to/shareef/context-api-with-typescript-and-next-js-2m25
