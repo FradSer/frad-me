@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.6.1](https://github.com/FradSer/frad-me/compare/v0.6.0...v0.6.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* **cmpts:** defining component during render ([1edddf7](https://github.com/FradSer/frad-me/commit/1edddf76abe25b83283cf398e8dd3c041fb420cd))
+* **cmpts:** defining component during render ([f390254](https://github.com/FradSer/frad-me/commit/f390254547ed233262120eeec88c4689aaf2e69e))
+* **cmpts:** remove comment ([f49963d](https://github.com/FradSer/frad-me/commit/f49963d98026c68417d684eb1a7e04c3faf163b3))
+* **cmpts:** remove unused variables in hero ([4554a15](https://github.com/FradSer/frad-me/commit/4554a154d480976604f4065abef4a3f068a1cc51))
+* **cmpts:** remove unused variables in webxr ([9bdecca](https://github.com/FradSer/frad-me/commit/9bdeccae459dc16665540f929c743bb175e84b0c))
+* **mouse:** remove unused import ([f78228f](https://github.com/FradSer/frad-me/commit/f78228f5e6df292cbc4914a9eb66d2b835f740e3))
+* **mouse:** wrap `value` in `useMemo` hook ([ca65957](https://github.com/FradSer/frad-me/commit/ca6595716c17d3d7212b121c24275da1c9ac1721))
+
 ## [0.6.0](https://github.com/FradSer/frad-me/compare/v0.5.0...v0.6.0) (2023-05-04)
 
 
