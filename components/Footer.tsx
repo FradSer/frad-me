@@ -1,5 +1,6 @@
-import footerLinks from '../content/footerLinks'
-import { CommonLink } from './common/CommonLink'
+import { CommonLink } from '@/components/common/CommonLink'
+
+import footerLinks from '@/content/footerLinks'
 
 function Footer() {
   return (

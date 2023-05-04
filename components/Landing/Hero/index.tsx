@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 
-import ScrollLink from '../../common/ScrollLink'
-import DotCircle from './DotCircle'
-import Rectangle from './Rectangle'
-import Triangle from './Triangle'
+import DotCircle from '@/components/Landing/Hero/DotCircle'
+import Rectangle from '@/components/Landing/Hero/Rectangle'
+import Triangle from '@/components/Landing/Hero/Triangle'
+import ScrollLink from '@/components/common/ScrollLink'
 
 interface IHeroProps {
   isWebXR?: boolean

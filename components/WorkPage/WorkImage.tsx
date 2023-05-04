@@ -1,7 +1,8 @@
-import classNames from 'classnames'
 import Image from 'next/image'
 
-import MDXComponentProvider from './MDXComponentProvider'
+import classNames from 'classnames'
+
+import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
 
 type IWorkImageProps = {
   src: string

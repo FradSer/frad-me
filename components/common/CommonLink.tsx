@@ -1,9 +1,10 @@
-import classNames from 'classnames'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { CursorProvider, CursorType } from './CursorProvider'
+import classNames from 'classnames'
+
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
 
 const ScrollLink = dynamic(() => import('./ScrollLink'), { ssr: false })
 

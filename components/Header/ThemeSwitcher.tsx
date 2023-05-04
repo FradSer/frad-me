@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
 
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
+
 import {
   primaryTransition,
   secondaryTransition,
-} from '../../utils/motion/springTransitions'
-import { CursorProvider, CursorType } from '../common/CursorProvider'
+} from '@/utils/motion/springTransitions'
 
 export default function ThemeSwitcher() {
   // * Hooks

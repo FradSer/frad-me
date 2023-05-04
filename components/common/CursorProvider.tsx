@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-import useMouseContext from '../../hooks/useMouseContext'
+import useMouseContext from '@/hooks/useMouseContext'
 
 type ICursorProviderProps = {
   children: React.ReactNode

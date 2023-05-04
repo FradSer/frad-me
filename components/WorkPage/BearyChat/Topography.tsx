@@ -1,6 +1,7 @@
+import Image from 'next/image'
+
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 
 const IN_VIEW_DELAY = 0.4
 const IN_VIEW_DURATION = 0.8

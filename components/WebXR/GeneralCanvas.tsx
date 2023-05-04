@@ -3,9 +3,9 @@ import { ReactNode, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Controllers, XR, XRButton } from '@react-three/xr'
 
-import useMousePosition from '../../hooks/useMousePosition'
-import useWindowSize from '../../hooks/useWindowSize'
-import useXRDetect from '../../hooks/useXRDetect'
+import useMousePosition from '@/hooks/useMousePosition'
+import useWindowSize from '@/hooks/useWindowSize'
+import useXRDetect from '@/hooks/useXRDetect'
 
 type IGenericCanvasProps = {
   children: ReactNode

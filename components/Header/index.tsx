@@ -1,9 +1,10 @@
 import Link from 'next/link'
 
-import headerLinks from '../../content/headerLinks'
-import { CommonLink } from '../common/CommonLink'
-import FLogo from './FLogo'
-import ThemeSwitcher from './ThemeSwitcher'
+import FLogo from '@/components/Header/FLogo'
+import ThemeSwitcher from '@/components/Header/ThemeSwitcher'
+import { CommonLink } from '@/components/common/CommonLink'
+
+import headerLinks from '@/content/headerLinks'
 
 function Header() {
   return (

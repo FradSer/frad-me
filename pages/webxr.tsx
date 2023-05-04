@@ -1,9 +1,10 @@
-import { Stars } from '@react-three/drei'
-import { useControls } from 'leva'
 import dynamic from 'next/dynamic'
 
-import Hero from '../components/Landing/Hero'
-import GenericCanvas from '../components/WebXR/GeneralCanvas'
+import { Stars } from '@react-three/drei'
+import { useControls } from 'leva'
+
+import Hero from '@/components/Landing/Hero'
+import GenericCanvas from '@/components/WebXR/GeneralCanvas'
 
 const Html = dynamic(() => import('../components/WebXR/Html'), { ssr: false })
 

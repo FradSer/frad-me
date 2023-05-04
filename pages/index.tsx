@@ -1,8 +1,8 @@
 import Head from 'next/head'
 
-import Footer from '../components/Footer'
-import Hero from '../components/Landing/Hero'
-import Work from '../components/Landing/Work'
+import Footer from '@/components/Footer'
+import Hero from '@/components/Landing/Hero'
+import Work from '@/components/Landing/Work'
 
 export default function Home() {
   return (

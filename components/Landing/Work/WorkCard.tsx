@@ -1,10 +1,12 @@
-import classNames from 'classnames'
-import { motion, useAnimationControls } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import useMouseContext from '../../../hooks/useMouseContext'
-import { primaryTransition } from '../../../utils/motion/springTransitions'
+import classNames from 'classnames'
+import { motion, useAnimationControls } from 'framer-motion'
+
+import useMouseContext from '@/hooks/useMouseContext'
+
+import { primaryTransition } from '@/utils/motion/springTransitions'
 
 interface IWorkCardProps {
   title: string
