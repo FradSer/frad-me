@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useMemo } from 'react'
 
 import { MouseContext } from '@/contexts/Mouse/MouseContext'
 
@@ -13,10 +13,12 @@ export default function MouseContextProvider({ children }: MouseContextProps) {
     setCursorType(cursorType)
   }
 
-  const value = {
-    cursorType: cursorType,
-    cursorChangeHandler: cursorChangeHandler,
-  }
+  const value = useMemo(() => {
+    return {
+      cursorType: cursorType,
+      cursorChangeHandler: cursorChangeHandler,
+    }
+  }, [cursorType])
 
   return <MouseContext.Provider value={value}>{children}</MouseContext.Provider>
 }
