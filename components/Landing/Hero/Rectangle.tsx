@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 
 import useMousePosition from '@/hooks/useMousePosition'
@@ -13,8 +11,7 @@ export default function Rectangle() {
   const size = useWindowSize()
 
   // * Animation
-  const [angle, setAngle] = useState(2)
-  const [perspective, setPerspective] = useState(500)
+  let angle = 2
 
   // we replace the useState with two motion values. One for each axis.
   // Since we want the card to start out flat we set the initial
