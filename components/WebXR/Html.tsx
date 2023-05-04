@@ -16,7 +16,7 @@ HTMLCanvasElement.prototype.getContext = (function (origFn: any) {
   }
 })(HTMLCanvasElement.prototype.getContext)
 
-let container: any | null = document.querySelector('#htmlContainer')
+let container: HTMLElement | null = document.querySelector('#htmlContainer')
 
 if (!container) {
   const node = document.createElement('div')
@@ -64,10 +64,10 @@ export default function Html({
   }, [children])
 
   useEffect(() => {
-    container.appendChild(node)
+    container!.appendChild(node)
     html2canvas(node, { backgroundColor: color }).then((canvas) => {
-      if (container.contains(node)) {
-        container.removeChild(node)
+      if (container!.contains(node)) {
+        container!.removeChild(node)
       }
       canvas.toBlob((blob) => {
         if (blob === null) return
