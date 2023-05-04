@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/FradSer/frad-me/compare/v0.5.0...v0.6.0) (2023-05-04)
+
+
+### Features
+
+* **git:** update git ignore ([365e77c](https://github.com/FradSer/frad-me/commit/365e77c801c3cf4387aabc7de549596f62020327))
+
 ## [0.5.0](https://github.com/FradSer/frad-me/compare/v0.4.0...v0.5.0) (2023-03-02)
 
 
