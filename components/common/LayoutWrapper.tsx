@@ -7,6 +7,50 @@ import Header from '@/components/Header'
 
 import useLoading from '@/hooks/useLoading'
 
+function LoadingDots() {
+  const loadingDotsVariants = {
+    start: {
+      transition: {
+        staggerChildren: 0.4,
+      },
+    },
+    end: {
+      transition: {
+        staggerChildren: 0.4,
+      },
+    },
+  }
+
+  const loadingDotTransition = {
+    duration: 0.8,
+    yoyo: Infinity,
+    ease: 'easeInOut',
+  }
+
+  const loadingDotVariants = {
+    start: {
+      opacity: 0,
+    },
+    end: {
+      opacity: 1,
+    },
+  }
+
+  return (
+    <motion.span variants={loadingDotsVariants} initial="start" animate="end">
+      {Array.from({ length: 3 }, (_, i) => (
+        <motion.span
+          key={i}
+          variants={loadingDotVariants}
+          transition={loadingDotTransition}
+        >
+          .
+        </motion.span>
+      ))}
+    </motion.span>
+  )
+}
+
 interface ILayoutWrapperProps {
   children: ReactNode
 }
@@ -138,50 +182,6 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
       'z-50': loading.isLoading,
     }
   )
-
-  function LoadingDots() {
-    const loadingDotsVariants = {
-      start: {
-        transition: {
-          staggerChildren: 0.4,
-        },
-      },
-      end: {
-        transition: {
-          staggerChildren: 0.4,
-        },
-      },
-    }
-
-    const loadingDotTransition = {
-      duration: 0.8,
-      yoyo: Infinity,
-      ease: 'easeInOut',
-    }
-
-    const loadingDotVariants = {
-      start: {
-        opacity: 0,
-      },
-      end: {
-        opacity: 1,
-      },
-    }
-
-    return (
-      <motion.span variants={loadingDotsVariants} initial="start" animate="end">
-        {Array.from({ length: 3 }, (_, i) => (
-          <motion.span
-            key={i}
-            variants={loadingDotVariants}
-            transition={loadingDotTransition}
-          >
-            .
-          </motion.span>
-        ))}
-      </motion.span>
-    )
-  }
 
   return (
     <>
