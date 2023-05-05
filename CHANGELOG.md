@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.6.2](https://github.com/FradSer/frad-me/compare/v0.6.1...v0.6.2) (2023-05-05)
+
+
+### Bug Fixes
+
+* **cmpts:** types error ([c614844](https://github.com/FradSer/frad-me/commit/c614844dd2f5b9dce2b2de2bf218faf9a26bfcb4))
+
 ### [0.6.1](https://github.com/FradSer/frad-me/compare/v0.6.0...v0.6.1) (2023-05-04)
 
 
