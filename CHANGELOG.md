@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.7.0](https://github.com/FradSer/frad-me/compare/v0.6.2...v0.7.0) (2023-07-25)
+
 ### [0.6.2](https://github.com/FradSer/frad-me/compare/v0.6.1...v0.6.2) (2023-05-05)
 
 
