@@ -19,7 +19,6 @@ export default function ThemeSwitcher() {
   useEffect(() => setMounted(true), [])
 
   // * Animation
-
   const hoverVariants = {
     initial: {
       scale: 1,
@@ -35,7 +34,7 @@ export default function ThemeSwitcher() {
     },
   }
 
-  // * Reander
+  // * Render
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
       <motion.button
