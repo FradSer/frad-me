@@ -1,17 +1,15 @@
-/**
- * @type {import('next').NextConfig}
- */
+const million = require('million/compiler')
 
-const withTM = require('next-transpile-modules')([
-  '@react-three/fiber',
-  '@react-three/xr',
-  '@react-three/drei',
-  'three',
-  'three-stdlib',
-])
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: [
+    '@react-three/fiber',
+    '@react-three/xr',
+    '@react-three/drei',
+    'three',
+    'three-stdlib',
+  ],
 }
 
-module.exports = withTM(nextConfig)
+module.exports = million.next(nextConfig)
