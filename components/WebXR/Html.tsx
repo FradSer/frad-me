@@ -59,7 +59,7 @@ export default function Html({
 
   const node = useMemo(() => {
     const node = document.createElement('div')
-    node.innerHTML = renderToString(children as React.ReactElement)
+    node.innerHTML = renderToString(children as any)
     return node
   }, [children])
 
