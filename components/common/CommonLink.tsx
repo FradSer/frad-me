@@ -47,7 +47,7 @@ function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
     }
   }
 
-  // * Reander
+  // * Render
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
       {link}

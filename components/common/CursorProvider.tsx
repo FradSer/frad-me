@@ -18,7 +18,7 @@ function CursorProvider<T extends ICursorProviderProps>(props: T) {
   // * Hooks
   const mouseContext = useMouseContext()
 
-  // * Reander
+  // * Render
   return (
     <motion.div
       onHoverStart={() => {

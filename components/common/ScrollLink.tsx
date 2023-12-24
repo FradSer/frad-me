@@ -2,10 +2,10 @@ import { Link } from 'react-scroll'
 
 type IScrollLinkProps = {
   destination: string
-  children: React.ReactNode
+  children: any
 }
 
-export default function ScrollLink<T extends IScrollLinkProps>(props: T) {
+export default function ScrollLink(props: IScrollLinkProps) {
   return (
     <Link to={props.destination} spy={true} smooth={true} duration={500}>
       {props.children}
