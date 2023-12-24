@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.0](https://github.com/FradSer/frad-me/compare/v0.7.0...v0.8.0) (2023-12-24)
+
+
+### Features
+
+* **deps:** add `million` ([8d2e0f8](https://github.com/FradSer/frad-me/commit/8d2e0f87748a75234db9d9f68effec0977221478))
+* **deps:** integrate @vercel/speed-insights ([b3a1d48](https://github.com/FradSer/frad-me/commit/b3a1d486256ca93600050bff1600c8eef53b2afd))
+
+
+### Bug Fixes
+
+* **cmpts:** fix ts types ([4fbeea7](https://github.com/FradSer/frad-me/commit/4fbeea7efbb9fb83dfaddf66f4537641392a5515))
+* **cmpts:** typo ([a5c9dc9](https://github.com/FradSer/frad-me/commit/a5c9dc9fb969acaeeb41adb820a4ea978e76b3eb))
+
 ## [0.7.0](https://github.com/FradSer/frad-me/compare/v0.6.2...v0.7.0) (2023-07-25)
 
 ### [0.6.2](https://github.com/FradSer/frad-me/compare/v0.6.1...v0.6.2) (2023-05-05)
