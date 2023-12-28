@@ -99,7 +99,7 @@ export default function DotRing() {
         controls.start('initial')
         setDotRingTitle('')
     }
-  }, [mouseContext.cursorType])
+  }, [mouseContext.cursorType, controls])
 
   // * Render
   return (
