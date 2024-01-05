@@ -1,18 +1,23 @@
 # Changelog
 
-## [0.8.0](https://github.com/FradSer/frad-me/compare/v0.7.0...v0.8.0) (2023-12-24)
-
-
-### Features
-
-* **deps:** add `million` ([8d2e0f8](https://github.com/FradSer/frad-me/commit/8d2e0f87748a75234db9d9f68effec0977221478))
-* **deps:** integrate @vercel/speed-insights ([b3a1d48](https://github.com/FradSer/frad-me/commit/b3a1d486256ca93600050bff1600c8eef53b2afd))
-
+## [0.8.1](https://github.com/FradSer/frad-me/compare/v0.8.0...v0.8.1) (2024-01-05)
 
 ### Bug Fixes
 
-* **cmpts:** fix ts types ([4fbeea7](https://github.com/FradSer/frad-me/commit/4fbeea7efbb9fb83dfaddf66f4537641392a5515))
-* **cmpts:** typo ([a5c9dc9](https://github.com/FradSer/frad-me/commit/a5c9dc9fb969acaeeb41adb820a4ea978e76b3eb))
+- **cmpts:** add missing dependency to effect ([9176e9c](https://github.com/FradSer/frad-me/commit/9176e9c0a088ce4aa4fa1e8d2a7e371afeb1dd9e))
+- **cmpts:** dot circle animation ([4f0a0ea](https://github.com/FradSer/frad-me/commit/4f0a0ea81b6e82cb639a05c8554bfa1bd50caa17))
+
+## [0.8.0](https://github.com/FradSer/frad-me/compare/v0.7.0...v0.8.0) (2023-12-24)
+
+### Features
+
+- **deps:** add `million` ([8d2e0f8](https://github.com/FradSer/frad-me/commit/8d2e0f87748a75234db9d9f68effec0977221478))
+- **deps:** integrate @vercel/speed-insights ([b3a1d48](https://github.com/FradSer/frad-me/commit/b3a1d486256ca93600050bff1600c8eef53b2afd))
+
+### Bug Fixes
+
+- **cmpts:** fix ts types ([4fbeea7](https://github.com/FradSer/frad-me/commit/4fbeea7efbb9fb83dfaddf66f4537641392a5515))
+- **cmpts:** typo ([a5c9dc9](https://github.com/FradSer/frad-me/commit/a5c9dc9fb969acaeeb41adb820a4ea978e76b3eb))
 
 ## [0.7.0](https://github.com/FradSer/frad-me/compare/v0.6.2...v0.7.0) (2023-07-25)
 
