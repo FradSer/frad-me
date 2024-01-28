@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.9.0](https://github.com/FradSer/frad-me/compare/v0.8.1...v0.9.0) (2024-01-28)
+
+### Features
+
+- **webxr:** add hero text in xr ([2b480e3](https://github.com/FradSer/frad-me/commit/2b480e35915096245361f85d7c8a43fb7e2c2f6b))
+
+### Bug Fixes
+
+- **webxr:** switch to planeGeometry for mesh ([3e64fa9](https://github.com/FradSer/frad-me/commit/3e64fa9092a5c568d83741b50ed36483b949aea1))
+
 ## [0.8.1](https://github.com/FradSer/frad-me/compare/v0.8.0...v0.8.1) (2024-01-05)
 
 ### Bug Fixes
