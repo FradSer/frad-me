@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react'
+import React, { ReactNode, useRef } from 'react'
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Controllers, XR, XRButton } from '@react-three/xr'
@@ -34,15 +34,21 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
   const xrDetect = useXRDetect()
 
   return xrDetect.isVR ? (
-    <>
-      <XRButton mode="VR" />
-      <Canvas>
+    <div className="w-screen h-screen bg-black">
+      <div
+        className={
+          'absolute h-60 w-60 bottom-4 m-auto left-0 right-0 text-white text-5xl font-black z-50'
+        }
+      >
+        <XRButton mode="VR" />
+      </div>
+      <Canvas className={'w-full'}>
         <XR>
           <Controllers />
           {children}
         </XR>
       </Canvas>
-    </>
+    </div>
   ) : (
     <Canvas>
       <MouseMove>{children}</MouseMove>
