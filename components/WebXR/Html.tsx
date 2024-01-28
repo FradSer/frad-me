@@ -133,7 +133,7 @@ export default function Html({
 
   return (
     <mesh>
-      <planeBufferGeometry args={[size.width, size.height]} />
+      <planeGeometry args={[size.width, size.height]} />
       <meshBasicMaterial map={texture} side={THREE.DoubleSide} transparent />
     </mesh>
   )
