@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/FradSer/frad-me/compare/v0.9.0...v0.9.1) (2024-02-03)
+
+
+### Features
+
+* **deps:** update deps ([214cd3b](https://github.com/FradSer/frad-me/commit/214cd3b1ebe2b01e3562f9f7bffd440b6749efe7))
+
 ## [0.9.0](https://github.com/FradSer/frad-me/compare/v0.8.1...v0.9.0) (2024-01-28)
 
 ### Features
