@@ -69,7 +69,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
   return (
     <>
       <Head>
-        <title>{frontmatter.title} | Work by Frad</title>
+        <title>{`${frontmatter.title} | Work by Frad`}</title>
       </Head>
 
       <main className="flex flex-col items-center justify-center">
