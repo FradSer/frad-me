@@ -39,7 +39,7 @@ module.exports = {
   importOrderSeparation: true,
   importOrderTypeImportsToBottom: true,
   plugins: [
-    require('prettier-plugin-tailwindcss'),
-    require('@serverless-guru/prettier-plugin-import-order'),
+    'prettier-plugin-tailwindcss',
+    '@serverless-guru/prettier-plugin-import-order',
   ],
 }
