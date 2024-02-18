@@ -43,7 +43,7 @@ export default function ThemeSwitcher() {
         className="flex h-8 w-8 items-center justify-center"
         onClick={() =>
           setTheme(
-            theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark'
+            theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark',
           )
         }
         initial="initial"

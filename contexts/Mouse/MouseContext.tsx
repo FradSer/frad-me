@@ -14,5 +14,5 @@ const mouseContextDefaultValues: mouseContextType = {
 }
 
 export const MouseContext = createContext<mouseContextType>(
-  mouseContextDefaultValues
+  mouseContextDefaultValues,
 )

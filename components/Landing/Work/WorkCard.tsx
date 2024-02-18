@@ -27,7 +27,7 @@ function WorkCard(props: IWorkCardProps) {
       'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
       'hover:cursor-not-allowed': props.isWIP,
       'hover:cursor-pointer': !props.isWIP,
-    }
+    },
   )
 
   const backgroundImageClass = classNames('absolute w-full h-full', {

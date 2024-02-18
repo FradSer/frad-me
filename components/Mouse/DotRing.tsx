@@ -15,14 +15,14 @@ export default function DotRing() {
 
   // * Styling
   const textClass = classNames(
-    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50'
+    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',
   )
 
   const backgroundClass = classNames(
     'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
       'mix-blend-difference': mouseContext.cursorType == 'default',
-    }
+    },
   )
 
   // * Animation

@@ -27,6 +27,7 @@ import {
 } from '@/components/WorkPage/WorkImage'
 import WorkInfomation from '@/components/WorkPage/WorkInfomation'
 import WorkSite from '@/components/WorkPage/WorkSite'
+
 import { getAllPosts, getSinglePost } from '@/utils/mdx'
 
 type IWorkProps = {

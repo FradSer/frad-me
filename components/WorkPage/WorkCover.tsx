@@ -14,7 +14,7 @@ function WorkCover(props: IWorkCoverProps) {
   const imageAlt = 'Cover for ' + props.title
   const workCoverClass = classNames(
     'flex h-[75vh] w-screen items-center justify-center relative overflow-hidden',
-    props.coverBackground
+    props.coverBackground,
   )
 
   return (

@@ -180,7 +180,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
     'fixed flex h-screen w-screen items-center justify-center overflow-hidden',
     {
       'z-50': loading.isLoading,
-    }
+    },
   )
 
   return (
@@ -197,7 +197,7 @@ function LayoutWrapper({ children }: ILayoutWrapperProps) {
         variants={loadingContentVariants}
         className={classNames(
           'text-4xl font-bold text-black dark:text-white md:text-7xl',
-          loadingClass
+          loadingClass,
         )}
       >
         loading
