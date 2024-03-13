@@ -6,6 +6,7 @@ module.exports = {
   tabWidth: 2,
   printWidth: 80,
   semi: false,
+  endOfLine: 'lf',
   overrides: [
     {
       files: ['*.json'],
