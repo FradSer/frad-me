@@ -32,6 +32,7 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
           </svg>
         </motion.div>
         <motion.div // Circle
+          initial={{ height: '20%', width: '20%' }}
           animate={{ height: ['20%', '100%'], width: ['20%', '100%'] }}
           transition={{ ...primaryTransition, delay: 2 }}
           className="absolute z-0 h-full w-full"
