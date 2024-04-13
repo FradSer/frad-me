@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.2](https://github.com/FradSer/frad-me/compare/v0.9.1...v0.9.2) (2024-4-13)
+
+### Features
+
+- **deps:** update deps ([167f121](https://github.com/FradSer/frad-me/commit/167f121931e12e21bfa1e3e25b9c091291d8e6fe))
+- **eslint:** add esLint configuration file ([468a8ae](https://github.com/FradSer/frad-me/commit/468a8ae8cf437d89aab6ad46ca53434558a6f8b5))
+
+### Bug Fixes
+
+- **landing:** dot circle animaiton ([cddac91](https://github.com/FradSer/frad-me/commit/cddac9184249d60934c82758b32c0366085aaa63))
+- **landing:** improve dot circle animation ([fb14bed](https://github.com/FradSer/frad-me/commit/fb14bed07b6ef9aa4c3913ef7ca449f85c9cd56c))
+- **prettier:** invalid configuration ([92f8c43](https://github.com/FradSer/frad-me/commit/92f8c43ba88c8429157290c3f0d45c9d0a33212e))
+- **work:** improve title element ([8109d76](https://github.com/FradSer/frad-me/commit/8109d768f64dceadab83c861ed0034f63237e563))
+
 ## [0.9.1](https://github.com/FradSer/frad-me/compare/v0.9.0...v0.9.1) (2024-02-03)
 
 ### Features
