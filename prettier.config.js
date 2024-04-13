@@ -6,6 +6,7 @@ module.exports = {
   tabWidth: 2,
   printWidth: 80,
   semi: false,
+  endOfLine: 'lf',
   overrides: [
     {
       files: ['*.json'],
@@ -39,7 +40,7 @@ module.exports = {
   importOrderSeparation: true,
   importOrderTypeImportsToBottom: true,
   plugins: [
-    require('prettier-plugin-tailwindcss'),
-    require('@serverless-guru/prettier-plugin-import-order'),
+    'prettier-plugin-tailwindcss',
+    '@serverless-guru/prettier-plugin-import-order',
   ],
 }

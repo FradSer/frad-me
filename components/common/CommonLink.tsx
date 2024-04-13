@@ -23,7 +23,7 @@ function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
   const { pathname } = useRouter()
 
   const titleClass = classNames(
-    'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer'
+    'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
   )
 
   const titleAnchor = <a className={titleClass}>{title}</a>

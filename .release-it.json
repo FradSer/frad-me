@@ -2,7 +2,9 @@
   "git": {
     "commitMessage": "chore(yarn): bump to v${version}",
     "tagName": "v${version}",
-    "requireUpstream": false
+    "requireUpstream": false,
+    "tag": false,
+    "push": false
   },
   "github": {
     "release": false

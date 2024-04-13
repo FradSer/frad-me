@@ -16,7 +16,7 @@ const getCompiledMDX = async (content: string) => {
       ROOT,
       'node_modules',
       'esbuild',
-      'esbuild.exe'
+      'esbuild.exe',
     )
   } else {
     process.env.ESBUILD_BINARY_PATH = path.join(
@@ -24,7 +24,7 @@ const getCompiledMDX = async (content: string) => {
       'node_modules',
       'esbuild',
       'bin',
-      'esbuild'
+      'esbuild',
     )
   }
   // Add your remark and rehype plugins here

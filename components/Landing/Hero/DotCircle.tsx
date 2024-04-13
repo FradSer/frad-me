@@ -1,30 +1,37 @@
+import { useState } from 'react'
+
 import { motion } from 'framer-motion'
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
 
-import {
-  primaryTransition,
-  secondaryTransition,
-} from '@/utils/motion/springTransitions'
+import { primaryTransition } from '@/utils/motion/springTransitions'
 
 interface IDotCircleProps {
   isInteractive?: boolean
 }
 
 function DotCircle({ isInteractive }: IDotCircleProps) {
+  let animationCircleDelay = 2.5
+  let animationArrowDelay = 0.6
+  const [hovered, setHovered] = useState<boolean>(false)
+
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
-      <div className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100">
-        <motion.div
+      <motion.div
+        onHoverStart={() => setHovered(true)}
+        onHoverEnd={() => setHovered(false)}
+        className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100"
+      >
+        <motion.div // Arrow
           whileInView={{
             opacity: [0, 1],
-            transition: { ...primaryTransition, delay: 2.5 },
+            transition: {
+              ...primaryTransition,
+              delay: animationArrowDelay + animationCircleDelay,
+            },
           }}
           viewport={{ once: true }}
-          whileHover={{
-            scale: 1.1,
-            transition: { ...primaryTransition },
-          }}
+          animate={{ scale: hovered ? 1.1 : 1 }}
           className="absolute top-4 left-9 z-10 m-auto h-6 w-6 fill-white dark:fill-black"
         >
           <svg viewBox="0 0 18 46">
@@ -32,15 +39,16 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
           </svg>
         </motion.div>
         <motion.div // Circle
+          initial={{ height: '20%', width: '20%' }}
           animate={{ height: ['20%', '100%'], width: ['20%', '100%'] }}
-          transition={{ ...primaryTransition, delay: 2 }}
+          transition={{ ...primaryTransition, delay: animationCircleDelay }}
           className="absolute z-0 h-full w-full"
         >
           <svg viewBox="0 0 96 96" className="fill-black dark:fill-white">
             <circle cx="48" cy="48" r="48" />
           </svg>
         </motion.div>
-      </div>
+      </motion.div>
     </CursorProvider>
   )
 }

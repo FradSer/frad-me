@@ -11,7 +11,7 @@ interface IHeroProps {
 
 function Hero({ isWebXR }: IHeroProps) {
   const heroH1 = classNames(
-    'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl'
+    'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
   )
 
   return (
@@ -19,7 +19,7 @@ function Hero({ isWebXR }: IHeroProps) {
       <h1
         className={classNames(
           'flex flex-col items-start justify-center',
-          heroH1
+          heroH1,
         )}
       >
         <div className="relative">

@@ -7,7 +7,7 @@ type ICommonProps = {
 }
 
 const wrapperClass = classNames(
-  'col-span-16 col-start-1 md:col-span-10 md:col-start-7'
+  'col-span-16 col-start-1 md:col-span-10 md:col-start-7',
 )
 
 function H1(props: ICommonProps) {
@@ -29,7 +29,7 @@ function H3(props: ICommonProps) {
 }
 
 const listWrapperClass = classNames(
-  'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4'
+  'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4',
 )
 
 function OL(props: ICommonProps) {

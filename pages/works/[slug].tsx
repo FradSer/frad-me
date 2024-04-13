@@ -5,10 +5,10 @@ import Head from 'next/head'
 import classNames from 'classnames'
 import { getMDXComponent } from 'mdx-bundler/client'
 
-import Topography from '../../components/WorkPage/BearyChat/Topography'
-import ComfortableFontSFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula'
-import ComfortableFontYong from '../../components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong'
-import EyeComfortDFormula from '../../components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula'
+import Topography from '@/components/WorkPage/BearyChat/Topography'
+import ComfortableFontSFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula'
+import ComfortableFontYong from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong'
+import EyeComfortDFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula'
 import {
   Blockquote,
   H1,
@@ -18,16 +18,17 @@ import {
   OL,
   P,
   UL,
-} from '../../components/WorkPage/MDXComponents'
-import NextWork from '../../components/WorkPage/NextWork'
-import WorkCover from '../../components/WorkPage/WorkCover'
+} from '@/components/WorkPage/MDXComponents'
+import NextWork from '@/components/WorkPage/NextWork'
+import WorkCover from '@/components/WorkPage/WorkCover'
 import {
   WorkSingleImage,
   WorkBeforeAfterImages,
-} from '../../components/WorkPage/WorkImage'
-import WorkInfomation from '../../components/WorkPage/WorkInfomation'
-import WorkSite from '../../components/WorkPage/WorkSite'
-import { getAllPosts, getSinglePost } from '../../utils/mdx'
+} from '@/components/WorkPage/WorkImage'
+import WorkInfomation from '@/components/WorkPage/WorkInfomation'
+import WorkSite from '@/components/WorkPage/WorkSite'
+
+import { getAllPosts, getSinglePost } from '@/utils/mdx'
 
 type IWorkProps = {
   slug: string
@@ -69,7 +70,7 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
   return (
     <>
       <Head>
-        <title>{frontmatter.title} | Work by Frad</title>
+        <title>{`${frontmatter.title} | Work by Frad`}</title>
       </Head>
 
       <main className="flex flex-col items-center justify-center">
