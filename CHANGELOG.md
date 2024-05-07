@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.4](https://github.com/FradSer/frad-me/compare/v0.9.3...v0.9.4) (2024-5-7)
+
+### Features
+
+- **landing:** update footer copyright year ([b2cfcac](https://github.com/FradSer/frad-me/commit/b2cfcacc1b14682c2ffd89ec335b19d5650e5597))
+
 ## [0.9.3](https://github.com/FradSer/frad-me/compare/v0.9.2...v0.9.3) (2024-4-14)
 
 ### Features
