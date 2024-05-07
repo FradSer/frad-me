@@ -13,7 +13,7 @@ function Footer() {
         ))}
       </ul>
       <span className="text-gray-400 hover:cursor-default">
-        Made by Frad © 2023
+        Made by Frad © {new Date().getFullYear()}
       </span>
     </footer>
   )
