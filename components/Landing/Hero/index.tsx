@@ -36,17 +36,21 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
         <span className="text-gray-400">advancement. Whether it&apos;s </span>
         <div>
           coding
-          <span className="text-gray-400"> in a new language, </span>
+          {/*
+           */}
+          <span className="text-gray-400"> in a new language,</span>
         </div>
         <div>
           design
+          {/*
+           */}
           <span className="text-gray-400"> with any tool whatsoever</span>
         </div>
         <div className="relative">
           <span className="text-gray-400">or building a </span>
           startup
           <ScrollLink destination="work">
-            <DotCircle isInteractive={isWebXR ? false : true} />
+            <DotCircle isInteractive={!isWebXR} />
           </ScrollLink>
         </div>
       </h1>
