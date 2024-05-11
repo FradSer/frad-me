@@ -9,7 +9,7 @@ interface IHeroProps {
   isWebXR?: boolean
 }
 
-function Hero({ isWebXR }: IHeroProps) {
+function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   const heroH1 = classNames(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
   )
@@ -52,10 +52,6 @@ function Hero({ isWebXR }: IHeroProps) {
       </h1>
     </section>
   )
-}
-
-Hero.defaultProps = {
-  isWebXR: false,
 }
 
 export default Hero

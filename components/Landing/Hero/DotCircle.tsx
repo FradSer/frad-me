@@ -10,7 +10,7 @@ interface IDotCircleProps {
   isInteractive?: boolean
 }
 
-function DotCircle({ isInteractive }: IDotCircleProps) {
+function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
   let animationCircleDelay = 2.5
   let animationArrowDelay = 0.6
   const [hovered, setHovered] = useState<boolean>(false)
@@ -51,10 +51,6 @@ function DotCircle({ isInteractive }: IDotCircleProps) {
       </motion.div>
     </CursorProvider>
   )
-}
-
-DotCircle.defaultProps = {
-  isInteractive: true,
 }
 
 export default DotCircle

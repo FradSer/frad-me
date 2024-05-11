@@ -18,14 +18,20 @@ enum ImagePosition {
   fullScreen = 'fullScreen',
 }
 
-function WorkSingleImage(props: IWorkImageProps) {
+function WorkSingleImage({
+  src,
+  width,
+  height,
+  alt,
+  position = ImagePosition.inline,
+}: Readonly<IWorkImageProps>) {
   // * Styling
   const workImageClass = classNames('w-full overflow-hidden', {
     'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
-      props.position === ImagePosition.inline,
-    'col-span-16': props.position === ImagePosition.fullScreen,
+      position === ImagePosition.inline,
+    'col-span-16': position === ImagePosition.fullScreen,
     'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
-      props.position === ImagePosition.underH2,
+      position === ImagePosition.underH2,
   })
 
   // * Render
@@ -33,23 +39,19 @@ function WorkSingleImage(props: IWorkImageProps) {
     <MDXComponentProvider className={workImageClass}>
       <div className="work-component-layout">
         <Image
-          src={props.src}
-          width={props.width}
-          height={props.height}
-          alt={props.alt}
+          src={src}
+          width={width}
+          height={height}
+          alt={alt}
           loading="eager"
         />
-        <span className="work-caption">{props.alt}</span>
+        <span className="work-caption">{alt}</span>
       </div>
     </MDXComponentProvider>
   )
 }
 
-WorkSingleImage.defaultProps = {
-  position: ImagePosition.inline,
-}
-
-interface IWorkBeforeAfterImagesProps {
+type IWorkBeforeAfterImagesProps = {
   beforeSrc: string
   afterSrc: string
   width: number
@@ -57,28 +59,34 @@ interface IWorkBeforeAfterImagesProps {
   description: string
 }
 
-function WorkBeforeAfterImages(props: IWorkBeforeAfterImagesProps) {
+function WorkBeforeAfterImages({
+  beforeSrc,
+  afterSrc,
+  width,
+  height,
+  description,
+}: Readonly<IWorkBeforeAfterImagesProps>) {
   return (
     <MDXComponentProvider className="work-component-layout col-span-16">
       <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
-        <span>Befor:</span>
+        <span>Before:</span>
         <Image
-          src={props.beforeSrc}
-          width={props.width}
-          height={props.height}
-          alt={props.description}
+          src={beforeSrc}
+          width={width}
+          height={height}
+          alt={description}
           loading="eager"
         />
         <span>After:</span>
         <Image
-          src={props.afterSrc}
-          width={props.width}
-          height={props.height}
-          alt={props.description}
+          src={afterSrc}
+          width={width}
+          height={height}
+          alt={description}
           loading="eager"
         />
       </div>
-      <span className="work-caption">{props.description}</span>
+      <span className="work-caption">{description}</span>
     </MDXComponentProvider>
   )
 }
