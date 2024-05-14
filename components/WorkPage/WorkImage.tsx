@@ -10,6 +10,7 @@ type IWorkImageProps = {
   height: number
   alt: string
   position: ImagePosition
+  unoptimized: boolean
 }
 
 enum ImagePosition {
@@ -24,6 +25,7 @@ function WorkSingleImage({
   height,
   alt,
   position = ImagePosition.inline,
+  unoptimized = false,
 }: Readonly<IWorkImageProps>) {
   // * Styling
   const workImageClass = classNames('w-full overflow-hidden', {
@@ -44,6 +46,7 @@ function WorkSingleImage({
           height={height}
           alt={alt}
           loading="eager"
+          unoptimized={unoptimized}
         />
         <span className="work-caption">{alt}</span>
       </div>
