@@ -40,7 +40,7 @@ export default function Html({
   width,
   height,
   color = 'transparent',
-}: IHtmlProps) {
+}: Readonly<IHtmlProps>) {
   const { camera, size: viewSize, gl } = useThree()
 
   const sceneSize = useMemo(() => {

@@ -1,10 +1,8 @@
 import React, { useRef, useState } from 'react'
 
-import { Billboard, Text, TrackballControls } from '@react-three/drei'
-import { Canvas, useFrame, extend } from '@react-three/fiber'
-import { Controllers, XR, XRButton } from '@react-three/xr'
-import { createRoot } from 'react-dom/client'
-import * as THREE from 'three'
+import { Text } from '@react-three/drei'
+import { useFrame, extend } from '@react-three/fiber'
+import { XRButton } from '@react-three/xr'
 
 extend({ XRButton })
 
@@ -20,28 +18,26 @@ interface IShapeProps {
   scale?: number
 }
 
-function Line(props: ILineProps) {
+function Line(props: Readonly<ILineProps>) {
   return (
-    <>
-      <Text
-        color={props.color}
-        anchorX="center"
-        anchorY="middle"
-        fontSize={1}
-        position={props.position}
-        rotation={[0, 0, 0]}
-        font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-        onClick={() => console.log('clicked')}
-      >
-        {props.text}
-      </Text>
-    </>
+    <Text
+      color={props.color}
+      anchorX="center"
+      anchorY="middle"
+      fontSize={1}
+      position={props.position}
+      rotation={[0, 0, 0]}
+      font="fonts/GT-Eesti-Display-Bold-Trial.woff"
+      onClick={() => console.log('clicked')}
+    >
+      {props.text}
+    </Text>
   )
 }
 
-function Box(props: IShapeProps) {
+function Box(props: Readonly<IShapeProps>) {
   const meshRef = useRef()
-  const [hovered, setHover] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
   useFrame((state, delta) => {
     // @ts-ignore
@@ -54,8 +50,8 @@ function Box(props: IShapeProps) {
       // @ts-ignore
       ref={meshRef}
       onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}
+      onPointerOver={(event) => setHovered(true)}
+      onPointerOut={(event) => setHovered(false)}
     >
       <boxGeometry args={[3, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />
@@ -63,10 +59,10 @@ function Box(props: IShapeProps) {
   )
 }
 
-function Triangle(props: IShapeProps) {
+function Triangle(props: Readonly<IShapeProps>) {
   const meshRef = useRef()
 
-  const [hovered, setHover] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
 
   useFrame((state, delta) => {
@@ -81,8 +77,8 @@ function Triangle(props: IShapeProps) {
       ref={meshRef}
       scale={1.5}
       onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}
+      onPointerOver={(event) => setHovered(true)}
+      onPointerOut={(event) => setHovered(false)}
     >
       <coneGeometry args={[1, 1.4, 3, 1]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />
@@ -90,11 +86,10 @@ function Triangle(props: IShapeProps) {
   )
 }
 
-function Sphere(props: IShapeProps) {
+function Sphere(props: Readonly<IShapeProps>) {
   const meshRef = useRef()
 
-  const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
+  const [hovered, setHovered] = useState(false)
 
   useFrame((state, delta) => {
     // @ts-ignore
@@ -107,8 +102,8 @@ function Sphere(props: IShapeProps) {
       // @ts-ignore
       ref={meshRef}
       scale={1.5}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}
+      onPointerOver={(event) => setHovered(true)}
+      onPointerOut={(event) => setHovered(false)}
     >
       <sphereGeometry args={[0.65, 16, 16]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />

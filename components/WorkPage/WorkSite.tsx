@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function WorkSite(props: { href?: string }) {
+export default function WorkSite(props: Readonly<{ href?: string }>) {
   if (!props.href) return null
   return (
     <div className="col-span-3">

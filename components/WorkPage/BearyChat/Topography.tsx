@@ -14,7 +14,7 @@ interface ITopographyImageProps {
   translateY?: string
 }
 
-function TopographyImage(props: ITopographyImageProps) {
+function TopographyImage(props: Readonly<ITopographyImageProps>) {
   const topographyClass = classNames('absolute h-auto w-full border-gray-200', {
     'z-50': props.isTop,
   })

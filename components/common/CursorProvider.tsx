@@ -14,7 +14,7 @@ enum CursorType {
   workCardHoveredWIP = 'work-card-hovered-wip',
 }
 
-function CursorProvider<T extends ICursorProviderProps>(props: T) {
+function CursorProvider<T extends ICursorProviderProps>(props: Readonly<T>) {
   // * Hooks
   const mouseContext = useMouseContext()
 

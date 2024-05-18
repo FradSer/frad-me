@@ -5,7 +5,7 @@ type IScrollLinkProps = {
   children: any
 }
 
-export default function ScrollLink(props: IScrollLinkProps) {
+export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
   return (
     <Link to={props.destination} spy={true} smooth={true} duration={500}>
       {props.children}

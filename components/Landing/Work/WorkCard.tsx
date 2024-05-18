@@ -18,7 +18,7 @@ interface IWorkCardProps {
   isWIP?: boolean
 }
 
-function WorkCard(props: IWorkCardProps) {
+function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
   const linkClass = classNames(
     'relative flex w-full items-center justify-center overflow-hidden',
