@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.5](https://github.com/FradSer/frad-me/compare/v0.9.4...v0.9.5) (2024-5-18)
+
+### Features
+
+- **cmpts:** add unoptimized prop to work image ([f2256b4](https://github.com/FradSer/frad-me/commit/f2256b427b4845eb9579ce33a60d8db54149bd87))
+
+### Bug Fixes
+
+- **cmpts:** typo ([40bc9fb](https://github.com/FradSer/frad-me/commit/40bc9fbd1baf4fbf22052cda78e574dc15df9a0f))
+- **work:** adjust width of images ([f27ec46](https://github.com/FradSer/frad-me/commit/f27ec462f3daaa8d915689c88914b502b584e5e0))
+
 ## [0.9.4](https://github.com/FradSer/frad-me/compare/v0.9.3...v0.9.4) (2024-5-7)
 
 ### Features
