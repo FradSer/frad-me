@@ -25,7 +25,7 @@ import {
   WorkSingleImage,
   WorkBeforeAfterImages,
 } from '@/components/WorkPage/WorkImage'
-import WorkInfomation from '@/components/WorkPage/WorkInfomation'
+import WorkInformation from '@/components/WorkPage/WorkInformation'
 import WorkSite from '@/components/WorkPage/WorkSite'
 
 import { getAllPosts, getSinglePost } from '@/utils/mdx'
@@ -92,8 +92,8 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
           </article>
 
           <div className={girdClass}>
-            <WorkInfomation title="platforms" data={frontmatter.platforms} />
-            <WorkInfomation
+            <WorkInformation title="platforms" data={frontmatter.platforms} />
+            <WorkInformation
               title="contributors"
               data={frontmatter.contributors}
             />

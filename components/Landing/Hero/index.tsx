@@ -9,7 +9,7 @@ interface IHeroProps {
   isWebXR?: boolean
 }
 
-function Hero({ isWebXR }: IHeroProps) {
+function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   const heroH1 = classNames(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
   )
@@ -36,26 +36,26 @@ function Hero({ isWebXR }: IHeroProps) {
         <span className="text-gray-400">advancement. Whether it&apos;s </span>
         <div>
           coding
-          <span className="text-gray-400"> in a new language, </span>
+          {/*
+           */}
+          <span className="text-gray-400"> in a new language,</span>
         </div>
         <div>
           design
+          {/*
+           */}
           <span className="text-gray-400"> with any tool whatsoever</span>
         </div>
         <div className="relative">
           <span className="text-gray-400">or building a </span>
           startup
           <ScrollLink destination="work">
-            <DotCircle isInteractive={isWebXR ? false : true} />
+            <DotCircle isInteractive={!isWebXR} />
           </ScrollLink>
         </div>
       </h1>
     </section>
   )
-}
-
-Hero.defaultProps = {
-  isWebXR: false,
 }
 
 export default Hero

@@ -1,4 +1,4 @@
-export default function WorkInfomation(props: {
+export default function WorkInformation(props: {
   title: string
   data?: [string]
 }) {

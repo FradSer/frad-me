@@ -19,7 +19,11 @@ enum DestinationType {
   section = 'section',
 }
 
-function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
+function CommonLink({
+  title,
+  href,
+  destinationType = DestinationType.link,
+}: Readonly<ICommonLinkProps>) {
   const { pathname } = useRouter()
 
   const titleClass = classNames(
@@ -53,10 +57,6 @@ function CommonLink({ title, href, destinationType }: ICommonLinkProps) {
       {link}
     </CursorProvider>
   )
-}
-
-CommonLink.defaultProps = {
-  destinationType: DestinationType.link,
 }
 
 export { CommonLink, DestinationType }
