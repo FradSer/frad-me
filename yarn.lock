@@ -1663,6 +1663,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-three/eslint-plugin@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@react-three/eslint-plugin@npm:0.1.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.17.8"
+    eslint: "npm:^8.12.0"
+  checksum: 10/7b467b8b679484a2c9759c4113857bb01d12f31a68d6052f4d06df7ec610866cbc725437eba331a879191829eb8e57b400f29b08732246608b0898e3071c1ea0
+  languageName: node
+  linkType: hard
+
 "@react-three/fiber@npm:^8.16.6":
   version: 8.16.6
   resolution: "@react-three/fiber@npm:8.16.6"
@@ -4461,7 +4471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8":
+"eslint@npm:8, eslint@npm:^8.12.0":
   version: 8.57.0
   resolution: "eslint@npm:8.57.0"
   dependencies:
@@ -4930,6 +4940,7 @@ __metadata:
   resolution: "frad-me@workspace:."
   dependencies:
     "@react-three/drei": "npm:^9.105.6"
+    "@react-three/eslint-plugin": "npm:^0.1.1"
     "@react-three/fiber": "npm:^8.16.6"
     "@react-three/xr": "npm:^5.7.1"
     "@release-it/conventional-changelog": "npm:^8.0.1"
