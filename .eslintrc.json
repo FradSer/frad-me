@@ -1,9 +1,11 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:@react-three/recommended"
+    "plugin:@react-three/recommended",
+    "plugin:sonarjs/recommended-legacy"
   ],
   "rules": {
     "@next/next/no-img-element": "off"
-  }
+  },
+  "plugins": ["sonarjs"]
 }
