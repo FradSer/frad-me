@@ -14,7 +14,7 @@ import {
   H1,
   H2,
   H3,
-  HR,
+  Line,
   OL,
   P,
   UL,
@@ -50,7 +50,7 @@ const mdxComponents = {
   h1: H1,
   h2: H2,
   h3: H3,
-  hr: HR,
+  line: Line,it
   ol: OL,
   p: P,
   ul: UL,
@@ -62,7 +62,7 @@ const mdxComponents = {
   EyeComfortDFormula,
 }
 
-export default function WorkPage({ code, frontmatter }: IWorkProps) {
+export default function WorkPage({ code, frontmatter }: Readonly<IWorkProps>) {
   const Component = useMemo(() => getMDXComponent(code), [code])
 
   const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6')
@@ -100,13 +100,13 @@ export default function WorkPage({ code, frontmatter }: IWorkProps) {
             <WorkSite href={frontmatter.site} />
           </div>
 
-          <HR />
+          <Line />
 
           <article className={classNames('text-lg', girdClass)}>
             <Component components={mdxComponents} />
           </article>
 
-          <HR />
+          <Line />
 
           <NextWork href={frontmatter.nextWork} />
 
