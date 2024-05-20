@@ -8,7 +8,7 @@ interface IWorkCoverProps {
   coverBackground?: string
 }
 
-function WorkCover(props: IWorkCoverProps) {
+function WorkCover(props: Readonly<IWorkCoverProps>) {
   if (!props.src) return null
 
   const imageAlt = 'Cover for ' + props.title

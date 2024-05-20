@@ -11,7 +11,7 @@ type IGenericCanvasProps = {
   children: ReactNode
 }
 
-function MouseMove({ children }: IGenericCanvasProps) {
+function MouseMove({ children }: Readonly<IGenericCanvasProps>) {
   const mousePosition = useMousePosition()
   const windowSize = useWindowSize()
 

@@ -6,7 +6,9 @@ type MouseContextProps = {
   children: ReactNode
 }
 
-export default function MouseContextProvider({ children }: MouseContextProps) {
+export default function MouseContextProvider({
+  children,
+}: Readonly<MouseContextProps>) {
   const [cursorType, setCursorType] = useState<string>('default')
 
   const cursorChangeHandler = (cursorType: string) => {

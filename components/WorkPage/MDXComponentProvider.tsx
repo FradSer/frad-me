@@ -5,7 +5,7 @@ interface IMDXComponentProviderProps {
   className?: string
 }
 
-function MDXComponentProvider(props: IMDXComponentProviderProps) {
+function MDXComponentProvider(props: Readonly<IMDXComponentProviderProps>) {
   // * Animation
   const variants = {
     hidden: {
