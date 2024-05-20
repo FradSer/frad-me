@@ -50,7 +50,7 @@ const mdxComponents = {
   h1: H1,
   h2: H2,
   h3: H3,
-  line: Line,it
+  line: Line,
   ol: OL,
   p: P,
   ul: UL,
