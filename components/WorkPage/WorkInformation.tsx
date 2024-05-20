@@ -1,7 +1,9 @@
-export default function WorkInformation(props: {
-  title: string
-  data?: [string]
-}) {
+export default function WorkInformation(
+  props: Readonly<{
+    title: string
+    data?: [string]
+  }>,
+) {
   if (!props.data) return null
   return (
     <div className="col-span-8 md:col-span-3">
