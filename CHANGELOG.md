@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.9.6](https://github.com/FradSer/frad-me/compare/v0.9.5...v0.9.6) (2024-5-20)
+
 ## [0.9.5](https://github.com/FradSer/frad-me/compare/v0.9.4...v0.9.5) (2024-5-18)
 
 ### Features
