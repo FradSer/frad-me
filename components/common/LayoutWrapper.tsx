@@ -55,7 +55,7 @@ interface ILayoutWrapperProps {
   children: ReactNode
 }
 
-function LayoutWrapper({ children }: ILayoutWrapperProps) {
+function LayoutWrapper({ children }: Readonly<ILayoutWrapperProps>) {
   const loading = useLoading()
 
   const loadingBackgroundControls = useAnimationControls()

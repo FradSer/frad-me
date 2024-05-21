@@ -55,8 +55,8 @@ function Blockquote(props: Readonly<ICommonProps>) {
   )
 }
 
-function HR() {
+function Line() {
   return <hr className="col-span-16 my-4 h-1 bg-black dark:bg-white"></hr>
 }
 
-export { Blockquote, H1, H2, H3, HR, P, OL, UL, wrapperClass }
+export { Blockquote, H1, H2, H3, Line, P, OL, UL, wrapperClass }
