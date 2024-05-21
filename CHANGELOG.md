@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.7](https://github.com/FradSer/frad-me/compare/v0.9.6...v0.9.7) (2024-5-21)
+
+### Bug Fixes
+
+- **work:** fix typo in mdx components object ([35682ff](https://github.com/FradSer/frad-me/commit/35682ff30dec1f6374bfd790c90f881f6b1fac73))
+
 ## [0.9.6](https://github.com/FradSer/frad-me/compare/v0.9.5...v0.9.6) (2024-5-20)
 
 ## [0.9.5](https://github.com/FradSer/frad-me/compare/v0.9.4...v0.9.5) (2024-5-18)
