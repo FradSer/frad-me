@@ -31,7 +31,6 @@ import WorkSite from '@/components/WorkPage/WorkSite'
 import { getAllPosts, getSinglePost } from '@/utils/mdx'
 
 type IWorkProps = {
-  slug: string
   code: string
   frontmatter: {
     cover?: string
