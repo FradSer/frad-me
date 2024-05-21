@@ -1,7 +1,5 @@
 import React from 'react'
 
-import dynamic from 'next/dynamic'
-
 import { Stars } from '@react-three/drei'
 
 import GenericCanvas from '@/components/WebXR/GeneralCanvas'
