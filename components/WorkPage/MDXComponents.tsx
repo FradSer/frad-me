@@ -12,7 +12,7 @@ const wrapperClass = classNames(
 
 function H1(props: Readonly<ICommonProps>) {
   return (
-    <h1 className="col-span-16 col-start-1 mt-4 mb-2 text-4xl font-bold md:col-span-10 md:mt-8 md:mb-4">
+    <h1 className="col-span-16 col-start-1 mb-2 mt-4 text-4xl font-bold md:col-span-10 md:mb-4 md:mt-8">
       {props.children}
     </h1>
   )

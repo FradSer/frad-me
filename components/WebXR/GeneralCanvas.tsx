@@ -34,10 +34,10 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
   const xrDetect = useXRDetect()
 
   return xrDetect.isVR ? (
-    <div className="w-screen h-screen bg-black">
+    <div className="h-screen w-screen bg-black">
       <div
         className={
-          'absolute h-60 w-60 bottom-4 m-auto left-0 right-0 text-white text-5xl font-black z-50'
+          'absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white'
         }
       >
         <XRButton mode="VR" />
