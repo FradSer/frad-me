@@ -9,7 +9,7 @@ import headerLinks from '@/content/headerLinks'
 function Header() {
   return (
     <nav className="flex h-24 flex-row items-center justify-between">
-      <div className="flex items-center justify-center ">
+      <div className="flex items-center justify-center">
         <Link href="/" className="hover:cursor-none">
           <FLogo />
         </Link>
