@@ -31,7 +31,6 @@ export default function Model() {
   //       return () => animation.forEach((clip) => mixer.uncacheClip(clip));
   //     }
   //   }, [animation, mixer]);
-
   const deg2rad = (degrees: number) => degrees * (Math.PI / 180)
 
   return (
