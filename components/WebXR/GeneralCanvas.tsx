@@ -1,7 +1,7 @@
 import React, { ReactNode, useRef } from 'react'
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Controllers, XR, XRButton } from '@react-three/xr'
+import { XR, createXRStore} from '@react-three/xr'
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
@@ -10,6 +10,8 @@ import useXRDetect from '@/hooks/useXRDetect'
 type IGenericCanvasProps = {
   children: ReactNode
 }
+
+const store = createXRStore()
 
 function MouseMove({ children }: Readonly<IGenericCanvasProps>) {
   const mousePosition = useMousePosition()
@@ -40,13 +42,10 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
           'absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white'
         }
       >
-        <XRButton mode="VR" />
+        <button onClick={() => store.enterVR()}>Enter</button>
       </div>
       <Canvas className={'w-full'}>
-        <XR>
-          <Controllers />
-          {children}
-        </XR>
+        <XR store={store}>{children}</XR>
       </Canvas>
     </div>
   ) : (
