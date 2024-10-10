@@ -42,7 +42,8 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
           'absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white'
         }
       >
-        <button onClick={() => store.enterVR()}>Enter</button>
+        <button onClick={() => store.enterVR()}>Enter VR</button>
+        <button onClick={() => store.enterAR()}>Enter AR</button>
       </div>
       <Canvas className={'w-full'}>
         <XR store={store}>{children}</XR>
