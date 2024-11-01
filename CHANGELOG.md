@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.8](https://github.com/FradSer/frad-me/compare/v0.9.7...v0.9.8) (2024-6-28)
+
+### Bug Fixes
+
+- **content:** correct terminology and typos ([0e69eca](https://github.com/FradSer/frad-me/commit/0e69eca75f3c3740b57054eaa91c0885ecc92a61))
+
 ## [0.9.7](https://github.com/FradSer/frad-me/compare/v0.9.6...v0.9.7) (2024-5-21)
 
 ### Bug Fixes

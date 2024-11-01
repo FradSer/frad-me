@@ -23,7 +23,7 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
         )}
       >
         <div className="relative">
-          <div className="absolute bottom-10 -left-12 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20">
+          <div className="absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20">
             <Triangle />
           </div>
           Frad LEE

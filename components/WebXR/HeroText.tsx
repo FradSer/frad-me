@@ -49,9 +49,9 @@ function Box(props: Readonly<IShapeProps>) {
       {...props}
       // @ts-ignore
       ref={meshRef}
-      onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHovered(true)}
-      onPointerOut={(event) => setHovered(false)}
+      onClick={() => setActive(!active)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       <boxGeometry args={[3, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />
@@ -76,9 +76,9 @@ function Triangle(props: Readonly<IShapeProps>) {
       // @ts-ignore
       ref={meshRef}
       scale={1.5}
-      onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHovered(true)}
-      onPointerOut={(event) => setHovered(false)}
+      onClick={() => setActive(!active)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       <coneGeometry args={[1, 1.4, 3, 1]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />
@@ -102,8 +102,8 @@ function Sphere(props: Readonly<IShapeProps>) {
       // @ts-ignore
       ref={meshRef}
       scale={1.5}
-      onPointerOver={(event) => setHovered(true)}
-      onPointerOut={(event) => setHovered(false)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       <sphereGeometry args={[0.65, 16, 16]} />
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />

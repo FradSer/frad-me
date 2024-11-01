@@ -34,7 +34,7 @@ const getCompiledMDX = async (content: string) => {
   try {
     return await bundleMDX({
       source: content,
-      mdxOptions(options, frontmatter) {
+      mdxOptions(options) {
         options.remarkPlugins = [
           ...(options.remarkPlugins ?? []),
           ...remarkPlugins,
