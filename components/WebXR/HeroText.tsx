@@ -1,10 +1,7 @@
 import React, { useRef, useState } from 'react'
 
 import { Text } from '@react-three/drei'
-import { useFrame, extend } from '@react-three/fiber'
-import { XRButton } from '@react-three/xr'
-
-extend({ XRButton })
+import { useFrame } from '@react-three/fiber'
 
 interface ILineProps {
   position: [number, number, number]
