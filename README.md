@@ -1,34 +1,115 @@
+# frad-me
+
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FradSer_frad-me&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=FradSer_frad-me)
+[![TypeScript](https://img.shields.io/badge/TypeScript-62.7%25-blue)](https://github.com/FradSer/frad-me)
+[![Website](https://img.shields.io/badge/website-frad.me-green)](https://frad.me)
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A personal website built using modern web technologies to share thoughts, experiences, and showcase projects. Designed for speed, accessibility, and a seamless user experience.
 
-## Getting Started
+---
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-yarn dev
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Language**: TypeScript (62.7%)
+- **Content**: MDX (32.9%)
+- **Styling**: CSS with advanced features
+- **Deployment**: Vercel
+
+---
+
+## 🌟 Features
+
+- **High Performance**: Optimized with Next.js for fast load times
+- **Content Management**: Powered by MDX for flexible and dynamic content
+- **Custom Design**: Unique styling and animations for a tailored experience
+- **Responsive**: Fully functional on all devices
+- **SEO-Friendly**: Built with best practices for search engines
+- **Type-Safe Development**: Ensured with TypeScript
+
+---
+
+## 🛠 Quick Start
+
+1. **Clone the Repository**:
+
+    ```bash
+    git clone https://github.com/FradSer/frad-me.git
+    cd frad-me
+    ```
+
+2. **Install Dependencies**:
+
+    ```bash
+    yarn install
+    ```
+
+3. **Start Development Server**:
+
+    ```bash
+    yarn dev
+    ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📁 Project Structure
+
+```
+frad-me/
+├── components/     # React components
+├── pages/          # Next.js pages
+├── public/         # Static assets
+├── styles/         # CSS styles
+└── content/        # MDX content
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 🔧 Development Scripts
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.tsx`.
+- `yarn dev`: Start the development server
+- `yarn build`: Create a production build
+- `yarn start`: Launch the production server
+- `yarn lint`: Run linting for code quality
+- `yarn format`: Format code and content files
+- `yarn release`: Prepare a new release
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+---
 
-## Learn More
+## 🚀 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+The website is automatically deployed to **Vercel** on every push to the `main` branch. The deployment process includes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Building the Next.js application
+2. Running quality checks
+3. Deploying to production
+4. Ensuring quality assurance
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✅ Code Quality
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project adheres to high-quality coding standards:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **SonarCloud**: Continuous code quality analysis
+- **TypeScript**: Strong type-checking
+- **ESLint**: Enforced code style consistency
+- **Automated Testing & CI/CD**: Robust testing and deployment pipelines
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 💬 Contact
+
+For questions or suggestions, please [open an issue](https://github.com/FradSer/frad-me/issues) in the repository.
+
+---
+
+Built with ❤️ by [FradSer](https://x.com/FradSer).
