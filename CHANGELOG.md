@@ -2,11 +2,10 @@
 
 ## [0.9.9](https://github.com/FradSer/frad-me/compare/v0.9.8...v0.9.9) (2024-11-03)
 
-
 ### Features
 
-* **cmpts:** add ad support ([4a4ed05](https://github.com/FradSer/frad-me/commit/4a4ed05593cff5a29ca3c2268843190c29f11efc))
-* **cmpts:** update logo animation ([096d756](https://github.com/FradSer/frad-me/commit/096d756ca316c21b7540084b7ea51e7722567f94))
+- **cmpts:** add ad support ([4a4ed05](https://github.com/FradSer/frad-me/commit/4a4ed05593cff5a29ca3c2268843190c29f11efc))
+- **cmpts:** update logo animation ([096d756](https://github.com/FradSer/frad-me/commit/096d756ca316c21b7540084b7ea51e7722567f94))
 
 ## [0.9.8](https://github.com/FradSer/frad-me/compare/v0.9.7...v0.9.8) (2024-6-28)
 

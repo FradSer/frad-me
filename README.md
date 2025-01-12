@@ -33,22 +33,22 @@ A personal website built using modern web technologies to share thoughts, experi
 
 1. **Clone the Repository**:
 
-    ```bash
-    git clone https://github.com/FradSer/frad-me.git
-    cd frad-me
-    ```
+   ```bash
+   git clone https://github.com/FradSer/frad-me.git
+   cd frad-me
+   ```
 
 2. **Install Dependencies**:
 
-    ```bash
-    yarn install
-    ```
+   ```bash
+   pnpm install
+   ```
 
 3. **Start Development Server**:
 
-    ```bash
-    yarn dev
-    ```
+   ```bash
+   pnpm dev
+   ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -69,12 +69,12 @@ frad-me/
 
 ## 🔧 Development Scripts
 
-- `yarn dev`: Start the development server
-- `yarn build`: Create a production build
-- `yarn start`: Launch the production server
-- `yarn lint`: Run linting for code quality
-- `yarn format`: Format code and content files
-- `yarn release`: Prepare a new release
+- `pnpm dev`: Start the development server
+- `pnpm build`: Create a production build
+- `pnpm start`: Launch the production server
+- `pnpm lint`: Run linting for code quality
+- `pnpm format`: Format code and content files
+- `pnpm release`: Prepare a new release
 
 ---
 
