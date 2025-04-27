@@ -1,0 +1,38 @@
+# https://www.frad.me llms-full.txt
+
+## Frad LEE's Creative Journey
+
+Frad LEE is a self-taught craftier who is eager to learn for advancement. Whether it's coding in a new language, design with any tool whatsoever or building a startup.
+
+## work
+
+![Cover for Eye Protection Design Handbook](https://www.frad.me/_next/image?url=%2Fworks%2Feye-protection-design-handbook%2Fcover.png&w=3840&q=75)
+
+Design Research
+
+Eye Protection Design Handbook
+
+![Cover for BearyChat](https://www.frad.me/_next/image?url=%2Fworks%2Fbearychat%2Fcover.png&w=3840&q=75)
+
+Product Management / Strategy
+
+BearyChat
+
+![Cover for Pachino](https://www.frad.me/_next/image?url=%2Fworks%2Fpachino%2Fcover.png&w=3840&q=75)
+
+Product Design / Development
+
+Pachino
+
+![Cover for Interactive Cross-platform Mixed Reality Video Player](https://www.frad.me/_next/image?url=%2Fworks%2Finteractive-cross-iplatform-mixed-reality-video-player%2Fcover.png&w=3840&q=75)
+
+Design Research / XR Prototyper
+
+Interactive Cross-platform Mixed Reality Video Player
+
+![Cover for Usability Design for Xigua Video](https://www.frad.me/_next/image?url=%2Fworks%2Fusability-design-for-xigua-video%2Fcover.png&w=3840&q=75)
+
+Design Research / Product Design
+
+Usability Design for Xigua Video
+
