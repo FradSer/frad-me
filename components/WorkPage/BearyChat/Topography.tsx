@@ -14,22 +14,28 @@ interface ITopographyImageProps {
   translateY?: string
 }
 
-function TopographyImage(props: Readonly<ITopographyImageProps>) {
+function TopographyImage({
+  isTop = false,
+  src,
+  alt,
+  translateX,
+  translateY,
+}: Readonly<ITopographyImageProps>) {
   const topographyClass = classNames('absolute h-auto w-full border-gray-200', {
-    'z-50': props.isTop,
+    'z-50': isTop,
   })
 
-  const opacity = props.isTop ? 0 : 1
-  const borderWidth = props.isTop ? '0' : '1px'
+  const opacity = isTop ? 0 : 1
+  const borderWidth = isTop ? '0' : '1px'
 
-  const duration = props.isTop ? 0.8 : 1.6
+  const duration = isTop ? 0.8 : 1.6
 
   return (
     <motion.div
       whileInView={{
         skewY: -5,
-        translateX: props.translateX,
-        translateY: props.translateY,
+        translateX: translateX,
+        translateY: translateY,
         opacity: opacity,
         borderWidth: borderWidth,
       }}
@@ -41,19 +47,14 @@ function TopographyImage(props: Readonly<ITopographyImageProps>) {
       className={topographyClass}
     >
       <Image
-        src={props.src}
+        src={src}
         width={1135}
         height={680}
-        alt={props.alt}
+        alt={alt}
         loading="eager"
       />
     </motion.div>
   )
-}
-
-TopographyImage.defaultProps = {
-  isTop: false,
-  opacity: 1,
 }
 
 function Topography() {
