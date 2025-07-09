@@ -1,0 +1,97 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is a Next.js personal website for Frad LEE built with TypeScript, featuring:
+- Portfolio/work showcase with MDX content
+- WebXR/VR capabilities with React Three Fiber
+- Dark mode support with next-themes
+- Custom mouse interactions and animations
+- Responsive design with Tailwind CSS
+
+## Common Development Commands
+
+**Development:**
+```bash
+pnpm dev          # Start development server on localhost:3000
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+pnpm format       # Format code with Prettier
+```
+
+**Package Management:**
+- Uses `pnpm` as package manager
+- Node.js version: 22.x (specified in engines)
+
+## Architecture
+
+### Core Structure
+- **pages/**: Next.js pages using App Router pattern
+  - `index.tsx`: Landing page with Hero and Work sections
+  - `works/[slug].tsx`: Dynamic work detail pages
+  - `webxr.tsx`: WebXR experience page
+  - `_app.tsx`: App wrapper with theme provider and XR detection
+
+### Key Components Organization
+- **components/**: Organized by feature/page
+  - `Landing/`: Hero section with 3D elements, Work showcase
+  - `WebXR/`: VR/AR components using React Three Fiber
+  - `WorkPage/`: MDX-based work detail components
+  - `Header/`: Navigation with theme switcher
+  - `common/`: Shared components (LayoutWrapper, etc.)
+
+### Content Management
+- **content/**: MDX files for work portfolio
+  - `works/`: Individual work case studies (.mdx files)
+  - Link configuration files for navigation
+- **utils/mdx.ts**: MDX processing with mdx-bundler
+
+### State Management
+- **contexts/**: React contexts for global state
+  - `Mouse/`: Custom mouse cursor functionality
+- **hooks/**: Custom React hooks
+  - `useXRDetect.ts`: WebXR capability detection
+  - `useLoading.ts`: Loading state management
+
+## Key Technologies
+
+**Frontend Stack:**
+- Next.js 14 with TypeScript
+- React 18 with Tailwind CSS
+- Framer Motion for animations
+- next-themes for dark mode
+
+**3D/XR Features:**
+- React Three Fiber ecosystem (@react-three/fiber, @react-three/drei, @react-three/xr)
+- Three.js for 3D graphics
+- WebXR for VR/AR experiences
+
+**Content & Styling:**
+- MDX with mdx-bundler for content
+- Custom Tailwind configuration with GT Eesti fonts
+- Million.js for React optimization
+
+## Development Notes
+
+**MDX Content:**
+- Work case studies are in `/content/works/` as `.mdx` files
+- Custom MDX components in `components/WorkPage/MDXComponents.tsx`
+- Frontmatter includes cover, title, description, platforms, contributors
+
+**WebXR Integration:**
+- XR detection in `_app.tsx` renders different UI for VR users
+- WebXR components are dynamically imported (SSR disabled)
+- 3D models stored in `/public/` (.gltf files)
+
+**Styling System:**
+- Custom Tailwind config extends grid system (16-column grid)
+- Dark mode implemented with class-based switching
+- Custom aspect ratios and font families configured
+
+**Performance:**
+- Million.js compiler integration
+- Dynamic imports for WebXR components
+- Vercel Analytics and Speed Insights integrated
