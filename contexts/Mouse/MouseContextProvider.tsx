@@ -10,6 +10,7 @@ export default function MouseContextProvider({
   children,
 }: Readonly<MouseContextProps>) {
   const [cursorType, setCursorType] = useState<string>('default')
+  const [attractorPosition, setAttractorPosition] = useState<{ x: number; y: number } | null>(null)
 
   const cursorChangeHandler = (cursorType: string) => {
     setCursorType(cursorType)
@@ -19,8 +20,10 @@ export default function MouseContextProvider({
     return {
       cursorType: cursorType,
       cursorChangeHandler: cursorChangeHandler,
+      attractorPosition: attractorPosition,
+      setAttractorPosition: setAttractorPosition,
     }
-  }, [cursorType])
+  }, [cursorType, attractorPosition])
 
   return <MouseContext.Provider value={value}>{children}</MouseContext.Provider>
 }

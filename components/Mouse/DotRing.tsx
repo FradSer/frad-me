@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import classNames from 'classnames'
-import { motion, useAnimationControls } from 'framer-motion'
+import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 import useMousePosition from '@/hooks/useMousePosition'
@@ -12,6 +12,12 @@ export default function DotRing() {
   // * Hooks
   const mousePosition = useMousePosition()
   const mouseContext = useMouseContext()
+
+  // * Physical attraction
+  const attractedX = useMotionValue(mousePosition.x)
+  const attractedY = useMotionValue(mousePosition.y)
+  const springX = useSpring(attractedX, { stiffness: 300, damping: 30 })
+  const springY = useSpring(attractedY, { stiffness: 300, damping: 30 })
 
   // * Styling
   const textClass = classNames(
@@ -52,6 +58,15 @@ export default function DotRing() {
         ...primaryTransition,
       },
     },
+    attracted: {
+      ...transitionOffset,
+      height: '2rem',
+      width: '2rem',
+      opacity: 0.8,
+      transition: {
+        ...primaryTransition,
+      },
+    },
   }
 
   const textVariants = {
@@ -83,6 +98,25 @@ export default function DotRing() {
 
   // * Effects
   useEffect(() => {
+    // Update position based on attraction
+    if (mouseContext.attractorPosition) {
+      const attractorPos = mouseContext.attractorPosition
+      const mousePos = { x: mousePosition.x, y: mousePosition.y }
+      
+      // Calculate blend position (closer to attractor)
+      const blendFactor = 0.7
+      const blendedX = mousePos.x + (attractorPos.x - mousePos.x) * blendFactor
+      const blendedY = mousePos.y + (attractorPos.y - mousePos.y) * blendFactor
+      
+      attractedX.set(blendedX)
+      attractedY.set(blendedY)
+    } else {
+      attractedX.set(mousePosition.x)
+      attractedY.set(mousePosition.y)
+    }
+  }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY])
+
+  useEffect(() => {
     switch (mouseContext.cursorType) {
       case 'header-link-hovered':
         controls.start('headerLinkHovered')
@@ -94,6 +128,10 @@ export default function DotRing() {
       case 'work-card-hovered-wip':
         controls.start('workCardHover')
         setDotRingTitle('WIP')
+        break
+      case 'attracted':
+        controls.start('attracted')
+        setDotRingTitle('')
         break
       default:
         controls.start('initial')
@@ -109,7 +147,7 @@ export default function DotRing() {
         variants={textVariants}
         initial="initial"
         className={textClass}
-        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
+        style={{ left: springX, top: springY }}
       >
         <h1>{dotRingTitle}</h1>
       </motion.div>
@@ -118,7 +156,7 @@ export default function DotRing() {
         variants={backgroundVariants}
         initial="initial"
         className={backgroundClass}
-        style={{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }}
+        style={{ left: springX, top: springY }}
       ></motion.div>
     </>
   )

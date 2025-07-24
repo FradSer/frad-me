@@ -205,7 +205,9 @@ function LayoutWrapper({ children }: Readonly<ILayoutWrapperProps>) {
       </motion.span>
       <motion.div
         onViewportEnter={() => {
-          contentControls.start('show')
+          if (!loading.isLoading) {
+            contentControls.start('show')
+          }
         }}
         className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
       >

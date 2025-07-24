@@ -6,11 +6,15 @@ import { createContext } from 'react'
 type mouseContextType = {
   cursorType: string
   cursorChangeHandler: (cursorType: string) => void
+  attractorPosition: { x: number; y: number } | null
+  setAttractorPosition: (position: { x: number; y: number } | null) => void
 }
 
 const mouseContextDefaultValues: mouseContextType = {
   cursorType: 'default',
   cursorChangeHandler: () => {},
+  attractorPosition: null,
+  setAttractorPosition: () => {},
 }
 
 export const MouseContext = createContext<mouseContextType>(

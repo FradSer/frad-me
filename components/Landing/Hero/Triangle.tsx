@@ -1,9 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion'
 
+import usePhysicalAttraction from '@/hooks/usePhysicalAttraction'
+
 export default function Triangle() {
   const { scrollYProgress } = useScroll()
+  const triangleRef = useRef<HTMLDivElement>(null)
 
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
   const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
@@ -11,6 +14,13 @@ export default function Triangle() {
   const initialRotate = Math.random() * 360
   const rotate = useMotionValue(0)
   const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90])
+
+  // Physical attraction
+  const { isAttracted } = usePhysicalAttraction({
+    elementRef: triangleRef,
+    attractionRadius: 80,
+    isActive: true,
+  })
 
   useEffect(() => {
     function updateRotate() {
@@ -25,11 +35,20 @@ export default function Triangle() {
 
   return (
     <motion.div
+      ref={triangleRef}
       initial={{ rotate: initialRotate }}
+      animate={{
+        scale: isAttracted ? 1.1 : 1,
+      }}
       style={{
         x,
         y,
         rotate,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
       }}
     >
       <svg
