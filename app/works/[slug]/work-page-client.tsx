@@ -59,7 +59,7 @@ const mdxComponents = {
   EyeComfortDFormula,
 }
 
-const GRID_CLASS = 'grid grid-cols-16 gap-y-3 md:gap-y-6'
+const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6'
 
 export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageClientProps>) {
   const Component = useMemo(() => getMDXComponent(code), [code])
@@ -73,16 +73,17 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
       />
 
       <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
-        <header className={GRID_CLASS}>
+        <header className={gridClass}>
           <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
             <strong className="font-black text-black dark:text-white">
               {frontmatter.title}
             </strong>{' '}
             {frontmatter.description}
           </h1>
+          <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
         </header>
 
-        <div className={GRID_CLASS}>
+        <div className={gridClass}>
           <WorkInformation title="platforms" data={frontmatter.platforms} />
           <WorkInformation title="contributors" data={frontmatter.contributors} />
           {frontmatter.site && <WorkSite href={frontmatter.site} />}
@@ -90,7 +91,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         <Line />
 
-        <article className={`${GRID_CLASS} text-lg`}>
+        <article className={`${gridClass} text-lg`}>
           <Component components={mdxComponents} />
         </article>
 
@@ -98,7 +99,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         {frontmatter.nextWork && <NextWork href={frontmatter.nextWork} />}
 
-        <div className="col-span-16 h-16" aria-hidden="true" />
+        <span className="col-span-16 h-16" />
       </section>
     </main>
   )
