@@ -45,7 +45,11 @@ export default class ErrorBoundary extends Component<
               An unexpected error occurred. Please try refreshing the page.
             </p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.reload()
+                }
+              }}
               className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
             >
               Refresh Page
