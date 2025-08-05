@@ -69,7 +69,8 @@ test.describe('Works Page', () => {
       const response = await page.goto(path)
       
       // Either loads successfully or returns 404
-      expect(response?.status()).toBeOneOf([200, 404])
+      const status = response?.status()
+      expect([200, 404]).toContain(status)
       
       if (response?.status() === 200) {
         const workDetailPage = new WorkDetailPage(page)

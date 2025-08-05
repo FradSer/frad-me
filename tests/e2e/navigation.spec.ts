@@ -68,7 +68,8 @@ test.describe('Navigation', () => {
     
     // Should handle 404 or redirect appropriately
     // This depends on your error handling implementation
-    expect(response?.status()).toBeOneOf([404, 302, 200])
+    const status = response?.status()
+    expect([404, 302, 200]).toContain(status)
   })
 
   test('should have responsive header across all viewport sizes', async ({ page }) => {

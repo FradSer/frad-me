@@ -40,7 +40,7 @@ export class BasePage {
 
   async waitForPageLoad() {
     await this.page.waitForLoadState('networkidle')
-    await expect(this.page.locator(selectors.layout.main)).toBeVisible()
+    await expect(this.page.locator(selectors.layout.main).first()).toBeVisible()
   }
 
   async setViewport(viewport: keyof typeof viewports) {
@@ -229,7 +229,7 @@ export class HomePage extends BasePage {
     
     // Verify main sections
     await this.header.verifyHeaderVisible()
-    await expect(this.page.locator(selectors.layout.main)).toBeVisible()
+    await expect(this.page.locator(selectors.layout.main).first()).toBeVisible()
   }
 
   async performCompleteUITest() {
