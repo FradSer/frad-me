@@ -6,6 +6,7 @@ import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-
 import useMouseContext from '@/hooks/useMouseContext'
 import useMousePosition from '@/hooks/useMousePosition'
 
+import { calculateBlendPosition } from '@/utils/motion/animationHelpers'
 import { primaryTransition } from '@/utils/motion/springTransitions'
 
 export default function DotRing() {
@@ -27,7 +28,7 @@ export default function DotRing() {
   const backgroundClass = classNames(
     'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
-      'mix-blend-difference': mouseContext.cursorType == 'default',
+      'mix-blend-difference': mouseContext.cursorType === 'default',
     },
   )
 
@@ -93,51 +94,33 @@ export default function DotRing() {
     },
   }
 
-  // * Dot Ring Title
-  const [dotRingTitle, setDotRingTitle] = useState('')
+  // * Cursor state mapping
+  const cursorStateMap = {
+    'header-link-hovered': { animation: 'headerLinkHovered', title: '' },
+    'work-card-hovered': { animation: 'workCardHover', title: 'READ' },
+    'work-card-hovered-wip': { animation: 'workCardHover', title: 'WIP' },
+    'attracted': { animation: 'attracted', title: '' },
+    'default': { animation: 'initial', title: '' },
+  } as const
+
+  const currentState = cursorStateMap[mouseContext.cursorType] || cursorStateMap.default
+  const dotRingTitle = currentState.title
 
   // * Effects
   useEffect(() => {
-    // Update position based on attraction
-    if (mouseContext.attractorPosition) {
-      const attractorPos = mouseContext.attractorPosition
-      const mousePos = { x: mousePosition.x, y: mousePosition.y }
-      
-      // Calculate blend position (closer to attractor)
-      const blendFactor = 0.7
-      const blendedX = mousePos.x + (attractorPos.x - mousePos.x) * blendFactor
-      const blendedY = mousePos.y + (attractorPos.y - mousePos.y) * blendFactor
-      
-      attractedX.set(blendedX)
-      attractedY.set(blendedY)
-    } else {
-      attractedX.set(mousePosition.x)
-      attractedY.set(mousePosition.y)
-    }
+    const blendedPosition = calculateBlendPosition(
+      mousePosition,
+      mouseContext.attractorPosition,
+      0.7
+    )
+    
+    attractedX.set(blendedPosition.x)
+    attractedY.set(blendedPosition.y)
   }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY])
 
   useEffect(() => {
-    switch (mouseContext.cursorType) {
-      case 'header-link-hovered':
-        controls.start('headerLinkHovered')
-        break
-      case 'work-card-hovered':
-        controls.start('workCardHover')
-        setDotRingTitle('READ')
-        break
-      case 'work-card-hovered-wip':
-        controls.start('workCardHover')
-        setDotRingTitle('WIP')
-        break
-      case 'attracted':
-        controls.start('attracted')
-        setDotRingTitle('')
-        break
-      default:
-        controls.start('initial')
-        setDotRingTitle('')
-    }
-  }, [mouseContext.cursorType, controls])
+    controls.start(currentState.animation)
+  }, [currentState.animation, controls])
 
   // * Render
   return (

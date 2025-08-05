@@ -7,13 +7,10 @@ const ROOT = process.cwd()
 const POSTS_PATH = path.join(ROOT, 'content', 'works')
 
 // Error handling utility
-const createError = (message: string, cause?: unknown) => {
-  const error = new Error(message)
-  if (cause instanceof Error) {
-    error.cause = cause
-  }
-  return error
-}
+const createError = (message: string, cause?: unknown) => 
+  Object.assign(new Error(message), { 
+    cause: cause instanceof Error ? cause : undefined 
+  })
 
 type PostFrontmatter = {
   title: string
