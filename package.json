@@ -13,6 +13,14 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"**/*.{js,ts,tsx,md,mdx,json}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:all": "npm run test:run && npm run test:e2e",
     "release": "release-it"
   },
   "dependencies": {
@@ -39,9 +47,13 @@
     "three-stdlib": "^2.36.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@react-three/eslint-plugin": "^0.1.2",
     "@release-it/conventional-changelog": "^8.0.2",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.2",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.16.2",
     "@types/react": "^18.3.23",
@@ -49,15 +61,18 @@
     "@types/react-scroll": "^1.8.10",
     "@types/three": "^0.169.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.30",
     "eslint-plugin-sonarjs": "^1.0.4",
+    "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "0.6.8",
     "release-it": "^17.11.0",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }
