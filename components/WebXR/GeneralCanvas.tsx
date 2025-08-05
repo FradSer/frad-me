@@ -12,18 +12,20 @@ type CanvasProps = {
   children: ReactNode
 }
 
-// Create dynamic import helper
-const createDynamicImport = (chunkName: string, importPath: string, componentName: string) =>
-  dynamic(
-    () => measureChunkLoad(chunkName, () => 
-      import(importPath).then(mod => ({ default: mod[componentName] }))
-    ),
-    { ssr: false }
-  )
-
 // Dynamic imports for code splitting
-const Canvas = createDynamicImport('Canvas', '@react-three/fiber', 'Canvas')
-const XR = createDynamicImport('XR', '@react-three/xr', 'XR')
+const Canvas = dynamic(
+  () => measureChunkLoad('Canvas', () => 
+    import('@react-three/fiber').then(mod => ({ default: mod.Canvas }))
+  ),
+  { ssr: false }
+)
+
+const XR = dynamic(
+  () => measureChunkLoad('XR', () => 
+    import('@react-three/xr').then(mod => ({ default: mod.XR }))
+  ),
+  { ssr: false }
+)
 
 const xrStore = createXRStore()
 
