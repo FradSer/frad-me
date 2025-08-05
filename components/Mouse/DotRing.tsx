@@ -3,10 +3,17 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 import useMousePosition from '@/hooks/useMousePosition'
+import usePointerType from '@/hooks/usePointerType'
 
 export default function DotRing() {
+  const pointerType = usePointerType()
   const mousePosition = useMousePosition()
   const { cursorType } = useMouseContext()
+
+  // Hide cursor on touch devices (mobile, tablets)
+  if (pointerType === 'coarse' || pointerType === 'none') {
+    return null
+  }
 
   // Use motion values for smooth spring animation
   const mouseX = useMotionValue(mousePosition.x)
