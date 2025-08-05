@@ -1,8 +1,20 @@
 import React, { ReactNode, useRef } from 'react'
+import dynamic from 'next/dynamic'
 
-import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, createXRStore } from '@react-three/xr'
+import { useFrame } from '@react-three/fiber'
+import { createXRStore } from '@react-three/xr'
 import * as THREE from 'three'
+import { measureChunkLoad } from '@/utils/performance'
+
+// Dynamic imports for better code splitting
+const Canvas = dynamic(
+  () => measureChunkLoad('Canvas', () => import('@react-three/fiber').then(mod => ({ default: mod.Canvas }))),
+  { ssr: false }
+)
+const XR = dynamic(
+  () => measureChunkLoad('XR', () => import('@react-three/xr').then(mod => ({ default: mod.XR }))),
+  { ssr: false }
+)
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'

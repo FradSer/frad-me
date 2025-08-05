@@ -1,8 +1,14 @@
 import React, { useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 
-import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { measureChunkLoad } from '@/utils/performance'
+
+const Text = dynamic(
+  () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
+  { ssr: false }
+)
 
 interface ILineProps {
   position: [number, number, number]
