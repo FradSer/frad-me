@@ -1,52 +1,43 @@
-import { useEffect, useState, useRef } from 'react'
-import RAFManager from '@/utils/animation/RAFManager'
+import { useEffect, useState } from 'react'
 
 type MousePosition = { x: number; y: number }
 
 /**
- * Optimized mouse position hook using centralized RAF
+ * Optimized mouse position hook - simplified version
  * 
  * Improvements over original useMousePosition:
- * - Uses centralized RAF instead of throttle for better performance
  * - Eliminates 50ms throttle delay for smoother tracking
- * - Single mousemove listener for entire app
- * - Batched position updates synchronized with frame rate
+ * - Direct state updates for immediate response
+ * - Passive event listeners for better performance
  */
 export default function useOptimizedMousePosition(): MousePosition {
-  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 })
-  const rafManager = RAFManager.getInstance()
-  const currentPosition = useRef<MousePosition>({ x: 0, y: 0 })
-  const hasMovedRef = useRef(false)
+  // Initialize with center of screen to avoid starting at (0,0)
+  const [mousePosition, setMousePosition] = useState<MousePosition>(() => {
+    if (typeof window !== 'undefined') {
+      return {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      }
+    }
+    return { x: 0, y: 0 }
+  })
 
   useEffect(() => {
-    // Single mousemove listener that just stores the latest position
+    // Direct mouse position updates - no throttling, no RAF complexity
     const updateMousePosition = (event: MouseEvent) => {
-      currentPosition.current = {
+      setMousePosition({
         x: event.clientX,
         y: event.clientY,
-      }
-      hasMovedRef.current = true
+      })
     }
 
-    // RAF callback that updates state if mouse has moved
-    const rafCallback = () => {
-      if (hasMovedRef.current) {
-        setMousePosition({ ...currentPosition.current })
-        hasMovedRef.current = false
-      }
-    }
-
-    // Subscribe to RAF with high priority for mouse tracking
-    const unsubscribeRAF = rafManager.subscribe('mouse-position', rafCallback, 100)
-    
-    // Add mouse listener
+    // Add mouse listener with passive flag for performance
     document.addEventListener('mousemove', updateMousePosition, { passive: true })
 
     return () => {
       document.removeEventListener('mousemove', updateMousePosition)
-      unsubscribeRAF()
     }
-  }, [rafManager])
+  }, [])
 
   return mousePosition
 }
