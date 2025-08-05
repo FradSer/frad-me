@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { motion, useSpring } from 'framer-motion'
+import { useEffect, useMemo } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 import useMousePosition from '@/hooks/useMousePosition'
@@ -8,9 +8,17 @@ export default function DotRing() {
   const mousePosition = useMousePosition()
   const { cursorType } = useMouseContext()
 
-  // Smooth mouse following with spring physics
-  const x = useSpring(mousePosition.x, { stiffness: 300, damping: 30 })
-  const y = useSpring(mousePosition.y, { stiffness: 300, damping: 30 })
+  // Use motion values for smooth spring animation
+  const mouseX = useMotionValue(mousePosition.x)
+  const mouseY = useMotionValue(mousePosition.y)
+  const x = useSpring(mouseX, { stiffness: 300, damping: 30 })
+  const y = useSpring(mouseY, { stiffness: 300, damping: 30 })
+
+  // Update motion values when mouse position changes
+  useEffect(() => {
+    mouseX.set(mousePosition.x)
+    mouseY.set(mousePosition.y)
+  }, [mousePosition.x, mousePosition.y, mouseX, mouseY])
 
   // Memoize cursor state to avoid recalculating on every render
   const cursorState = useMemo(() => {
