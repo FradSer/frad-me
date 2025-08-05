@@ -43,7 +43,7 @@ export default defineConfig({
     // Setup project for authentication if needed
     {
       name: 'setup',
-      testMatch: /[^/]*\.setup\.ts$/,
+      testMatch: '**/*.setup.ts',
     },
     
     // Desktop browsers
