@@ -21,6 +21,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:all": "npm run test:ci && npm run test:e2e",
+    "analyze": "cross-env ANALYZE=true next build",
     "release": "release-it"
   },
   "dependencies": {
@@ -47,6 +48,7 @@
     "three-stdlib": "^2.36.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.4.5",
     "@playwright/test": "^1.54.2",
     "@react-three/eslint-plugin": "^0.1.2",
     "@release-it/conventional-changelog": "^8.0.2",
@@ -62,6 +64,7 @@
     "@types/three": "^0.169.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "autoprefixer": "^10.4.21",
+    "cross-env": "^10.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.30",
     "eslint-plugin-sonarjs": "^1.0.4",
