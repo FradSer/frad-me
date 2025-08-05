@@ -10,11 +10,6 @@ export default function DotRing() {
   const mousePosition = useMousePosition()
   const { cursorType } = useMouseContext()
 
-  // Hide cursor on touch devices (mobile, tablets)
-  if (pointerType === 'coarse' || pointerType === 'none') {
-    return null
-  }
-
   // Use motion values for smooth spring animation
   const mouseX = useMotionValue(mousePosition.x)
   const mouseY = useMotionValue(mousePosition.y)
@@ -42,6 +37,11 @@ export default function DotRing() {
         return { showBackground: true, showText: false, text: '', size: '1rem' }
     }
   }, [cursorType])
+
+  // Hide cursor on touch devices (mobile, tablets)
+  if (pointerType === 'coarse' || pointerType === 'none') {
+    return null
+  }
 
   const baseStyle = { 
     left: x, 
