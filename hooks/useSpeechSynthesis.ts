@@ -60,13 +60,10 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
       const selectedVoice = voices.find((voice) => voice.name === voiceName)
       if (selectedVoice) {
         utterance.voice = selectedVoice
-        // console.log(`Using voice: ${voiceName}`); // For debugging
       } else if (voices.length > 0) {
         // Fallback logic if specific voice not found but voices are available
-        // console.warn(`Voice '${voiceName}' not found. Using default or first available.`);
         // You might want to set a default voice here, e.g., utterance.voice = voices[0];
       } else {
-        // console.warn('No voices available. Using browser default.');
       }
 
       utterance.onstart = () => {

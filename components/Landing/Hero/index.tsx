@@ -21,6 +21,9 @@ design with any tool whatsoever
 or building a startup.
 `
 
+const trianglePositionClass = 'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20'
+const mutedTextClass = 'text-gray-400'
+
 function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis()
 
@@ -50,31 +53,27 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
           </button>
         )}
         <div className="relative">
-          <div className="absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20">
+          <div className={trianglePositionClass}>
             <Triangle />
           </div>
           Frad LEE
-          <span className="text-gray-400"> is a self-taught craftier</span>
+          <span className={mutedTextClass}> is a self-taught craftier</span>
         </div>
         <div className="flex w-full">
-          <span className="text-gray-400">who is eager to learn for</span>
+          <span className={mutedTextClass}>who is eager to learn for</span>
           <Rectangle />
         </div>
-        <span className="text-gray-400">advancement. Whether it&apos;s </span>
+        <span className={mutedTextClass}>advancement. Whether it&apos;s </span>
         <div>
           coding
-          {/*
-           */}
-          <span className="text-gray-400"> in a new language,</span>
+          <span className={mutedTextClass}> in a new language,</span>
         </div>
         <div>
           design
-          {/*
-           */}
-          <span className="text-gray-400"> with any tool whatsoever</span>
+          <span className={mutedTextClass}> with any tool whatsoever</span>
         </div>
         <div className="relative">
-          <span className="text-gray-400">or building a </span>
+          <span className={mutedTextClass}>or building a </span>
           startup
           <ScrollLink destination="work">
             <DotCircle isInteractive={!isWebXR} />

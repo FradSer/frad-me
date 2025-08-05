@@ -32,7 +32,11 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 Try Again
               </button>
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.reload()
+                  }
+                }}
                 className="w-full rounded-lg border border-red-300 px-4 py-2 text-red-700 transition-colors hover:bg-red-50"
               >
                 Refresh Page

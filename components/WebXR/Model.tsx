@@ -10,7 +10,6 @@ import { GLTFLoader } from 'three-stdlib'
 export default function Model() {
   /* State */
   const [model, setModel] = useState()
-  //   const [animation, setAnimation] = useState<AnimationClip[] | null>(null);
 
   /* Load model */
   useEffect(() => {
@@ -21,30 +20,18 @@ export default function Model() {
     })
   }, [])
 
-  //   /* Set animation */
-  //   useEffect(() => {
-  //     if (animation && typeof group.current != 'undefined') {
-  //       actions.current = {
-  //         idle: mixer.clipAction(animation[0], group.current as Object3D),
-  //       };
-  //       actions.current.idle.play();
-  //       return () => animation.forEach((clip) => mixer.uncacheClip(clip));
-  //     }
-  //   }, [animation, mixer]);
   const deg2rad = (degrees: number) => degrees * (Math.PI / 180)
 
   return (
     <>
       {model ? (
         <group
-          // ref={group}
           dispose={null}
         >
           <primitive
             position={[0, 0, 0]}
             rotation={[deg2rad(0), deg2rad(72), deg2rad(0)]}
-            // ref={group}
-            name="Object_0"
+              name="Object_0"
             object={model}
           />
         </group>

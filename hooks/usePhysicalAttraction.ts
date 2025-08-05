@@ -21,41 +21,27 @@ export default function usePhysicalAttraction({
   useEffect(() => {
     if (!isActive || !elementRef.current) return
 
-    const checkAttraction = () => {
-      const element = elementRef.current
-      if (!element) return
-
-      const rect = element.getBoundingClientRect()
-      const elementCenter = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      }
-
-      const distance = Math.sqrt(
-        Math.pow(mousePosition.x - elementCenter.x, 2) +
-          Math.pow(mousePosition.y - elementCenter.y, 2),
-      )
-
-      if (distance <= attractionRadius) {
-        // Within attraction radius - set attractor position
-        mouseContext.setAttractorPosition(elementCenter)
-        mouseContext.cursorChangeHandler('attracted')
-      } else if (mouseContext.attractorPosition) {
-        // Outside attraction radius - reset
-        mouseContext.setAttractorPosition(null)
-        mouseContext.cursorChangeHandler('default')
-      }
-
-      animationFrameRef.current = requestAnimationFrame(checkAttraction)
+    const element = elementRef.current
+    const rect = element.getBoundingClientRect()
+    const elementCenter = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
     }
 
-    animationFrameRef.current = requestAnimationFrame(checkAttraction)
+    // Calculate distance using more efficient method
+    const deltaX = mousePosition.x - elementCenter.x
+    const deltaY = mousePosition.y - elementCenter.y
+    const distance = Math.hypot(deltaX, deltaY)
 
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
+    const isWithinRadius = distance <= attractionRadius
+    const wasAttracted = mouseContext.attractorPosition !== null
+
+    if (isWithinRadius && !wasAttracted) {
+      mouseContext.setAttractorPosition(elementCenter)
+      mouseContext.cursorChangeHandler('attracted')
+    } else if (!isWithinRadius && wasAttracted) {
       mouseContext.setAttractorPosition(null)
+      mouseContext.cursorChangeHandler('default')
     }
   }, [mousePosition, elementRef, attractionRadius, isActive, mouseContext])
 
