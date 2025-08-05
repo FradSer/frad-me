@@ -136,7 +136,7 @@ pnpm test:all     # Run all tests (unit + E2E)
 
 **Tailwind Configuration:**
 - JIT mode enabled for optimal build size
-- Custom GT Eesti font family integration  
+- Custom GT Eesti font family integration
 - Extended grid system (16-column layout)
 - Custom aspect ratios for responsive design
 - Class-based dark mode switching

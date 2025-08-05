@@ -1,67 +1,36 @@
-import { useRef } from 'react'
-
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
-import usePhysicalAttraction from '@/hooks/usePhysicalAttraction'
-
-// https://github.com/brunob/leaflet.fullscreen/issues/52
+import { calculateSkew, SPRING_CONFIGS } from '@/utils/motion/animationUtils'
 
 export default function Rectangle() {
-  // * Hooks
   const mousePosition = useMousePosition()
   const size = useWindowSize()
-  const rectangleRef = useRef<HTMLDivElement>(null)
 
-  // * Physical attraction
-  const { isAttracted } = usePhysicalAttraction({
-    elementRef: rectangleRef,
-    attractionRadius: 60,
-    isActive: true,
-  })
+  const { skewX: calculatedSkewX, skewY: calculatedSkewY, xValue, yValue } = calculateSkew(
+    mousePosition,
+    size,
+    2
+  )
 
-  // * Animation
-  let angle = 2
-
-  // we replace the useState with two motion values. One for each axis.
-  // Since we want the card to start out flat we set the initial
-  // values to x=0.5 y=0.5 which equals to no transformation
-  const mouseY = useMotionValue(0.5)
   const mouseX = useMotionValue(0.5)
+  const mouseY = useMotionValue(0.5)
 
-  const skewX = useTransform(mouseX, [0, 1], [angle, -angle], {
-    clamp: true,
-  })
-  const skewY = useTransform(mouseY, [0, 1], [-angle, angle], {
-    clamp: true,
-  })
+  const skewX = useTransform(mouseX, [0, 1], [2, -2], { clamp: true })
+  const skewY = useTransform(mouseY, [0, 1], [-2, 2], { clamp: true })
 
-  // set x,y local coordinates
-  const xValue = mousePosition.x / size.width
-  const yValue = mousePosition.y / size.height
-
-  // update MotionValues
+  // Update motion values
   mouseX.set(xValue, true)
   mouseY.set(yValue, true)
 
-  // * Render
   return (
     <div className="ml-2 flex grow lg:ml-8">
       <motion.div
-        ref={rectangleRef}
         className="h-full w-full bg-black dark:bg-white"
-        animate={{
-          scale: isAttracted ? 1.05 : 1,
-        }}
         style={{
           skewX: skewX,
           skewY: skewY,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 30,
         }}
       ></motion.div>
     </div>
