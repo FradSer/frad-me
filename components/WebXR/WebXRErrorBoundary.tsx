@@ -1,49 +1,144 @@
 import React, { Component, ReactNode } from 'react'
 
+import WebXR2DFallback from './WebXR2DFallback'
+import WebXR3DFallback from './WebXR3DFallback'
+import { webxrErrorLogger } from '@/utils/errorLogger'
+
+type FallbackLevel = 'webxr' | '3d' | '2d'
+
+interface ActionButton {
+  text: string
+  onClick: () => void
+  className: string
+}
+
 interface WebXRErrorBoundaryState {
   hasError: boolean
   error?: Error
   errorInfo?: React.ErrorInfo
+  fallbackLevel: FallbackLevel
+  retryCount: number
 }
 
 interface WebXRErrorBoundaryProps {
   children: ReactNode
   fallback?: ReactNode
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void
+  initialLevel?: FallbackLevel
+  enableAutoFallback?: boolean
+  maxRetries?: number
+}
+
+// Configuration for fallback progression
+const FALLBACK_PROGRESSION: Record<FallbackLevel, FallbackLevel | null> = {
+  webxr: '3d',
+  '3d': '2d',
+  '2d': null
 }
 
 class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBoundaryState> {
   constructor(props: WebXRErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false }
+    this.state = { 
+      hasError: false,
+      fallbackLevel: props.initialLevel || 'webxr',
+      retryCount: 0
+    }
   }
 
-  static getDerivedStateFromError(error: Error): WebXRErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): Partial<WebXRErrorBoundaryState> {
     return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Only set errorInfo since error is already set by getDerivedStateFromError
-    this.setState({ errorInfo })
-
-    console.error('WebXR Error Boundary caught an error:', error, errorInfo)
+    const { enableAutoFallback = true, maxRetries = 2 } = this.props
     
+    // Determine new fallback level based on retry count and auto-fallback setting
+    const shouldFallback = enableAutoFallback && this.state.retryCount < maxRetries
+    const nextLevel = shouldFallback ? FALLBACK_PROGRESSION[this.state.fallbackLevel] : null
+    
+    this.setState(prevState => ({
+      errorInfo,
+      fallbackLevel: nextLevel || prevState.fallbackLevel,
+      retryCount: prevState.retryCount + 1
+    }))
+    
+    // Handle logging and external error callback
+    this.handleErrorLogging(error, errorInfo)
     this.props.onError?.(error, errorInfo)
-    this.logToAnalytics(error)
   }
 
-  private logToAnalytics(error: Error) {
-    if (typeof window !== 'undefined' && 'gtag' in window) {
-      ;(window as any).gtag('event', 'exception', {
-        description: `WebXR Error: ${error.message}`,
-        fatal: false
-      })
+  private async handleErrorLogging(error: Error, errorInfo: React.ErrorInfo): Promise<void> {
+    const logMessage = `WebXR Error Boundary (${this.state.fallbackLevel})`
+    console.error(logMessage, error, errorInfo)
+    
+    try {
+      await webxrErrorLogger.logError(error, errorInfo)
+    } catch (loggingError) {
+      console.warn('Failed to log error:', loggingError)
     }
   }
 
-  private renderErrorFallback() {
-    const { error, errorInfo } = this.state
+  private resetErrorState = (overrides: Partial<WebXRErrorBoundaryState> = {}) => {
+    this.setState(prevState => ({
+      hasError: false,
+      error: undefined,
+      errorInfo: undefined,
+      fallbackLevel: prevState.fallbackLevel,
+      retryCount: prevState.retryCount,
+      ...overrides
+    }))
+  }
+
+  private handleRetry = () => {
+    this.resetErrorState({ retryCount: this.state.retryCount + 1 })
+  }
+
+  private handleFallbackLevelChange = (level: FallbackLevel) => {
+    this.resetErrorState({ fallbackLevel: level, retryCount: 0 })
+  }
+
+  private renderFallbackByLevel(): ReactNode {
+    const { fallbackLevel, retryCount } = this.state
+    const { maxRetries = 2, fallback } = this.props
+
+    if (fallback) return fallback
+
+    const fallbackComponents = {
+      '3d': () => retryCount <= maxRetries ? (
+        <WebXR3DFallback 
+          onError={(err) => this.componentDidCatch(err, { componentStack: '' })}
+        />
+      ) : <WebXR2DFallback />,
+      '2d': () => <WebXR2DFallback />,
+      'webxr': () => this.renderErrorFallback()
+    }
+
+    return fallbackComponents[fallbackLevel]?.() || this.renderErrorFallback()
+  }
+
+  private renderErrorFallback(): ReactNode {
+    const { error } = this.state
     const isDevMode = process.env.NODE_ENV === 'development'
+    
+    const errorReasons: readonly string[] = [
+      'Unsupported device or browser',
+      'WebGL/WebXR not available', 
+      'Graphics hardware limitations'
+    ] as const
+
+    const actionButtons: readonly ActionButton[] = [
+      {
+        text: 'Try Again',
+        onClick: () => window.location.reload(),
+        className: 'bg-blue-600 hover:bg-blue-700'
+      },
+      {
+        text: 'Return to Main Site',
+        onClick: () => { window.location.href = '/' },
+        className: 'bg-gray-700 hover:bg-gray-600'
+      }
+    ] as const
 
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center bg-gray-900 text-white">
@@ -51,26 +146,22 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
           <h1 className="mb-4 text-2xl font-bold">WebXR Experience Unavailable</h1>
           <p className="mb-6 text-gray-300">
             We encountered an issue loading the 3D experience. This might be due to:
-            <br />
-            • Unsupported device or browser
-            <br />
-            • WebGL/WebXR not available
-            <br />
-            • Graphics hardware limitations
+            {errorReasons.map(reason => (
+              <React.Fragment key={reason}>
+                <br />• {reason}
+              </React.Fragment>
+            ))}
           </p>
           <div className="space-y-3">
-            <button
-              className="w-full rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-              onClick={() => window.location.reload()}
-            >
-              Try Again
-            </button>
-            <button
-              className="w-full rounded bg-gray-700 px-4 py-2 font-medium text-white hover:bg-gray-600"
-              onClick={() => (window.location.href = '/')}
-            >
-              Return to Main Site
-            </button>
+            {actionButtons.map(({ text, onClick, className }) => (
+              <button
+                key={text}
+                className={`w-full rounded px-4 py-2 font-medium text-white ${className}`}
+                onClick={onClick}
+              >
+                {text}
+              </button>
+            ))}
           </div>
           {isDevMode && error && (
             <details className="mt-6 text-left">
@@ -79,7 +170,7 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
               </summary>
               <pre className="mt-2 overflow-auto bg-gray-800 p-2 text-xs text-red-300">
                 {error.toString()}
-                {errorInfo?.componentStack}
+                {this.state.errorInfo?.componentStack}
               </pre>
             </details>
           )}
@@ -89,10 +180,7 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
   }
 
   render() {
-    if (this.state.hasError) {
-      return this.props.fallback || this.renderErrorFallback()
-    }
-    return this.props.children
+    return this.state.hasError ? this.renderFallbackByLevel() : this.props.children
   }
 }
 
