@@ -1,9 +1,14 @@
-interface ChunkLoadMetrics {
-  chunkName: string
-  loadTime: number
-  success: boolean
-  error?: string
-  timestamp: number
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+const logChunkLoad = (chunkName: string, loadTime: number, success: boolean, error?: string) => {
+  if (!isDevelopment) return
+  
+  const timeStr = loadTime.toFixed(2)
+  if (success) {
+    console.log(`✅ ${chunkName} loaded in ${timeStr}ms`)
+  } else {
+    console.error(`❌ ${chunkName} failed after ${timeStr}ms:`, error)
+  }
 }
 
 export const measureChunkLoad = async <T>(
@@ -14,23 +19,11 @@ export const measureChunkLoad = async <T>(
 
   try {
     const module = await importFn()
-    const loadTime = performance.now() - startTime
-
-    // Log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ ${chunkName} loaded in ${loadTime.toFixed(2)}ms`)
-    }
-
+    logChunkLoad(chunkName, performance.now() - startTime, true)
     return module
   } catch (error) {
-    const loadTime = performance.now() - startTime
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-
-    // Log error in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error(`❌ ${chunkName} failed after ${loadTime.toFixed(2)}ms:`, errorMessage)
-    }
-
+    logChunkLoad(chunkName, performance.now() - startTime, false, errorMessage)
     throw error
   }
 }
