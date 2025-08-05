@@ -1,8 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-
-import classNames from 'classnames'
 import { getMDXComponent } from 'mdx-bundler/client'
 
 import Topography from '@/components/WorkPage/BearyChat/Topography'
@@ -28,11 +26,20 @@ import {
 import WorkInformation from '@/components/WorkPage/WorkInformation'
 import WorkSite from '@/components/WorkPage/WorkSite'
 
-type IWorkProps = {
+type WorkFrontmatter = {
+  title: string
+  description: string
+  cover: string
+  coverBackground?: string
+  platforms?: string[]
+  contributors?: string[]
+  site?: string
+  nextWork?: string
+}
+
+type WorkPageClientProps = {
   code: string
-  frontmatter: {
-    [key: string]: any
-  }
+  frontmatter: WorkFrontmatter
 }
 
 const mdxComponents = {
@@ -52,10 +59,10 @@ const mdxComponents = {
   EyeComfortDFormula,
 }
 
-export default function WorkPageClient({ code, frontmatter }: Readonly<IWorkProps>) {
-  const Component = useMemo(() => getMDXComponent(code), [code])
+const GRID_CLASS = 'grid grid-cols-16 gap-y-3 md:gap-y-6'
 
-  const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6')
+export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageClientProps>) {
+  const Component = useMemo(() => getMDXComponent(code), [code])
 
   return (
     <main className="flex flex-col items-center justify-center">
@@ -66,36 +73,32 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<IWorkProp
       />
 
       <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
-        <article className={girdClass}>
+        <header className={GRID_CLASS}>
           <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
             <strong className="font-black text-black dark:text-white">
               {frontmatter.title}
             </strong>{' '}
             {frontmatter.description}
           </h1>
-          <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
-        </article>
+        </header>
 
-        <div className={girdClass}>
+        <div className={GRID_CLASS}>
           <WorkInformation title="platforms" data={frontmatter.platforms} />
-          <WorkInformation
-            title="contributors"
-            data={frontmatter.contributors}
-          />
-          <WorkSite href={frontmatter.site} />
+          <WorkInformation title="contributors" data={frontmatter.contributors} />
+          {frontmatter.site && <WorkSite href={frontmatter.site} />}
         </div>
 
         <Line />
 
-        <article className={classNames('text-lg', girdClass)}>
+        <article className={`${GRID_CLASS} text-lg`}>
           <Component components={mdxComponents} />
         </article>
 
         <Line />
 
-        <NextWork href={frontmatter.nextWork} />
+        {frontmatter.nextWork && <NextWork href={frontmatter.nextWork} />}
 
-        <span className="col-span-16 h-16" />
+        <div className="col-span-16 h-16" aria-hidden="true" />
       </section>
     </main>
   )
