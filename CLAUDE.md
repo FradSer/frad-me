@@ -18,8 +18,9 @@ This is a Next.js personal website for Frad LEE built with TypeScript, featuring
 pnpm dev          # Start development server on localhost:3000
 pnpm build        # Build for production
 pnpm start        # Start production server
-pnpm lint         # Run ESLint
-pnpm format       # Format code with Prettier
+pnpm lint         # Run ESLint with Next.js rules
+pnpm format       # Format code with Prettier and import ordering
+pnpm release      # Create release with conventional changelog
 ```
 
 **Package Management:**
@@ -29,11 +30,13 @@ pnpm format       # Format code with Prettier
 ## Architecture
 
 ### Core Structure
-- **pages/**: Next.js pages using App Router pattern
+- **pages/**: Next.js pages using Pages Router pattern
   - `index.tsx`: Landing page with Hero and Work sections
-  - `works/[slug].tsx`: Dynamic work detail pages
-  - `webxr.tsx`: WebXR experience page
+  - `works/[slug].tsx`: Dynamic work detail pages from MDX content
+  - `webxr.tsx`: WebXR experience page with 3D models
   - `_app.tsx`: App wrapper with theme provider and XR detection
+  - `_document.js`: Custom document for font loading
+  - `api/hello.ts`: Example API route
 
 ### Key Components Organization
 - **components/**: Organized by feature/page
@@ -51,10 +54,14 @@ pnpm format       # Format code with Prettier
 
 ### State Management
 - **contexts/**: React contexts for global state
-  - `Mouse/`: Custom mouse cursor functionality
+  - `Mouse/`: Custom mouse cursor functionality and physical attraction effects
 - **hooks/**: Custom React hooks
   - `useXRDetect.ts`: WebXR capability detection
   - `useLoading.ts`: Loading state management
+  - `useMouseContext.ts`, `useMousePosition.ts`: Mouse interaction hooks
+  - `usePhysicalAttraction.ts`: Mouse attraction physics
+  - `useSpeechSynthesis.ts`: Web Speech API integration
+  - `useWindowSize.ts`: Responsive design utilities
 
 ## Key Technologies
 
@@ -95,3 +102,24 @@ pnpm format       # Format code with Prettier
 - Million.js compiler integration
 - Dynamic imports for WebXR components
 - Vercel Analytics and Speed Insights integrated
+
+## Build Configuration
+
+**Next.js Setup:**
+- Million.js integration for React optimization
+- Transpiled packages for 3D libraries compatibility
+- Custom font loading via `_document.js`
+- TypeScript with strict mode and path aliases (`@/*`)
+
+**Tailwind Configuration:**
+- JIT mode enabled for optimal build size
+- Custom GT Eesti font family integration  
+- Extended grid system (16-column layout)
+- Custom aspect ratios for responsive design
+- Class-based dark mode switching
+
+**Development Tools:**
+- ESLint with Next.js, TypeScript, and React Three Fiber rules
+- Prettier with import ordering and Tailwind class sorting
+- SonarJS plugin for code quality analysis
+- Release-it with conventional changelog generation
