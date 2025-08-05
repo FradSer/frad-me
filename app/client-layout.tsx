@@ -1,8 +1,6 @@
-import { AppProps } from 'next/app'
-import dynamic from 'next/dynamic'
+'use client'
 
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import dynamic from 'next/dynamic'
 
 import { ThemeProvider } from 'next-themes'
 
@@ -13,32 +11,25 @@ import useXRDetect from '@/hooks/useXRDetect'
 
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider'
 
-import '@/styles/globals.css'
+const WebXR = dynamic(() => import('./webxr/page'), { ssr: false })
 
-const WebXR = dynamic(() => import('./webxr'), { ssr: false })
-
-function MyApp({ Component, pageProps }: AppProps) {
-  // * Hooks
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const xrDetect = useXRDetect()
 
-  // * Render
   return xrDetect.isVR ? (
     <div className="flex h-screen w-screen flex-col">
       <WebXR />
-      <Analytics />
     </div>
   ) : (
     <MouseContextProvider>
       <ThemeProvider forcedTheme={undefined} attribute="class">
         <DotRing />
-        <LayoutWrapper>
-          <Component {...pageProps} />
-          <SpeedInsights />
-          <Analytics />
-        </LayoutWrapper>
+        <LayoutWrapper>{children}</LayoutWrapper>
       </ThemeProvider>
     </MouseContextProvider>
   )
 }
-
-export default MyApp

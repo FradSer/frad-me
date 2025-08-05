@@ -1,11 +1,14 @@
+'use client'
+
 import React from 'react'
+import { Metadata } from 'next'
 
 import { Stars } from '@react-three/drei'
 
 import GenericCanvas from '@/components/WebXR/GeneralCanvas'
 import HeroText from '@/components/WebXR/HeroText'
 
-const WebXR = () => {
+export default function WebXR() {
   return (
     <div className="h-screen w-screen">
       <GenericCanvas>
@@ -25,5 +28,3 @@ const WebXR = () => {
     </div>
   )
 }
-
-export default WebXR

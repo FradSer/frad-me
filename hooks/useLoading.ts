@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react'
 
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 type Loading = {
   isLoading: boolean
 }
 
 function useLoading(): Loading {
-  const router = useRouter()
+  const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    const handleStart = () => setIsLoading(true)
-    const handleComplete = () => setIsLoading(false)
-
-    router.events.on('routeChangeStart', handleStart)
-    router.events.on('routeChangeComplete', handleComplete)
-    router.events.on('routeChangeError', handleComplete)
-  }, [router])
+    setIsLoading(false)
+  }, [pathname])
 
   return { isLoading }
 }
