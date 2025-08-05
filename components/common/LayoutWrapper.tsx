@@ -1,28 +1,20 @@
 import { ReactNode } from 'react'
+
 import { motion } from 'framer-motion'
 
 import Header from '@/components/Header'
+
 import useLoading from '@/hooks/useLoading'
+import { 
+  createPageVariants, 
+  createHeaderVariants, 
+  createStaggerChildren, 
+  createLoadingDots 
+} from '@/utils/motion/animationUtils'
 
 const LoadingDots = () => {
-  const containerVariants = {
-    animate: {
-      transition: {
-        staggerChildren: 0.4,
-      },
-    },
-  }
-
-  const dotVariants = {
-    animate: {
-      opacity: [0, 1, 0],
-      transition: {
-        duration: 0.8,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      },
-    },
-  }
+  const containerVariants = createStaggerChildren(0.4)
+  const dotVariants = createLoadingDots()
 
   return (
     <motion.span variants={containerVariants} animate="animate">
@@ -39,30 +31,8 @@ type LayoutWrapperProps = {
   children: ReactNode
 }
 
-const ANIMATION_DURATION = 0.6
-
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: ANIMATION_DURATION, ease: 'easeOut' }
-  },
-  exit: { 
-    opacity: 0, 
-    y: -20,
-    transition: { duration: ANIMATION_DURATION * 0.5, ease: 'easeIn' }
-  }
-}
-
-const headerVariants = {
-  initial: { opacity: 0, y: -20 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: ANIMATION_DURATION, delay: 0.2, ease: 'easeOut' }
-  }
-}
+const pageVariants = createPageVariants()
+const headerVariants = createHeaderVariants()
 
 const LoadingScreen = () => (
   <motion.div
@@ -84,7 +54,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   return (
     <>
       {isLoading && <LoadingScreen />}
-      
+
       <div className="flex w-full flex-col items-center justify-center bg-white dark:bg-black">
         <motion.header
           variants={headerVariants}
@@ -94,7 +64,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         >
           <Header />
         </motion.header>
-        
+
         <motion.main
           variants={pageVariants}
           initial="initial"

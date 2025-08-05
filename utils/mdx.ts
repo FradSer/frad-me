@@ -1,10 +1,19 @@
 import fs from 'fs'
-import path from 'path'
 import matter from 'gray-matter'
 import { bundleMDX } from 'mdx-bundler'
+import path from 'path'
 
 const ROOT = process.cwd()
 const POSTS_PATH = path.join(ROOT, 'content', 'works')
+
+// Error handling utility
+const createError = (message: string, cause?: unknown) => {
+  const error = new Error(message)
+  if (cause instanceof Error) {
+    error.cause = cause
+  }
+  return error
+}
 
 type PostFrontmatter = {
   title: string
@@ -27,42 +36,39 @@ const getFileContent = (filename: string): string => {
   try {
     return fs.readFileSync(path.join(POSTS_PATH, filename), 'utf8')
   } catch (error) {
-    throw new Error(`Failed to read file ${filename}: ${error}`)
+    throw createError(`Failed to read file ${filename}`, error)
   }
 }
 
 const configureEsbuildPath = (): void => {
-  const esbuildPath = process.platform === 'win32'
-    ? path.join(ROOT, 'node_modules', 'esbuild', 'esbuild.exe')
-    : path.join(ROOT, 'node_modules', 'esbuild', 'bin', 'esbuild')
-  
+  const binaryName = process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild'
+  const esbuildPath = path.join(ROOT, 'node_modules', 'esbuild', binaryName)
   process.env.ESBUILD_BINARY_PATH = esbuildPath
 }
 
 const getCompiledMDX = async (content: string) => {
   configureEsbuildPath()
-  
-  // Add your remark and rehype plugins here
+
   const remarkPlugins: any[] = []
   const rehypePlugins: any[] = []
 
   try {
     return await bundleMDX({
       source: content,
-      mdxOptions(options) {
-        options.remarkPlugins = [...(options.remarkPlugins ?? []), ...remarkPlugins]
-        options.rehypePlugins = [...(options.rehypePlugins ?? []), ...rehypePlugins]
-        return options
-      },
-      esbuildOptions: (options) => {
-        options.minify = true
-        options.target = ['es2020']
-        return options
-      },
+      mdxOptions: (options) => ({
+        ...options,
+        remarkPlugins: [...(options.remarkPlugins ?? []), ...remarkPlugins],
+        rehypePlugins: [...(options.rehypePlugins ?? []), ...rehypePlugins],
+      }),
+      esbuildOptions: (options) => ({
+        ...options,
+        minify: true,
+        target: ['es2020'],
+      }),
       cwd: POSTS_PATH,
     })
   } catch (error) {
-    throw new Error(`Failed to compile MDX: ${error}`)
+    throw createError('Failed to compile MDX', error)
   }
 }
 
@@ -76,7 +82,18 @@ export const getSinglePost = async (slug: string): Promise<CompiledPost> => {
       frontmatter: frontmatter as PostFrontmatter,
     }
   } catch (error) {
-    throw new Error(`Failed to get post '${slug}': ${error}`)
+    throw createError(`Failed to get post '${slug}'`, error)
+  }
+}
+
+const processPostFile = (fileName: string): Post => {
+  const source = getFileContent(fileName)
+  const slug = fileName.replace(/\.mdx?$/, '')
+  const { data } = matter(source)
+
+  return {
+    frontmatter: data as PostFrontmatter,
+    slug,
   }
 }
 
@@ -85,18 +102,9 @@ export const getAllPosts = (): Post[] => {
     return fs
       .readdirSync(POSTS_PATH)
       .filter((fileName) => /\.mdx?$/.test(fileName))
-      .map((fileName) => {
-        const source = getFileContent(fileName)
-        const slug = fileName.replace(/\.mdx?$/, '')
-        const { data } = matter(source)
-
-        return {
-          frontmatter: data as PostFrontmatter,
-          slug,
-        }
-      })
+      .map(processPostFile)
       .sort((a, b) => a.frontmatter.title.localeCompare(b.frontmatter.title))
   } catch (error) {
-    throw new Error(`Failed to get all posts: ${error}`)
+    throw createError('Failed to get all posts', error)
   }
 }

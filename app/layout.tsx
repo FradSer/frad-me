@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+
 import { Fira_Code } from 'next/font/google'
 
 import { Analytics } from '@vercel/analytics/react'

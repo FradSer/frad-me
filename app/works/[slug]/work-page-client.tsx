@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+
 import { getMDXComponent } from 'mdx-bundler/client'
 
 import Topography from '@/components/WorkPage/BearyChat/Topography'
@@ -61,7 +62,10 @@ const mdxComponents = {
 
 const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6'
 
-export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageClientProps>) {
+export default function WorkPageClient({
+  code,
+  frontmatter,
+}: Readonly<WorkPageClientProps>) {
   const Component = useMemo(() => getMDXComponent(code), [code])
 
   return (
@@ -85,7 +89,10 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         <div className={gridClass}>
           <WorkInformation title="platforms" data={frontmatter.platforms} />
-          <WorkInformation title="contributors" data={frontmatter.contributors} />
+          <WorkInformation
+            title="contributors"
+            data={frontmatter.contributors}
+          />
           {frontmatter.site && <WorkSite href={frontmatter.site} />}
         </div>
 

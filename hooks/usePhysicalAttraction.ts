@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+
 import useMouseContext from './useMouseContext'
 import useMousePosition from './useMousePosition'
 
@@ -32,7 +33,7 @@ export default function usePhysicalAttraction({
 
       const distance = Math.sqrt(
         Math.pow(mousePosition.x - elementCenter.x, 2) +
-        Math.pow(mousePosition.y - elementCenter.y, 2)
+          Math.pow(mousePosition.y - elementCenter.y, 2),
       )
 
       if (distance <= attractionRadius) {

@@ -1,7 +1,7 @@
 import React, { ReactNode, useRef } from 'react'
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, createXRStore} from '@react-three/xr'
+import { XR, createXRStore } from '@react-three/xr'
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
