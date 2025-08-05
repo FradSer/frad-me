@@ -52,7 +52,8 @@ export default function Rectangle() {
         ref={rectangleRef}
         className="h-full w-full bg-black dark:bg-white"
         animate={{
-          scale: isAttracted ? 1.05 : 1,
+          scale: isAttracted ? 0 : 1,
+          opacity: isAttracted ? 0 : 1,
         }}
         style={{
           skewX: skewX,
@@ -63,7 +64,13 @@ export default function Rectangle() {
             type: 'spring',
             stiffness: 400,
             damping: 25,
-            duration: isAttracted ? 0.2 : 0.35,
+            duration: isAttracted ? 0.15 : 0.3,
+          },
+          opacity: {
+            type: 'spring',
+            stiffness: 400,
+            damping: 25,
+            duration: isAttracted ? 0.15 : 0.3,
           },
           default: {
             type: 'spring',

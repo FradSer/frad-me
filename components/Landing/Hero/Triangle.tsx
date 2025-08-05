@@ -38,7 +38,8 @@ export default function Triangle() {
       ref={triangleRef}
       initial={{ rotate: initialRotate }}
       animate={{
-        scale: isAttracted ? 1.1 : 1,
+        scale: isAttracted ? 0 : 1,
+        opacity: isAttracted ? 0 : 1,
       }}
       style={{
         x,
@@ -50,7 +51,13 @@ export default function Triangle() {
           type: 'spring',
           stiffness: 400,
           damping: 25,
-          duration: isAttracted ? 0.2 : 0.3,
+          duration: isAttracted ? 0.15 : 0.25,
+        },
+        opacity: {
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+          duration: isAttracted ? 0.15 : 0.25,
         },
         default: {
           type: 'spring',
