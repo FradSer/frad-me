@@ -24,7 +24,6 @@ export default function Rectangle() {
   mouseX.set(xValue, true)
   mouseY.set(yValue, true)
 
-  // * Render
   return (
     <div className="ml-2 flex grow lg:ml-8">
       <motion.div
