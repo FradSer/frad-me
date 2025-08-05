@@ -25,7 +25,7 @@ function Line(props: Readonly<ILineProps>) {
       position={props.position}
       rotation={[0, 0, 0]}
       font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-      onClick={() => console.log('clicked')}
+      onClick={() => {}}
     >
       {props.text}
     </Text>

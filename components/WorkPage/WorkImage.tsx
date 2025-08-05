@@ -12,6 +12,7 @@ function WorkSingleImage({
   alt,
   position = ImagePosition.inline,
   unoptimized = false,
+  priority = false,
 }: Readonly<WorkImageProps>) {
   // * Styling
   const workImageClass = classNames('w-full overflow-hidden', {
@@ -31,7 +32,8 @@ function WorkSingleImage({
           width={width}
           height={height}
           alt={alt}
-          loading="lazy"
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
           unoptimized={unoptimized}
         />
         <span className="work-caption">{alt}</span>
@@ -46,6 +48,7 @@ function WorkBeforeAfterImages({
   width,
   height,
   description,
+  priority = false,
 }: Readonly<WorkBeforeAfterImagesProps>) {
   return (
     <MDXComponentProvider className="work-component-layout col-span-16">
@@ -56,7 +59,8 @@ function WorkBeforeAfterImages({
           width={width}
           height={height}
           alt={description}
-          loading="lazy"
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
         />
         <span>After:</span>
         <Image
@@ -64,7 +68,8 @@ function WorkBeforeAfterImages({
           width={width}
           height={height}
           alt={description}
-          loading="lazy"
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
         />
       </div>
       <span className="work-caption">{description}</span>

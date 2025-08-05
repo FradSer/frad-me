@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 import classNames from 'classnames'
 import { getMDXComponent } from 'mdx-bundler/client'
@@ -51,11 +52,13 @@ const mdxComponents = {
 }
 
 export default function WorkPage({ code, frontmatter }: Readonly<WorkPageProps>) {
+  const router = useRouter()
   const Component = useMemo(() => getMDXComponent(code), [code])
   const metaTags = generateMetaTags({
     title: frontmatter.title,
     description: frontmatter.description,
     image: frontmatter.cover,
+    canonical: `https://frad.me${router.asPath}`,
   })
 
   const gridClass = GRID_CLASSES.base
@@ -65,6 +68,8 @@ export default function WorkPage({ code, frontmatter }: Readonly<WorkPageProps>)
       <Head>
         <title>{metaTags.title}</title>
         <meta name="description" content={metaTags.description} />
+        <meta name="robots" content={metaTags.robots} />
+        {metaTags.canonical && <link rel="canonical" href={metaTags.canonical} />}
         <meta property="og:title" content={metaTags.openGraph.title} />
         <meta property="og:description" content={metaTags.openGraph.description} />
         <meta property="og:type" content={metaTags.openGraph.type} />

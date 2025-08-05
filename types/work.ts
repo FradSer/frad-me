@@ -21,6 +21,7 @@ export interface WorkImageProps {
   alt: string
   position?: ImagePosition
   unoptimized?: boolean
+  priority?: boolean
 }
 
 export enum ImagePosition {
@@ -35,4 +36,5 @@ export interface WorkBeforeAfterImagesProps {
   width: number
   height: number
   description: string
+  priority?: boolean
 }
