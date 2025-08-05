@@ -5,7 +5,7 @@
   "homepage": "https://github.com/FradSer/frad-me",
   "license": "MIT",
   "engines": {
-    "node": "22.x"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -18,11 +18,11 @@
   "dependencies": {
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
-    "@react-three/xr": "^6.6.14",
+    "@react-three/xr": "^6.6.19",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",
-    "esbuild": "^0.25.3",
+    "esbuild": "^0.25.6",
     "framer-motion": "^11.18.2",
     "gray-matter": "^4.0.3",
     "html2canvas": "^1.4.1",
@@ -36,24 +36,24 @@
     "react-dom": "^18.3.1",
     "react-scroll": "^1.9.3",
     "three": "^0.169.0",
-    "three-stdlib": "^2.35.16"
+    "three-stdlib": "^2.36.0"
   },
   "devDependencies": {
     "@react-three/eslint-plugin": "^0.1.2",
     "@release-it/conventional-changelog": "^8.0.2",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.2",
-    "@types/lodash": "^4.17.16",
-    "@types/node": "^22.15.2",
-    "@types/react": "^18.3.20",
-    "@types/react-dom": "^18.3.6",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^22.16.2",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
     "@types/react-scroll": "^1.8.10",
     "@types/three": "^0.169.0",
-    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.28",
+    "eslint-config-next": "^14.2.30",
     "eslint-plugin-sonarjs": "^1.0.4",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.6",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "0.6.8",
     "release-it": "^17.11.0",

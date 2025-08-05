@@ -46,13 +46,7 @@ function TopographyImage({
       viewport={{ once: true }}
       className={topographyClass}
     >
-      <Image
-        src={src}
-        width={1135}
-        height={680}
-        alt={alt}
-        loading="eager"
-      />
+      <Image src={src} width={1135} height={680} alt={alt} loading="eager" />
     </motion.div>
   )
 }
