@@ -25,11 +25,11 @@ pnpm release      # Create release with conventional changelog
 
 **Testing:**
 ```bash
-pnpm test         # Run unit tests in watch mode
-pnpm test:run     # Run unit tests once
-pnpm test:ui      # Run unit tests with UI
+pnpm test         # Run unit tests (Jest)
+pnpm test:watch   # Run unit tests in watch mode
+pnpm test:ci      # Run unit tests with coverage for CI
 pnpm test:coverage # Run unit tests with coverage report
-pnpm test:e2e     # Run end-to-end tests
+pnpm test:e2e     # Run end-to-end tests (Playwright)
 pnpm test:e2e:ui  # Run E2E tests with UI
 pnpm test:e2e:headed # Run E2E tests in headed mode (visible browser)
 pnpm test:all     # Run all tests (unit + E2E)
@@ -76,16 +76,15 @@ pnpm test:all     # Run all tests (unit + E2E)
   - `useWindowSize.ts`: Responsive design utilities
 
 ### Testing Infrastructure
-- **src/__tests__/**: Unit and component tests using Vitest + React Testing Library
+- **src/__tests__/**: Unit and component tests using Jest + React Testing Library
   - `mdx.test.ts`: Tests for MDX utilities and content processing
-  - `components/`: Component-specific tests with mocked dependencies
 - **tests/e2e/**: End-to-end tests using Playwright
   - `navigation.spec.ts`: Navigation and theme switching tests
   - `works.spec.ts`: Work portfolio functionality tests
 - **Configuration**: 
-  - `vitest.config.ts`: Vitest configuration with jsdom environment
+  - `jest.config.js`: Jest configuration with Next.js integration
+  - `jest.setup.js`: Global test setup with mocks for Next.js, framer-motion, and 3D libraries
   - `playwright.config.ts`: Playwright multi-browser testing setup
-  - `src/test-setup.ts`: Global test setup with mocks for Next.js, framer-motion, and 3D libraries
 
 ## Key Technologies
 

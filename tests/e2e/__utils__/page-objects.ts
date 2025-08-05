@@ -1,5 +1,29 @@
 import { Page, Locator, expect } from '@playwright/test'
-import { selectors, viewports } from '../../../src/__tests__/__utils__/fixtures'
+
+// Common selectors
+const selectors = {
+  navigation: {
+    header: 'header',
+    themeSwitcher: '[aria-label="Toggle Dark Mode"]',
+    logo: '[data-testid="logo"]',
+  },
+  works: {
+    workCard: '[class*="work-card"], a[href^="/works/"]',
+    workTitle: 'h1, h2, h3',
+    workImage: 'img[alt*="Cover"]',
+  },
+  layout: {
+    main: 'main',
+    footer: 'footer',
+  },
+}
+
+// Common viewports
+const viewports = {
+  mobile: { width: 375, height: 667 },
+  tablet: { width: 768, height: 1024 },
+  desktop: { width: 1200, height: 800 },
+}
 
 // Base page object with common functionality
 export class BasePage {
@@ -16,7 +40,7 @@ export class BasePage {
 
   async waitForPageLoad() {
     await this.page.waitForLoadState('networkidle')
-    await expect(this.page.locator(selectors.main)).toBeVisible()
+    await expect(this.page.locator(selectors.layout.main)).toBeVisible()
   }
 
   async setViewport(viewport: keyof typeof viewports) {
@@ -39,8 +63,8 @@ export class HeaderPage extends BasePage {
 
   constructor(page: Page) {
     super(page)
-    this.header = page.locator(selectors.header)
-    this.themeSwitcher = page.locator(selectors.themeSwitcher)
+    this.header = page.locator(selectors.navigation.header)
+    this.themeSwitcher = page.locator(selectors.navigation.themeSwitcher)
   }
 
   async toggleTheme() {
@@ -50,7 +74,7 @@ export class HeaderPage extends BasePage {
   }
 
   async verifyTheme(theme: 'light' | 'dark') {
-    const htmlElement = this.page.locator(selectors.htmlElement)
+    const htmlElement = this.page.locator('html')
     if (theme === 'dark') {
       await expect(htmlElement).toHaveClass(/dark/)
     } else {
@@ -83,11 +107,11 @@ export class WorksPage extends BasePage {
 
   constructor(page: Page) {
     super(page)
-    this.workSection = page.locator(selectors.workSection).first()
-    this.workCards = page.locator(selectors.workCards)
-    this.workLinks = page.locator(selectors.workLinks)
-    this.wipElements = page.locator(selectors.wipElements)
-    this.images = page.locator(selectors.images)
+    this.workSection = page.locator('section').filter({ hasText: /work/i }).or(page.locator('section').nth(1))
+    this.workCards = page.locator(selectors.works.workCard)
+    this.workLinks = page.locator('a[href^="/works/"]')
+    this.wipElements = page.locator('[class*="wip"], [class*="not-allowed"]')
+    this.images = page.locator('img')
   }
 
   async verifyWorkSection() {
@@ -205,7 +229,7 @@ export class HomePage extends BasePage {
     
     // Verify main sections
     await this.header.verifyHeaderVisible()
-    await expect(this.page.locator(selectors.main)).toBeVisible()
+    await expect(this.page.locator(selectors.layout.main)).toBeVisible()
   }
 
   async performCompleteUITest() {
@@ -282,7 +306,7 @@ export class TestUtils {
     const conditions = {
       slow: { downloadThroughput: 50000, uploadThroughput: 20000, latency: 200 },
       fast: { downloadThroughput: 10000000, uploadThroughput: 5000000, latency: 20 },
-      offline: { offline: true }
+      offline: { offline: true, downloadThroughput: 0, uploadThroughput: 0, latency: 0 }
     }
     
     const cdp = await page.context().newCDPSession(page)

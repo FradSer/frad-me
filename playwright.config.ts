@@ -8,11 +8,16 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   
   // Enhanced reporting
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/playwright-results.json' }],
-    ...(process.env.CI ? [['junit', { outputFile: 'test-results/playwright-junit.xml' }]] : []),
-  ],
+  reporter: process.env.CI 
+    ? [
+        ['html', { outputFolder: 'playwright-report' }],
+        ['json', { outputFile: 'test-results/playwright-results.json' }],
+        ['junit', { outputFile: 'test-results/playwright-junit.xml' }],
+      ]
+    : [
+        ['html', { outputFolder: 'playwright-report' }],
+        ['json', { outputFile: 'test-results/playwright-results.json' }],
+      ],
   
   // Global test configuration
   use: {
