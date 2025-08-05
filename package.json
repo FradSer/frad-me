@@ -13,6 +13,14 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"**/*.{js,ts,tsx,md,mdx,json}\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:all": "npm run test:ci && npm run test:e2e",
     "release": "release-it"
   },
   "dependencies": {
@@ -39,9 +47,13 @@
     "three-stdlib": "^2.36.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@react-three/eslint-plugin": "^0.1.2",
     "@release-it/conventional-changelog": "^8.0.2",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.2",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.16.2",
     "@types/react": "^18.3.23",
@@ -53,6 +65,8 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.30",
     "eslint-plugin-sonarjs": "^1.0.4",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8.5.6",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "0.6.8",
