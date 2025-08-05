@@ -1,150 +1,76 @@
-import { useEffect, useState } from 'react'
-
-import classNames from 'classnames'
-import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
+import { useMemo } from 'react'
+import { motion, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
 
-import { primaryTransition } from '@/utils/motion/springTransitions'
-
 export default function DotRing() {
-  // * Hooks
   const mousePosition = useOptimizedMousePosition()
-  const mouseContext = useMouseContext()
+  const { cursorType } = useMouseContext()
 
-  // * Physical attraction
-  const attractedX = useMotionValue(mousePosition.x)
-  const attractedY = useMotionValue(mousePosition.y)
-  const springX = useSpring(attractedX, { stiffness: 300, damping: 30 })
-  const springY = useSpring(attractedY, { stiffness: 300, damping: 30 })
+  // Smooth mouse following with spring physics
+  const x = useSpring(mousePosition.x, { stiffness: 300, damping: 30 })
+  const y = useSpring(mousePosition.y, { stiffness: 300, damping: 30 })
 
-  // * Styling
-  const textClass = classNames(
-    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',
-  )
-
-  const backgroundClass = classNames(
-    'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
-    {
-      'mix-blend-difference': mouseContext.cursorType == 'default',
-    },
-  )
-
-  // * Animation
-  const controls = useAnimationControls()
-
-  const transitionOffset = { x: '-50%', y: '-50%' }
-
-  const backgroundVariants = {
-    initial: {
-      ...transitionOffset,
-      height: '1rem',
-      width: '1rem',
-      opacity: 1,
-      transition: {
-        ...primaryTransition,
-      },
-    },
-    headerLinkHovered: {
-      opacity: 0,
-      transition: { ...primaryTransition },
-    },
-    workCardHover: {
-      ...transitionOffset,
-      height: '4rem',
-      width: '4rem',
-      transition: {
-        ...primaryTransition,
-      },
-    },
-    attracted: {
-      ...transitionOffset,
-      height: '1rem',
-      width: '1rem',
-      opacity: 0,
-      transition: {
-        ...primaryTransition,
-      },
-    },
-  }
-
-  const textVariants = {
-    initial: {
-      ...transitionOffset,
-      height: '2rem',
-      width: '2rem',
-      opacity: 0,
-      scale: 0.5,
-      transition: {
-        ...primaryTransition,
-      },
-    },
-
-    workCardHover: {
-      ...transitionOffset,
-      height: '4rem',
-      width: '4rem',
-      opacity: 1,
-      scale: 1,
-      transition: {
-        ...primaryTransition,
-      },
-    },
-  }
-
-  // * Dot Ring Title
-  const [dotRingTitle, setDotRingTitle] = useState('')
-
-  // * Effects
-  useEffect(() => {
-    // Simple mouse following - always follow mouse position
-    attractedX.set(mousePosition.x)
-    attractedY.set(mousePosition.y)
-  }, [mousePosition, attractedX, attractedY])
-
-  useEffect(() => {
-    switch (mouseContext.cursorType) {
+  // Memoize cursor state to avoid recalculating on every render
+  const cursorState = useMemo(() => {
+    switch (cursorType) {
       case 'header-link-hovered':
-        controls.start('headerLinkHovered')
-        break
+        return { showBackground: false, showText: false, text: '' }
       case 'work-card-hovered':
-        controls.start('workCardHover')
-        setDotRingTitle('READ')
-        break
+        return { showBackground: true, showText: true, text: 'READ', size: '4rem' }
       case 'work-card-hovered-wip':
-        controls.start('workCardHover')
-        setDotRingTitle('WIP')
-        break
+        return { showBackground: true, showText: true, text: 'WIP', size: '4rem' }
       case 'attracted':
-        controls.start('attracted')
-        setDotRingTitle('')
-        break
+        return { showBackground: false, showText: false, text: '' }
       default:
-        controls.start('initial')
-        setDotRingTitle('')
+        return { showBackground: true, showText: false, text: '', size: '1rem' }
     }
-  }, [mouseContext.cursorType, controls])
+  }, [cursorType])
 
-  // * Render
+  const baseStyle = { 
+    left: x, 
+    top: y, 
+    x: '-50%', 
+    y: '-50%' 
+  }
+
   return (
     <>
-      <motion.div
-        animate={controls}
-        variants={textVariants}
-        initial="initial"
-        className={textClass}
-        style={{ left: springX, top: springY }}
-      >
-        <h1>{dotRingTitle}</h1>
-      </motion.div>
-      <motion.div
-        animate={controls}
-        variants={backgroundVariants}
-        initial="initial"
-        className={backgroundClass}
-        style={{ left: springX, top: springY }}
-      ></motion.div>
+      {/* Text overlay */}
+      {cursorState.showText && (
+        <motion.div
+          className="fixed flex items-center justify-center pointer-events-none text-black font-bold text-xl z-50"
+          style={{
+            ...baseStyle,
+            height: cursorState.size,
+            width: cursorState.size,
+          }}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.2 }}
+        >
+          {cursorState.text}
+        </motion.div>
+      )}
+
+      {/* Background circle */}
+      {cursorState.showBackground && (
+        <motion.div
+          className={`fixed rounded-full bg-white pointer-events-none z-40 ${
+            cursorType === 'default' ? 'mix-blend-difference' : ''
+          }`}
+          style={baseStyle}
+          initial={{ height: '1rem', width: '1rem', opacity: 1 }}
+          animate={{
+            height: cursorState.size || '1rem',
+            width: cursorState.size || '1rem',
+            opacity: 1,
+          }}
+          transition={{ duration: 0.2 }}
+        />
+      )}
     </>
   )
 }
