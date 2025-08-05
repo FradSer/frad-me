@@ -1,26 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion'
 
-import usePhysicalAttraction from '@/hooks/usePhysicalAttraction'
-
 export default function Triangle() {
   const { scrollYProgress } = useScroll()
-  const triangleRef = useRef<HTMLDivElement>(null)
-
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
-  const y = useTransform(scrollYProgress, [0, 0.3], [0, 200])
+  const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
 
   const initialRotate = Math.random() * 360
   const rotate = useMotionValue(0)
-  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 180])
-
-  // Physical attraction
-  const { isAttracted } = usePhysicalAttraction({
-    elementRef: triangleRef,
-    attractionRadius: 80,
-    isActive: true,
-  })
+  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90])
 
   useEffect(() => {
     function updateRotate() {
@@ -35,35 +24,11 @@ export default function Triangle() {
 
   return (
     <motion.div
-      ref={triangleRef}
       initial={{ rotate: initialRotate }}
-      animate={{
-        scale: isAttracted ? 0 : 1,
-        opacity: isAttracted ? 0 : 1,
-      }}
       style={{
         x,
         y,
         rotate,
-      }}
-      transition={{
-        scale: {
-          type: 'spring',
-          stiffness: 400,
-          damping: 25,
-          duration: isAttracted ? 0.15 : 0.25,
-        },
-        opacity: {
-          type: 'spring',
-          stiffness: 400,
-          damping: 25,
-          duration: isAttracted ? 0.15 : 0.25,
-        },
-        default: {
-          type: 'spring',
-          stiffness: 300,
-          damping: 30,
-        },
       }}
     >
       <svg
