@@ -5,39 +5,6 @@ export const ANIMATION_DURATIONS = {
   slow: 1.2,
 } as const
 
-export const SPRING_CONFIGS = {
-  gentle: { stiffness: 100, damping: 20 },
-  snappy: { stiffness: 300, damping: 30 },
-  bouncy: { stiffness: 400, damping: 10 },
-} as const
-
-export const TRANSFORM_ORIGINS = {
-  center: { x: '-50%', y: '-50%' },
-  topLeft: { x: '0%', y: '0%' },
-  topRight: { x: '-100%', y: '0%' },
-  bottomLeft: { x: '0%', y: '-100%' },
-  bottomRight: { x: '-100%', y: '-100%' },
-} as const
-
-export const OPACITY_TRANSITIONS = {
-  fadeIn: { opacity: [0, 1] },
-  fadeOut: { opacity: [1, 0] },
-  fadeInOut: { opacity: [0, 1, 0] },
-} as const
-
-export const SCALE_TRANSITIONS = {
-  scaleIn: { scale: [0, 1] },
-  scaleOut: { scale: [1, 0] },
-  scaleUp: { scale: [1, 1.1] },
-  scaleDown: { scale: [1, 0.9] },
-} as const
-
-export const SLIDE_TRANSITIONS = {
-  slideUp: { y: [20, 0] },
-  slideDown: { y: [-20, 0] },
-  slideLeft: { x: [20, 0] },
-  slideRight: { x: [-20, 0] },
-} as const
 
 // Common animation variants
 export const createPageVariants = (duration = ANIMATION_DURATIONS.normal) => ({
@@ -99,15 +66,6 @@ export const createLoadingDots = () => ({
 })
 
 // Utility functions
-export const blendPositions = (
-  mousePos: { x: number; y: number },
-  attractorPos: { x: number; y: number },
-  blendFactor: number = 0.7
-) => ({
-  x: mousePos.x + (attractorPos.x - mousePos.x) * blendFactor,
-  y: mousePos.y + (attractorPos.y - mousePos.y) * blendFactor,
-})
-
 export const calculateSkew = (
   mousePos: { x: number; y: number },
   windowSize: { width: number; height: number },

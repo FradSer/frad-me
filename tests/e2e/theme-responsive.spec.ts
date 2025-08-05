@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test'
 import { HomePage, TestUtils } from './__utils__/page-objects'
-import { viewports } from '../../src/__tests__/__utils__/fixtures'
 
 test.describe('Theme and Responsive Integration', () => {
   let homePage: HomePage
