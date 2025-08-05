@@ -19,7 +19,7 @@ type PostFrontmatter = {
   title: string
   description: string
   cover: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 type Post = {

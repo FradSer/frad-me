@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 
 import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 
 interface ILineProps {
   position: [number, number, number]
@@ -25,7 +26,7 @@ function Line(props: Readonly<ILineProps>) {
       position={props.position}
       rotation={[0, 0, 0]}
       font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-      onClick={() => console.log('clicked')}
+      onClick={() => {/* Handle click event */}}
     >
       {props.text}
     </Text>
@@ -33,18 +34,18 @@ function Line(props: Readonly<ILineProps>) {
 }
 
 function Box(props: Readonly<IShapeProps>) {
-  const meshRef = useRef()
+  const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
   useFrame((state, delta) => {
-    // @ts-ignore
-    meshRef.current.rotation.x += delta / 10
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta / 10
+    }
   })
   // Return view, these are regular three.js elements expressed in JSX
   return (
     <mesh
       {...props}
-      // @ts-ignore
       ref={meshRef}
       onClick={() => setActive(!active)}
       onPointerOver={() => setHovered(true)}
@@ -57,20 +58,20 @@ function Box(props: Readonly<IShapeProps>) {
 }
 
 function Triangle(props: Readonly<IShapeProps>) {
-  const meshRef = useRef()
+  const meshRef = useRef<THREE.Mesh>(null)
 
   const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
 
   useFrame((state, delta) => {
-    // @ts-ignore
-    meshRef.current.rotation.z += delta / 10
+    if (meshRef.current) {
+      meshRef.current.rotation.z += delta / 10
+    }
   })
 
   return (
     <mesh
       {...props}
-      // @ts-ignore
       ref={meshRef}
       scale={1.5}
       onClick={() => setActive(!active)}
@@ -84,19 +85,19 @@ function Triangle(props: Readonly<IShapeProps>) {
 }
 
 function Sphere(props: Readonly<IShapeProps>) {
-  const meshRef = useRef()
+  const meshRef = useRef<THREE.Mesh>(null)
 
   const [hovered, setHovered] = useState(false)
 
   useFrame((state, delta) => {
-    // @ts-ignore
-    meshRef.current.rotation.y += delta / 5
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta / 5
+    }
   })
 
   return (
     <mesh
       {...props}
-      // @ts-ignore
       ref={meshRef}
       scale={1.5}
       onPointerOver={() => setHovered(true)}

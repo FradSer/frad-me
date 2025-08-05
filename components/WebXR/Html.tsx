@@ -8,7 +8,8 @@ import * as THREE from 'three'
 
 // Prevents html2canvas warnings
 
-HTMLCanvasElement.prototype.getContext = (function (origFn: any) {
+// Prevents html2canvas warnings by monkey-patching canvas context
+;(HTMLCanvasElement.prototype.getContext as any) = (function (origFn: any) {
   return function (this: any, type: any, attribs: any) {
     attribs = attribs || {}
     attribs.preserveDrawingBuffer = true
@@ -51,7 +52,7 @@ export default function Html({
     return { width, height }
   }, [camera, viewSize])
 
-  const lastUrl = useRef() as React.MutableRefObject<string>
+  const lastUrl = useRef<string | null>(null)
 
   const [image, setImage] = useState(
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
@@ -59,7 +60,7 @@ export default function Html({
 
   const node = useMemo(() => {
     const node = document.createElement('div')
-    node.innerHTML = renderToString(children as any)
+    node.innerHTML = renderToString(children as React.ReactElement)
     return node
   }, [children])
 
@@ -73,10 +74,10 @@ export default function Html({
         if (blob === null) return
         if (lastUrl.current !== null) {
           URL.revokeObjectURL(lastUrl.current)
-          const url: string = URL.createObjectURL(blob)
-          lastUrl.current = url
-          setImage(url)
         }
+        const url: string = URL.createObjectURL(blob)
+        lastUrl.current = url
+        setImage(url)
       })
     })
     return () => {

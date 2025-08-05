@@ -2,6 +2,7 @@ import React, { ReactNode, useRef } from 'react'
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { XR, createXRStore } from '@react-three/xr'
+import * as THREE from 'three'
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
@@ -17,16 +18,18 @@ function MouseMove({ children }: Readonly<IGenericCanvasProps>) {
   const mousePosition = useMousePosition()
   const windowSize = useWindowSize()
 
-  const ref = useRef<any>()
+  const ref = useRef<THREE.Mesh>(null)
 
   useFrame(() => {
-    const positionX = mousePosition.x / windowSize.width
-    const positionY = mousePosition.y / windowSize.height
+    if (ref.current) {
+      const positionX = mousePosition.x / windowSize.width
+      const positionY = mousePosition.y / windowSize.height
 
-    const delta = 0.1
+      const delta = 0.1
 
-    ref.current.position.x = positionX * delta
-    ref.current.position.y = positionY * delta
+      ref.current.position.x = positionX * delta
+      ref.current.position.y = positionY * delta
+    }
   })
 
   return <mesh ref={ref}>{children}</mesh>
