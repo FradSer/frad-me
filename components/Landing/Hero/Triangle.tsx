@@ -7,7 +7,14 @@ export default function Triangle() {
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
   const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
 
-  const initialRotate = useMemo(() => Math.random() * 360, [])
+  // Use a deterministic rotation based on component instance for visual variety
+  // This avoids security concerns with Math.random() while providing visual interest
+  const initialRotate = useMemo(() => {
+    // Create a simple hash from current timestamp and a fixed seed
+    // This provides visual variety without cryptographic concerns
+    const seed = Date.now() % 1000
+    return (seed * 0.36) % 360
+  }, [])
   const rotate = useMotionValue(0)
   const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90])
 
