@@ -98,23 +98,10 @@ export default function DotRing() {
 
   // * Effects
   useEffect(() => {
-    // Update position based on attraction
-    if (mouseContext.attractorPosition) {
-      const attractorPos = mouseContext.attractorPosition
-      const mousePos = { x: mousePosition.x, y: mousePosition.y }
-      
-      // Calculate blend position (closer to attractor)
-      const blendFactor = 0.7
-      const blendedX = mousePos.x + (attractorPos.x - mousePos.x) * blendFactor
-      const blendedY = mousePos.y + (attractorPos.y - mousePos.y) * blendFactor
-      
-      attractedX.set(blendedX)
-      attractedY.set(blendedY)
-    } else {
-      attractedX.set(mousePosition.x)
-      attractedY.set(mousePosition.y)
-    }
-  }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY])
+    // Simple mouse following - always follow mouse position
+    attractedX.set(mousePosition.x)
+    attractedY.set(mousePosition.y)
+  }, [mousePosition, attractedX, attractedY])
 
   useEffect(() => {
     switch (mouseContext.cursorType) {
