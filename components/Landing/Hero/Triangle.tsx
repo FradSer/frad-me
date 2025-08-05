@@ -9,11 +9,11 @@ export default function Triangle() {
   const triangleRef = useRef<HTMLDivElement>(null)
 
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
-  const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
+  const y = useTransform(scrollYProgress, [0, 0.3], [0, 200])
 
   const initialRotate = Math.random() * 360
   const rotate = useMotionValue(0)
-  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90])
+  const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 180])
 
   // Physical attraction
   const { isAttracted } = usePhysicalAttraction({
@@ -46,9 +46,17 @@ export default function Triangle() {
         rotate,
       }}
       transition={{
-        type: 'spring',
-        stiffness: 300,
-        damping: 30,
+        scale: {
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+          duration: isAttracted ? 0.2 : 0.3,
+        },
+        default: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+        },
       }}
     >
       <svg

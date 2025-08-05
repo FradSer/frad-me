@@ -59,9 +59,17 @@ export default function Rectangle() {
           skewY: skewY,
         }}
         transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 30,
+          scale: {
+            type: 'spring',
+            stiffness: 400,
+            damping: 25,
+            duration: isAttracted ? 0.2 : 0.35,
+          },
+          default: {
+            type: 'spring',
+            stiffness: 300,
+            damping: 30,
+          },
         }}
       ></motion.div>
     </div>
