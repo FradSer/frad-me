@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { throttle } from 'lodash'
+import { throttle } from '@/utils/throttle'
 
 type MousePosition = { x: number; y: number }
 

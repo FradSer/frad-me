@@ -1,7 +1,7 @@
 export default function WorkInformation(
   props: Readonly<{
     title: string
-    data?: [string]
+    data?: string[]
   }>,
 ) {
   if (!props.data) return null

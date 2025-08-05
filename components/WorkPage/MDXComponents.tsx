@@ -2,13 +2,13 @@ import { ReactNode } from 'react'
 
 import classNames from 'classnames'
 
+import { GRID_CLASSES } from '@/utils/constants'
+
 type ICommonProps = {
   children?: ReactNode
 }
 
-const wrapperClass = classNames(
-  'col-span-16 col-start-1 md:col-span-10 md:col-start-7',
-)
+const wrapperClass = GRID_CLASSES.contentWrapper
 
 function H1(props: Readonly<ICommonProps>) {
   return (
@@ -28,9 +28,7 @@ function H3(props: Readonly<ICommonProps>) {
   return <h3 className={h3Class}>{props.children}</h3>
 }
 
-const listWrapperClass = classNames(
-  'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4',
-)
+const listWrapperClass = GRID_CLASSES.listWrapper
 
 function OL(props: Readonly<ICommonProps>) {
   const olClass = classNames('list-decimal', listWrapperClass)

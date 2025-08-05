@@ -3,21 +3,7 @@ import Image from 'next/image'
 import classNames from 'classnames'
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
-
-type IWorkImageProps = {
-  src: string
-  width: number
-  height: number
-  alt: string
-  position: ImagePosition
-  unoptimized: boolean
-}
-
-enum ImagePosition {
-  inline = 'inline',
-  underH2 = 'underH2',
-  fullScreen = 'fullScreen',
-}
+import { WorkImageProps, WorkBeforeAfterImagesProps, ImagePosition } from '@/types/work'
 
 function WorkSingleImage({
   src,
@@ -26,7 +12,7 @@ function WorkSingleImage({
   alt,
   position = ImagePosition.inline,
   unoptimized = false,
-}: Readonly<IWorkImageProps>) {
+}: Readonly<WorkImageProps>) {
   // * Styling
   const workImageClass = classNames('w-full overflow-hidden', {
     'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
@@ -45,7 +31,7 @@ function WorkSingleImage({
           width={width}
           height={height}
           alt={alt}
-          loading="eager"
+          loading="lazy"
           unoptimized={unoptimized}
         />
         <span className="work-caption">{alt}</span>
@@ -54,21 +40,13 @@ function WorkSingleImage({
   )
 }
 
-type IWorkBeforeAfterImagesProps = {
-  beforeSrc: string
-  afterSrc: string
-  width: number
-  height: number
-  description: string
-}
-
 function WorkBeforeAfterImages({
   beforeSrc,
   afterSrc,
   width,
   height,
   description,
-}: Readonly<IWorkBeforeAfterImagesProps>) {
+}: Readonly<WorkBeforeAfterImagesProps>) {
   return (
     <MDXComponentProvider className="work-component-layout col-span-16">
       <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
@@ -78,7 +56,7 @@ function WorkBeforeAfterImages({
           width={width}
           height={height}
           alt={description}
-          loading="eager"
+          loading="lazy"
         />
         <span>After:</span>
         <Image
@@ -86,7 +64,7 @@ function WorkBeforeAfterImages({
           width={width}
           height={height}
           alt={description}
-          loading="eager"
+          loading="lazy"
         />
       </div>
       <span className="work-caption">{description}</span>

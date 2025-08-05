@@ -29,20 +29,9 @@ import WorkInformation from '@/components/WorkPage/WorkInformation'
 import WorkSite from '@/components/WorkPage/WorkSite'
 
 import { getAllPosts, getSinglePost } from '@/utils/mdx'
-
-type IWorkProps = {
-  code: string
-  frontmatter: {
-    cover?: string
-    coverBackground?: string
-    title: string
-    description: string
-    platforms?: [string]
-    contributors?: [string]
-    site?: string
-    nextWork?: string
-  }
-}
+import { generateMetaTags } from '@/utils/seo'
+import { WorkPageProps } from '@/types/work'
+import { GRID_CLASSES } from '@/utils/constants'
 
 const mdxComponents = {
   blockquote: Blockquote,
@@ -61,15 +50,33 @@ const mdxComponents = {
   EyeComfortDFormula,
 }
 
-export default function WorkPage({ code, frontmatter }: Readonly<IWorkProps>) {
+export default function WorkPage({ code, frontmatter }: Readonly<WorkPageProps>) {
   const Component = useMemo(() => getMDXComponent(code), [code])
+  const metaTags = generateMetaTags({
+    title: frontmatter.title,
+    description: frontmatter.description,
+    image: frontmatter.cover,
+  })
 
-  const girdClass = classNames('grid grid-cols-16 gap-y-3 md:gap-y-6')
+  const gridClass = GRID_CLASSES.base
 
   return (
     <>
       <Head>
-        <title>{`${frontmatter.title} | Work by Frad`}</title>
+        <title>{metaTags.title}</title>
+        <meta name="description" content={metaTags.description} />
+        <meta property="og:title" content={metaTags.openGraph.title} />
+        <meta property="og:description" content={metaTags.openGraph.description} />
+        <meta property="og:type" content={metaTags.openGraph.type} />
+        {metaTags.openGraph.image && (
+          <meta property="og:image" content={metaTags.openGraph.image} />
+        )}
+        <meta name="twitter:card" content={metaTags.twitter.card} />
+        <meta name="twitter:title" content={metaTags.twitter.title} />
+        <meta name="twitter:description" content={metaTags.twitter.description} />
+        {metaTags.twitter.image && (
+          <meta name="twitter:image" content={metaTags.twitter.image} />
+        )}
       </Head>
 
       <main className="flex flex-col items-center justify-center">
@@ -80,7 +87,7 @@ export default function WorkPage({ code, frontmatter }: Readonly<IWorkProps>) {
         />
 
         <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
-          <article className={girdClass}>
+          <article className={gridClass}>
             <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
               <strong className="font-black text-black dark:text-white">
                 {frontmatter.title}
@@ -90,7 +97,7 @@ export default function WorkPage({ code, frontmatter }: Readonly<IWorkProps>) {
             <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
           </article>
 
-          <div className={girdClass}>
+          <div className={gridClass}>
             <WorkInformation title="platforms" data={frontmatter.platforms} />
             <WorkInformation
               title="contributors"
@@ -101,7 +108,7 @@ export default function WorkPage({ code, frontmatter }: Readonly<IWorkProps>) {
 
           <Line />
 
-          <article className={classNames('text-lg', girdClass)}>
+          <article className={classNames('text-lg', gridClass)}>
             <Component components={mdxComponents} />
           </article>
 

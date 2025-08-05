@@ -52,8 +52,8 @@ const getCompiledMDX = async (content: string) => {
       },
       cwd: POSTS_PATH,
     })
-  } catch (error: any) {
-    throw new Error(error)
+  } catch (error) {
+    throw new Error(`Failed to compile MDX: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 
@@ -72,7 +72,6 @@ export const getAllPosts = () => {
     .readdirSync(POSTS_PATH)
     .filter((path) => /\.mdx?$/.test(path))
     .map((fileName) => {
-      console.log(fileName)
       const source = getFileContent(fileName)
       const slug = fileName.replace(/\.mdx?$/, '')
       const { data } = matter(source)
