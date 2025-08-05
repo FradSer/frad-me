@@ -60,9 +60,9 @@ export default function DotRing() {
     },
     attracted: {
       ...transitionOffset,
-      height: '2rem',
-      width: '2rem',
-      opacity: 0.8,
+      height: '1rem',
+      width: '1rem',
+      opacity: 0,
       transition: {
         ...primaryTransition,
       },
