@@ -4,13 +4,13 @@ import classNames from 'classnames'
 import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
-import useMousePosition from '@/hooks/useMousePosition'
+import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
 
 import { primaryTransition } from '@/utils/motion/springTransitions'
 
 export default function DotRing() {
   // * Hooks
-  const mousePosition = useMousePosition()
+  const mousePosition = useOptimizedMousePosition()
   const mouseContext = useMouseContext()
 
   // * Physical attraction
