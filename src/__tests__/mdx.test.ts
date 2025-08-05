@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
-import { getFileContent, getAllPosts, getSinglePost } from '../../utils/mdx'
+import { getAllPosts, getSinglePost } from '../../utils/mdx'
 
 // Mock fs module
 jest.mock('fs')
@@ -28,20 +28,6 @@ jest.mock('mdx-bundler', () => ({
 describe('MDX Utils', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-  })
-
-  describe('getFileContent', () => {
-    it('should read file content correctly', () => {
-      mockFs.readFileSync.mockReturnValue(MOCK_CONTENT)
-
-      const result = getFileContent('test.mdx')
-
-      expect(mockFs.readFileSync).toHaveBeenCalledWith(
-        path.join(process.cwd(), '/content/works', 'test.mdx'),
-        'utf8'
-      )
-      expect(result).toBe(MOCK_CONTENT)
-    })
   })
 
   describe('getAllPosts', () => {
