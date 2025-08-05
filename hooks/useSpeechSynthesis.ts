@@ -34,7 +34,6 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
       // Listen for changes (voices might load asynchronously)
       window.speechSynthesis.onvoiceschanged = initVoices
     } else {
-      console.warn('Speech Synthesis not supported by this browser.')
       setIsSupported(false)
     }
 
@@ -78,8 +77,7 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
         setIsSpeaking(false)
       }
 
-      utterance.onerror = (event) => {
-        console.error('SpeechSynthesisUtterance.onerror', event)
+      utterance.onerror = () => {
         setIsSpeaking(false)
       }
 
