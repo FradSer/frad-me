@@ -1,9 +1,20 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion'
 
+import usePhysicalAttraction from '@/hooks/usePhysicalAttraction'
+
 export default function Triangle() {
   const { scrollYProgress } = useScroll()
+  const triangleRef = useRef<HTMLDivElement>(null)
+  
+  // Physical attraction with optimized hook
+  const { isAttracted } = usePhysicalAttraction({
+    elementRef: triangleRef,
+    attractionRadius: 80,
+    isActive: true,
+  })
+
   const x = useTransform(scrollYProgress, [0, 0.3], [0, -50])
   const y = useTransform(scrollYProgress, [0, 0.3], [0, 400])
 
@@ -28,11 +39,20 @@ export default function Triangle() {
 
   return (
     <motion.div
+      ref={triangleRef}
       initial={{ rotate: initialRotate }}
+      animate={{
+        scale: isAttracted ? 1.1 : 1,
+      }}
       style={{
         x,
         y,
         rotate,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
       }}
     >
       <svg

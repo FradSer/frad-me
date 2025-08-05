@@ -1,12 +1,22 @@
+import { useRef } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 
-import useMousePosition from '@/hooks/useMousePosition'
+import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
+import usePhysicalAttraction from '@/hooks/usePhysicalAttraction'
 import useWindowSize from '@/hooks/useWindowSize'
 import { calculateSkew, SPRING_CONFIGS } from '@/utils/motion/animationUtils'
 
 export default function Rectangle() {
-  const mousePosition = useMousePosition()
+  const mousePosition = useOptimizedMousePosition()
   const size = useWindowSize()
+  const rectangleRef = useRef<HTMLDivElement>(null)
+
+  // Physical attraction with optimized hook
+  const { isAttracted } = usePhysicalAttraction({
+    elementRef: rectangleRef,
+    attractionRadius: 60,
+    isActive: true,
+  })
 
   const { skewX: calculatedSkewX, skewY: calculatedSkewY, xValue, yValue } = calculateSkew(
     mousePosition,
@@ -27,10 +37,19 @@ export default function Rectangle() {
   return (
     <div className="ml-2 flex grow lg:ml-8">
       <motion.div
+        ref={rectangleRef}
         className="h-full w-full bg-black dark:bg-white"
+        animate={{
+          scale: isAttracted ? 1.05 : 1,
+        }}
         style={{
           skewX: skewX,
           skewY: skewY,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
         }}
       ></motion.div>
     </div>
