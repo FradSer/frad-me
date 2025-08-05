@@ -1,11 +1,11 @@
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 
-import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
+import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
 import { calculateSkew, SPRING_CONFIGS } from '@/utils/motion/animationUtils'
 
 export default function Rectangle() {
-  const mousePosition = useOptimizedMousePosition()
+  const mousePosition = useMousePosition()
   const size = useWindowSize()
 
   const { skewX: calculatedSkewX, skewY: calculatedSkewY, xValue, yValue } = calculateSkew(

@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { XR, createXRStore } from '@react-three/xr'
 import * as THREE from 'three'
 
-import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
+import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
 import useXRDetect from '@/hooks/useXRDetect'
 
@@ -15,7 +15,7 @@ type IGenericCanvasProps = {
 const store = createXRStore()
 
 function MouseMove({ children }: Readonly<IGenericCanvasProps>) {
-  const mousePosition = useOptimizedMousePosition()
+  const mousePosition = useMousePosition()
   const windowSize = useWindowSize()
 
   const ref = useRef<THREE.Mesh>(null)

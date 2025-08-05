@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 interface PerformanceMonitorProps {
-  enabled?: boolean
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  readonly enabled?: boolean
+  readonly position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 }
 
 /**

@@ -2,10 +2,10 @@ import { useMemo } from 'react'
 import { motion, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
-import useOptimizedMousePosition from '@/hooks/useOptimizedMousePosition'
+import useMousePosition from '@/hooks/useMousePosition'
 
 export default function DotRing() {
-  const mousePosition = useOptimizedMousePosition()
+  const mousePosition = useMousePosition()
   const { cursorType } = useMouseContext()
 
   // Smooth mouse following with spring physics
