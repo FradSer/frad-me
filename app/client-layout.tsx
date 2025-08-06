@@ -45,7 +45,15 @@ const VRLayout = () => (
 )
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const { isVR } = useXRDetect()
+  const { isVR, isLoading } = useXRDetect()
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-black">
+        <div className="text-2xl font-bold text-white">Detecting XR capabilities...</div>
+      </div>
+    )
+  }
 
   return isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>
 }

@@ -3,8 +3,7 @@ import Image from 'next/image'
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
 
-const IN_VIEW_DELAY = 0.4
-const IN_VIEW_DURATION = 0.8
+import { ANIMATION_CONSTANTS } from '@/utils/constants'
 
 interface ITopographyImageProps {
   isTop?: boolean
@@ -41,12 +40,18 @@ function TopographyImage({
       }}
       transition={{
         duration: duration,
-        delay: IN_VIEW_DURATION + IN_VIEW_DELAY,
+        delay: ANIMATION_CONSTANTS.inViewDuration + ANIMATION_CONSTANTS.inViewDelay,
       }}
       viewport={{ once: true }}
       className={topographyClass}
     >
-      <Image src={src} width={1135} height={680} alt={alt} loading="eager" />
+      <Image
+        src={src}
+        width={1135}
+        height={680}
+        alt={alt}
+        loading="lazy"
+      />
     </motion.div>
   )
 }
@@ -58,7 +63,7 @@ function Topography() {
         initial={{ scale: 0.98, opacity: 0, y: 200 }}
         whileInView={{ scale: 0.8, opacity: 1, y: 0 }}
         transition={{
-          scale: { duration: IN_VIEW_DURATION, delay: IN_VIEW_DELAY },
+          scale: { duration: ANIMATION_CONSTANTS.inViewDuration, delay: ANIMATION_CONSTANTS.inViewDelay },
           opacity: { duration: 0.4, ease: 'linear' },
           y: { duration: 0.4, ease: 'linear' },
         }}

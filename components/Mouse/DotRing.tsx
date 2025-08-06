@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import classNames from 'classnames'
 import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
@@ -140,7 +140,7 @@ export default function DotRing() {
         initial="initial"
         className={backgroundClass}
         style={{ left: springX, top: springY }}
-      ></motion.div>
+      />
     </>
   )
 }

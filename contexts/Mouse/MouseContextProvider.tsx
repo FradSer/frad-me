@@ -1,9 +1,9 @@
 import { ReactNode, useState, useMemo, useCallback } from 'react'
 
+import type { Position } from '@/types/common'
 import { 
   MouseContext, 
-  type CursorType, 
-  type Position 
+  type CursorType 
 } from '@/contexts/Mouse/MouseContext'
 
 type MouseContextProps = {

@@ -54,16 +54,30 @@ describe('WebXRErrorBoundary', () => {
   })
 
   it('handles retry button click', () => {
-    render(
+    let throwError = true
+    const DynamicThrowError = () => <ThrowError shouldThrow={throwError} />
+    
+    const { rerender } = render(
       <WebXRErrorBoundary>
-        <ThrowError shouldThrow={true} />
+        <DynamicThrowError />
       </WebXRErrorBoundary>
     )
 
     const retryButton = screen.getByRole('button', { name: 'Try Again' })
     expect(retryButton).toBeInTheDocument()
     
+    // Change the error condition and click retry
+    throwError = false
     fireEvent.click(retryButton)
-    expect(retryButton).toBeInTheDocument()
+    
+    // Re-render with the new state
+    rerender(
+      <WebXRErrorBoundary>
+        <DynamicThrowError />
+      </WebXRErrorBoundary>
+    )
+    
+    expect(screen.getByText('No error')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Try Again' })).not.toBeInTheDocument()
   })
 })

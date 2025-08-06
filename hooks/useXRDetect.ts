@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 
-type XRDetect = {
+type XRDetectResult = {
   isVR: boolean
+  isAR?: boolean
+  isLoading: boolean
 }
 
 interface NavigatorWithXR {
@@ -10,25 +12,49 @@ interface NavigatorWithXR {
   }
 }
 
-// Detect if the browser is supporting WebXR
-// https://developer.mozilla.org/en-US/docs/Web/API/WebXR_API
-// https://www.devbridge.com/articles/ar-app-development-tutorial/
-export default function useXRDetect(): XRDetect {
+/**
+ * Modern WebXR detection hook with improved error handling and TypeScript support
+ * Detects browser support for WebXR VR sessions
+ */
+export default function useXRDetect(): XRDetectResult {
   const [isVR, setIsVR] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    let isMounted = true
+
     const checkVRSupport = async () => {
       try {
         const nav = navigator as NavigatorWithXR
-        const supported = nav.xr ? await nav.xr.isSessionSupported('immersive-vr') : false
-        setIsVR(supported)
-      } catch {
-        setIsVR(false)
+        
+        if (!nav.xr) {
+          setIsVR(false)
+          return
+        }
+
+        const vrSupported = await nav.xr.isSessionSupported('immersive-vr')
+        
+        if (isMounted) {
+          setIsVR(vrSupported)
+        }
+      } catch (error) {
+        console.warn('WebXR detection failed:', error)
+        if (isMounted) {
+          setIsVR(false)
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
     checkVRSupport()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
-  return { isVR }
+  return { isVR, isLoading }
 }

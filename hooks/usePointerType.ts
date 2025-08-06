@@ -1,24 +1,40 @@
 import { useEffect, useState } from 'react'
 
-type PointerType = 'fine' | 'coarse' | 'none'
+export type PointerType = 'fine' | 'coarse' | 'none'
+
+type UsePointerTypeResult = {
+  pointerType: PointerType
+  isFinePointer: boolean
+  isCoarsePointer: boolean
+  hasNoPointer: boolean
+}
+
+const POINTER_QUERIES = {
+  fine: '(pointer: fine)',
+  coarse: '(pointer: coarse)',
+} as const
 
 /**
- * Hook to detect the primary pointer type using CSS media queries
- * - fine: Mouse, trackpad, stylus (precise pointing)
- * - coarse: Touch screen, TV remote (less precise)
- * - none: No pointing device
+ * Modern hook to detect pointer type with additional helper properties
+ * Uses CSS media queries to determine the primary pointing device capability
+ * 
+ * @returns Object with pointer type and boolean helpers
  */
-export default function usePointerType(): PointerType {
+export default function usePointerType(): UsePointerTypeResult {
   const [pointerType, setPointerType] = useState<PointerType>('fine')
 
   useEffect(() => {
-    // Check if window is available (client-side)
     if (typeof window === 'undefined') return
 
-    const checkPointerType = () => {
-      if (window.matchMedia('(pointer: fine)').matches) {
+    const mediaQueries = {
+      fine: window.matchMedia(POINTER_QUERIES.fine),
+      coarse: window.matchMedia(POINTER_QUERIES.coarse),
+    }
+
+    const updatePointerType = () => {
+      if (mediaQueries.fine.matches) {
         setPointerType('fine')
-      } else if (window.matchMedia('(pointer: coarse)').matches) {
+      } else if (mediaQueries.coarse.matches) {
         setPointerType('coarse')
       } else {
         setPointerType('none')
@@ -26,22 +42,25 @@ export default function usePointerType(): PointerType {
     }
 
     // Initial check
-    checkPointerType()
+    updatePointerType()
 
-    // Create media query listeners
-    const fineQuery = window.matchMedia('(pointer: fine)')
-    const coarseQuery = window.matchMedia('(pointer: coarse)')
-
-    // Add listeners for dynamic changes
-    fineQuery.addEventListener('change', checkPointerType)
-    coarseQuery.addEventListener('change', checkPointerType)
+    // Add event listeners
+    Object.values(mediaQueries).forEach(query => {
+      query.addEventListener('change', updatePointerType)
+    })
 
     // Cleanup
     return () => {
-      fineQuery.removeEventListener('change', checkPointerType)
-      coarseQuery.removeEventListener('change', checkPointerType)
+      Object.values(mediaQueries).forEach(query => {
+        query.removeEventListener('change', updatePointerType)
+      })
     }
   }, [])
 
-  return pointerType
+  return {
+    pointerType,
+    isFinePointer: pointerType === 'fine',
+    isCoarsePointer: pointerType === 'coarse',
+    hasNoPointer: pointerType === 'none',
+  }
 }
