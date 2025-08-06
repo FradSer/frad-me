@@ -1,5 +1,3 @@
-import fs from 'fs'
-import path from 'path'
 import { getAllPosts } from './mdx'
 import { SITE_CONFIG } from './constants'
 
@@ -10,57 +8,31 @@ interface SitemapEntry {
   priority: number
 }
 
-async function getFileLastModified(filePath: string): Promise<string> {
-  try {
-    // Validate and sanitize file path
-    const normalizedPath = path.normalize(filePath)
-    if (!normalizedPath.startsWith(process.cwd())) {
-      throw new Error('Invalid file path - outside project directory')
-    }
-    
-    const stats = await fs.promises.stat(normalizedPath)
-    return stats.mtime.toISOString().split('T')[0]
-  } catch (error) {
-    console.warn(`Failed to get modification time for ${filePath}:`, error instanceof Error ? error.message : String(error))
-    return new Date().toISOString().split('T')[0]
-  }
-}
-
-export async function generateSitemap(): Promise<string> {
+export function generateSitemap(): string {
   const posts = getAllPosts()
-
-  // Get last modified dates for static pages
-  const indexLastMod = await getFileLastModified(path.join(process.cwd(), 'pages/index.tsx'))
-  const webxrLastMod = await getFileLastModified(path.join(process.cwd(), 'pages/webxr.tsx'))
+  const currentDate = new Date().toISOString().split('T')[0]
 
   const staticPages: SitemapEntry[] = [
     {
       url: `${SITE_CONFIG.domain}/`,
-      lastmod: indexLastMod,
+      lastmod: currentDate,
       changefreq: 'monthly',
       priority: 1.0,
     },
     {
       url: `${SITE_CONFIG.domain}/webxr`,
-      lastmod: webxrLastMod,
+      lastmod: currentDate,
       changefreq: 'monthly', 
       priority: 0.8,
     },
   ]
 
-  const workPages: SitemapEntry[] = await Promise.all(
-    posts.map(async (post) => {
-      const mdxFilePath = path.join(process.cwd(), 'content/works', `${encodeURIComponent(post.slug)}.mdx`)
-      const lastmod = await getFileLastModified(mdxFilePath)
-      
-      return {
-        url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(post.slug)}`,
-        lastmod,
-        changefreq: 'yearly' as const,
-        priority: 0.9,
-      }
-    })
-  )
+  const workPages: SitemapEntry[] = posts.map((post) => ({
+    url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(post.slug)}`,
+    lastmod: currentDate,
+    changefreq: 'yearly' as const,
+    priority: 0.9,
+  }))
 
   const allPages = [...staticPages, ...workPages]
 

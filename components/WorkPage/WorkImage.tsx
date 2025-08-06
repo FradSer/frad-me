@@ -1,9 +1,38 @@
 import Image from 'next/image'
-
 import classNames from 'classnames'
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
 import { WorkImageProps, WorkBeforeAfterImagesProps, ImagePosition } from '@/types/work'
+import { IMAGE_POSITION_CLASSES, COMMON_CLASSES } from '@/utils/constants'
+
+// Shared optimized image component
+function OptimizedImage({ 
+  src, 
+  width, 
+  height, 
+  alt, 
+  priority = false, 
+  unoptimized = false 
+}: {
+  src: string
+  width: number
+  height: number
+  alt: string
+  priority?: boolean
+  unoptimized?: boolean
+}) {
+  return (
+    <Image
+      src={src}
+      width={width}
+      height={height}
+      alt={alt}
+      priority={priority}
+      loading={priority ? undefined : "lazy"}
+      unoptimized={unoptimized}
+    />
+  )
+}
 
 function WorkSingleImage({
   src,
@@ -14,29 +43,23 @@ function WorkSingleImage({
   unoptimized = false,
   priority = false,
 }: Readonly<WorkImageProps>) {
-  // * Styling
-  const workImageClass = classNames('w-full overflow-hidden', {
-    'col-span-16 col-start-1 md:col-span-10 md:col-start-7':
-      position === ImagePosition.inline,
-    'col-span-16': position === ImagePosition.fullScreen,
-    'col-span-16 md:col-span-5 mt-0 md:mt-[-3.25rem]':
-      position === ImagePosition.underH2,
-  })
+  const workImageClass = classNames(
+    COMMON_CLASSES.imageContainer,
+    IMAGE_POSITION_CLASSES[position]
+  )
 
-  // * Render
   return (
     <MDXComponentProvider className={workImageClass}>
       <div className="work-component-layout">
-        <Image
+        <OptimizedImage
           src={src}
           width={width}
           height={height}
           alt={alt}
           priority={priority}
-          loading={priority ? undefined : "lazy"}
           unoptimized={unoptimized}
         />
-        <span className="work-caption">{alt}</span>
+        <span className={COMMON_CLASSES.workCaption}>{alt}</span>
       </div>
     </MDXComponentProvider>
   )
@@ -50,29 +73,22 @@ function WorkBeforeAfterImages({
   description,
   priority = false,
 }: Readonly<WorkBeforeAfterImagesProps>) {
+  const sharedImageProps = {
+    width,
+    height,
+    alt: description,
+    priority,
+  }
+
   return (
     <MDXComponentProvider className="work-component-layout col-span-16">
       <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
         <span>Before:</span>
-        <Image
-          src={beforeSrc}
-          width={width}
-          height={height}
-          alt={description}
-          priority={priority}
-          loading={priority ? undefined : "lazy"}
-        />
+        <OptimizedImage src={beforeSrc} {...sharedImageProps} />
         <span>After:</span>
-        <Image
-          src={afterSrc}
-          width={width}
-          height={height}
-          alt={description}
-          priority={priority}
-          loading={priority ? undefined : "lazy"}
-        />
+        <OptimizedImage src={afterSrc} {...sharedImageProps} />
       </div>
-      <span className="work-caption">{description}</span>
+      <span className={COMMON_CLASSES.workCaption}>{description}</span>
     </MDXComponentProvider>
   )
 }

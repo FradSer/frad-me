@@ -9,6 +9,7 @@ interface SEOMetaData {
   robots?: string
 }
 
+// Generate structured meta data object
 export function generateMetaTags({ 
   title, 
   description, 
@@ -32,7 +33,7 @@ export function generateMetaTags({
       ...(fullImageUrl && { image: fullImageUrl }),
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary_large_image' as const,
       title: fullTitle,
       description,
       ...(fullImageUrl && { image: fullImageUrl }),

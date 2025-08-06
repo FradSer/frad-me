@@ -6,6 +6,20 @@ export const GRID_CLASSES = {
   listWrapper: 'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4',
 } as const
 
+// Image position classes for WorkImage components
+export const IMAGE_POSITION_CLASSES = {
+  inline: GRID_CLASSES.contentWrapper,
+  underH2: GRID_CLASSES.contentWrapper,
+  fullScreen: GRID_CLASSES.fullWidth,
+} as const
+
+// Common component classes
+export const COMMON_CLASSES = {
+  workComponentLayout: 'work-component-layout',
+  workCaption: 'work-caption',
+  imageContainer: 'w-full overflow-hidden',
+} as const
+
 // Animation constants
 export const ANIMATION_CONSTANTS = {
   inViewDelay: 0.4,
