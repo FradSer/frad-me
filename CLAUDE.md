@@ -23,6 +23,18 @@ pnpm format       # Format code with Prettier and import ordering
 pnpm release      # Create release with conventional changelog
 ```
 
+**Testing:**
+```bash
+pnpm test         # Run unit tests (Jest)
+pnpm test:watch   # Run unit tests in watch mode
+pnpm test:ci      # Run unit tests with coverage for CI
+pnpm test:coverage # Run unit tests with coverage report
+pnpm test:e2e     # Run end-to-end tests (Playwright)
+pnpm test:e2e:ui  # Run E2E tests with UI
+pnpm test:e2e:headed # Run E2E tests in headed mode (visible browser)
+pnpm test:all     # Run all tests (unit + E2E)
+```
+
 **Package Management:**
 - Uses `pnpm` as package manager
 - Node.js version: 22.x (specified in engines)
@@ -62,6 +74,17 @@ pnpm release      # Create release with conventional changelog
   - `usePhysicalAttraction.ts`: Mouse attraction physics
   - `useSpeechSynthesis.ts`: Web Speech API integration
   - `useWindowSize.ts`: Responsive design utilities
+
+### Testing Infrastructure
+- **src/__tests__/**: Unit and component tests using Jest + React Testing Library
+  - `mdx.test.ts`: Tests for MDX utilities and content processing
+- **tests/e2e/**: End-to-end tests using Playwright
+  - `navigation.spec.ts`: Navigation and theme switching tests
+  - `works.spec.ts`: Work portfolio functionality tests
+- **Configuration**: 
+  - `jest.config.js`: Jest configuration with Next.js integration
+  - `jest.setup.js`: Global test setup with mocks for Next.js, framer-motion, and 3D libraries
+  - `playwright.config.ts`: Playwright multi-browser testing setup
 
 ## Key Technologies
 
@@ -113,7 +136,7 @@ pnpm release      # Create release with conventional changelog
 
 **Tailwind Configuration:**
 - JIT mode enabled for optimal build size
-- Custom GT Eesti font family integration  
+- Custom GT Eesti font family integration
 - Extended grid system (16-column layout)
 - Custom aspect ratios for responsive design
 - Class-based dark mode switching

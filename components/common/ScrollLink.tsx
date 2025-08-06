@@ -1,8 +1,9 @@
 import { Link } from 'react-scroll'
+import { ReactNode } from 'react'
 
 type IScrollLinkProps = {
   destination: string
-  children: any
+  children: ReactNode
 }
 
 export default function ScrollLink(props: Readonly<IScrollLinkProps>) {

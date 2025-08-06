@@ -1,6 +1,10 @@
-import { ReactNode, useState, useMemo } from 'react'
+import { ReactNode, useState, useMemo, useCallback } from 'react'
 
-import { MouseContext } from '@/contexts/Mouse/MouseContext'
+import { 
+  MouseContext, 
+  type CursorType, 
+  type Position 
+} from '@/contexts/Mouse/MouseContext'
 
 type MouseContextProps = {
   children: ReactNode
@@ -9,21 +13,19 @@ type MouseContextProps = {
 export default function MouseContextProvider({
   children,
 }: Readonly<MouseContextProps>) {
-  const [cursorType, setCursorType] = useState<string>('default')
-  const [attractorPosition, setAttractorPosition] = useState<{ x: number; y: number } | null>(null)
+  const [cursorType, setCursorType] = useState<CursorType>('default')
+  const [attractorPosition, setAttractorPosition] = useState<Position | null>(null)
 
-  const cursorChangeHandler = (cursorType: string) => {
-    setCursorType(cursorType)
-  }
+  const cursorChangeHandler = useCallback((newCursorType: CursorType) => {
+    setCursorType(newCursorType)
+  }, [])
 
-  const value = useMemo(() => {
-    return {
-      cursorType: cursorType,
-      cursorChangeHandler: cursorChangeHandler,
-      attractorPosition: attractorPosition,
-      setAttractorPosition: setAttractorPosition,
-    }
-  }, [cursorType, attractorPosition])
+  const value = useMemo(() => ({
+    cursorType,
+    cursorChangeHandler,
+    attractorPosition,
+    setAttractorPosition,
+  }), [cursorType, attractorPosition, cursorChangeHandler])
 
   return <MouseContext.Provider value={value}>{children}</MouseContext.Provider>
 }

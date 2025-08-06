@@ -1,4 +1,7 @@
 const million = require('million/compiler')
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -10,6 +13,12 @@ const nextConfig = {
     'three',
     'three-stdlib',
   ],
+  webpack: (config, { isServer }) => {
+    if (process.env.ANALYZE === 'true') {
+      console.log(`Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`)
+    }
+    return config
+  },
 }
 
-module.exports = million.next(nextConfig)
+module.exports = withBundleAnalyzer(million.next(nextConfig))

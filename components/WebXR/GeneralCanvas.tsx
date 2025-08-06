@@ -1,106 +1,80 @@
-import React, { ReactNode, useRef, useEffect, useState } from 'react'
-
-import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, createXRStore} from '@react-three/xr'
-
+import React, { ReactNode, useRef } from 'react'
+import dynamic from 'next/dynamic'
+import { useFrame } from '@react-three/fiber'
+import { createXRStore } from '@react-three/xr'
+import * as THREE from 'three'
+import { measureChunkLoad } from '@/utils/performance'
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
 import useXRDetect from '@/hooks/useXRDetect'
 import { webxrErrorLogger } from '@/utils/errorLogger'
 
-type IGenericCanvasProps = {
+type CanvasProps = {
   children: ReactNode
 }
 
-const store = createXRStore()
+// Dynamic imports for code splitting
+const Canvas = dynamic(
+  () => measureChunkLoad('Canvas', () => 
+    import('@react-three/fiber').then(mod => ({ default: mod.Canvas }))
+  ),
+  { ssr: false }
+)
 
-function MouseMove({ children }: Readonly<IGenericCanvasProps>) {
+const XR = dynamic(
+  () => measureChunkLoad('XR', () => 
+    import('@react-three/xr').then(mod => ({ default: mod.XR }))
+  ),
+  { ssr: false }
+)
+
+const xrStore = createXRStore()
+
+const MouseMove = ({ children }: CanvasProps) => {
   const mousePosition = useMousePosition()
   const windowSize = useWindowSize()
-  const ref = useRef<any>()
+  const meshRef = useRef<THREE.Mesh>(null)
 
   useFrame(() => {
-    if (!ref.current) return
+    if (!meshRef.current) return
     
-    const positionX = (mousePosition.x / windowSize.width) * 0.1
-    const positionY = (mousePosition.y / windowSize.height) * 0.1
-
-    ref.current.position.x = positionX
-    ref.current.position.y = positionY
+    const deltaX = (mousePosition.x / windowSize.width) * 0.1
+    const deltaY = (mousePosition.y / windowSize.height) * 0.1
+    
+    meshRef.current.position.set(deltaX, deltaY, 0)
   })
 
-  return <mesh ref={ref}>{children}</mesh>
+  return <mesh ref={meshRef}>{children}</mesh>
 }
 
-function GenericCanvas({ children }: IGenericCanvasProps) {
-  const xrDetect = useXRDetect()
-  const [webglError, setWebglError] = useState<string | null>(null)
+const XRControls = () => (
+  <div className="absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white">
+    <button onClick={() => xrStore.enterVR()}>Enter VR</button>
+    <button onClick={() => xrStore.enterAR()}>Enter AR</button>
+  </div>
+)
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const handleWebGLContextLost = (event: Event) => {
-      event.preventDefault()
-      const error = new Error('WebGL context lost')
-      webxrErrorLogger.logError(error)
-      setWebglError('WebGL context was lost. Please refresh the page.')
-    }
-
-    const handleWebGLContextRestored = () => setWebglError(null)
-
-    window.addEventListener('webglcontextlost', handleWebGLContextLost)
-    window.addEventListener('webglcontextrestored', handleWebGLContextRestored)
-
-    return () => {
-      window.removeEventListener('webglcontextlost', handleWebGLContextLost)
-      window.removeEventListener('webglcontextrestored', handleWebGLContextRestored)
-    }
-  }, [])
-
-  const handleXRAction = (action: () => void) => {
-    try {
-      action()
-    } catch (error) {
-      webxrErrorLogger.logError(error as Error)
-      throw error
-    }
-  }
-
-  if (webglError) {
-    throw new Error(webglError)
-  }
-
-  if (xrDetect.isVR) {
-    return (
-      <div className="h-screen w-screen bg-black">
-        <div className="absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white">
-          <button onClick={() => handleXRAction(() => store.enterVR())}>
-            Enter VR
-          </button>
-          <button onClick={() => handleXRAction(() => store.enterAR())}>
-            Enter AR
-          </button>
-        </div>
-        <Canvas className="w-full">
-          <XR store={store}>{children}</XR>
-        </Canvas>
-      </div>
-    )
-  }
-
-  return (
-    <Canvas
-      style={{ background: 'linear-gradient(135deg, #1e1b4b, #3730a3, #7c3aed)' }}
-      camera={{
-        position: [0, 0, 10],
-        fov: 50
-      }}
-    >
-      <color attach="background" args={['#1e1b4b']} />
-      <fog attach="fog" args={['#1e1b4b', 15, 50]} />
-      <MouseMove>{children}</MouseMove>
+const VRCanvas = ({ children }: CanvasProps) => (
+  <div className="h-screen w-screen bg-black">
+    <XRControls />
+    <Canvas className="w-full">
+      <XR store={xrStore}>{children}</XR>
     </Canvas>
-  )
+  </div>
+)
+
+const StandardCanvas = ({ children }: CanvasProps) => (
+  <Canvas>
+    <MouseMove>{children}</MouseMove>
+  </Canvas>
+)
+
+function GenericCanvas({ children }: CanvasProps) {
+  const { isVR } = useXRDetect()
+  
+  return isVR ? 
+    <VRCanvas>{children}</VRCanvas> : 
+    <StandardCanvas>{children}</StandardCanvas>
 }
 
 export default GenericCanvas

@@ -1,6 +1,8 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 import classNames from 'classnames'
 
@@ -24,7 +26,7 @@ function CommonLink({
   href,
   destinationType = DestinationType.link,
 }: Readonly<ICommonLinkProps>) {
-  const { pathname } = useRouter()
+  const pathname = usePathname()
 
   const titleClass = classNames(
     'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
