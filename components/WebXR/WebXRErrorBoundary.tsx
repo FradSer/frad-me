@@ -1,10 +1,9 @@
 import React, { Component, ReactNode } from 'react'
 
-import WebXR2DFallback from './WebXR2DFallback'
 import WebXR3DFallback from './WebXR3DFallback'
 import { webxrErrorLogger } from '@/utils/errorLogger'
 
-type FallbackLevel = 'webxr' | '3d' | '2d'
+type FallbackLevel = 'webxr' | '3d' | 'error'
 
 interface ActionButton {
   text: string
@@ -32,8 +31,8 @@ interface WebXRErrorBoundaryProps {
 // Configuration for fallback progression
 const FALLBACK_PROGRESSION: Record<FallbackLevel, FallbackLevel | null> = {
   webxr: '3d',
-  '3d': '2d',
-  '2d': null
+  '3d': 'error',
+  'error': null
 }
 
 class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBoundaryState> {
@@ -114,8 +113,8 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
         <WebXR3DFallback 
           onError={(err) => this.componentDidCatch(err, { componentStack: '' })}
         />
-      ) : <WebXR2DFallback />,
-      '2d': () => <WebXR2DFallback />,
+      ) : this.renderErrorFallback(),
+      'error': () => this.renderErrorFallback(),
       'webxr': () => this.renderErrorFallback()
     }
 

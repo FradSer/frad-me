@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber'
 import { Html, PerformanceMonitor } from '@react-three/drei'
 
 import Scene3DFallback from './Fallback3D/Scene'
-import WebXR2DFallback from './WebXR2DFallback'
 import { webxrErrorLogger } from '@/utils/errorLogger'
 import { use3DFallbackState, Quality } from '@/hooks/use3DFallbackState'
 
@@ -107,9 +106,29 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
     updateQuality(quality === 'high' ? 'medium' : 'low')
   }, [quality, updateQuality])
 
-  // Fallback to 2D if critical errors or mode is forced to 2D
+  // Fallback to error message if critical errors or mode is forced to 2D
   if (error?.message.includes('WebGL') || mode === '2d') {
-    return <WebXR2DFallback />
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+        <div className="max-w-md text-center text-white">
+          <h1 className="mb-4 text-2xl font-bold">WebGL Error</h1>
+          <p className="mb-6 text-gray-300">
+            Your device doesn&apos;t support WebGL or 3D rendering. Please try a different browser or device.
+          </p>
+          <button
+            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const homeUrl = new URL('/', window.location.origin)
+                window.location.href = homeUrl.toString()
+              }
+            }}
+          >
+            Go to Main Site
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

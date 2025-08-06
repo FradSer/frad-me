@@ -69,12 +69,14 @@ interface ParticleData {
   rotationSpeed: number
 }
 
-// Predefined shape configurations to eliminate hardcoded values
-const SHAPE_CONFIGS: ShapeConfig[] = [
-  { geometry: 'cone', position: [-8, 4, 0], color: '#e879f9', delay: 0, scale: 0.8, speed: 1.2 },
-  { geometry: 'box', position: [8, 1, 0], color: '#60a5fa', delay: 1, scale: 1.2, speed: 0.8 },
-  { geometry: 'sphere', position: [3, -4, 2], color: '#34d399', delay: 2, scale: 1.3, speed: 1.0 },
-  { geometry: 'cone', position: [-12, -2, -5], color: '#f472b6', delay: 3, scale: 0.6, speed: 1.5, floatIntensity: 0.8, distortionIntensity: 0.3 }
+// Predefined shape configurations matching Hero component geometry
+const HERO_SHAPE_CONFIGS: ShapeConfig[] = [
+  // Triangle - positioned near "Frad LEE" text like in Hero component
+  { geometry: 'cone', position: [-6, 4, -2], color: '#ffffff', delay: 0, scale: 1.2, speed: 1.0 },
+  // Rectangle - positioned near "advancement" text 
+  { geometry: 'box', position: [4, 1.5, -1], color: '#ffffff', delay: 0.5, scale: [2, 0.2, 0.5] as any, speed: 0.8 },
+  // Dot Circle - positioned near "startup" text
+  { geometry: 'sphere', position: [3, -2.5, -1], color: '#ffffff', delay: 1.0, scale: 0.8, speed: 1.2 }
 ]
 
 const RING_POSITIONS: [number, number, number][] = [
@@ -291,17 +293,14 @@ const FloatingParticles: React.FC<{ quality: Quality }> = ({ quality }) => {
 
 const AnimatedShapes: React.FC<AnimatedShapesProps> = ({ quality }) => {
   const shapesToRender = useMemo(() => {
-    return SHAPE_CONFIGS.filter((_, index) => {
-      // Only render the 4th shape (index 3) on high quality
-      return index < 3 || quality === 'high'
-    })
-  }, [quality])
+    return HERO_SHAPE_CONFIGS
+  }, [])
 
   return (
     <group>
       {shapesToRender.map((config, index) => (
         <AnimatedShape
-          key={`${config.geometry}-${index}`}
+          key={`hero-shape-${index}`}
           {...config}
           quality={quality}
         />

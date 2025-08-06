@@ -308,19 +308,17 @@ const PulsingIndicator: React.FC<PulsingIndicatorProps> = ({ position, color, qu
 
 const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
   const handlers = useMemo(() => ({
-    tryWebXRAgain: () => {
-      if (typeof window !== 'undefined') {
-        window.location.reload()
-      }
+    scrollToWork: () => {
+      // Simulate scrolling to work section by creating a work view
+      console.log('Scroll to work section - transitioning to work view')
+      // This would trigger a view change in the parent component
     },
-    explorePortfolio: () => {
+    backToMainSite: () => {
       if (typeof window !== 'undefined') {
         const homeUrl = new URL('/', window.location.origin)
         window.location.href = homeUrl.toString()
       }
-    },
-    downloadResume: () => console.log('Download resume clicked'),
-    contactMe: () => console.log('Contact me clicked')
+    }
   }), [])
 
   const platformMaterial = useMemo(() => ({
@@ -332,45 +330,18 @@ const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
 
   const buttonConfigs = useMemo(() => ([
     {
-      position: [-3, 1, 0] as Position3D,
-      text: 'Try WebXR Again',
-      onClick: handlers.tryWebXRAgain,
+      position: [0, 1, 0] as Position3D,
+      text: 'Explore My Work',
+      onClick: handlers.scrollToWork,
       color: '#3b82f6',
       hoverColor: '#1d4ed8'
-    },
-    {
-      position: [3, 1, 0] as Position3D,
-      text: 'Explore Portfolio',
-      onClick: handlers.explorePortfolio,
-      color: '#6b7280',
-      hoverColor: '#374151'
     }
   ]), [handlers])
-
-  const floatingConfigs = useMemo(() => ([
-    {
-      position: [-6, 2, 2] as Position3D,
-      icon: '📄',
-      onClick: handlers.downloadResume,
-      color: '#10b981'
-    },
-    {
-      position: [6, 2, 2] as Position3D,
-      icon: '✉️',
-      onClick: handlers.contactMe,
-      color: '#f59e0b'
-    }
-  ]), [handlers])
-
-  const indicatorConfigs = useMemo(() => ([
-    { position: [-3, 2.2, 0] as Position3D, color: '#3b82f6' },
-    { position: [3, 2.2, 0] as Position3D, color: '#6b7280' }
-  ]), [])
 
   return (
     <group position={[0, -6, 0]}>
       <mesh position={[0, 0, 0]} receiveShadow={quality === 'high'}>
-        <boxGeometry args={[12, 0.2, 8]} />
+        <boxGeometry args={[8, 0.2, 6]} />
         <meshStandardMaterial {...platformMaterial} />
       </mesh>
 
@@ -378,22 +349,10 @@ const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
         <InteractiveButton
           key={index}
           {...config}
-          size={[4, 1, 0.5]}
+          size={[5, 1.2, 0.6]}
           quality={quality}
         />
       ))}
-
-      {quality !== 'low' && (
-        <>
-          {floatingConfigs.map((config, index) => (
-            <FloatingActionButton key={index} {...config} quality={quality} />
-          ))}
-          
-          {indicatorConfigs.map((config, index) => (
-            <PulsingIndicator key={index} {...config} quality={quality} />
-          ))}
-        </>
-      )}
 
       {quality === 'high' && (
         <Html
@@ -410,10 +369,30 @@ const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
           }}
         >
           <div className="animate-pulse">
-            Click or hover to interact with elements
+            This is a 3D version of the main website experience
           </div>
         </Html>
       )}
+
+      <Html
+        position={[0, -1.5, 0]}
+        transform
+        occlude
+        style={{
+          color: 'white',
+          fontSize: '10px',
+          textAlign: 'center',
+          userSelect: 'none',
+          opacity: 0.5
+        }}
+      >
+        <button
+          onClick={handlers.backToMainSite}
+          className="text-blue-300 underline hover:text-blue-200"
+        >
+          Visit full website instead
+        </button>
+      </Html>
     </group>
   )
 }

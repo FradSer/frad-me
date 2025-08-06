@@ -4,7 +4,6 @@ import { Stars } from '@react-three/drei'
 
 import GenericCanvas from '@/components/WebXR/GeneralCanvas'
 import HeroText from '@/components/WebXR/HeroText'
-import WebXR2DFallback from '@/components/WebXR/WebXR2DFallback'
 import WebXR3DFallback from '@/components/WebXR/WebXR3DFallback'
 import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary'
 import { webxrErrorLogger } from '@/utils/errorLogger'

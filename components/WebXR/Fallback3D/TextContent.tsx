@@ -239,15 +239,18 @@ const FloatingTextBubble = React.memo<{
 
 FloatingTextBubble.displayName = 'FloatingTextBubble'
 
-// Content configuration - moved outside component for better performance
-const TEXT_LINES = [
-  { text: "Frad LEE", position: [-5.3, 1, 0] as [number, number, number], size: 1.2, color: "#ffffff", delay: 0, emissiveIntensity: 0.4 },
-  { text: "is a self-taught craftier", position: [2, 1, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 0.5, emissiveIntensity: 0.2 },
-  { text: "who is eager to learn for", position: [-1.8, 0, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 1.0, emissiveIntensity: 0.2 },
-  { text: "advancement. Whether it is", position: [-1, -1, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 1.5, emissiveIntensity: 0.2 },
-  { text: "coding in a new language,", position: [-1.3, -2, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 2.0, emissiveIntensity: 0.2 },
-  { text: "design with any tool whatsoever", position: [0.1, -3, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 2.5, emissiveIntensity: 0.2 },
-  { text: "or building a startup", position: [-2.5, -4, 0] as [number, number, number], size: 0.6, color: "#9ca3af", delay: 3.0, emissiveIntensity: 0.2 }
+// Content configuration - exactly matching Hero component from pages/index.tsx
+const HERO_TEXT_LINES = [
+  { text: "Frad LEE", position: [0, 4, 0] as [number, number, number], size: 2.5, color: "#ffffff", delay: 0, emissiveIntensity: 0.5, type: "title" },
+  { text: "is a self-taught craftier", position: [0, 2.5, 0] as [number, number, number], size: 1.2, color: "#9ca3af", delay: 0.3, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "who is eager to learn for", position: [0, 1.5, 0] as [number, number, number], size: 1.2, color: "#9ca3af", delay: 0.6, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "advancement. Whether it's", position: [0, 0.5, 0] as [number, number, number], size: 1.2, color: "#9ca3af", delay: 0.9, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "coding", position: [-2, -0.5, 0] as [number, number, number], size: 1.2, color: "#ffffff", delay: 1.2, emissiveIntensity: 0.3, type: "highlight" },
+  { text: "in a new language,", position: [2, -0.5, 0] as [number, number, number], size: 1.0, color: "#9ca3af", delay: 1.3, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "design", position: [-2, -1.5, 0] as [number, number, number], size: 1.2, color: "#ffffff", delay: 1.5, emissiveIntensity: 0.3, type: "highlight" },
+  { text: "with any tool whatsoever", position: [2.5, -1.5, 0] as [number, number, number], size: 1.0, color: "#9ca3af", delay: 1.6, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "or building a", position: [-1.5, -2.5, 0] as [number, number, number], size: 1.0, color: "#9ca3af", delay: 1.8, emissiveIntensity: 0.2, type: "subtitle" },
+  { text: "startup", position: [1.5, -2.5, 0] as [number, number, number], size: 1.2, color: "#ffffff", delay: 1.9, emissiveIntensity: 0.3, type: "highlight" }
 ] as const
 
 const BUBBLE_TEXTS = [
@@ -270,8 +273,8 @@ const TextContent = React.memo<TextContentProps>(({ quality }) => {
   const showHelpText = quality === 'high'
 
   return (
-    <group position={[0, 2, -10]}>
-      {TEXT_LINES.map((line, index) => (
+    <group position={[0, 0, -10]}>
+      {HERO_TEXT_LINES.map((line, index) => (
         <Text3D
           key={`text-${index}`}
           text={line.text}
@@ -296,7 +299,7 @@ const TextContent = React.memo<TextContentProps>(({ quality }) => {
 
       {showHelpText && (
         <Html
-          position={[0, -6, 0]}
+          position={[0, -4, 0]}
           transform
           occlude
           style={HELP_TEXT_STYLE}
