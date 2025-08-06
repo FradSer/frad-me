@@ -2,11 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import classNames from 'classnames'
-import { motion, useAnimationControls } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 
-import { primaryTransition } from '@/utils/motion/springTransitions'
+import { createVariants, useAnimationGroup } from '@/utils/motion/animationHelpers'
+import { getWorkColor } from '@/utils/theme/workColors'
 
 interface IWorkCardProps {
   title: string
@@ -30,13 +31,10 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     },
   )
 
-  const backgroundImageClass = classNames('absolute w-full h-full', {
-    'bg-[#313131]': props.slug === 'eye-protection-design-handbook',
-    'bg-blue-500': props.slug === 'usability-design-for-xigua-video',
-    'bg-red-600': props.slug === 'pachino',
-    'bg-green-600': props.slug === 'bearychat',
-    'bg-white': props.slug == null,
-  })
+  const backgroundImageClass = classNames(
+    'absolute w-full h-full',
+    getWorkColor(props.slug)
+  )
 
   const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
     'text-left md:text-center': props.isCenter,
@@ -49,81 +47,65 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   })
 
   // * Animation
-
-  const backgroundImageControls = useAnimationControls()
-  const backgroundMaskControls = useAnimationControls()
-  const textControls = useAnimationControls()
-
-  const backgroundMaskVariants = {
-    initial: {
-      opacity: 0,
+  const { controls, startGroup } = useAnimationGroup(['backgroundImage', 'backgroundMask', 'text'])
+  
+  const variants = createVariants({
+    backgroundMask: {
+      initial: { opacity: 0 },
+      hover: { opacity: 1 },
     },
-    hover: {
-      opacity: 1,
+    backgroundImage: {
+      initial: { scale: 1.1 },
+      hover: { scale: 1.2 },
     },
-    transition: {
-      ...primaryTransition,
+    text: {
+      initial: { opacity: 0, y: -20 },
+      hover: { opacity: 1, y: 0 },
     },
-  }
-
-  const backgroundImageVariants = {
-    initial: {
-      scale: 1.1,
-    },
-    hover: {
-      scale: 1.2,
-    },
-    transition: {
-      ...primaryTransition,
-    },
-  }
-
-  const textVariants = {
-    initial: {
-      opacity: 0,
-      y: -20,
-    },
-    hover: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        ...primaryTransition,
-      },
-    },
-  }
+  })
 
   // * Hooks
   const mouseContext = useMouseContext()
 
+  // * Animation handlers
+  const handleHoverStart = () => {
+    const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered'
+    mouseContext.cursorChangeHandler(cursorType)
+    
+    startGroup({
+      backgroundImage: 'hover',
+      backgroundMask: 'hover',
+      text: 'hover',
+    })
+  }
+
+  const handleHoverEnd = () => {
+    mouseContext.cursorChangeHandler('default')
+    
+    startGroup({
+      backgroundImage: 'initial',
+      backgroundMask: 'initial',
+      text: 'initial',
+    })
+  }
+
+  const handleClick = () => {
+    if (!props.isWIP) {
+      mouseContext.cursorChangeHandler('default')
+    }
+  }
+
   const workCard = (
     <motion.div
-      onHoverStart={() => {
-        if (props.isWIP) {
-          mouseContext.cursorChangeHandler('work-card-hovered-wip')
-        } else {
-          mouseContext.cursorChangeHandler('work-card-hovered')
-        }
-        backgroundImageControls.start(backgroundImageVariants.hover)
-        backgroundMaskControls.start(backgroundMaskVariants.hover)
-        textControls.start(textVariants.hover)
-      }}
-      onHoverEnd={() => {
-        mouseContext.cursorChangeHandler('default')
-        backgroundImageControls.start(backgroundImageVariants.initial)
-        backgroundMaskControls.start(backgroundMaskVariants.initial)
-        textControls.start(textVariants.initial)
-      }}
-      onClick={() => {
-        if (!props.isWIP) {
-          mouseContext.cursorChangeHandler('default')
-        }
-      }}
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
+      onClick={handleClick}
       className={linkClass}
     >
       <motion.div // Background Image
-        animate={backgroundImageControls}
+        animate={controls.backgroundImage}
         initial="initial"
-        variants={backgroundImageVariants}
+        variants={variants.backgroundImage}
         className={backgroundImageClass}
       >
         <Image
@@ -134,15 +116,15 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
         />
       </motion.div>
       <motion.div // Background Image Mask
-        animate={backgroundMaskControls}
+        animate={controls.backgroundMask}
         initial="initial"
-        variants={backgroundMaskVariants}
+        variants={variants.backgroundMask}
         className="absolute h-full w-full bg-black bg-opacity-50"
       />
       <motion.div // Text
-        animate={textControls}
+        animate={controls.text}
         initial="initial"
-        variants={textVariants}
+        variants={variants.text}
         className={textLayoutClass}
       >
         <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">

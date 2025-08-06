@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
-import { useRouter } from 'next/router'
-
-type Loading = {
+type UseLoadingReturn = {
   isLoading: boolean
+  startTransition: (callback: () => void) => void
 }
 
-function useLoading(): Loading {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+/**
+ * Hook for managing loading states in App Router
+ * Uses React's useTransition for better UX during navigation
+ */
+export default function useLoading(): UseLoadingReturn {
+  const [isPending, startTransition] = useTransition()
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   useEffect(() => {
-    const handleStart = () => setIsLoading(true)
-    const handleComplete = () => setIsLoading(false)
+    // Reset initial loading state after first render
+    setIsInitialLoading(false)
+  }, [])
 
-    router.events.on('routeChangeStart', handleStart)
-    router.events.on('routeChangeComplete', handleComplete)
-    router.events.on('routeChangeError', handleComplete)
-  }, [router])
-
-  return { isLoading }
+  return {
+    isLoading: isInitialLoading || isPending,
+    startTransition,
+  }
 }
-
-export default useLoading

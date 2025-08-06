@@ -4,7 +4,11 @@ type XRDetect = {
   isVR: boolean
 }
 
-declare const navigator: any
+interface NavigatorWithXR {
+  xr?: {
+    isSessionSupported: (mode: string) => Promise<boolean>
+  }
+}
 
 // Detect if the browser is supporting WebXR
 // https://developer.mozilla.org/en-US/docs/Web/API/WebXR_API
@@ -13,13 +17,17 @@ export default function useXRDetect(): XRDetect {
   const [isVR, setIsVR] = useState(false)
 
   useEffect(() => {
-    if (navigator.xr) {
-      navigator.xr
-        .isSessionSupported('immersive-vr')
-        .then((supported: boolean) => {
-          setIsVR(supported)
-        })
+    const checkVRSupport = async () => {
+      try {
+        const nav = navigator as NavigatorWithXR
+        const supported = nav.xr ? await nav.xr.isSessionSupported('immersive-vr') : false
+        setIsVR(supported)
+      } catch {
+        setIsVR(false)
+      }
     }
+
+    checkVRSupport()
   }, [])
 
   return { isVR }
