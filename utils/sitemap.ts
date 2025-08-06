@@ -9,7 +9,13 @@ interface SitemapEntry {
 }
 
 export function generateSitemap(): string {
-  const posts = getAllPosts()
+  let posts: any[] = []
+  try {
+    posts = getAllPosts() || []
+  } catch (error) {
+    console.error('Error getting posts for sitemap:', error)
+    posts = []
+  }
   const currentDate = new Date().toISOString().split('T')[0]
 
   const staticPages: SitemapEntry[] = [
