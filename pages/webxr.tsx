@@ -18,29 +18,8 @@ const WebXR = () => {
       enableAutoFallback={true}
       onError={webxrErrorLogger.logError}
     >
-      {xrDetect.isVR ? (
-        <div className="h-screen w-screen">
-          <GenericCanvas>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            
-            <mesh position={[0, 2, -10]}>
-              <HeroText />
-            </mesh>
-
-            <Stars
-              radius={5}
-              depth={50}
-              count={500}
-              factor={10}
-              saturation={0}
-              fade
-            />
-          </GenericCanvas>
-        </div>
-      ) : (
-        <WebXR3DFallback onError={webxrErrorLogger.logError} />
-      )}
+      {/* Always show 3D fallback for now, VR version can be accessed separately */}
+      <WebXR3DFallback onError={webxrErrorLogger.logError} />
     </WebXRErrorBoundary>
   )
 }
