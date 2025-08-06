@@ -48,11 +48,23 @@ class WebXRErrorLogger {
     }
   }
 
+  private sanitizeMessage(message: string): string {
+    return message.replace(/\/[^\s]+/g, '[PATH]').substring(0, 500)
+  }
+
+  private sanitizeUserAgent(userAgent: string): string {
+    return userAgent.replace(/[<>'"]/g, '').substring(0, 200)
+  }
+
   public async logError(error: Error, errorInfo?: React.ErrorInfo): Promise<void> {
     const errorDetails: WebXRErrorDetails = {
-      error,
-      errorInfo,
-      userAgent: navigator?.userAgent || 'Unknown',
+      error: {
+        name: error.name.substring(0, 100),
+        message: this.sanitizeMessage(error.message),
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      } as Error,
+      errorInfo: process.env.NODE_ENV === 'development' ? errorInfo : undefined,
+      userAgent: this.sanitizeUserAgent(navigator?.userAgent || 'Unknown'),
       timestamp: new Date().toISOString(),
       url: window?.location.href || 'Unknown',
       webxrSupported: await this.checkWebXRSupport(),
