@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 import classNames from 'classnames'
 import { motion, useAnimationControls } from 'framer-motion'
@@ -57,10 +57,15 @@ interface ILayoutWrapperProps {
 
 function LayoutWrapper({ children }: Readonly<ILayoutWrapperProps>) {
   const loading = useLoading()
+  const [isMounted, setIsMounted] = useState(false)
 
   const loadingBackgroundControls = useAnimationControls()
   const loadingContentControls = useAnimationControls()
   const contentControls = useAnimationControls()
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const linearTransition = {
     type: 'linear',
@@ -205,7 +210,7 @@ function LayoutWrapper({ children }: Readonly<ILayoutWrapperProps>) {
       </motion.span>
       <motion.div
         onViewportEnter={() => {
-          if (!loading.isLoading) {
+          if (!loading.isLoading && isMounted) {
             contentControls.start('show')
           }
         }}
