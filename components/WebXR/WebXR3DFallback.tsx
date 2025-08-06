@@ -1,9 +1,11 @@
-import React, { Suspense, useCallback, useMemo } from 'react'
+import React, { Suspense, useCallback, useMemo, useState } from 'react'
 
 import { Canvas } from '@react-three/fiber'
 import { Html, PerformanceMonitor, AdaptiveDpr, AdaptiveEvents, BakeShadows } from '@react-three/drei'
 
 import Scene3DFallback from './Fallback3D/Scene'
+import SafeCanvas from './SafeCanvas'
+import SafeScene from './SafeScene'
 import { webxrErrorLogger } from '@/utils/errorLogger'
 import { use3DFallbackState, Quality } from '@/hooks/use3DFallbackState'
 
@@ -63,6 +65,7 @@ const LoadingOverlay = React.memo<{ isLoading: boolean }>(({ isLoading }) =>
 LoadingOverlay.displayName = 'LoadingOverlay'
 
 const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
+  const [useSafeMode, setUseSafeMode] = useState(false)
   const {
     quality,
     isLoading,
@@ -111,26 +114,25 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
     const errorMessage = error.toString()
     
     // Detect WebXR polyfill conflicts
-    if (errorMessage.includes('trim') || errorMessage.includes('webxr-polyfill')) {
-      console.warn('WebXR polyfill conflict detected, attempting recovery...')
+    if (errorMessage.includes('trim') || errorMessage.includes('webxr-polyfill') || errorMessage.includes('shader')) {
+      console.warn('WebXR polyfill conflict detected, switching to safe mode...')
       
-      // Try to disable polyfill interference
-      if (typeof window !== 'undefined' && (window as any).WebXRPolyfill) {
-        try {
-          (window as any).WebXRPolyfill = undefined
-          console.log('WebXR polyfill disabled')
-        } catch (polyfillError) {
-          console.warn('Could not disable WebXR polyfill:', polyfillError)
-        }
-      }
-      
-      // Fallback to error state instead of crashing
-      updateQuality('low') // Switch to low quality to reduce WebGL usage
+      // Switch to safe mode instead of trying to fix polyfill
+      setUseSafeMode(true)
       return
     }
     
     handleError(error, '3D Canvas Error')
-  }, [handleError, updateQuality])
+  }, [handleError])
+
+  // Use safe mode if polyfill conflicts detected
+  if (useSafeMode) {
+    return (
+      <SafeCanvas>
+        <SafeScene />
+      </SafeCanvas>
+    )
+  }
 
   // Fallback to error message if critical errors or mode is forced to 2D
   if (error?.message.includes('WebGL') || mode === '2d') {
