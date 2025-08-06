@@ -1,3 +1,5 @@
+import type { Position, Size } from '@/types/common'
+
 // Animation constants and utilities
 export const ANIMATION_DURATIONS = {
   fast: 0.3,
@@ -67,8 +69,8 @@ export const createLoadingDots = () => ({
 
 // Utility functions
 export const calculateSkew = (
-  mousePos: { x: number; y: number },
-  windowSize: { width: number; height: number },
+  mousePos: Position,
+  windowSize: Size,
   angle: number = 2
 ) => {
   const xValue = mousePos.x / windowSize.width

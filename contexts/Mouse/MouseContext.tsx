@@ -1,16 +1,13 @@
 import { createContext } from 'react'
 
+import type { Position } from '@/types/common'
+
 export type CursorType = 
   | 'default'
   | 'header-link-hovered'
   | 'work-card-hovered'
   | 'work-card-hovered-wip'
   | 'attracted'
-
-export type Position = {
-  x: number
-  y: number
-}
 
 export type MouseContextType = {
   cursorType: CursorType

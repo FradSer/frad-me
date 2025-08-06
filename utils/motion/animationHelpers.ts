@@ -1,4 +1,6 @@
 import { useAnimationControls } from 'framer-motion'
+
+import type { Position } from '@/types/common'
 import { primaryTransition } from './springTransitions'
 
 // Common animation variant factory
@@ -36,8 +38,8 @@ export const useAnimationGroup = (animationKeys: string[]) => {
 
 // Common blend calculation for mouse attraction
 export const calculateBlendPosition = (
-  mousePos: { x: number; y: number },
-  attractorPos: { x: number; y: number } | null,
+  mousePos: Position,
+  attractorPos: Position | null,
   blendFactor: number = 0.7
 ) => {
   if (!attractorPos) return mousePos
@@ -50,6 +52,6 @@ export const calculateBlendPosition = (
 
 // Distance calculation utility
 export const calculateDistance = (
-  point1: { x: number; y: number },
-  point2: { x: number; y: number }
+  point1: Position,
+  point2: Position
 ) => Math.hypot(point1.x - point2.x, point1.y - point2.y)
