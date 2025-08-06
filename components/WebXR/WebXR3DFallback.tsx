@@ -1,7 +1,7 @@
 import React, { Suspense, useCallback, useMemo } from 'react'
 
 import { Canvas } from '@react-three/fiber'
-import { Html, PerformanceMonitor } from '@react-three/drei'
+import { Html, PerformanceMonitor, AdaptiveDpr, AdaptiveEvents, BakeShadows } from '@react-three/drei'
 
 import Scene3DFallback from './Fallback3D/Scene'
 import { webxrErrorLogger } from '@/utils/errorLogger'
@@ -106,6 +106,32 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
     updateQuality(quality === 'high' ? 'medium' : 'low')
   }, [quality, updateQuality])
 
+  // Enhanced error handler for WebXR polyfill issues
+  const handleCanvasError = useCallback((error: Error) => {
+    const errorMessage = error.toString()
+    
+    // Detect WebXR polyfill conflicts
+    if (errorMessage.includes('trim') || errorMessage.includes('webxr-polyfill')) {
+      console.warn('WebXR polyfill conflict detected, attempting recovery...')
+      
+      // Try to disable polyfill interference
+      if (typeof window !== 'undefined' && (window as any).WebXRPolyfill) {
+        try {
+          (window as any).WebXRPolyfill = undefined
+          console.log('WebXR polyfill disabled')
+        } catch (polyfillError) {
+          console.warn('Could not disable WebXR polyfill:', polyfillError)
+        }
+      }
+      
+      // Fallback to error state instead of crashing
+      updateQuality('low') // Switch to low quality to reduce WebGL usage
+      return
+    }
+    
+    handleError(error, '3D Canvas Error')
+  }, [handleError, updateQuality])
+
   // Fallback to error message if critical errors or mode is forced to 2D
   if (error?.message.includes('WebGL') || mode === '2d') {
     return (
@@ -138,13 +164,13 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
         performance={canvasConfig.performance}
         gl={{
           antialias: canvasConfig.antialias,
-          powerPreference: 'high-performance',
+          powerPreference: 'default', // Changed from 'high-performance' to avoid WebXR polyfill conflicts
           failIfMajorPerformanceCaveat: false,
           alpha: false,
           stencil: false,
           depth: true,
-          preserveDrawingBuffer: false, // Better performance
-          premultipliedAlpha: false     // Consistent rendering
+          preserveDrawingBuffer: false,
+          premultipliedAlpha: false
         }}
         shadows={canvasConfig.shadows}
         camera={{
@@ -153,13 +179,39 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
           near: 0.1,
           far: 1000
         }}
-        onError={(error) => handleError(new Error(error.toString()), '3D Canvas Error')}
+        onError={(error) => handleCanvasError(new Error(error.toString()))}
+        onCreated={({ gl, scene, camera }) => {
+          // Add error handling for WebGL context
+          try {
+            // Ensure WebGL context is properly initialized
+            const webglContext = gl.getContext()
+            if (!webglContext) {
+              throw new Error('WebGL context not available')
+            }
+            
+            // Set conservative WebGL settings to prevent polyfill conflicts
+            webglContext.pixelStorei(webglContext.UNPACK_FLIP_Y_WEBGL, false)
+            webglContext.pixelStorei(webglContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
+            
+            console.log('WebGL context initialized successfully')
+          } catch (contextError) {
+            console.error('WebGL context error:', contextError)
+            handleCanvasError(new Error(`WebGL Context: ${contextError}`))
+          }
+        }}
       >
+        {/* R3F Adaptive Performance Components */}
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
+        
         <PerformanceMonitor
           onChange={handlePerformanceChange}
           onIncline={handleQualityUpgrade}
           onDecline={handleQualityDowngrade}
         />
+        
+        {canvasConfig.shadows && <BakeShadows />}
+        
         <Suspense fallback={<LoadingFallback />}>
           <Scene3DFallback quality={quality} />
         </Suspense>

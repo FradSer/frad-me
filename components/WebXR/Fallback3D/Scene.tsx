@@ -1,5 +1,7 @@
 import React from 'react'
-import { OrbitControls, Stars, Environment } from '@react-three/drei'
+import { OrbitControls, Stars, Environment, Float, ContactShadows, Preload, useProgress } from '@react-three/drei'
+
+import ErrorBoundary3D from './ErrorBoundary3D'
 
 interface SceneProps {
   quality: 'high' | 'medium' | 'low'
@@ -145,7 +147,7 @@ const Scene3DFallback: React.FC<SceneProps> = ({ quality }) => {
   const config = QUALITY_CONFIGS[quality]
 
   return (
-    <>
+    <ErrorBoundary3D>
       <OrbitControls
         enablePan={false}
         enableZoom={true}
@@ -173,51 +175,76 @@ const Scene3DFallback: React.FC<SceneProps> = ({ quality }) => {
 
       {quality === 'high' && <Environment preset="night" />}
 
-      {/* Floating Shapes */}
+      {/* Floating Shapes with R3F Float component */}
       <group position={[0, 0, 0]}>
         {FLOATING_SHAPES.map((shape, index) => (
-          <SceneMesh
-            key={`floating-${index}`}
-            type={shape.type}
-            position={shape.position as [number, number, number]}
-            rotation={('rotation' in shape ? shape.rotation : [0, 0, 0]) as [number, number, number]}
-            scale={shape.scale}
-            geometry={shape.geometry as unknown as number[]}
-            colors={shape.colors}
-            materialType="metallic"
-          />
+          <ErrorBoundary3D key={`floating-${index}`}>
+            <Float
+              speed={1.5}
+              rotationIntensity={0.5}
+              floatIntensity={0.8}
+              floatingRange={[-0.1, 0.1]}
+            >
+              <SceneMesh
+                type={shape.type}
+                position={shape.position as [number, number, number]}
+                rotation={('rotation' in shape ? shape.rotation : [0, 0, 0]) as [number, number, number]}
+                scale={shape.scale}
+                geometry={shape.geometry as unknown as number[]}
+                colors={shape.colors}
+                materialType="metallic"
+              />
+            </Float>
+          </ErrorBoundary3D>
         ))}
       </group>
 
       {/* Text Simulation */}
       <group position={[0, 2, -10]}>
         {TEXT_PLANES.map((plane, index) => (
-          <SceneMesh
-            key={`text-${index}`}
-            type="plane"
-            position={plane.position as [number, number, number]}
-            geometry={plane.size as unknown as number[]}
-            colors={plane.colors}
-            materialType="transparent"
-            opacity={plane.opacity}
-          />
+          <ErrorBoundary3D key={`text-${index}`}>
+            <SceneMesh
+              type="plane"
+              position={plane.position as [number, number, number]}
+              geometry={plane.size as unknown as number[]}
+              colors={plane.colors}
+              materialType="transparent"
+              opacity={plane.opacity}
+            />
+          </ErrorBoundary3D>
         ))}
       </group>
 
-      {/* Platform */}
+      {/* Platform with Contact Shadows */}
       <group position={[0, -6, 0]}>
         {PLATFORM_ELEMENTS.map((element, index) => (
-          <SceneMesh
-            key={`platform-${index}`}
-            type="box"
-            position={element.position as [number, number, number]}
-            geometry={element.size as unknown as number[]}
-            colors={element.colors}
-            materialType={element.material as keyof typeof MATERIALS}
-          />
+          <ErrorBoundary3D key={`platform-${index}`}>
+            <SceneMesh
+              type="box"
+              position={element.position as [number, number, number]}
+              geometry={element.size as unknown as number[]}
+              colors={element.colors}
+              materialType={element.material as keyof typeof MATERIALS}
+            />
+          </ErrorBoundary3D>
         ))}
+        
+        {/* Add contact shadows for better ground connection */}
+        {quality !== 'low' && (
+          <ContactShadows
+            position={[0, -0.1, 0]}
+            opacity={0.4}
+            scale={10}
+            blur={1.5}
+            far={10}
+            resolution={256}
+          />
+        )}
       </group>
-    </>
+
+      {/* Preload assets for better performance */}
+      <Preload all />
+    </ErrorBoundary3D>
   )
 }
 

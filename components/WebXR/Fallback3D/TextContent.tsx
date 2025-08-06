@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 
-import { Text, Html } from '@react-three/drei'
+import { Text, Html, Float, Trail, Sparkles } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -27,6 +27,7 @@ interface Text3DProps extends BaseTextProps {
 
 // Constants for better maintainability
 const FONT_PATH = '/fonts/GT-Eesti-Display-Bold-Trial.woff'
+const FALLBACK_FONT = 'Arial, sans-serif' // Add fallback font
 const CHARACTER_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>? "
 
 const ANIMATION_CONFIG = {
@@ -155,6 +156,12 @@ const Text3D = React.memo<Text3DProps>(({
     anchorX: "center" as const,
     anchorY: "middle" as const,
     font: FONT_PATH,
+    // Add error handling for font loading
+    onError: (error: any) => {
+      console.warn('Font loading error, falling back to system font:', error)
+    },
+    // Add fallback for when custom font fails
+    fontFamily: FALLBACK_FONT,
     bevelEnabled: quality === 'high',
     bevelSize: quality === 'high' ? 0.02 : 0,
     bevelThickness: quality === 'high' ? 0.01 : 0,
@@ -274,27 +281,70 @@ const TextContent = React.memo<TextContentProps>(({ quality }) => {
 
   return (
     <group position={[0, 0, -10]}>
-      {HERO_TEXT_LINES.map((line, index) => (
-        <Text3D
-          key={`text-${index}`}
-          text={line.text}
-          position={line.position}
-          size={line.size}
-          color={line.color}
-          delay={line.delay}
-          quality={quality}
-          emissiveIntensity={line.emissiveIntensity}
-        />
-      ))}
+      {/* Main text content with Float wrapper for Hero title */}
+      {HERO_TEXT_LINES.map((line, index) => {
+        // Special treatment for the main title
+        if (line.text === "Frad LEE") {
+          return (
+            <Float
+              key={`text-${index}`}
+              speed={0.8}
+              rotationIntensity={0.1}
+              floatIntensity={0.3}
+              floatingRange={[-0.05, 0.05]}
+            >
+              <Text3D
+                text={line.text}
+                position={line.position}
+                size={line.size}
+                color={line.color}
+                delay={line.delay}
+                quality={quality}
+                emissiveIntensity={line.emissiveIntensity}
+              />
+              {quality === 'high' && (
+                <Sparkles
+                  count={50}
+                  scale={[4, 4, 4]}
+                  size={2}
+                  speed={0.4}
+                  opacity={0.3}
+                  color="#ffffff"
+                />
+              )}
+            </Float>
+          )
+        }
+        
+        return (
+          <Text3D
+            key={`text-${index}`}
+            text={line.text}
+            position={line.position}
+            size={line.size}
+            color={line.color}
+            delay={line.delay}
+            quality={quality}
+            emissiveIntensity={line.emissiveIntensity}
+          />
+        )
+      })}
 
       {showBubbles && BUBBLE_TEXTS.map((bubble, index) => (
-        <FloatingTextBubble
+        <Float
           key={`bubble-${index}`}
-          text={bubble.text}
-          position={bubble.position}
-          delay={bubble.delay}
-          quality={quality}
-        />
+          speed={1.5}
+          rotationIntensity={0.2}
+          floatIntensity={0.6}
+          floatingRange={[-0.2, 0.2]}
+        >
+          <FloatingTextBubble
+            text={bubble.text}
+            position={bubble.position}
+            delay={bubble.delay}
+            quality={quality}
+          />
+        </Float>
       ))}
 
       {showHelpText && (
