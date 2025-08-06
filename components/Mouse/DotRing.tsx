@@ -1,36 +1,128 @@
 import { useEffect } from 'react'
 
-import { motion, useAnimationControls } from 'framer-motion'
+import classNames from 'classnames'
+import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
-import useMouseAttraction from '@/hooks/useMouseAttraction'
+import useMousePosition from '@/hooks/useMousePosition'
 
-import { getCursorState } from '@/utils/cursor'
-import { createCursorClasses, CURSOR_BASE_CLASSES } from '@/utils/classNames'
-import { createBackgroundVariants, createTextVariants } from '@/utils/motion/variantFactory'
+import { calculateBlendPosition } from '@/utils/motion/animationHelpers'
+import { primaryTransition } from '@/utils/motion/springTransitions'
 
 export default function DotRing() {
+  // * Hooks
+  const mousePosition = useMousePosition()
   const mouseContext = useMouseContext()
-  const { springX, springY } = useMouseAttraction()
 
+  // * Physical attraction
+  const attractedX = useMotionValue(mousePosition.x)
+  const attractedY = useMotionValue(mousePosition.y)
+  const springX = useSpring(attractedX, { stiffness: 300, damping: 30 })
+  const springY = useSpring(attractedY, { stiffness: 300, damping: 30 })
+
+  // * Styling
+  const textClass = classNames(
+    'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',
+  )
+
+  const backgroundClass = classNames(
+    'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
+    {
+      'mix-blend-difference': mouseContext.cursorType === 'default',
+    },
+  )
+
+  // * Animation
   const controls = useAnimationControls()
-  const currentState = getCursorState(mouseContext.cursorType)
 
-  // Dynamic class names based on cursor type
-  const textClass = createCursorClasses(CURSOR_BASE_CLASSES.text)
-  const backgroundClass = createCursorClasses(CURSOR_BASE_CLASSES.background, {
-    'mix-blend-difference': mouseContext.cursorType === 'default',
-  })
+  const transitionOffset = { x: '-50%', y: '-50%' }
 
-  // Trigger animations based on cursor state
+  const backgroundVariants = {
+    initial: {
+      ...transitionOffset,
+      height: '1rem',
+      width: '1rem',
+      opacity: 1,
+      transition: {
+        ...primaryTransition,
+      },
+    },
+    headerLinkHovered: {
+      opacity: 0,
+      transition: { ...primaryTransition },
+    },
+    workCardHover: {
+      ...transitionOffset,
+      height: '4rem',
+      width: '4rem',
+      transition: {
+        ...primaryTransition,
+      },
+    },
+    attracted: {
+      ...transitionOffset,
+      height: '1rem',
+      width: '1rem',
+      opacity: 0,
+      transition: {
+        ...primaryTransition,
+      },
+    },
+  }
+
+  const textVariants = {
+    initial: {
+      ...transitionOffset,
+      height: '2rem',
+      width: '2rem',
+      opacity: 0,
+      scale: 0.5,
+      transition: {
+        ...primaryTransition,
+      },
+    },
+
+    workCardHover: {
+      ...transitionOffset,
+      height: '4rem',
+      width: '4rem',
+      opacity: 1,
+      scale: 1,
+      transition: {
+        ...primaryTransition,
+      },
+    },
+  }
+
+  // * Cursor state mapping
+  const cursorStateMap = {
+    'header-link-hovered': { animation: 'headerLinkHovered', title: '' },
+    'work-card-hovered': { animation: 'workCardHover', title: 'READ' },
+    'work-card-hovered-wip': { animation: 'workCardHover', title: 'WIP' },
+    'attracted': { animation: 'attracted', title: '' },
+    'default': { animation: 'initial', title: '' },
+  } as const
+
+  const currentState = cursorStateMap[mouseContext.cursorType] || cursorStateMap.default
+  const dotRingTitle = currentState.title
+
+  // * Effects
+  useEffect(() => {
+    const blendedPosition = calculateBlendPosition(
+      mousePosition,
+      mouseContext.attractorPosition,
+      0.7
+    )
+    
+    attractedX.set(blendedPosition.x)
+    attractedY.set(blendedPosition.y)
+  }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY])
+
   useEffect(() => {
     controls.start(currentState.animation)
   }, [currentState.animation, controls])
 
-  const backgroundVariants = createBackgroundVariants()
-  const textVariants = createTextVariants()
-  const style = { left: springX, top: springY }
-
+  // * Render
   return (
     <>
       <motion.div
@@ -38,16 +130,16 @@ export default function DotRing() {
         variants={textVariants}
         initial="initial"
         className={textClass}
-        style={style}
+        style={{ left: springX, top: springY }}
       >
-        <h1>{currentState.title}</h1>
+        <h1>{dotRingTitle}</h1>
       </motion.div>
       <motion.div
         animate={controls}
         variants={backgroundVariants}
         initial="initial"
         className={backgroundClass}
-        style={style}
+        style={{ left: springX, top: springY }}
       />
     </>
   )
