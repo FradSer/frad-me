@@ -7,6 +7,34 @@ import * as THREE from 'three'
 type Quality = 'high' | 'medium' | 'low'
 type GeometryType = 'box' | 'sphere' | 'cone'
 
+// Quality-based configurations
+const QUALITY_CONFIGS = {
+  high: { 
+    segments: 32, 
+    shadows: true, 
+    distortion: true, 
+    particles: 20,
+    rotationIntensity: 0.5,
+    floatingRange: [-0.1, 0.1] as [number, number]
+  },
+  medium: { 
+    segments: 24, 
+    shadows: false, 
+    distortion: true, 
+    particles: 10,
+    rotationIntensity: 0.3,
+    floatingRange: [-0.075, 0.075] as [number, number]
+  },
+  low: { 
+    segments: 16, 
+    shadows: false, 
+    distortion: false, 
+    particles: 0,
+    rotationIntensity: 0.2,
+    floatingRange: [-0.05, 0.05] as [number, number]
+  }
+} as const
+
 interface AnimatedShapeProps {
   geometry: GeometryType
   position: [number, number, number]
@@ -41,34 +69,6 @@ interface ParticleData {
   rotationSpeed: number
 }
 
-// Quality-based configurations to eliminate repeated conditionals
-const QUALITY_CONFIGS = {
-  low: { 
-    segments: { sphere: 16, cone: 8, ring: 16 },
-    rotationIntensity: 0.2,
-    floatingRange: [-0.05, 0.05] as [number, number],
-    particleCount: 20,
-    enableShadows: false,
-    enableDistortion: false
-  },
-  medium: { 
-    segments: { sphere: 24, cone: 16, ring: 24 },
-    rotationIntensity: 0.5,
-    floatingRange: [-0.1, 0.1] as [number, number],
-    particleCount: 40,
-    enableShadows: false,
-    enableDistortion: true
-  },
-  high: { 
-    segments: { sphere: 32, cone: 32, ring: 32 },
-    rotationIntensity: 0.5,
-    floatingRange: [-0.1, 0.1] as [number, number],
-    particleCount: 60,
-    enableShadows: true,
-    enableDistortion: true
-  }
-} as const
-
 // Predefined shape configurations to eliminate hardcoded values
 const SHAPE_CONFIGS: ShapeConfig[] = [
   { geometry: 'cone', position: [-8, 4, 0], color: '#e879f9', delay: 0, scale: 0.8, speed: 1.2 },
@@ -84,15 +84,15 @@ const RING_POSITIONS: [number, number, number][] = [
 
 // Reusable geometry factory to eliminate duplication
 const createGeometry = (type: GeometryType, quality: Quality) => {
-  const config = QUALITY_CONFIGS[quality]
+  const segments = QUALITY_CONFIGS[quality].segments
   
   switch (type) {
     case 'box':
       return <boxGeometry args={[1, 1, 1]} />
     case 'sphere':
-      return <sphereGeometry args={[0.6, config.segments.sphere, config.segments.sphere]} />
+      return <sphereGeometry args={[0.6, segments, segments]} />
     case 'cone':
-      return <coneGeometry args={[0.6, 1, config.segments.cone]} />
+      return <coneGeometry args={[0.6, 1, segments]} />
   }
 }
 
@@ -100,7 +100,7 @@ const createGeometry = (type: GeometryType, quality: Quality) => {
 const createMaterial = (color: string, speed: number, distortionIntensity: number, quality: Quality) => {
   const config = QUALITY_CONFIGS[quality]
   
-  if (!config.enableDistortion) {
+  if (!config.distortion) {
     return (
       <meshStandardMaterial
         color={color}
@@ -169,8 +169,8 @@ const AnimatedShape: React.FC<AnimatedShapeProps> = ({
         ref={meshRef}
         position={position}
         scale={scale}
-        castShadow={config.enableShadows}
-        receiveShadow={config.enableShadows}
+        castShadow={quality === 'high'}
+        receiveShadow={quality === 'high'}
       >
         {createGeometry(geometry, quality)}
         {createMaterial(color, speed, distortionIntensity, quality)}
@@ -204,7 +204,7 @@ const PulsingRing: React.FC<{ position: [number, number, number]; quality: Quali
       position={position}
       rotation={[Math.PI / 2, 0, 0]}
     >
-      <ringGeometry args={[0.8, 1.2, config.segments.ring]} />
+      <ringGeometry args={[0.8, 1.2, config.segments]} />
       <meshStandardMaterial
         color="#8b5cf6"
         emissive="#7c3aed"
@@ -226,7 +226,7 @@ const FloatingParticles: React.FC<{ quality: Quality }> = ({ quality }) => {
   const particles = useMemo(() => {
     const particleArray: ParticleData[] = []
 
-    for (let i = 0; i < config.particleCount; i++) {
+    for (let i = 0; i < config.particles; i++) {
       particleArray.push({
         position: [
           (Math.random() - 0.5) * 30,
@@ -244,7 +244,7 @@ const FloatingParticles: React.FC<{ quality: Quality }> = ({ quality }) => {
     }
 
     return particleArray
-  }, [config.particleCount])
+  }, [config.particles])
 
   useFrame(() => {
     if (!particlesRef.current) return
@@ -276,7 +276,7 @@ const FloatingParticles: React.FC<{ quality: Quality }> = ({ quality }) => {
   if (quality === 'low') return null
 
   return (
-    <instancedMesh ref={particlesRef} args={[undefined, undefined, config.particleCount]}>
+    <instancedMesh ref={particlesRef} args={[undefined, undefined, config.particles]}>
       <sphereGeometry args={[0.1, 8, 8]} />
       <meshStandardMaterial
         color="#f59e0b"

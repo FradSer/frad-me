@@ -89,7 +89,15 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
   }
 
   return (
-    <Canvas>
+    <Canvas
+      style={{ background: 'linear-gradient(135deg, #1e1b4b, #3730a3, #7c3aed)' }}
+      camera={{
+        position: [0, 0, 10],
+        fov: 50
+      }}
+    >
+      <color attach="background" args={['#1e1b4b']} />
+      <fog attach="fog" args={['#1e1b4b', 15, 50]} />
       <MouseMove>{children}</MouseMove>
     </Canvas>
   )
