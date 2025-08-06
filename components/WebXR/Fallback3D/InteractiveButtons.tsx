@@ -308,8 +308,17 @@ const PulsingIndicator: React.FC<PulsingIndicatorProps> = ({ position, color, qu
 
 const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
   const handlers = useMemo(() => ({
-    tryWebXRAgain: () => window.location.reload(),
-    explorePortfolio: () => window.location.href = '/',
+    tryWebXRAgain: () => {
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
+    },
+    explorePortfolio: () => {
+      if (typeof window !== 'undefined') {
+        const homeUrl = new URL('/', window.location.origin)
+        window.location.href = homeUrl.toString()
+      }
+    },
     downloadResume: () => console.log('Download resume clicked'),
     contactMe: () => console.log('Contact me clicked')
   }), [])

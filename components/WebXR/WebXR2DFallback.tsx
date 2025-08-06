@@ -86,13 +86,22 @@ const WebXR2DFallback = () => {
           <div className="flex flex-col items-center space-y-3 md:flex-row md:justify-center md:space-x-4 md:space-y-0">
             <button
               className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.reload()
+                }
+              }}
             >
               Try WebXR Again
             </button>
             <button
               className="rounded-lg bg-gray-700 px-6 py-3 font-medium text-white transition-colors hover:bg-gray-600"
-              onClick={() => (window.location.href = '/')}
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  const homeUrl = new URL('/', window.location.origin)
+                  window.location.href = homeUrl.toString()
+                }
+              }}
             >
               Explore Portfolio
             </button>

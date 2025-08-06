@@ -79,6 +79,11 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
     }
   }
 
+  private sanitizeError(error: Error): string {
+    const sanitizedMessage = error.message.replace(/\/[^\s]+/g, '[PATH]')
+    return `${error.name}: ${sanitizedMessage}`
+  }
+
   private resetErrorState = (overrides: Partial<WebXRErrorBoundaryState> = {}) => {
     this.setState(prevState => ({
       hasError: false,
@@ -130,12 +135,21 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
     const actionButtons: readonly ActionButton[] = [
       {
         text: 'Try Again',
-        onClick: () => window.location.reload(),
+        onClick: () => {
+          if (typeof window !== 'undefined') {
+            window.location.reload()
+          }
+        },
         className: 'bg-blue-600 hover:bg-blue-700'
       },
       {
         text: 'Return to Main Site',
-        onClick: () => { window.location.href = '/' },
+        onClick: () => {
+          if (typeof window !== 'undefined') {
+            const homeUrl = new URL('/', window.location.origin)
+            window.location.href = homeUrl.toString()
+          }
+        },
         className: 'bg-gray-700 hover:bg-gray-600'
       }
     ] as const
@@ -169,8 +183,7 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
                 Error Details (Development)
               </summary>
               <pre className="mt-2 overflow-auto bg-gray-800 p-2 text-xs text-red-300">
-                {error.toString()}
-                {this.state.errorInfo?.componentStack}
+                {this.sanitizeError(error)}
               </pre>
             </details>
           )}
