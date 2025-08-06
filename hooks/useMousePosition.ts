@@ -15,15 +15,17 @@ export default function useMousePosition(): MousePosition {
   useEffect(() => {
     const updateMousePosition = (event: MouseEvent) => {
       if (throttleRef.current) return
-      
+
       throttleRef.current = window.setTimeout(() => {
         setMousePosition({ x: event.clientX, y: event.clientY })
         throttleRef.current = null
       }, 16) // ~60fps
     }
 
-    document.addEventListener('mousemove', updateMousePosition, { passive: true })
-    
+    document.addEventListener('mousemove', updateMousePosition, {
+      passive: true,
+    })
+
     return () => {
       document.removeEventListener('mousemove', updateMousePosition)
       if (throttleRef.current) {

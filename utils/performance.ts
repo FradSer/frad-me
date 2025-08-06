@@ -1,8 +1,13 @@
 const isDevelopment = process.env.NODE_ENV === 'development'
 
-const logChunkLoad = (chunkName: string, loadTime: number, success: boolean, error?: string) => {
+const logChunkLoad = (
+  chunkName: string,
+  loadTime: number,
+  success: boolean,
+  error?: string,
+) => {
   if (!isDevelopment) return
-  
+
   const timeStr = loadTime.toFixed(2)
   if (success) {
     console.log(`✅ ${chunkName} loaded in ${timeStr}ms`)
@@ -13,7 +18,7 @@ const logChunkLoad = (chunkName: string, loadTime: number, success: boolean, err
 
 export const measureChunkLoad = async <T>(
   chunkName: string,
-  importFn: () => Promise<T>
+  importFn: () => Promise<T>,
 ): Promise<T> => {
   const startTime = performance.now()
 
@@ -22,7 +27,8 @@ export const measureChunkLoad = async <T>(
     logChunkLoad(chunkName, performance.now() - startTime, true)
     return module
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
     logChunkLoad(chunkName, performance.now() - startTime, false, errorMessage)
     throw error
   }

@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-export type CursorType = 
+export type CursorType =
   | 'default'
   | 'header-link-hovered'
   | 'work-card-hovered'

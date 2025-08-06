@@ -49,7 +49,7 @@ const createMaterial = ({
   roughness = 0.3,
   metalness = 0.7,
   transparent = false,
-  opacity = 1
+  opacity = 1,
 }: MaterialProps): ReactElement => (
   <meshStandardMaterial
     color={color}
@@ -64,38 +64,43 @@ const createMaterial = ({
 
 const createShape = <T extends BaseShapeProps>(
   geometryFactory: GeometryFactory,
-  config: ShapeConfig = {}
+  config: ShapeConfig = {},
 ) => {
   const { defaultCastShadow = true, defaultReceiveShadow = true } = config
-  
-  const ShapeComponent = forwardRef<THREE.Mesh, T>(({
-    position = [0, 0, 0],
-    rotation = [0, 0, 0],
-    scale = 1,
-    castShadow = defaultCastShadow,
-    receiveShadow = defaultReceiveShadow,
-    quality,
-    onClick,
-    onPointerOver,
-    onPointerOut,
-    ...materialProps
-  }, ref) => (
-    <mesh
-      ref={ref}
-      position={position}
-      rotation={rotation}
-      scale={scale}
-      castShadow={castShadow && quality === 'high'}
-      receiveShadow={receiveShadow && quality === 'high'}
-      onClick={onClick}
-      onPointerOver={onPointerOver}
-      onPointerOut={onPointerOut}
-    >
-      {geometryFactory(quality)}
-      {createMaterial(materialProps)}
-    </mesh>
-  ))
-  
+
+  const ShapeComponent = forwardRef<THREE.Mesh, T>(
+    (
+      {
+        position = [0, 0, 0],
+        rotation = [0, 0, 0],
+        scale = 1,
+        castShadow = defaultCastShadow,
+        receiveShadow = defaultReceiveShadow,
+        quality,
+        onClick,
+        onPointerOver,
+        onPointerOut,
+        ...materialProps
+      },
+      ref,
+    ) => (
+      <mesh
+        ref={ref}
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        castShadow={castShadow && quality === 'high'}
+        receiveShadow={receiveShadow && quality === 'high'}
+        onClick={onClick}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+      >
+        {geometryFactory(quality)}
+        {createMaterial(materialProps)}
+      </mesh>
+    ),
+  )
+
   ShapeComponent.displayName = 'Shape'
   return ShapeComponent
 }
@@ -140,90 +145,102 @@ interface OctahedronProps extends BaseShapeProps {
 }
 
 // Shape implementations
-export const Box = forwardRef<THREE.Mesh, BoxProps>(({ size = [1, 1, 1], ...props }, ref) => {
-  const geometryFactory = () => <boxGeometry args={size} />
-  const ShapeWithCustomGeometry = createShape<BoxProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Box = forwardRef<THREE.Mesh, BoxProps>(
+  ({ size = [1, 1, 1], ...props }, ref) => {
+    const geometryFactory = () => <boxGeometry args={size} />
+    const ShapeWithCustomGeometry = createShape<BoxProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Sphere = forwardRef<THREE.Mesh, SphereProps>(({ radius = 0.5, ...props }, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const segments = getQualitySegments(quality, 32)
-    return <sphereGeometry args={[radius, segments, segments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<SphereProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Sphere = forwardRef<THREE.Mesh, SphereProps>(
+  ({ radius = 0.5, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const segments = getQualitySegments(quality, 32)
+      return <sphereGeometry args={[radius, segments, segments]} />
+    }
+    const ShapeWithCustomGeometry = createShape<SphereProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Cone = forwardRef<THREE.Mesh, ConeProps>(({ radius = 0.5, height = 1, ...props }, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const segments = getQualitySegments(quality, 32)
-    return <coneGeometry args={[radius, height, segments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<ConeProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Cone = forwardRef<THREE.Mesh, ConeProps>(
+  ({ radius = 0.5, height = 1, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const segments = getQualitySegments(quality, 32)
+      return <coneGeometry args={[radius, height, segments]} />
+    }
+    const ShapeWithCustomGeometry = createShape<ConeProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Cylinder = forwardRef<THREE.Mesh, CylinderProps>(({ 
-  radiusTop = 0.5, 
-  radiusBottom = 0.5, 
-  height = 1, 
-  ...props 
-}, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const segments = getQualitySegments(quality, 32)
-    return <cylinderGeometry args={[radiusTop, radiusBottom, height, segments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<CylinderProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Cylinder = forwardRef<THREE.Mesh, CylinderProps>(
+  ({ radiusTop = 0.5, radiusBottom = 0.5, height = 1, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const segments = getQualitySegments(quality, 32)
+      return (
+        <cylinderGeometry args={[radiusTop, radiusBottom, height, segments]} />
+      )
+    }
+    const ShapeWithCustomGeometry = createShape<CylinderProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Plane = forwardRef<THREE.Mesh, PlaneProps>(({ width = 1, height = 1, ...props }, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const segments = getQualitySegments(quality, 16)
-    return <planeGeometry args={[width, height, segments, segments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<PlaneProps>(geometryFactory, {
-    defaultCastShadow: false,
-    defaultReceiveShadow: true
-  })
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Plane = forwardRef<THREE.Mesh, PlaneProps>(
+  ({ width = 1, height = 1, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const segments = getQualitySegments(quality, 16)
+      return <planeGeometry args={[width, height, segments, segments]} />
+    }
+    const ShapeWithCustomGeometry = createShape<PlaneProps>(geometryFactory, {
+      defaultCastShadow: false,
+      defaultReceiveShadow: true,
+    })
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Ring = forwardRef<THREE.Mesh, RingProps>(({ 
-  innerRadius = 0.3, 
-  outerRadius = 0.8, 
-  ...props 
-}, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const segments = getQualitySegments(quality, 32)
-    return <ringGeometry args={[innerRadius, outerRadius, segments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<RingProps>(geometryFactory, {
-    defaultCastShadow: false,
-    defaultReceiveShadow: false
-  })
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Ring = forwardRef<THREE.Mesh, RingProps>(
+  ({ innerRadius = 0.3, outerRadius = 0.8, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const segments = getQualitySegments(quality, 32)
+      return <ringGeometry args={[innerRadius, outerRadius, segments]} />
+    }
+    const ShapeWithCustomGeometry = createShape<RingProps>(geometryFactory, {
+      defaultCastShadow: false,
+      defaultReceiveShadow: false,
+    })
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Torus = forwardRef<THREE.Mesh, TorusProps>(({ radius = 0.5, tube = 0.2, ...props }, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const radialSegments = getQualitySegments(quality, 16)
-    const tubularSegments = getQualitySegments(quality, 32)
-    return <torusGeometry args={[radius, tube, radialSegments, tubularSegments]} />
-  }
-  const ShapeWithCustomGeometry = createShape<TorusProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Torus = forwardRef<THREE.Mesh, TorusProps>(
+  ({ radius = 0.5, tube = 0.2, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const radialSegments = getQualitySegments(quality, 16)
+      const tubularSegments = getQualitySegments(quality, 32)
+      return (
+        <torusGeometry args={[radius, tube, radialSegments, tubularSegments]} />
+      )
+    }
+    const ShapeWithCustomGeometry = createShape<TorusProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
-export const Octahedron = forwardRef<THREE.Mesh, OctahedronProps>(({ radius = 0.5, ...props }, ref) => {
-  const geometryFactory = (quality: Quality) => {
-    const detail = QUALITY_DETAIL[quality]
-    return <octahedronGeometry args={[radius, detail]} />
-  }
-  const ShapeWithCustomGeometry = createShape<OctahedronProps>(geometryFactory)
-  return <ShapeWithCustomGeometry ref={ref} {...props} />
-})
+export const Octahedron = forwardRef<THREE.Mesh, OctahedronProps>(
+  ({ radius = 0.5, ...props }, ref) => {
+    const geometryFactory = (quality: Quality) => {
+      const detail = QUALITY_DETAIL[quality]
+      return <octahedronGeometry args={[radius, detail]} />
+    }
+    const ShapeWithCustomGeometry =
+      createShape<OctahedronProps>(geometryFactory)
+    return <ShapeWithCustomGeometry ref={ref} {...props} />
+  },
+)
 
 // Set display names for better debugging
 Box.displayName = 'ShapePrimitive.Box'
@@ -243,7 +260,7 @@ export const ShapesPrimitives = {
   Plane,
   Ring,
   Torus,
-  Octahedron
+  Octahedron,
 }
 
 export default ShapesPrimitives

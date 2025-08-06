@@ -1,6 +1,7 @@
-import { getAllPosts } from '@/utils/mdx'
-import { SITE_CONFIG } from '@/utils/constants'
 import { MetadataRoute } from 'next'
+
+import { SITE_CONFIG } from '@/utils/constants'
+import { getAllPosts } from '@/utils/mdx'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   let posts: any[] = []
@@ -23,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${SITE_CONFIG.domain}/webxr`,
       lastModified: currentDate,
-      changeFrequency: 'monthly', 
+      changeFrequency: 'monthly',
       priority: 0.8,
     },
   ]

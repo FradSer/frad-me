@@ -38,7 +38,9 @@ export const detectWebXRPolyfill = (): WebXRPolyfillDetection => {
       }
 
       // Check for extension injection markers in DOM
-      const extensionScripts = document.querySelectorAll('script[src*="webxr-polyfill"]')
+      const extensionScripts = document.querySelectorAll(
+        'script[src*="webxr-polyfill"]',
+      )
       if (extensionScripts.length > 0) {
         detected = true
         detectionMethods.push('extension script tags')
@@ -46,8 +48,12 @@ export const detectWebXRPolyfill = (): WebXRPolyfillDetection => {
       }
 
       // Check for modified WebGL context prototypes
-      const originalGetShaderSource = WebGLRenderingContext.prototype.getShaderSource
-      if (originalGetShaderSource.toString().includes('polyfill') || originalGetShaderSource.toString().includes('extension')) {
+      const originalGetShaderSource =
+        WebGLRenderingContext.prototype.getShaderSource
+      if (
+        originalGetShaderSource.toString().includes('polyfill') ||
+        originalGetShaderSource.toString().includes('extension')
+      ) {
         detected = true
         detectionMethods.push('WebGL prototype modified')
         confidence += 25
@@ -61,17 +67,23 @@ export const detectWebXRPolyfill = (): WebXRPolyfillDetection => {
     detected,
     methods: detectionMethods,
     extensionId: detected ? 'cgffilbpcibhmcfbgggfhfolhkfbhmik' : undefined,
-    confidence
+    confidence,
   }
 }
 
-export const getWebGLContextState = (gl: WebGLRenderingContext | null): WebGLContextState | null => {
+export const getWebGLContextState = (
+  gl: WebGLRenderingContext | null,
+): WebGLContextState | null => {
   if (!gl) return null
 
   try {
     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
-    const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Unknown'
-    const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown'
+    const vendor = debugInfo
+      ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL)
+      : 'Unknown'
+    const renderer = debugInfo
+      ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+      : 'Unknown'
 
     return {
       version: gl.getParameter(gl.VERSION),
@@ -79,7 +91,7 @@ export const getWebGLContextState = (gl: WebGLRenderingContext | null): WebGLCon
       renderer: renderer,
       extensions: gl.getSupportedExtensions() || [],
       maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
-      isHealthy: gl.getError() === gl.NO_ERROR
+      isHealthy: gl.getError() === gl.NO_ERROR,
     }
   } catch (error) {
     console.error('Failed to get WebGL context state:', error)
@@ -93,20 +105,26 @@ export const runDiagnosticTests = (): {
   recommendations: string[]
 } => {
   const polyfillDetection = detectWebXRPolyfill()
-  
+
   // Create a test canvas to check WebGL state
   const testCanvas = document.createElement('canvas')
   testCanvas.width = 1
   testCanvas.height = 1
-  const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')
+  const gl =
+    testCanvas.getContext('webgl') ||
+    testCanvas.getContext('experimental-webgl')
   const webglState = getWebGLContextState(gl as WebGLRenderingContext)
 
   const recommendations: string[] = []
 
   if (polyfillDetection.detected) {
-    recommendations.push('WebXR polyfill extension detected - using isolated mode')
+    recommendations.push(
+      'WebXR polyfill extension detected - using isolated mode',
+    )
     if (polyfillDetection.confidence > 50) {
-      recommendations.push('High confidence polyfill detection - disable extension for best experience')
+      recommendations.push(
+        'High confidence polyfill detection - disable extension for best experience',
+      )
     }
   }
 
@@ -124,6 +142,6 @@ export const runDiagnosticTests = (): {
   return {
     polyfillDetection,
     webglState,
-    recommendations
+    recommendations,
   }
 }

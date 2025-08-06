@@ -31,7 +31,7 @@ function checkRateLimit(ip: string): boolean {
   if (!clientData || now > clientData.resetTime) {
     rateLimitStore[ip] = {
       count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW
+      resetTime: now + RATE_LIMIT_WINDOW,
     }
     return true
   }
@@ -60,25 +60,32 @@ function sanitizeErrorPayload(payload: ErrorPayload): ErrorPayload {
     error: {
       name: payload.error.name.substring(0, 100),
       message: payload.error.message.substring(0, 500),
-      stack: process.env.NODE_ENV === 'development' ? payload.error.stack?.substring(0, 2000) : undefined
+      stack:
+        process.env.NODE_ENV === 'development'
+          ? payload.error.stack?.substring(0, 2000)
+          : undefined,
     },
     userAgent: payload.userAgent?.substring(0, 200),
     timestamp: new Date().toISOString(), // Use server timestamp for security
     url: payload.url?.substring(0, 300),
     webxrSupported: payload.webxrSupported,
-    webglSupported: payload.webglSupported
+    webglSupported: payload.webglSupported,
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0] || 
-                   (req.connection?.remoteAddress) || 
-                   (req.socket?.remoteAddress) || 
-                   'unknown'
+  const clientIp =
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+    req.connection?.remoteAddress ||
+    req.socket?.remoteAddress ||
+    'unknown'
 
   if (!checkRateLimit(clientIp)) {
     return res.status(429).json({ error: 'Rate limit exceeded' })
@@ -90,12 +97,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const sanitizedPayload = sanitizeErrorPayload(req.body)
-    
+
     // Log the error securely
     console.error('[WebXR Error API]', {
       ...sanitizedPayload,
       clientIp,
-      requestTime: new Date().toISOString()
+      requestTime: new Date().toISOString(),
     })
 
     // In production, you might want to:

@@ -66,7 +66,7 @@ const useInteractiveState = () => {
     clicked,
     handlePointerOver,
     handlePointerOut,
-    createClickHandler
+    createClickHandler,
   }
 }
 
@@ -81,14 +81,18 @@ const getSphereSegments = (quality: Quality): number => {
   return segmentMap[quality]
 }
 
-const createStandardMaterial = (color: string, emissiveIntensity: number, opacity = 0.9) => ({
+const createStandardMaterial = (
+  color: string,
+  emissiveIntensity: number,
+  opacity = 0.9,
+) => ({
   color,
   emissive: color,
   emissiveIntensity,
   roughness: 0.3,
   metalness: 0.7,
   transparent: true,
-  opacity
+  opacity,
 })
 
 // Unified animation hook
@@ -98,7 +102,7 @@ const useUnifiedAnimation = (
   position: Position3D,
   hovered: boolean,
   clicked: boolean,
-  animationType: 'button' | 'floating' | 'pulsing'
+  animationType: 'button' | 'floating' | 'pulsing',
 ) => {
   useFrame((state) => {
     if (!meshRef.current) return
@@ -140,8 +144,12 @@ const useUnifiedAnimation = (
     // Material animations
     if (animationType === 'button') {
       const glowIntensity = hovered ? 0.4 : 0.2
-      material.emissiveIntensity = THREE.MathUtils.lerp(material.emissiveIntensity, glowIntensity, 0.1)
-      
+      material.emissiveIntensity = THREE.MathUtils.lerp(
+        material.emissiveIntensity,
+        glowIntensity,
+        0.1,
+      )
+
       if (clicked) {
         mesh.rotation.z = Math.sin(time * 15) * 0.01
       }
@@ -160,18 +168,30 @@ const InteractiveButton: React.FC<InteractiveButtonProps> = ({
   color,
   hoverColor,
   size,
-  quality
+  quality,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
-  const { hovered, clicked, handlePointerOver, handlePointerOut, createClickHandler } = useInteractiveState()
-  
+  const {
+    hovered,
+    clicked,
+    handlePointerOver,
+    handlePointerOut,
+    createClickHandler,
+  } = useInteractiveState()
+
   useUnifiedAnimation(meshRef, groupRef, position, hovered, clicked, 'button')
-  
-  const handleClick = useMemo(() => createClickHandler(onClick), [createClickHandler, onClick])
+
+  const handleClick = useMemo(
+    () => createClickHandler(onClick),
+    [createClickHandler, onClick],
+  )
   const buttonColor = hovered ? hoverColor : color
   const segments = getQualitySegments(quality)
-  const materialProps = useMemo(() => createStandardMaterial(buttonColor, 0.2), [buttonColor])
+  const materialProps = useMemo(
+    () => createStandardMaterial(buttonColor, 0.2),
+    [buttonColor],
+  )
 
   return (
     <group ref={groupRef} position={position}>
@@ -211,7 +231,7 @@ const InteractiveButton: React.FC<InteractiveButtonProps> = ({
           textAlign: 'center',
           userSelect: 'none',
           pointerEvents: 'none',
-          textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          textShadow: '0 1px 2px rgba(0,0,0,0.1)',
         }}
       >
         <div>{text}</div>
@@ -233,25 +253,32 @@ const InteractiveButton: React.FC<InteractiveButtonProps> = ({
   )
 }
 
-const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({ 
-  position, 
-  icon, 
-  onClick, 
-  color, 
-  quality 
+const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
+  position,
+  icon,
+  onClick,
+  color,
+  quality,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { hovered, handlePointerOver, handlePointerOut, createClickHandler } = useInteractiveState()
-  
+  const { hovered, handlePointerOver, handlePointerOut, createClickHandler } =
+    useInteractiveState()
+
   useUnifiedAnimation(meshRef, null, position, hovered, false, 'floating')
-  
-  const handleClick = useMemo(() => createClickHandler(onClick), [createClickHandler, onClick])
+
+  const handleClick = useMemo(
+    () => createClickHandler(onClick),
+    [createClickHandler, onClick],
+  )
   const segments = getSphereSegments(quality)
-  const materialProps = useMemo(() => ({
-    ...createStandardMaterial(color, hovered ? 0.4 : 0.2),
-    roughness: 0.2,
-    metalness: 0.8
-  }), [color, hovered])
+  const materialProps = useMemo(
+    () => ({
+      ...createStandardMaterial(color, hovered ? 0.4 : 0.2),
+      roughness: 0.2,
+      metalness: 0.8,
+    }),
+    [color, hovered],
+  )
 
   return (
     <mesh
@@ -265,7 +292,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     >
       <sphereGeometry args={[0.5, segments, segments]} />
       <meshStandardMaterial {...materialProps} />
-      
+
       <Html
         position={[0, 0, 0]}
         transform
@@ -284,19 +311,26 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   )
 }
 
-const PulsingIndicator: React.FC<PulsingIndicatorProps> = ({ position, color, quality }) => {
+const PulsingIndicator: React.FC<PulsingIndicatorProps> = ({
+  position,
+  color,
+  quality,
+}) => {
   const meshRef = useRef<THREE.Mesh>(null)
-  
+
   useUnifiedAnimation(meshRef, null, position, false, false, 'pulsing')
-  
+
   const segments = getQualitySegments(quality)
-  const materialProps = useMemo(() => ({
-    color,
-    emissive: color,
-    emissiveIntensity: 0.5,
-    transparent: true,
-    opacity: 0.7
-  }), [color])
+  const materialProps = useMemo(
+    () => ({
+      color,
+      emissive: color,
+      emissiveIntensity: 0.5,
+      transparent: true,
+      opacity: 0.7,
+    }),
+    [color],
+  )
 
   return (
     <mesh ref={meshRef} position={position}>
@@ -307,36 +341,45 @@ const PulsingIndicator: React.FC<PulsingIndicatorProps> = ({ position, color, qu
 }
 
 const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
-  const handlers = useMemo(() => ({
-    scrollToWork: () => {
-      // Simulate scrolling to work section by creating a work view
-      console.log('Scroll to work section - transitioning to work view')
-      // This would trigger a view change in the parent component
-    },
-    backToMainSite: () => {
-      if (typeof window !== 'undefined') {
-        const homeUrl = new URL('/', window.location.origin)
-        window.location.href = homeUrl.toString()
-      }
-    }
-  }), [])
+  const handlers = useMemo(
+    () => ({
+      scrollToWork: () => {
+        // Simulate scrolling to work section by creating a work view
+        console.log('Scroll to work section - transitioning to work view')
+        // This would trigger a view change in the parent component
+      },
+      backToMainSite: () => {
+        if (typeof window !== 'undefined') {
+          const homeUrl = new URL('/', window.location.origin)
+          window.location.href = homeUrl.toString()
+        }
+      },
+    }),
+    [],
+  )
 
-  const platformMaterial = useMemo(() => ({
-    color: '#1f2937',
-    transparent: true,
-    opacity: 0.3,
-    roughness: 0.8
-  }), [])
+  const platformMaterial = useMemo(
+    () => ({
+      color: '#1f2937',
+      transparent: true,
+      opacity: 0.3,
+      roughness: 0.8,
+    }),
+    [],
+  )
 
-  const buttonConfigs = useMemo(() => ([
-    {
-      position: [0, 1, 0] as Position3D,
-      text: 'Explore My Work',
-      onClick: handlers.scrollToWork,
-      color: '#3b82f6',
-      hoverColor: '#1d4ed8'
-    }
-  ]), [handlers])
+  const buttonConfigs = useMemo(
+    () => [
+      {
+        position: [0, 1, 0] as Position3D,
+        text: 'Explore My Work',
+        onClick: handlers.scrollToWork,
+        color: '#3b82f6',
+        hoverColor: '#1d4ed8',
+      },
+    ],
+    [handlers],
+  )
 
   return (
     <group position={[0, -6, 0]}>
@@ -365,7 +408,7 @@ const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
             textAlign: 'center',
             userSelect: 'none',
             pointerEvents: 'none',
-            opacity: 0.6
+            opacity: 0.6,
           }}
         >
           <div className="animate-pulse">
@@ -383,7 +426,7 @@ const InteractiveButtons: React.FC<InteractiveButtonsProps> = ({ quality }) => {
           fontSize: '10px',
           textAlign: 'center',
           userSelect: 'none',
-          opacity: 0.5
+          opacity: 0.5,
         }}
       >
         <button

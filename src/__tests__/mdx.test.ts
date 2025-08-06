@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
+
 import { getAllPosts, getSinglePost } from '../../utils/mdx'
 
 // Mock fs module
@@ -19,10 +20,12 @@ description: Test Description
 
 // Mock mdx-bundler
 jest.mock('mdx-bundler', () => ({
-  bundleMDX: jest.fn(() => Promise.resolve({
-    code: MOCK_COMPILED_CODE,
-    frontmatter: MOCK_FRONTMATTER
-  }))
+  bundleMDX: jest.fn(() =>
+    Promise.resolve({
+      code: MOCK_COMPILED_CODE,
+      frontmatter: MOCK_FRONTMATTER,
+    }),
+  ),
 }))
 
 describe('MDX Utils', () => {
@@ -42,7 +45,7 @@ describe('MDX Utils', () => {
       expect(result).toHaveLength(2) // Only .mdx and .md files
       expect(result[0]).toEqual({
         frontmatter: MOCK_FRONTMATTER,
-        slug: 'post1'
+        slug: 'post1',
       })
     })
   })
@@ -55,7 +58,7 @@ describe('MDX Utils', () => {
 
       expect(result).toEqual({
         code: MOCK_COMPILED_CODE,
-        frontmatter: MOCK_FRONTMATTER
+        frontmatter: MOCK_FRONTMATTER,
       })
     })
   })

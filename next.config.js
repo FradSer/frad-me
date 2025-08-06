@@ -15,7 +15,9 @@ const nextConfig = {
   ],
   webpack: (config, { isServer }) => {
     if (process.env.ANALYZE === 'true') {
-      console.log(`Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`)
+      console.log(
+        `Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`,
+      )
     }
     return config
   },

@@ -10,13 +10,13 @@ interface SEOMetaData {
 }
 
 // Generate structured meta data object
-export function generateMetaTags({ 
-  title, 
-  description, 
-  image, 
-  type = 'article', 
-  canonical, 
-  robots = 'index, follow' 
+export function generateMetaTags({
+  title,
+  description,
+  image,
+  type = 'article',
+  canonical,
+  robots = 'index, follow',
 }: SEOMetaData) {
   const fullTitle = `${title} | ${SITE_CONFIG.title}`
   const fullImageUrl = image ? `${SITE_CONFIG.domain}${image}` : undefined

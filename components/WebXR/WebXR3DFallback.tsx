@@ -1,14 +1,28 @@
-import React, { Suspense, useCallback, useMemo, useState, useEffect } from 'react'
+import React, {
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react'
 
+import {
+  Html,
+  PerformanceMonitor,
+  AdaptiveDpr,
+  AdaptiveEvents,
+  BakeShadows,
+} from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Html, PerformanceMonitor, AdaptiveDpr, AdaptiveEvents, BakeShadows } from '@react-three/drei'
 
 import Scene3DFallback from './Fallback3D/Scene'
+import IsolatedCanvas from './IsolatedCanvas'
 import SafeCanvas from './SafeCanvas'
 import SafeScene from './SafeScene'
-import IsolatedCanvas from './IsolatedCanvas'
-import { webxrErrorLogger } from '@/utils/errorLogger'
+
 import { use3DFallbackState, Quality } from '@/hooks/use3DFallbackState'
+
+import { webxrErrorLogger } from '@/utils/errorLogger'
 import { WebXRPolyfillDetection } from '@/utils/webxrDiagnostics'
 
 interface WebXR3DFallbackProps {
@@ -17,24 +31,24 @@ interface WebXR3DFallbackProps {
 
 // Centralized quality configurations with optimized settings
 const CANVAS_CONFIGS = {
-  high: { 
-    dpr: [1, 2] as [number, number], 
-    antialias: true, 
+  high: {
+    dpr: [1, 2] as [number, number],
+    antialias: true,
     shadows: true,
-    performance: { min: 0.7 }
+    performance: { min: 0.7 },
   },
-  medium: { 
-    dpr: [1, 1.5] as [number, number], 
-    antialias: true, 
+  medium: {
+    dpr: [1, 1.5] as [number, number],
+    antialias: true,
     shadows: false,
-    performance: { min: 0.5 }
+    performance: { min: 0.5 },
   },
-  low: { 
-    dpr: 1, 
-    antialias: false, 
+  low: {
+    dpr: 1,
+    antialias: false,
     shadows: false,
-    performance: { min: 0.3 }
-  }
+    performance: { min: 0.3 },
+  },
 } as const
 
 const LoadingFallback = React.memo(() => (
@@ -48,12 +62,12 @@ const LoadingFallback = React.memo(() => (
 LoadingFallback.displayName = 'LoadingFallback'
 
 // Extracted UI components for better separation of concerns
-const QualityIndicator = React.memo<{ quality: Quality }>(({ quality }) => 
+const QualityIndicator = React.memo<{ quality: Quality }>(({ quality }) =>
   quality !== 'high' ? (
     <div className="absolute bottom-4 right-4 rounded bg-black bg-opacity-50 p-2 text-xs text-white">
       Performance Mode: {quality.toUpperCase()}
     </div>
-  ) : null
+  ) : null,
 )
 QualityIndicator.displayName = 'QualityIndicator'
 
@@ -62,7 +76,7 @@ const LoadingOverlay = React.memo<{ isLoading: boolean }>(({ isLoading }) =>
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="text-white">Loading 3D experience...</div>
     </div>
-  ) : null
+  ) : null,
 )
 LoadingOverlay.displayName = 'LoadingOverlay'
 
@@ -75,11 +89,11 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
     error,
     mode,
     updatePerformanceMetrics,
-    updateQuality
+    updateQuality,
   } = use3DFallbackState({
     initialQuality: 'high',
     autoAdjustQuality: true,
-    debugMode: process.env.NODE_ENV === 'development'
+    debugMode: process.env.NODE_ENV === 'development',
   })
 
   // This logic is now handled by IsolatedCanvas component
@@ -87,53 +101,78 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
   const canvasConfig = useMemo(() => CANVAS_CONFIGS[quality], [quality])
 
   // Unified error handler that leverages hook's error state
-  const handleError = useCallback((error: Error, context?: string) => {
-    const errorMessage = context ? `${context}: ${error.message}` : error.message
-    const enhancedError = new Error(errorMessage)
-    
-    console.error('[WebXR3DFallback]', enhancedError)
-    webxrErrorLogger.logError(enhancedError)
-    onError?.(enhancedError)
-  }, [onError])
+  const handleError = useCallback(
+    (error: Error, context?: string) => {
+      const errorMessage = context
+        ? `${context}: ${error.message}`
+        : error.message
+      const enhancedError = new Error(errorMessage)
+
+      console.error('[WebXR3DFallback]', enhancedError)
+      webxrErrorLogger.logError(enhancedError)
+      onError?.(enhancedError)
+    },
+    [onError],
+  )
 
   // Optimized performance monitoring with stable threshold
-  const handlePerformanceChange = useCallback((api: { factor: number }) => {
-    const fps = Math.max(1, Math.round(60 * api.factor))
-    const frameTime = Math.round((1000 / fps) * 100) / 100 // Round to 2 decimal places
-    
-    updatePerformanceMetrics({
-      fps,
-      frameTime,
-      isStable: api.factor > 0.75 // More stable threshold
-    })
-  }, [updatePerformanceMetrics])
+  const handlePerformanceChange = useCallback(
+    (api: { factor: number }) => {
+      const fps = Math.max(1, Math.round(60 * api.factor))
+      const frameTime = Math.round((1000 / fps) * 100) / 100 // Round to 2 decimal places
+
+      updatePerformanceMetrics({
+        fps,
+        frameTime,
+        isStable: api.factor > 0.75, // More stable threshold
+      })
+    },
+    [updatePerformanceMetrics],
+  )
 
   // Simplified quality adjustment handlers
-  const handleQualityUpgrade = useCallback(() => updateQuality('high'), [updateQuality])
+  const handleQualityUpgrade = useCallback(
+    () => updateQuality('high'),
+    [updateQuality],
+  )
   const handleQualityDowngrade = useCallback(() => {
     updateQuality(quality === 'high' ? 'medium' : 'low')
   }, [quality, updateQuality])
 
-  const handlePolyfillDetected = useCallback((detection: WebXRPolyfillDetection) => {
-    if (detection.confidence > 50) {
-      console.warn('High confidence WebXR polyfill detected, switching to isolated mode')
-      setUseIsolatedMode(true)
-    }
-  }, [])
+  const handlePolyfillDetected = useCallback(
+    (detection: WebXRPolyfillDetection) => {
+      if (detection.confidence > 50) {
+        console.warn(
+          'High confidence WebXR polyfill detected, switching to isolated mode',
+        )
+        setUseIsolatedMode(true)
+      }
+    },
+    [],
+  )
 
   // Enhanced error handler for WebXR polyfill issues
-  const handleCanvasError = useCallback((error: Error) => {
-    const errorMessage = error.toString()
-    
-    // Detect WebXR polyfill conflicts
-    if (errorMessage.includes('trim') || errorMessage.includes('webxr-polyfill') || errorMessage.includes('shader')) {
-      console.warn('WebXR polyfill conflict detected, switching to isolated mode...')
-      setUseIsolatedMode(true)
-      return
-    }
-    
-    handleError(error, '3D Canvas Error')
-  }, [handleError])
+  const handleCanvasError = useCallback(
+    (error: Error) => {
+      const errorMessage = error.toString()
+
+      // Detect WebXR polyfill conflicts
+      if (
+        errorMessage.includes('trim') ||
+        errorMessage.includes('webxr-polyfill') ||
+        errorMessage.includes('shader')
+      ) {
+        console.warn(
+          'WebXR polyfill conflict detected, switching to isolated mode...',
+        )
+        setUseIsolatedMode(true)
+        return
+      }
+
+      handleError(error, '3D Canvas Error')
+    },
+    [handleError],
+  )
 
   // Use isolated mode for polyfill conflicts (highest priority)
   if (useIsolatedMode) {
@@ -173,7 +212,8 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
         <div className="max-w-md text-center text-white">
           <h1 className="mb-4 text-2xl font-bold">WebGL Error</h1>
           <p className="mb-6 text-gray-300">
-            Your device doesn&apos;t support WebGL or 3D rendering. Please try a different browser or device.
+            Your device doesn&apos;t support WebGL or 3D rendering. Please try a
+            different browser or device.
           </p>
           <button
             className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
@@ -204,14 +244,14 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
           stencil: false,
           depth: true,
           preserveDrawingBuffer: false,
-          premultipliedAlpha: false
+          premultipliedAlpha: false,
         }}
         shadows={canvasConfig.shadows}
         camera={{
           position: [0, 0, 10],
           fov: 50,
           near: 0.1,
-          far: 100
+          far: 100,
         }}
         onCreated={({ gl }) => {
           console.log('Canvas created successfully')
@@ -220,20 +260,20 @@ const WebXR3DFallback: React.FC<WebXR3DFallbackProps> = ({ onError }) => {
         {/* R3F Adaptive Performance Components */}
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
-        
+
         <PerformanceMonitor
           onChange={handlePerformanceChange}
           onIncline={handleQualityUpgrade}
           onDecline={handleQualityDowngrade}
         />
-        
+
         {canvasConfig.shadows && <BakeShadows />}
-        
+
         <Suspense fallback={<LoadingFallback />}>
           <Scene3DFallback quality={quality} />
         </Suspense>
       </Canvas>
-      
+
       <QualityIndicator quality={quality} />
       <LoadingOverlay isLoading={isLoading} />
     </div>

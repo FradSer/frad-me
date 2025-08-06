@@ -40,18 +40,13 @@ function TopographyImage({
       }}
       transition={{
         duration: duration,
-        delay: ANIMATION_CONSTANTS.inViewDuration + ANIMATION_CONSTANTS.inViewDelay,
+        delay:
+          ANIMATION_CONSTANTS.inViewDuration + ANIMATION_CONSTANTS.inViewDelay,
       }}
       viewport={{ once: true }}
       className={topographyClass}
     >
-      <Image
-        src={src}
-        width={1135}
-        height={680}
-        alt={alt}
-        loading="lazy"
-      />
+      <Image src={src} width={1135} height={680} alt={alt} loading="lazy" />
     </motion.div>
   )
 }
@@ -63,7 +58,10 @@ function Topography() {
         initial={{ scale: 0.98, opacity: 0, y: 200 }}
         whileInView={{ scale: 0.8, opacity: 1, y: 0 }}
         transition={{
-          scale: { duration: ANIMATION_CONSTANTS.inViewDuration, delay: ANIMATION_CONSTANTS.inViewDelay },
+          scale: {
+            duration: ANIMATION_CONSTANTS.inViewDuration,
+            delay: ANIMATION_CONSTANTS.inViewDelay,
+          },
           opacity: { duration: 0.4, ease: 'linear' },
           y: { duration: 0.4, ease: 'linear' },
         }}

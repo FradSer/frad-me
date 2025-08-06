@@ -7,21 +7,29 @@ export interface IconProps {
 }
 
 // Base SVG wrapper component
-const SVGIcon = forwardRef<SVGSVGElement, IconProps & { 
-  children: React.ReactNode
-  viewBox: string
-}>(({ className = '', size = 'currentSize', viewBox, children, ...props }, ref) => (
-  <svg
-    ref={ref}
-    width={size}
-    height={size}
-    viewBox={viewBox}
-    className={className}
-    {...props}
-  >
-    {children}
-  </svg>
-))
+const SVGIcon = forwardRef<
+  SVGSVGElement,
+  IconProps & {
+    children: React.ReactNode
+    viewBox: string
+  }
+>(
+  (
+    { className = '', size = 'currentSize', viewBox, children, ...props },
+    ref,
+  ) => (
+    <svg
+      ref={ref}
+      width={size}
+      height={size}
+      viewBox={viewBox}
+      className={className}
+      {...props}
+    >
+      {children}
+    </svg>
+  ),
+)
 
 SVGIcon.displayName = 'SVGIcon'
 
@@ -44,11 +52,13 @@ export const MoonIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
 MoonIcon.displayName = 'MoonIcon'
 
 // External link icon
-export const ExternalLinkIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <SVGIcon ref={ref} viewBox="0 0 14 14" {...props}>
-    <path d="M11.1465 9.45508V3.58984C11.1465 3.32812 11.0645 3.11523 10.9004 2.95117C10.7402 2.78711 10.5254 2.70508 10.2559 2.70508H4.39062C4.14062 2.70508 3.93164 2.78711 3.76367 2.95117C3.59961 3.11523 3.51758 3.31055 3.51758 3.53711C3.51758 3.75977 3.60156 3.94922 3.76953 4.10547C3.9375 4.26172 4.14062 4.33984 4.37891 4.33984H6.55273L8.48047 4.26953L7.45508 5.17773L2.28125 10.3633C2.08984 10.5586 1.99414 10.7676 1.99414 10.9902C1.99414 11.1387 2.03516 11.2793 2.11719 11.4121C2.19922 11.541 2.30469 11.6465 2.43359 11.7285C2.5625 11.8105 2.70312 11.8516 2.85547 11.8516C3.08203 11.8516 3.29102 11.7559 3.48242 11.5645L8.66797 6.39062L9.58203 5.35938L9.50586 7.22852V9.46094C9.50586 9.70312 9.58203 9.9082 9.73438 10.0762C9.89062 10.2441 10.082 10.3281 10.3086 10.3281C10.5391 10.3281 10.7363 10.2441 10.9004 10.0762C11.0645 9.9082 11.1465 9.70117 11.1465 9.45508Z" />
-  </SVGIcon>
-))
+export const ExternalLinkIcon = forwardRef<SVGSVGElement, IconProps>(
+  (props, ref) => (
+    <SVGIcon ref={ref} viewBox="0 0 14 14" {...props}>
+      <path d="M11.1465 9.45508V3.58984C11.1465 3.32812 11.0645 3.11523 10.9004 2.95117C10.7402 2.78711 10.5254 2.70508 10.2559 2.70508H4.39062C4.14062 2.70508 3.93164 2.78711 3.76367 2.95117C3.59961 3.11523 3.51758 3.31055 3.51758 3.53711C3.51758 3.75977 3.60156 3.94922 3.76953 4.10547C3.9375 4.26172 4.14062 4.33984 4.37891 4.33984H6.55273L8.48047 4.26953L7.45508 5.17773L2.28125 10.3633C2.08984 10.5586 1.99414 10.7676 1.99414 10.9902C1.99414 11.1387 2.03516 11.2793 2.11719 11.4121C2.19922 11.541 2.30469 11.6465 2.43359 11.7285C2.5625 11.8105 2.70312 11.8516 2.85547 11.8516C3.08203 11.8516 3.29102 11.7559 3.48242 11.5645L8.66797 6.39062L9.58203 5.35938L9.50586 7.22852V9.46094C9.50586 9.70312 9.58203 9.9082 9.73438 10.0762C9.89062 10.2441 10.082 10.3281 10.3086 10.3281C10.5391 10.3281 10.7363 10.2441 10.9004 10.0762C11.0645 9.9082 11.1465 9.70117 11.1465 9.45508Z" />
+    </SVGIcon>
+  ),
+)
 
 ExternalLinkIcon.displayName = 'ExternalLinkIcon'
 
@@ -75,19 +85,23 @@ export const StopIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
 StopIcon.displayName = 'StopIcon'
 
 // Down arrow icon
-export const DownArrowIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <SVGIcon ref={ref} viewBox="0 0 18 46" {...props}>
-    <path d="M0.439999 31.768C1.54933 32.1947 2.57333 32.664 3.512 33.176C4.49333 33.688 5.41067 34.264 6.264 34.904L6.264 0.599999L11.512 0.599999L11.512 34.904C12.3653 34.3067 13.2613 33.752 14.2 33.24C15.1813 32.728 16.2267 32.2587 17.336 31.832L17.336 36.696C14.2213 39.3413 11.8533 42.2427 10.232 45.4L7.48 45.4C5.944 42.2427 3.59733 39.3413 0.439999 36.696L0.439999 31.768Z" />
-  </SVGIcon>
-))
+export const DownArrowIcon = forwardRef<SVGSVGElement, IconProps>(
+  (props, ref) => (
+    <SVGIcon ref={ref} viewBox="0 0 18 46" {...props}>
+      <path d="M0.439999 31.768C1.54933 32.1947 2.57333 32.664 3.512 33.176C4.49333 33.688 5.41067 34.264 6.264 34.904L6.264 0.599999L11.512 0.599999L11.512 34.904C12.3653 34.3067 13.2613 33.752 14.2 33.24C15.1813 32.728 16.2267 32.2587 17.336 31.832L17.336 36.696C14.2213 39.3413 11.8533 42.2427 10.232 45.4L7.48 45.4C5.944 42.2427 3.59733 39.3413 0.439999 36.696L0.439999 31.768Z" />
+    </SVGIcon>
+  ),
+)
 
 DownArrowIcon.displayName = 'DownArrowIcon'
 
 // Triangle shape
-export const TriangleIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-  <SVGIcon ref={ref} viewBox="0 0 149 129" {...props}>
-    <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
-  </SVGIcon>
-))
+export const TriangleIcon = forwardRef<SVGSVGElement, IconProps>(
+  (props, ref) => (
+    <SVGIcon ref={ref} viewBox="0 0 149 129" {...props}>
+      <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
+    </SVGIcon>
+  ),
+)
 
 TriangleIcon.displayName = 'TriangleIcon'

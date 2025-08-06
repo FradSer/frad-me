@@ -3,10 +3,10 @@ import classNames from 'classnames'
 import DotCircle from '@/components/Landing/Hero/DotCircle'
 import Rectangle from '@/components/Landing/Hero/Rectangle'
 import Triangle from '@/components/Landing/Hero/Triangle'
+import { PlayIcon, StopIcon } from '@/components/common/Icons'
 import ScrollLink from '@/components/common/ScrollLink'
 
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
-import { PlayIcon, StopIcon } from '@/components/common/Icons'
 
 interface IHeroProps {
   isWebXR?: boolean
@@ -21,7 +21,8 @@ design with any tool whatsoever
 or building a startup.
 `
 
-const trianglePositionClass = 'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20'
+const trianglePositionClass =
+  'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20'
 const mutedTextClass = 'text-gray-400'
 
 function Hero({ isWebXR = false }: Readonly<IHeroProps>) {

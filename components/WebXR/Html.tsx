@@ -9,6 +9,7 @@ import * as THREE from 'three'
 // Prevents html2canvas warnings
 
 // Prevents html2canvas warnings by monkey-patching canvas context
+
 ;(HTMLCanvasElement.prototype.getContext as any) = (function (origFn: any) {
   return function (this: any, type: any, attribs: any) {
     attribs = attribs || {}

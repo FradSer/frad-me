@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import classNames from 'classnames'
-import { motion, useAnimationControls, useMotionValue, useSpring } from 'framer-motion'
+import {
+  motion,
+  useAnimationControls,
+  useMotionValue,
+  useSpring,
+} from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 import useMousePosition from '@/hooks/useMousePosition'
@@ -99,11 +104,12 @@ export default function DotRing() {
     'header-link-hovered': { animation: 'headerLinkHovered', title: '' },
     'work-card-hovered': { animation: 'workCardHover', title: 'READ' },
     'work-card-hovered-wip': { animation: 'workCardHover', title: 'WIP' },
-    'attracted': { animation: 'attracted', title: '' },
-    'default': { animation: 'initial', title: '' },
+    attracted: { animation: 'attracted', title: '' },
+    default: { animation: 'initial', title: '' },
   } as const
 
-  const currentState = cursorStateMap[mouseContext.cursorType] || cursorStateMap.default
+  const currentState =
+    cursorStateMap[mouseContext.cursorType] || cursorStateMap.default
   const dotRingTitle = currentState.title
 
   // * Effects
@@ -111,9 +117,9 @@ export default function DotRing() {
     const blendedPosition = calculateBlendPosition(
       mousePosition,
       mouseContext.attractorPosition,
-      0.7
+      0.7,
     )
-    
+
     attractedX.set(blendedPosition.x)
     attractedY.set(blendedPosition.y)
   }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY])

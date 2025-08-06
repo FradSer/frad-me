@@ -49,9 +49,9 @@ export class BasePage {
   }
 
   async takeScreenshot(name: string) {
-    return await this.page.screenshot({ 
+    return await this.page.screenshot({
       path: `test-results/screenshots/${name}.png`,
-      fullPage: true 
+      fullPage: true,
     })
   }
 }
@@ -90,7 +90,7 @@ export class HeaderPage extends BasePage {
     // Test desktop
     await this.setViewport('desktop')
     await expect(this.header).toBeVisible()
-    
+
     // Test mobile
     await this.setViewport('mobile')
     await expect(this.header).toBeVisible()
@@ -107,7 +107,10 @@ export class WorksPage extends BasePage {
 
   constructor(page: Page) {
     super(page)
-    this.workSection = page.locator('section').filter({ hasText: /work/i }).or(page.locator('section').nth(1))
+    this.workSection = page
+      .locator('section')
+      .filter({ hasText: /work/i })
+      .or(page.locator('section').nth(1))
     this.workCards = page.locator(selectors.works.workCard)
     this.workLinks = page.locator('a[href^="/works/"]')
     this.wipElements = page.locator('[class*="wip"], [class*="not-allowed"]')
@@ -150,19 +153,21 @@ export class WorksPage extends BasePage {
       await expect(this.wipElements.first()).toBeVisible()
       // WIP elements should not be clickable links
       const wipElement = this.wipElements.first()
-      const tagName = await wipElement.evaluate(el => el.tagName.toLowerCase())
+      const tagName = await wipElement.evaluate((el) =>
+        el.tagName.toLowerCase(),
+      )
       expect(tagName).not.toBe('a')
     }
   }
 
   async verifyImageLoading() {
     await this.page.waitForLoadState('networkidle')
-    
+
     const imageCount = await this.images.count()
     if (imageCount > 0) {
       const firstImage = this.images.first()
       await expect(firstImage).toBeVisible()
-      
+
       // Check alt text
       const altText = await firstImage.getAttribute('alt')
       expect(altText).toBeTruthy()
@@ -172,11 +177,11 @@ export class WorksPage extends BasePage {
 
   async verifyResponsiveLayout() {
     const viewportSizes = ['mobile', 'tablet', 'desktop'] as const
-    
+
     for (const viewport of viewportSizes) {
       await this.setViewport(viewport)
       await this.verifyWorkSection()
-      
+
       // Take screenshot for visual comparison if needed
       await this.takeScreenshot(`works-${viewport}`)
     }
@@ -226,7 +231,7 @@ export class HomePage extends BasePage {
   async verifyPageLoad() {
     // Check page title
     await expect(this.page).toHaveTitle(/Frad LEE/)
-    
+
     // Verify main sections
     await this.header.verifyHeaderVisible()
     await expect(this.page.locator(selectors.layout.main).first()).toBeVisible()
@@ -236,24 +241,24 @@ export class HomePage extends BasePage {
     // Test theme switching
     await this.header.toggleTheme()
     await this.header.verifyTheme('dark')
-    
+
     await this.header.toggleTheme()
     await this.header.verifyTheme('light')
-    
+
     // Test responsive design
     await this.header.verifyResponsiveHeader()
-    
+
     // Test works section
     await this.works.verifyWorkSection()
     await this.works.verifyWorkCards()
     await this.works.verifyImageLoading()
-    
+
     // Test work navigation if available
     const workHref = await this.works.navigateToFirstWork()
     if (workHref) {
       const workDetail = new WorkDetailPage(this.page)
       await workDetail.verifyWorkDetailPage()
-      
+
       // Navigate back
       await workDetail.verifyBackNavigation()
     }
@@ -266,7 +271,7 @@ export class TestUtils {
     let lastContent = ''
     let stableCount = 0
     const startTime = Date.now()
-    
+
     while (Date.now() - startTime < timeout) {
       const currentContent = await page.textContent('body')
       if (currentContent === lastContent) {
@@ -281,12 +286,12 @@ export class TestUtils {
   }
 
   static async retryAssertion(
-    assertion: () => Promise<void>, 
+    assertion: () => Promise<void>,
     maxRetries: number = 3,
-    delay: number = 1000
+    delay: number = 1000,
   ) {
     let lastError: Error
-    
+
     for (let i = 0; i < maxRetries; i++) {
       try {
         await assertion()
@@ -294,28 +299,44 @@ export class TestUtils {
       } catch (error) {
         lastError = error as Error
         if (i < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay))
+          await new Promise((resolve) => setTimeout(resolve, delay))
         }
       }
     }
-    
+
     throw lastError!
   }
 
-  static async mockNetworkConditions(page: Page, condition: 'slow' | 'fast' | 'offline') {
+  static async mockNetworkConditions(
+    page: Page,
+    condition: 'slow' | 'fast' | 'offline',
+  ) {
     const conditions = {
-      slow: { downloadThroughput: 50000, uploadThroughput: 20000, latency: 200 },
-      fast: { downloadThroughput: 10000000, uploadThroughput: 5000000, latency: 20 },
-      offline: { offline: true, downloadThroughput: 0, uploadThroughput: 0, latency: 0 }
+      slow: {
+        downloadThroughput: 50000,
+        uploadThroughput: 20000,
+        latency: 200,
+      },
+      fast: {
+        downloadThroughput: 10000000,
+        uploadThroughput: 5000000,
+        latency: 20,
+      },
+      offline: {
+        offline: true,
+        downloadThroughput: 0,
+        uploadThroughput: 0,
+        latency: 0,
+      },
     }
-    
+
     const cdp = await page.context().newCDPSession(page)
     if (condition === 'offline') {
       await cdp.send('Network.emulateNetworkConditions', conditions.offline)
     } else {
       await cdp.send('Network.emulateNetworkConditions', {
         offline: false,
-        ...conditions[condition]
+        ...conditions[condition],
       })
     }
   }

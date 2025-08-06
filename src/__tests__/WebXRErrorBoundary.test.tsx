@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { render, screen, fireEvent } from '@testing-library/react'
+
 import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary'
 
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
@@ -22,7 +24,7 @@ describe('WebXRErrorBoundary', () => {
     render(
       <WebXRErrorBoundary>
         <ThrowError shouldThrow={false} />
-      </WebXRErrorBoundary>
+      </WebXRErrorBoundary>,
     )
 
     expect(screen.getByText('No error')).toBeInTheDocument()
@@ -32,12 +34,16 @@ describe('WebXRErrorBoundary', () => {
     render(
       <WebXRErrorBoundary>
         <ThrowError shouldThrow={true} />
-      </WebXRErrorBoundary>
+      </WebXRErrorBoundary>,
     )
 
     expect(screen.getByText('Unable to load 3D experience')).toBeInTheDocument()
-    expect(screen.getByText(/The WebXR components failed to load/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Try Again' })).toBeInTheDocument()
+    expect(
+      screen.getByText(/The WebXR components failed to load/),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Try Again' }),
+    ).toBeInTheDocument()
   })
 
   it('renders custom fallback when provided', () => {
@@ -46,23 +52,25 @@ describe('WebXRErrorBoundary', () => {
     render(
       <WebXRErrorBoundary fallback={customFallback}>
         <ThrowError shouldThrow={true} />
-      </WebXRErrorBoundary>
+      </WebXRErrorBoundary>,
     )
 
     expect(screen.getByText('Custom error message')).toBeInTheDocument()
-    expect(screen.queryByText('Unable to load 3D experience')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Unable to load 3D experience'),
+    ).not.toBeInTheDocument()
   })
 
   it('handles retry button click', () => {
     render(
       <WebXRErrorBoundary>
         <ThrowError shouldThrow={true} />
-      </WebXRErrorBoundary>
+      </WebXRErrorBoundary>,
     )
 
     const retryButton = screen.getByRole('button', { name: 'Try Again' })
     expect(retryButton).toBeInTheDocument()
-    
+
     fireEvent.click(retryButton)
     expect(retryButton).toBeInTheDocument()
   })

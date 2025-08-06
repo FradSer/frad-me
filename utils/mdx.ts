@@ -7,9 +7,9 @@ const ROOT = process.cwd()
 const POSTS_PATH = path.join(ROOT, 'content', 'works')
 
 // Error handling utility
-const createError = (message: string, cause?: unknown) => 
-  Object.assign(new Error(message), { 
-    cause: cause instanceof Error ? cause : undefined 
+const createError = (message: string, cause?: unknown) =>
+  Object.assign(new Error(message), {
+    cause: cause instanceof Error ? cause : undefined,
   })
 
 type PostFrontmatter = {
@@ -38,7 +38,8 @@ const getFileContent = (filename: string): string => {
 }
 
 const configureEsbuildPath = (): void => {
-  const binaryName = process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild'
+  const binaryName =
+    process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild'
   const esbuildPath = path.join(ROOT, 'node_modules', 'esbuild', binaryName)
   process.env.ESBUILD_BINARY_PATH = esbuildPath
 }

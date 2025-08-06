@@ -22,7 +22,7 @@ export default function Triangle() {
     const updateRotate = () => {
       rotate.set(rotateOffset.get() + initialRotate)
     }
-    
+
     return rotateOffset.onChange(updateRotate)
   }, [initialRotate, rotate, rotateOffset])
 

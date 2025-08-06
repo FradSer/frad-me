@@ -1,9 +1,14 @@
 import React, { Suspense, useEffect, useState, useMemo } from 'react'
-import { Canvas } from '@react-three/fiber'
+
 import { Html, AdaptiveDpr } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
 
 import SafeCanvas from './SafeCanvas'
-import { detectWebXRPolyfill, WebXRPolyfillDetection } from '@/utils/webxrDiagnostics'
+
+import {
+  detectWebXRPolyfill,
+  WebXRPolyfillDetection,
+} from '@/utils/webxrDiagnostics'
 
 interface IsolatedCanvasProps {
   children: React.ReactNode
@@ -12,8 +17,10 @@ interface IsolatedCanvasProps {
 }
 
 // Store original WebGL constructors before any polyfill contamination
-const OriginalWebGLRenderingContext = typeof window !== 'undefined' ? window.WebGLRenderingContext : null
-const OriginalWebGL2RenderingContext = typeof window !== 'undefined' ? window.WebGL2RenderingContext : null
+const OriginalWebGLRenderingContext =
+  typeof window !== 'undefined' ? window.WebGLRenderingContext : null
+const OriginalWebGL2RenderingContext =
+  typeof window !== 'undefined' ? window.WebGL2RenderingContext : null
 
 const IsolatedLoadingFallback = () => (
   <Html center>
@@ -24,18 +31,19 @@ const IsolatedLoadingFallback = () => (
   </Html>
 )
 
-const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({ 
-  children, 
-  fallback, 
-  onPolyfillDetected 
+const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
+  children,
+  fallback,
+  onPolyfillDetected,
 }) => {
-  const [polyfillDetection, setPolyfillDetection] = useState<WebXRPolyfillDetection | null>(null)
+  const [polyfillDetection, setPolyfillDetection] =
+    useState<WebXRPolyfillDetection | null>(null)
   const [isolationFailed, setIsolationFailed] = useState(false)
 
   useEffect(() => {
     const detection = detectWebXRPolyfill()
     setPolyfillDetection(detection)
-    
+
     if (detection.detected) {
       console.warn('WebXR polyfill detected, using isolated mode:', detection)
       onPolyfillDetected?.(detection)
@@ -51,46 +59,60 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
     return (canvas: HTMLCanvasElement, contextId: string, attributes?: any) => {
       try {
         // Use original constructors to bypass polyfill
-        let context: WebGLRenderingContext | WebGL2RenderingContext | null = null
+        let context: WebGLRenderingContext | WebGL2RenderingContext | null =
+          null
 
         if (contextId === 'webgl' || contextId === 'experimental-webgl') {
           // Create context using original method
           context = canvas.getContext('webgl', {
             ...attributes,
             // Force conservative settings when polyfill detected
-            antialias: polyfillDetection?.detected ? false : attributes?.antialias,
+            antialias: polyfillDetection?.detected
+              ? false
+              : attributes?.antialias,
             powerPreference: 'default',
-            failIfMajorPerformanceCaveat: false
+            failIfMajorPerformanceCaveat: false,
           }) as WebGLRenderingContext
 
           if (!context && !polyfillDetection?.detected) {
-            context = canvas.getContext('experimental-webgl', attributes) as WebGLRenderingContext
+            context = canvas.getContext(
+              'experimental-webgl',
+              attributes,
+            ) as WebGLRenderingContext
           }
         } else if (contextId === 'webgl2' && OriginalWebGL2RenderingContext) {
           context = canvas.getContext('webgl2', {
             ...attributes,
-            antialias: polyfillDetection?.detected ? false : attributes?.antialias,
+            antialias: polyfillDetection?.detected
+              ? false
+              : attributes?.antialias,
             powerPreference: 'default',
-            failIfMajorPerformanceCaveat: false
+            failIfMajorPerformanceCaveat: false,
           }) as WebGL2RenderingContext
         }
 
         if (context && polyfillDetection?.detected) {
           // Wrap critical methods to prevent null returns
           const originalGetShaderSource = context.getShaderSource
-          context.getShaderSource = function(shader: WebGLShader): string | null {
+          context.getShaderSource = function (
+            shader: WebGLShader,
+          ): string | null {
             const source = originalGetShaderSource.call(this, shader)
             return source || ''
           }
 
           const originalGetShaderInfoLog = context.getShaderInfoLog
-          context.getShaderInfoLog = function(shader: WebGLShader): string | null {
+          context.getShaderInfoLog = function (
+            shader: WebGLShader,
+          ): string | null {
             const log = originalGetShaderInfoLog.call(this, shader)
             return log || ''
           }
 
           const originalGetProgramInfoLog = context.getProgramInfoLog
-          context.getProgramInfoLog = function(program: WebGLProgram): string | null {
+          context.getProgramInfoLog = function (
+            program: WebGLProgram,
+          ): string | null {
             const log = originalGetProgramInfoLog.call(this, program)
             return log || ''
           }
@@ -105,17 +127,20 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
     }
   }, [polyfillDetection])
 
-  const isolatedGLSettings = useMemo(() => ({
-    // Very conservative settings when polyfill detected
-    antialias: polyfillDetection?.detected ? false : true,
-    alpha: false,
-    depth: true,
-    stencil: false,
-    powerPreference: 'default' as const,
-    preserveDrawingBuffer: false,
-    premultipliedAlpha: false,
-    failIfMajorPerformanceCaveat: false
-  }), [polyfillDetection])
+  const isolatedGLSettings = useMemo(
+    () => ({
+      // Very conservative settings when polyfill detected
+      antialias: polyfillDetection?.detected ? false : true,
+      alpha: false,
+      depth: true,
+      stencil: false,
+      powerPreference: 'default' as const,
+      preserveDrawingBuffer: false,
+      premultipliedAlpha: false,
+      failIfMajorPerformanceCaveat: false,
+    }),
+    [polyfillDetection],
+  )
 
   const handleCanvasError = (error: any) => {
     console.error('Isolated Canvas Error:', error)
@@ -123,8 +148,13 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
   }
 
   // Fall back to SafeCanvas if isolation failed or polyfill confidence is too high
-  if (isolationFailed || (polyfillDetection?.confidence && polyfillDetection.confidence > 75)) {
-    console.warn('Falling back to SafeCanvas due to isolation failure or high polyfill confidence')
+  if (
+    isolationFailed ||
+    (polyfillDetection?.confidence && polyfillDetection.confidence > 75)
+  ) {
+    console.warn(
+      'Falling back to SafeCanvas due to isolation failure or high polyfill confidence',
+    )
     return fallback ? <>{fallback}</> : <SafeCanvas>{children}</SafeCanvas>
   }
 
@@ -135,7 +165,8 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
           <div className="font-semibold">⚠️ WebXR Extension Detected</div>
           <div>Using isolated rendering mode</div>
           <div className="text-xs opacity-75">
-            Confidence: {polyfillDetection.confidence}% | Methods: {polyfillDetection.methods.join(', ')}
+            Confidence: {polyfillDetection.confidence}% | Methods:{' '}
+            {polyfillDetection.methods.join(', ')}
           </div>
         </div>
       )}
@@ -147,29 +178,39 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
           position: [0, 0, 10],
           fov: 50,
           near: 0.1,
-          far: 100
+          far: 100,
         }}
         shadows={polyfillDetection?.detected ? false : true}
         onError={handleCanvasError}
         onCreated={({ gl }) => {
           try {
             gl.setClearColor('#1e1b4b')
-            
+
             // Test WebGL functionality using the underlying context
             const context = gl.getContext()
             if (context) {
               const testShader = context.createShader(context.VERTEX_SHADER)
               if (testShader) {
-                context.shaderSource(testShader, 'attribute vec4 position; void main() { gl_Position = position; }')
+                context.shaderSource(
+                  testShader,
+                  'attribute vec4 position; void main() { gl_Position = position; }',
+                )
                 context.compileShader(testShader)
-                
-                if (!context.getShaderParameter(testShader, context.COMPILE_STATUS)) {
+
+                if (
+                  !context.getShaderParameter(
+                    testShader,
+                    context.COMPILE_STATUS,
+                  )
+                ) {
                   const error = context.getShaderInfoLog(testShader)
                   if (error && error.includes('polyfill')) {
-                    throw new Error('Polyfill interference detected in shader compilation')
+                    throw new Error(
+                      'Polyfill interference detected in shader compilation',
+                    )
                   }
                 }
-                
+
                 context.deleteShader(testShader)
               }
             }
@@ -182,10 +223,8 @@ const IsolatedCanvas: React.FC<IsolatedCanvasProps> = ({
         }}
       >
         <AdaptiveDpr pixelated />
-        
-        <Suspense fallback={<IsolatedLoadingFallback />}>
-          {children}
-        </Suspense>
+
+        <Suspense fallback={<IsolatedLoadingFallback />}>{children}</Suspense>
       </Canvas>
     </div>
   )

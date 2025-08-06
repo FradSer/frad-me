@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from 'react'
 
 import WebXR3DFallback from './WebXR3DFallback'
+
 import { webxrErrorLogger } from '@/utils/errorLogger'
 
 type FallbackLevel = 'webxr' | '3d' | 'error'
@@ -32,45 +33,56 @@ interface WebXRErrorBoundaryProps {
 const FALLBACK_PROGRESSION: Record<FallbackLevel, FallbackLevel | null> = {
   webxr: '3d',
   '3d': 'error',
-  'error': null
+  error: null,
 }
 
-class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBoundaryState> {
+class WebXRErrorBoundary extends Component<
+  WebXRErrorBoundaryProps,
+  WebXRErrorBoundaryState
+> {
   constructor(props: WebXRErrorBoundaryProps) {
     super(props)
-    this.state = { 
+    this.state = {
       hasError: false,
       fallbackLevel: props.initialLevel || 'webxr',
-      retryCount: 0
+      retryCount: 0,
     }
   }
 
-  static getDerivedStateFromError(error: Error): Partial<WebXRErrorBoundaryState> {
+  static getDerivedStateFromError(
+    error: Error,
+  ): Partial<WebXRErrorBoundaryState> {
     return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { enableAutoFallback = true, maxRetries = 2 } = this.props
-    
+
     // Determine new fallback level based on retry count and auto-fallback setting
-    const shouldFallback = enableAutoFallback && this.state.retryCount < maxRetries
-    const nextLevel = shouldFallback ? FALLBACK_PROGRESSION[this.state.fallbackLevel] : null
-    
-    this.setState(prevState => ({
+    const shouldFallback =
+      enableAutoFallback && this.state.retryCount < maxRetries
+    const nextLevel = shouldFallback
+      ? FALLBACK_PROGRESSION[this.state.fallbackLevel]
+      : null
+
+    this.setState((prevState) => ({
       errorInfo,
       fallbackLevel: nextLevel || prevState.fallbackLevel,
-      retryCount: prevState.retryCount + 1
+      retryCount: prevState.retryCount + 1,
     }))
-    
+
     // Handle logging and external error callback
     this.handleErrorLogging(error, errorInfo)
     this.props.onError?.(error, errorInfo)
   }
 
-  private async handleErrorLogging(error: Error, errorInfo: React.ErrorInfo): Promise<void> {
+  private async handleErrorLogging(
+    error: Error,
+    errorInfo: React.ErrorInfo,
+  ): Promise<void> {
     const logMessage = `WebXR Error Boundary (${this.state.fallbackLevel})`
     console.error(logMessage, error, errorInfo)
-    
+
     try {
       await webxrErrorLogger.logError(error, errorInfo)
     } catch (loggingError) {
@@ -83,14 +95,16 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
     return `${error.name}: ${sanitizedMessage}`
   }
 
-  private resetErrorState = (overrides: Partial<WebXRErrorBoundaryState> = {}) => {
-    this.setState(prevState => ({
+  private resetErrorState = (
+    overrides: Partial<WebXRErrorBoundaryState> = {},
+  ) => {
+    this.setState((prevState) => ({
       hasError: false,
       error: undefined,
       errorInfo: undefined,
       fallbackLevel: prevState.fallbackLevel,
       retryCount: prevState.retryCount,
-      ...overrides
+      ...overrides,
     }))
   }
 
@@ -109,13 +123,18 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
     if (fallback) return fallback
 
     const fallbackComponents = {
-      '3d': () => retryCount <= maxRetries ? (
-        <WebXR3DFallback 
-          onError={(err) => this.componentDidCatch(err, { componentStack: '' })}
-        />
-      ) : this.renderErrorFallback(),
-      'error': () => this.renderErrorFallback(),
-      'webxr': () => this.renderErrorFallback()
+      '3d': () =>
+        retryCount <= maxRetries ? (
+          <WebXR3DFallback
+            onError={(err) =>
+              this.componentDidCatch(err, { componentStack: '' })
+            }
+          />
+        ) : (
+          this.renderErrorFallback()
+        ),
+      error: () => this.renderErrorFallback(),
+      webxr: () => this.renderErrorFallback(),
     }
 
     return fallbackComponents[fallbackLevel]?.() || this.renderErrorFallback()
@@ -124,11 +143,11 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
   private renderErrorFallback(): ReactNode {
     const { error } = this.state
     const isDevMode = process.env.NODE_ENV === 'development'
-    
+
     const errorReasons: readonly string[] = [
       'Unsupported device or browser',
-      'WebGL/WebXR not available', 
-      'Graphics hardware limitations'
+      'WebGL/WebXR not available',
+      'Graphics hardware limitations',
     ] as const
 
     const actionButtons: readonly ActionButton[] = [
@@ -139,7 +158,7 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
             window.location.reload()
           }
         },
-        className: 'bg-blue-600 hover:bg-blue-700'
+        className: 'bg-blue-600 hover:bg-blue-700',
       },
       {
         text: 'Return to Main Site',
@@ -149,17 +168,20 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
             window.location.href = homeUrl.toString()
           }
         },
-        className: 'bg-gray-700 hover:bg-gray-600'
-      }
+        className: 'bg-gray-700 hover:bg-gray-600',
+      },
     ] as const
 
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center bg-gray-900 text-white">
         <div className="max-w-md text-center">
-          <h1 className="mb-4 text-2xl font-bold">WebXR Experience Unavailable</h1>
+          <h1 className="mb-4 text-2xl font-bold">
+            WebXR Experience Unavailable
+          </h1>
           <p className="mb-6 text-gray-300">
-            We encountered an issue loading the 3D experience. This might be due to:
-            {errorReasons.map(reason => (
+            We encountered an issue loading the 3D experience. This might be due
+            to:
+            {errorReasons.map((reason) => (
               <React.Fragment key={reason}>
                 <br />• {reason}
               </React.Fragment>
@@ -192,7 +214,9 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
   }
 
   render() {
-    return this.state.hasError ? this.renderFallbackByLevel() : this.props.children
+    return this.state.hasError
+      ? this.renderFallbackByLevel()
+      : this.props.children
   }
 }
 

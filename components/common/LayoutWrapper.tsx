@@ -5,11 +5,12 @@ import { motion } from 'framer-motion'
 import Header from '@/components/Header'
 
 import useLoading from '@/hooks/useLoading'
-import { 
-  createPageVariants, 
-  createHeaderVariants, 
-  createStaggerChildren, 
-  createLoadingDots 
+
+import {
+  createPageVariants,
+  createHeaderVariants,
+  createStaggerChildren,
+  createLoadingDots,
 } from '@/utils/motion/animationUtils'
 
 const LoadingDots = () => {

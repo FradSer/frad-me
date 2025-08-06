@@ -1,18 +1,24 @@
 import Image from 'next/image'
+
+import {
+  WorkImageProps,
+  WorkBeforeAfterImagesProps,
+  ImagePosition,
+} from '@/types/work'
 import classNames from 'classnames'
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
-import { WorkImageProps, WorkBeforeAfterImagesProps, ImagePosition } from '@/types/work'
+
 import { IMAGE_POSITION_CLASSES, COMMON_CLASSES } from '@/utils/constants'
 
 // Shared optimized image component
-function OptimizedImage({ 
-  src, 
-  width, 
-  height, 
-  alt, 
-  priority = false, 
-  unoptimized = false 
+function OptimizedImage({
+  src,
+  width,
+  height,
+  alt,
+  priority = false,
+  unoptimized = false,
 }: {
   src: string
   width: number
@@ -28,7 +34,7 @@ function OptimizedImage({
       height={height}
       alt={alt}
       priority={priority}
-      loading={priority ? undefined : "lazy"}
+      loading={priority ? undefined : 'lazy'}
       unoptimized={unoptimized}
     />
   )
@@ -45,7 +51,7 @@ function WorkSingleImage({
 }: Readonly<WorkImageProps>) {
   const workImageClass = classNames(
     COMMON_CLASSES.imageContainer,
-    IMAGE_POSITION_CLASSES[position]
+    IMAGE_POSITION_CLASSES[position],
   )
 
   return (

@@ -19,16 +19,19 @@ export default function ThemeSwitcher() {
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
 
-  const hoverVariants = useMemo(() => ({
-    initial: {
-      scale: 1,
-      transition: primaryTransition,
-    },
-    hover: {
-      scale: 1.1,
-      transition: secondaryTransition,
-    },
-  }), [])
+  const hoverVariants = useMemo(
+    () => ({
+      initial: {
+        scale: 1,
+        transition: primaryTransition,
+      },
+      hover: {
+        scale: 1.1,
+        transition: secondaryTransition,
+      },
+    }),
+    [],
+  )
 
   const isDark = mounted && (theme === 'dark' || resolvedTheme === 'dark')
   const toggleTheme = () => setTheme(isDark ? 'light' : 'dark')

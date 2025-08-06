@@ -6,9 +6,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  
+
   // Enhanced reporting
-  reporter: process.env.CI 
+  reporter: process.env.CI
     ? [
         ['html', { outputFolder: 'playwright-report' }],
         ['json', { outputFile: 'test-results/playwright-results.json' }],
@@ -18,7 +18,7 @@ export default defineConfig({
         ['html', { outputFolder: 'playwright-report' }],
         ['json', { outputFile: 'test-results/playwright-results.json' }],
       ],
-  
+
   // Global test configuration
   use: {
     baseURL: 'http://localhost:3000',
@@ -45,7 +45,7 @@ export default defineConfig({
       name: 'setup',
       testMatch: '**/*.setup.ts',
     },
-    
+
     // Desktop browsers
     {
       name: 'chromium',
@@ -62,20 +62,22 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
       dependencies: ['setup'],
     },
-    
+
     // Mobile browsers (optional, can be enabled when needed)
-    ...(process.env.MOBILE_TESTS ? [
-      {
-        name: 'Mobile Chrome',
-        use: { ...devices['Pixel 5'] },
-        dependencies: ['setup'],
-      },
-      {
-        name: 'Mobile Safari',
-        use: { ...devices['iPhone 12'] },
-        dependencies: ['setup'],
-      },
-    ] : []),
+    ...(process.env.MOBILE_TESTS
+      ? [
+          {
+            name: 'Mobile Chrome',
+            use: { ...devices['Pixel 5'] },
+            dependencies: ['setup'],
+          },
+          {
+            name: 'Mobile Safari',
+            use: { ...devices['iPhone 12'] },
+            dependencies: ['setup'],
+          },
+        ]
+      : []),
   ],
 
   webServer: {
@@ -87,7 +89,7 @@ export default defineConfig({
       NODE_ENV: 'test',
     },
   },
-  
+
   // Output directory
   outputDir: 'test-results/playwright-artifacts',
 })

@@ -1,30 +1,49 @@
 'use client'
 
 import { Suspense, useState, useCallback } from 'react'
+
 import dynamic from 'next/dynamic'
+
 import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary'
+
 import { measureChunkLoad } from '@/utils/performance'
 
 // Dynamic imports for bundle optimization
 const GenericCanvas = dynamic(
-  () => measureChunkLoad('GenericCanvas', () => import('@/components/WebXR/GeneralCanvas')),
-  { ssr: false }
+  () =>
+    measureChunkLoad(
+      'GenericCanvas',
+      () => import('@/components/WebXR/GeneralCanvas'),
+    ),
+  { ssr: false },
 )
-const HeroText = dynamic(
-  () => measureChunkLoad('HeroText', () => import('@/components/WebXR/HeroText')),
-  { ssr: false }
+const AnimatedHeroSection = dynamic(
+  () =>
+    measureChunkLoad(
+      'AnimatedHeroSection',
+      () => import('@/components/WebXR/AnimatedHeroSection'),
+    ),
+  { ssr: false },
 )
 const WebXRWork = dynamic(
-  () => measureChunkLoad('WebXRWork', () => import('@/components/WebXR/WebXRWork')),
-  { ssr: false }
+  () =>
+    measureChunkLoad('WebXRWork', () => import('@/components/WebXR/WebXRWork')),
+  { ssr: false },
 )
 const WebXRNavigation = dynamic(
-  () => measureChunkLoad('WebXRNavigation', () => import('@/components/WebXR/WebXRNavigation')),
-  { ssr: false }
+  () =>
+    measureChunkLoad(
+      'WebXRNavigation',
+      () => import('@/components/WebXR/WebXRNavigation'),
+    ),
+  { ssr: false },
 )
 const Stars = dynamic(
-  () => measureChunkLoad('Stars', () => import('@react-three/drei').then(mod => ({ default: mod.Stars }))),
-  { ssr: false }
+  () =>
+    measureChunkLoad('Stars', () =>
+      import('@react-three/drei').then((mod) => ({ default: mod.Stars })),
+    ),
+  { ssr: false },
 )
 
 const ENHANCED_STARS_CONFIG = {
@@ -41,7 +60,9 @@ const LoadingFallback = () => (
     <div className="text-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
       <p className="text-white text-sm">Loading WebXR Experience...</p>
-      <p className="text-gray-400 text-xs mt-2">Preparing immersive portfolio...</p>
+      <p className="text-gray-400 text-xs mt-2">
+        Preparing immersive portfolio...
+      </p>
     </div>
   </div>
 )
@@ -61,15 +82,13 @@ export default function WebXRPageClient() {
         <Suspense fallback={<LoadingFallback />}>
           <GenericCanvas>
             <Stars {...ENHANCED_STARS_CONFIG} />
-            
+
             <group>
-              {currentSection === 'hero' ? (
-                <mesh position={[0, 2, -10]}>
-                  <HeroText />
-                </mesh>
-              ) : (
-                <WebXRWork />
-              )}
+              {/* Hero Section - Always rendered with spring animations */}
+              <AnimatedHeroSection currentSection={currentSection} />
+
+              {/* Work Section - Always rendered for animation continuity */}
+              <WebXRWork currentSection={currentSection} />
             </group>
 
             <WebXRNavigation

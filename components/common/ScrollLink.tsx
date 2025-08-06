@@ -1,5 +1,6 @@
-import { Link } from 'react-scroll'
 import { ReactNode } from 'react'
+
+import { Link } from 'react-scroll'
 
 type IScrollLinkProps = {
   destination: string

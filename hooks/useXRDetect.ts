@@ -20,7 +20,9 @@ export default function useXRDetect(): XRDetect {
     const checkVRSupport = async () => {
       try {
         const nav = navigator as NavigatorWithXR
-        const supported = nav.xr ? await nav.xr.isSessionSupported('immersive-vr') : false
+        const supported = nav.xr
+          ? await nav.xr.isSessionSupported('immersive-vr')
+          : false
         setIsVR(supported)
       } catch {
         setIsVR(false)

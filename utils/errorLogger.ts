@@ -16,12 +16,12 @@ class WebXRErrorLogger {
     if (typeof window === 'undefined') return
 
     this.isOnline = navigator.onLine
-    
+
     window.addEventListener('online', () => {
       this.isOnline = true
       this.flushErrorQueue()
     })
-    
+
     window.addEventListener('offline', () => {
       this.isOnline = false
     })
@@ -29,7 +29,7 @@ class WebXRErrorLogger {
 
   private async checkWebXRSupport(): Promise<boolean> {
     if (typeof navigator === 'undefined' || !navigator.xr) return false
-    
+
     try {
       return await navigator.xr.isSessionSupported('immersive-vr')
     } catch {
@@ -39,10 +39,12 @@ class WebXRErrorLogger {
 
   private checkWebGLSupport(): boolean {
     if (typeof window === 'undefined') return false
-    
+
     try {
       const canvas = document.createElement('canvas')
-      return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      return !!(
+        canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+      )
     } catch {
       return false
     }
@@ -56,19 +58,22 @@ class WebXRErrorLogger {
     return userAgent.replace(/[<>'"]/g, '').substring(0, 200)
   }
 
-  public async logError(error: Error, errorInfo?: React.ErrorInfo): Promise<void> {
+  public async logError(
+    error: Error,
+    errorInfo?: React.ErrorInfo,
+  ): Promise<void> {
     const errorDetails: WebXRErrorDetails = {
       error: {
         name: error.name.substring(0, 100),
         message: this.sanitizeMessage(error.message),
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       } as Error,
       errorInfo: process.env.NODE_ENV === 'development' ? errorInfo : undefined,
       userAgent: this.sanitizeUserAgent(navigator?.userAgent || 'Unknown'),
       timestamp: new Date().toISOString(),
       url: window?.location.href || 'Unknown',
       webxrSupported: await this.checkWebXRSupport(),
-      webglSupported: this.checkWebGLSupport()
+      webglSupported: this.checkWebGLSupport(),
     }
 
     console.error('WebXR Error logged:', errorDetails)
@@ -115,8 +120,8 @@ class WebXRErrorLogger {
         custom_map: {
           webxr_supported: webxrSupported,
           webgl_supported: webglSupported,
-          error_name: error.name
-        }
+          error_name: error.name,
+        },
       })
     }
 
@@ -126,13 +131,13 @@ class WebXRErrorLogger {
         tags: {
           component: 'WebXR',
           webxr_supported: webxrSupported,
-          webgl_supported: webglSupported
+          webgl_supported: webglSupported,
         },
         extra: {
           errorInfo: errorDetails.errorInfo,
           userAgent: errorDetails.userAgent,
-          timestamp: errorDetails.timestamp
-        }
+          timestamp: errorDetails.timestamp,
+        },
       })
     }
   }

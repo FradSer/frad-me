@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test'
-import { HomePage, WorksPage, WorkDetailPage, TestUtils } from './__utils__/page-objects'
+
+import {
+  HomePage,
+  WorksPage,
+  WorkDetailPage,
+  TestUtils,
+} from './__utils__/page-objects'
 
 test.describe('Works Page', () => {
   let homePage: HomePage
@@ -12,7 +18,7 @@ test.describe('Works Page', () => {
 
   test('should display work cards on homepage', async ({ page }) => {
     await homePage.goto('/')
-    
+
     await TestUtils.retryAssertion(async () => {
       await worksPage.verifyWorkSection()
       await worksPage.verifyWorkCards()
@@ -24,17 +30,19 @@ test.describe('Works Page', () => {
     await worksPage.verifyWIPElements()
   })
 
-  test('should display proper hover states for interactive elements', async ({ page }) => {
+  test('should display proper hover states for interactive elements', async ({
+    page,
+  }) => {
     await homePage.goto('/')
-    
+
     const firstWorkLink = await worksPage.getFirstWorkLink()
     if (firstWorkLink) {
       // Hover over work card
       await firstWorkLink.hover()
-      
+
       // Wait for any hover animations
       await page.waitForTimeout(300)
-      
+
       // Could check for specific hover styles if needed
       await expect(firstWorkLink).toBeVisible()
     }
@@ -42,17 +50,17 @@ test.describe('Works Page', () => {
 
   test('should load work detail page with proper content', async ({ page }) => {
     await homePage.goto('/')
-    
+
     const workHref = await worksPage.navigateToFirstWork()
-    
+
     if (workHref) {
       const workDetailPage = new WorkDetailPage(page)
-      
+
       await TestUtils.retryAssertion(async () => {
         await workDetailPage.verifyWorkDetailPage()
         await workDetailPage.verifyArticleContent()
       })
-      
+
       // Test back navigation
       await workDetailPage.verifyBackNavigation()
     } else {
@@ -64,14 +72,14 @@ test.describe('Works Page', () => {
     // Test direct navigation to a known work page
     // This would need to be adjusted based on your actual work slugs
     const testWorkPaths = ['/works/test-work', '/works/sample-project']
-    
+
     for (const path of testWorkPaths) {
       const response = await page.goto(path)
-      
+
       // Either loads successfully or returns 404
       const status = response?.status()
       expect([200, 404]).toContain(status)
-      
+
       if (response?.status() === 200) {
         const workDetailPage = new WorkDetailPage(page)
         await workDetailPage.verifyWorkDetailPage()
@@ -80,12 +88,16 @@ test.describe('Works Page', () => {
     }
   })
 
-  test('should have proper image loading and optimization', async ({ page }) => {
+  test('should have proper image loading and optimization', async ({
+    page,
+  }) => {
     await homePage.goto('/')
     await worksPage.verifyImageLoading()
   })
 
-  test('should be responsive across different screen sizes', async ({ page }) => {
+  test('should be responsive across different screen sizes', async ({
+    page,
+  }) => {
     await homePage.goto('/')
     await worksPage.verifyResponsiveLayout()
   })
@@ -94,29 +106,33 @@ test.describe('Works Page', () => {
     // Test behavior when no works are available
     // This would depend on your implementation
     await homePage.goto('/')
-    
+
     // Wait for page to load
     await TestUtils.waitForStableContent(page)
-    
+
     // The page should still load successfully even if no works are present
     await expect(page.locator('main')).toBeVisible()
   })
 
-  test('should support work filtering and search if available', async ({ page }) => {
+  test('should support work filtering and search if available', async ({
+    page,
+  }) => {
     await homePage.goto('/')
-    
+
     // Look for filter or search elements
-    const filterElements = page.locator('[data-testid*="filter"], [placeholder*="search"], [aria-label*="filter"]')
+    const filterElements = page.locator(
+      '[data-testid*="filter"], [placeholder*="search"], [aria-label*="filter"]',
+    )
     const filterCount = await filterElements.count()
-    
+
     if (filterCount > 0) {
       // Test filtering functionality
       const firstFilter = filterElements.first()
       await firstFilter.click()
-      
+
       // Wait for potential filtering animation
       await page.waitForTimeout(500)
-      
+
       // Verify that works are still visible or properly filtered
       await worksPage.verifyWorkSection()
     } else {
@@ -126,12 +142,12 @@ test.describe('Works Page', () => {
 
   test('should load works performantly', async ({ page }) => {
     const startTime = Date.now()
-    
+
     await homePage.goto('/')
     await worksPage.verifyWorkSection()
-    
+
     const loadTime = Date.now() - startTime
-    
+
     // Should load within reasonable time (adjust threshold as needed)
     expect(loadTime).toBeLessThan(5000)
   })

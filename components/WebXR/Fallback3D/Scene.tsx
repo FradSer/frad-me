@@ -1,5 +1,14 @@
 import React from 'react'
-import { OrbitControls, Stars, Environment, Float, ContactShadows, Preload, useProgress } from '@react-three/drei'
+
+import {
+  OrbitControls,
+  Stars,
+  Environment,
+  Float,
+  ContactShadows,
+  Preload,
+  useProgress,
+} from '@react-three/drei'
 
 import ErrorBoundary3D from './ErrorBoundary3D'
 
@@ -9,21 +18,51 @@ interface SceneProps {
 
 // Quality-based configurations
 const QUALITY_CONFIGS = {
-  high: { 
+  high: {
     stars: { count: 5000, radius: 100, depth: 50, factor: 4, speed: 1 },
-    camera: { autoRotate: true, autoRotateSpeed: 0.5, maxDistance: 15, minDistance: 5 },
-    lighting: { ambient: 0.5, directional: 1, shadows: true, shadowMapSize: 2048 }
+    camera: {
+      autoRotate: true,
+      autoRotateSpeed: 0.5,
+      maxDistance: 15,
+      minDistance: 5,
+    },
+    lighting: {
+      ambient: 0.5,
+      directional: 1,
+      shadows: true,
+      shadowMapSize: 2048,
+    },
   },
-  medium: { 
+  medium: {
     stars: { count: 2000, radius: 80, depth: 30, factor: 3, speed: 0.5 },
-    camera: { autoRotate: true, autoRotateSpeed: 0.3, maxDistance: 12, minDistance: 4 },
-    lighting: { ambient: 0.5, directional: 1, shadows: false, shadowMapSize: 1024 }
+    camera: {
+      autoRotate: true,
+      autoRotateSpeed: 0.3,
+      maxDistance: 12,
+      minDistance: 4,
+    },
+    lighting: {
+      ambient: 0.5,
+      directional: 1,
+      shadows: false,
+      shadowMapSize: 1024,
+    },
   },
-  low: { 
+  low: {
     stars: { count: 1000, radius: 60, depth: 20, factor: 2, speed: 0.5 },
-    camera: { autoRotate: false, autoRotateSpeed: 0, maxDistance: 10, minDistance: 3 },
-    lighting: { ambient: 0.3, directional: 0.5, shadows: false, shadowMapSize: 1024 }
-  }
+    camera: {
+      autoRotate: false,
+      autoRotateSpeed: 0,
+      maxDistance: 10,
+      minDistance: 3,
+    },
+    lighting: {
+      ambient: 0.3,
+      directional: 0.5,
+      shadows: false,
+      shadowMapSize: 1024,
+    },
+  },
 } as const
 
 // Material presets
@@ -31,51 +70,101 @@ const MATERIALS = {
   metallic: { roughness: 0.3, metalness: 0.7, emissiveIntensity: 0.2 },
   transparent: { transparent: true, emissiveIntensity: 0.1 },
   platform: { transparent: true, opacity: 0.3 },
-  bar: { emissiveIntensity: 0.3 }
+  bar: { emissiveIntensity: 0.3 },
 } as const
 
 // Shape definitions
 const FLOATING_SHAPES = [
-  { 
-    type: 'cone' as const, 
-    position: [-8, 4, 0], 
-    rotation: [0.1, 0.2, 0.1], 
+  {
+    type: 'cone' as const,
+    position: [-8, 4, 0],
+    rotation: [0.1, 0.2, 0.1],
     scale: 0.8,
     geometry: [1, 1.8, 8],
-    colors: { main: '#e879f9', emissive: '#7c3aed' }
+    colors: { main: '#e879f9', emissive: '#7c3aed' },
   },
-  { 
-    type: 'box' as const, 
-    position: [8, 1, 0], 
+  {
+    type: 'box' as const,
+    position: [8, 1, 0],
     scale: 1.2,
     geometry: [2, 0.8, 0.8],
-    colors: { main: '#60a5fa', emissive: '#1d4ed8' }
+    colors: { main: '#60a5fa', emissive: '#1d4ed8' },
   },
-  { 
-    type: 'sphere' as const, 
-    position: [3, -4, 2], 
+  {
+    type: 'sphere' as const,
+    position: [3, -4, 2],
     scale: 1.3,
     geometry: [0.8, 32, 32],
-    colors: { main: '#34d399', emissive: '#059669' }
-  }
+    colors: { main: '#34d399', emissive: '#059669' },
+  },
 ] as const
 
 // Text simulation planes
 const TEXT_PLANES = [
-  { position: [-5.3, 1, 0], size: [3, 0.8], colors: { main: '#ffffff', emissive: '#f3f4f6' }, opacity: 0.9 },
-  { position: [2, 1, 0], size: [4, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 },
-  { position: [-1.8, 0, 0], size: [3.5, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 },
-  { position: [-1, -1, 0], size: [3.8, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 },
-  { position: [-1.3, -2, 0], size: [3.2, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 },
-  { position: [0.1, -3, 0], size: [4.2, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 },
-  { position: [-2.5, -4, 0], size: [2.8, 0.6], colors: { main: '#9ca3af', emissive: '#6b7280' }, opacity: 0.8 }
+  {
+    position: [-5.3, 1, 0],
+    size: [3, 0.8],
+    colors: { main: '#ffffff', emissive: '#f3f4f6' },
+    opacity: 0.9,
+  },
+  {
+    position: [2, 1, 0],
+    size: [4, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
+  {
+    position: [-1.8, 0, 0],
+    size: [3.5, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
+  {
+    position: [-1, -1, 0],
+    size: [3.8, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
+  {
+    position: [-1.3, -2, 0],
+    size: [3.2, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
+  {
+    position: [0.1, -3, 0],
+    size: [4.2, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
+  {
+    position: [-2.5, -4, 0],
+    size: [2.8, 0.6],
+    colors: { main: '#9ca3af', emissive: '#6b7280' },
+    opacity: 0.8,
+  },
 ] as const
 
 // Platform elements
 const PLATFORM_ELEMENTS = [
-  { position: [0, 0, 0], size: [6, 0.2, 6], colors: { main: '#1f2937' }, material: 'platform' },
-  { position: [-2, 1, 0], size: [3, 0.8, 0.8], colors: { main: '#3b82f6', emissive: '#1d4ed8' }, material: 'bar' },
-  { position: [2, 1, 0], size: [3, 0.8, 0.8], colors: { main: '#6b7280', emissive: '#374151' }, material: 'bar' }
+  {
+    position: [0, 0, 0],
+    size: [6, 0.2, 6],
+    colors: { main: '#1f2937' },
+    material: 'platform',
+  },
+  {
+    position: [-2, 1, 0],
+    size: [3, 0.8, 0.8],
+    colors: { main: '#3b82f6', emissive: '#1d4ed8' },
+    material: 'bar',
+  },
+  {
+    position: [2, 1, 0],
+    size: [3, 0.8, 0.8],
+    colors: { main: '#6b7280', emissive: '#374151' },
+    material: 'bar',
+  },
 ] as const
 
 // Reusable Mesh Component
@@ -90,17 +179,28 @@ interface MeshProps {
   opacity?: number
 }
 
-const SceneMesh: React.FC<MeshProps> = ({ 
-  type, position, rotation, scale, geometry, colors, materialType = 'metallic', opacity 
+const SceneMesh: React.FC<MeshProps> = ({
+  type,
+  position,
+  rotation,
+  scale,
+  geometry,
+  colors,
+  materialType = 'metallic',
+  opacity,
 }) => {
   const materialProps = MATERIALS[materialType]
-  
+
   const renderGeometry = () => {
     switch (type) {
-      case 'cone': return <coneGeometry args={geometry as [number, number, number]} />
-      case 'box': return <boxGeometry args={geometry as [number, number, number]} />
-      case 'sphere': return <sphereGeometry args={geometry as [number, number, number]} />
-      case 'plane': return <planeGeometry args={geometry as [number, number]} />
+      case 'cone':
+        return <coneGeometry args={geometry as [number, number, number]} />
+      case 'box':
+        return <boxGeometry args={geometry as [number, number, number]} />
+      case 'sphere':
+        return <sphereGeometry args={geometry as [number, number, number]} />
+      case 'plane':
+        return <planeGeometry args={geometry as [number, number]} />
     }
   }
 
@@ -118,9 +218,11 @@ const SceneMesh: React.FC<MeshProps> = ({
 }
 
 // Lighting Component
-const SceneLighting: React.FC<{ quality: SceneProps['quality'] }> = ({ quality }) => {
+const SceneLighting: React.FC<{ quality: SceneProps['quality'] }> = ({
+  quality,
+}) => {
   const config = QUALITY_CONFIGS[quality].lighting
-  
+
   return (
     <>
       <ambientLight intensity={config.ambient} />
@@ -137,7 +239,11 @@ const SceneLighting: React.FC<{ quality: SceneProps['quality'] }> = ({ quality }
         shadow-camera-bottom={-10}
       />
       {quality !== 'low' && (
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#4f46e5" />
+        <pointLight
+          position={[-10, -10, -10]}
+          intensity={0.3}
+          color="#4f46e5"
+        />
       )}
     </>
   )
@@ -188,7 +294,13 @@ const Scene3DFallback: React.FC<SceneProps> = ({ quality }) => {
               <SceneMesh
                 type={shape.type}
                 position={shape.position as [number, number, number]}
-                rotation={('rotation' in shape ? shape.rotation : [0, 0, 0]) as [number, number, number]}
+                rotation={
+                  ('rotation' in shape ? shape.rotation : [0, 0, 0]) as [
+                    number,
+                    number,
+                    number,
+                  ]
+                }
                 scale={shape.scale}
                 geometry={shape.geometry as unknown as number[]}
                 colors={shape.colors}
@@ -228,7 +340,7 @@ const Scene3DFallback: React.FC<SceneProps> = ({ quality }) => {
             />
           </ErrorBoundary3D>
         ))}
-        
+
         {/* Add contact shadows for better ground connection */}
         {quality !== 'low' && (
           <ContactShadows

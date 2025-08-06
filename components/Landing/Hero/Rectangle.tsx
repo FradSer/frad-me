@@ -2,17 +2,14 @@ import { motion, useMotionValue, useTransform } from 'framer-motion'
 
 import useMousePosition from '@/hooks/useMousePosition'
 import useWindowSize from '@/hooks/useWindowSize'
+
 import { calculateSkew } from '@/utils/motion/animationUtils'
 
 export default function Rectangle() {
   const mousePosition = useMousePosition()
   const size = useWindowSize()
 
-  const { xValue, yValue } = calculateSkew(
-    mousePosition,
-    size,
-    2
-  )
+  const { xValue, yValue } = calculateSkew(mousePosition, size, 2)
 
   const mouseX = useMotionValue(0.5)
   const mouseY = useMotionValue(0.5)

@@ -10,7 +10,10 @@ interface ErrorBoundary3DProps {
   fallback?: ReactNode
 }
 
-class ErrorBoundary3D extends Component<ErrorBoundary3DProps, ErrorBoundary3DState> {
+class ErrorBoundary3D extends Component<
+  ErrorBoundary3DProps,
+  ErrorBoundary3DState
+> {
   constructor(props: ErrorBoundary3DProps) {
     super(props)
     this.state = { hasError: false }
@@ -22,10 +25,15 @@ class ErrorBoundary3D extends Component<ErrorBoundary3DProps, ErrorBoundary3DSta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('3D Component Error:', error, errorInfo)
-    
+
     // Check if it's a WebXR polyfill error
-    if (error.message.includes('trim') || error.stack?.includes('webxr-polyfill')) {
-      console.warn('WebXR polyfill conflict detected, falling back to safe mode')
+    if (
+      error.message.includes('trim') ||
+      error.stack?.includes('webxr-polyfill')
+    ) {
+      console.warn(
+        'WebXR polyfill conflict detected, falling back to safe mode',
+      )
     }
   }
 

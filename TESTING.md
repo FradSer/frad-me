@@ -5,12 +5,14 @@ This document provides comprehensive guidance for testing the frad-me Next.js ap
 ## Testing Stack
 
 ### Unit & Component Testing
+
 - **Framework**: Jest (Next.js official recommendation)
 - **Testing Library**: @testing-library/react
 - **Environment**: jsdom
 - **Assertion Library**: Jest built-in matchers + @testing-library/jest-dom
 
 ### End-to-End Testing
+
 - **Framework**: Playwright
 - **Browsers**: Chromium, Firefox, WebKit
 - **Environment**: Real browser automation
@@ -87,6 +89,7 @@ playwright.config.ts            # Playwright configuration
 ### Unit Tests
 
 **MDX Utilities** (`src/__tests__/mdx.test.ts`):
+
 - File content reading and processing
 - Frontmatter parsing with gray-matter
 - MDX compilation with mdx-bundler
@@ -95,18 +98,21 @@ playwright.config.ts            # Playwright configuration
 ### End-to-End Tests
 
 **Navigation** (`tests/e2e/navigation.spec.ts`):
+
 - Homepage loading and basic structure
 - Theme switching between light/dark modes
 - Navigation to work detail pages
 - Responsive header behavior
 
 **Works Functionality** (`tests/e2e/works.spec.ts`):
+
 - Work card display and interactions
 - WIP (Work in Progress) item handling
 - Work detail page loading and content
 - Image loading and optimization
 
 **Theme + Responsive** (`tests/e2e/theme-responsive.spec.ts`):
+
 - Theme persistence across different viewports
 - Mobile theme switching functionality
 - Integration between theme and responsive behavior
@@ -119,6 +125,7 @@ playwright.config.ts            # Playwright configuration
 // src/__tests__/example.test.ts
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
 import Component from '../Component'
 
 describe('Component', () => {
@@ -130,7 +137,7 @@ describe('Component', () => {
   it('should handle user interactions', async () => {
     const user = userEvent.setup()
     render(<Component />)
-    
+
     await user.click(screen.getByRole('button'))
     expect(screen.getByText('Clicked')).toBeInTheDocument()
   })
@@ -145,10 +152,10 @@ import { test, expect } from '@playwright/test'
 
 test('should navigate to work page', async ({ page }) => {
   await page.goto('/')
-  
+
   const workLink = page.locator('a[href^="/works/"]').first()
   await workLink.click()
-  
+
   await expect(page).toHaveURL(/\/works\//)
   await expect(page.locator('main')).toBeVisible()
 })
@@ -157,21 +164,25 @@ test('should navigate to work page', async ({ page }) => {
 ## Best Practices
 
 ### 1. Test Organization
+
 - Use descriptive test names that explain expected behavior
 - Group related tests with `describe` blocks
 - Separate unit, integration, and E2E tests clearly
 
 ### 2. Mocking Strategy
+
 - Use Jest's built-in mocking capabilities
 - Mock at the appropriate level (component vs module)
 - Reset mocks between tests for isolation
 
 ### 3. Assertions
+
 - Use specific assertions rather than generic ones
 - Test both positive and negative scenarios
 - Include accessibility testing where appropriate
 
 ### 4. Performance
+
 - Use `beforeEach`/`afterEach` for test isolation
 - Avoid unnecessary DOM queries in tests
 - Use appropriate timeouts for async operations
@@ -179,11 +190,13 @@ test('should navigate to work page', async ({ page }) => {
 ## Debugging
 
 ### Unit Tests
+
 - Use `screen.debug()` to see rendered output
 - Use `--verbose` flag for detailed test output
 - Check console output for warnings and errors
 
 ### E2E Tests
+
 - Use `--headed` to see browser actions
 - Use `--debug` to pause test execution
 - Check screenshots/videos in `test-results/` folder
@@ -215,6 +228,7 @@ When adding new tests:
 5. Add appropriate error handling and cleanup
 
 For questions or issues with the testing setup, refer to:
+
 - [Jest Documentation](https://jestjs.io/docs/getting-started)
 - [Testing Library Documentation](https://testing-library.com/docs/)
 - [Playwright Documentation](https://playwright.dev/docs/intro)

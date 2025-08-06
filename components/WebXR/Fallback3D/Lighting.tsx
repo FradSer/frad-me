@@ -12,16 +12,25 @@ interface LightingProps {
 // Animation utilities to reduce duplication
 const createFlickerAnimation = (baseIntensity: number, time: number) => {
   const flickerIntensity = Math.sin(time * 8) * 0.1 + Math.sin(time * 3) * 0.05
-  return Math.max(0, baseIntensity + (flickerIntensity * baseIntensity * 0.3))
+  return Math.max(0, baseIntensity + flickerIntensity * baseIntensity * 0.3)
 }
 
-const createOrbitAnimation = (basePosition: [number, number, number], time: number, radius = 2, speed = 0.5) => ({
+const createOrbitAnimation = (
+  basePosition: [number, number, number],
+  time: number,
+  radius = 2,
+  speed = 0.5,
+) => ({
   x: basePosition[0] + Math.sin(time * speed) * radius,
-  z: basePosition[2] + Math.cos(time * speed) * radius
+  z: basePosition[2] + Math.cos(time * speed) * radius,
 })
 
-const createPulseAnimation = (baseValue: number, time: number, frequency = 2, amplitude = 0.2) => 
-  baseValue * (Math.sin(time * frequency) * amplitude + 1)
+const createPulseAnimation = (
+  baseValue: number,
+  time: number,
+  frequency = 2,
+  amplitude = 0.2,
+) => baseValue * (Math.sin(time * frequency) * amplitude + 1)
 
 // Quality-based configuration utilities
 const getQualityConfig = (quality: Quality) => ({
@@ -29,18 +38,21 @@ const getQualityConfig = (quality: Quality) => ({
   castShadow: quality === 'high',
   isLowQuality: quality === 'low',
   particleCount: quality === 'high' ? 20 : quality === 'medium' ? 10 : 0,
-  intensityMultiplier: quality === 'low' ? 0.6 : quality === 'medium' ? 0.8 : 1.0
+  intensityMultiplier:
+    quality === 'low' ? 0.6 : quality === 'medium' ? 0.8 : 1.0,
 })
 
 const getShadowProps = (quality: Quality, size?: number) => {
   const config = getQualityConfig(quality)
   const shadowSize = size || config.shadowMapSize
-  
-  return config.castShadow ? {
-    castShadow: true,
-    'shadow-mapSize-width': shadowSize,
-    'shadow-mapSize-height': shadowSize
-  } : { castShadow: false }
+
+  return config.castShadow
+    ? {
+        castShadow: true,
+        'shadow-mapSize-width': shadowSize,
+        'shadow-mapSize-height': shadowSize,
+      }
+    : { castShadow: false }
 }
 
 // Simplified animated light components
@@ -52,7 +64,15 @@ const AnimatedPointLight: React.FC<{
   decay?: number
   quality: Quality
   enableOrbit?: boolean
-}> = ({ position, color, intensity, distance = 0, decay = 2, quality, enableOrbit = false }) => {
+}> = ({
+  position,
+  color,
+  intensity,
+  distance = 0,
+  decay = 2,
+  quality,
+  enableOrbit = false,
+}) => {
   const lightRef = useRef<THREE.PointLight>(null)
 
   useFrame((state) => {
@@ -99,7 +119,7 @@ const AnimatedSpotlight: React.FC<{
     if (!spotlightRef.current || !targetRef.current) return
 
     const time = state.clock.elapsedTime
-    
+
     // Animated target movement
     targetRef.current.position.x = target[0] + Math.sin(time * 0.8) * 0.5
     targetRef.current.position.y = target[1] + Math.sin(time * 1.2) * 0.3
@@ -113,7 +133,7 @@ const AnimatedSpotlight: React.FC<{
       spotlightRef.current.color.setRGB(
         colorShift,
         colorShift * 0.9,
-        colorShift * 1.1
+        colorShift * 1.1,
       )
     }
   })
@@ -151,7 +171,7 @@ const VolumetricLight: React.FC<{
 
     const time = state.clock.elapsedTime
     meshRef.current.scale.setScalar(Math.sin(time * 1.5) * 0.1 + 1)
-    ;(meshRef.current.material as THREE.MeshBasicMaterial).opacity = 
+    ;(meshRef.current.material as THREE.MeshBasicMaterial).opacity =
       (Math.sin(time * 2) * 0.1 + 0.3) * 0.5
   })
 
@@ -174,9 +194,10 @@ const VolumetricLight: React.FC<{
 const ParticleLights: React.FC<{ quality: Quality }> = ({ quality }) => {
   const groupRef = useRef<THREE.Group>(null)
   const config = getQualityConfig(quality)
-  
-  const particleColors = useMemo(() => 
-    ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'], []
+
+  const particleColors = useMemo(
+    () => ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'],
+    [],
   )
 
   useFrame((state) => {
@@ -186,13 +207,13 @@ const ParticleLights: React.FC<{ quality: Quality }> = ({ quality }) => {
     groupRef.current.children.forEach((child, i) => {
       const light = child as THREE.PointLight
       const offset = i * 0.5
-      
+
       light.position.set(
         Math.sin(time * 0.5 + offset) * 15,
         Math.cos(time * 0.3 + offset) * 8 + 5,
-        Math.sin(time * 0.4 + offset) * 10
+        Math.sin(time * 0.4 + offset) * 10,
       )
-      
+
       light.intensity = Math.sin(time * 10 + offset) * 0.1 + 0.2
     })
   })
@@ -205,7 +226,7 @@ const ParticleLights: React.FC<{ quality: Quality }> = ({ quality }) => {
       position={[
         (Math.random() - 0.5) * 30,
         Math.random() * 10 + 5,
-        (Math.random() - 0.5) * 20
+        (Math.random() - 0.5) * 20,
       ]}
       color={particleColors[i % particleColors.length]}
       intensity={0.2}
@@ -219,29 +240,26 @@ const ParticleLights: React.FC<{ quality: Quality }> = ({ quality }) => {
 
 const AnimatedAmbientLight: React.FC<{ quality: Quality }> = ({ quality }) => {
   const lightRef = useRef<THREE.AmbientLight>(null)
-  const baseIntensity = useMemo(() => 
-    quality === 'low' ? 0.4 : quality === 'medium' ? 0.3 : 0.25, [quality]
+  const baseIntensity = useMemo(
+    () => (quality === 'low' ? 0.4 : quality === 'medium' ? 0.3 : 0.25),
+    [quality],
   )
 
   useFrame((state) => {
     if (!lightRef.current) return
-    
+
     const pulse = Math.sin(state.clock.elapsedTime * 0.5) * 0.05
     lightRef.current.intensity = baseIntensity + pulse
   })
 
   return (
-    <ambientLight
-      ref={lightRef}
-      color="#4f46e5"
-      intensity={baseIntensity}
-    />
+    <ambientLight ref={lightRef} color="#4f46e5" intensity={baseIntensity} />
   )
 }
 
 const Lighting: React.FC<LightingProps> = ({ quality }) => {
   const config = useMemo(() => getQualityConfig(quality), [quality])
-  
+
   return (
     <group>
       {/* Ambient lighting with pulse animation */}
@@ -327,7 +345,11 @@ const Lighting: React.FC<LightingProps> = ({ quality }) => {
 
       {/* Hemisphere lighting for ambient fill */}
       <hemisphereLight
-        args={["#87ceeb", "#2c3e50", quality === 'low' ? 0.2 : quality === 'medium' ? 0.15 : 0.1]}
+        args={[
+          '#87ceeb',
+          '#2c3e50',
+          quality === 'low' ? 0.2 : quality === 'medium' ? 0.15 : 0.1,
+        ]}
       />
     </group>
   )

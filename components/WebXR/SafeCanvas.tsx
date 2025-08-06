@@ -1,6 +1,7 @@
 import React, { Suspense, useMemo } from 'react'
-import { Canvas } from '@react-three/fiber'
+
 import { Html, AdaptiveDpr } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
 
 interface SafeCanvasProps {
   children: React.ReactNode
@@ -17,33 +18,37 @@ const SafeLoadingFallback = () => (
 )
 
 const SafeCanvas: React.FC<SafeCanvasProps> = ({ children, fallback }) => {
-  const safeGLSettings = useMemo(() => ({
-    // Very conservative WebGL settings to avoid polyfill conflicts
-    antialias: false,
-    alpha: false,
-    depth: true,
-    stencil: false,
-    powerPreference: 'default' as const,
-    preserveDrawingBuffer: false,
-    premultipliedAlpha: false,
-    failIfMajorPerformanceCaveat: false
-  }), [])
+  const safeGLSettings = useMemo(
+    () => ({
+      // Very conservative WebGL settings to avoid polyfill conflicts
+      antialias: false,
+      alpha: false,
+      depth: true,
+      stencil: false,
+      powerPreference: 'default' as const,
+      preserveDrawingBuffer: false,
+      premultipliedAlpha: false,
+      failIfMajorPerformanceCaveat: false,
+    }),
+    [],
+  )
 
   const handleCanvasError = (error: any) => {
     console.error('Safe Canvas Error:', error)
-    
+
     // If we're still getting errors, show the fallback
     if (fallback) {
       return fallback
     }
-    
+
     // Last resort: show error message
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
         <div className="max-w-md text-center text-white">
           <h1 className="mb-4 text-2xl font-bold">3D Mode Unavailable</h1>
           <p className="mb-6 text-gray-300">
-            Your browser or device doesn&apos;t support the required 3D features.
+            Your browser or device doesn&apos;t support the required 3D
+            features.
           </p>
           <button
             className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
@@ -70,7 +75,7 @@ const SafeCanvas: React.FC<SafeCanvasProps> = ({ children, fallback }) => {
           position: [0, 0, 10],
           fov: 50,
           near: 0.1,
-          far: 100 // Reduced far plane
+          far: 100, // Reduced far plane
         }}
         shadows={false} // Disable shadows completely for safety
         onError={handleCanvasError}
@@ -87,10 +92,8 @@ const SafeCanvas: React.FC<SafeCanvasProps> = ({ children, fallback }) => {
       >
         {/* Only essential performance components */}
         <AdaptiveDpr pixelated />
-        
-        <Suspense fallback={<SafeLoadingFallback />}>
-          {children}
-        </Suspense>
+
+        <Suspense fallback={<SafeLoadingFallback />}>{children}</Suspense>
       </Canvas>
     </div>
   )

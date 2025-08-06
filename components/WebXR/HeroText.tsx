@@ -1,12 +1,18 @@
 import React, { useRef, useState } from 'react'
+
 import dynamic from 'next/dynamic'
+
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+
 import { measureChunkLoad } from '@/utils/performance'
 
 const Text = dynamic(
-  () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
-  { ssr: false }
+  () =>
+    measureChunkLoad('Text', () =>
+      import('@react-three/drei').then((mod) => ({ default: mod.Text })),
+    ),
+  { ssr: false },
 )
 
 interface LineProps {
@@ -38,7 +44,7 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
   const handlers = {
     onClick: () => setActive(!active),
     onPointerOver: () => setHovered(true),
-    onPointerOut: () => setHovered(false)
+    onPointerOut: () => setHovered(false),
   }
 
   return { meshRef, hovered, active, handlers }
@@ -53,23 +59,28 @@ const Line = ({ position, color, text }: LineProps) => (
     position={position}
     rotation={[0, 0, 0]}
     font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-    onClick={() => {/* Handle click event */}}
+    onClick={() => {
+      /* Handle click event */
+    }}
   >
     {text}
   </Text>
 )
 
-const InteractiveShape = ({ 
-  children, 
-  rotationAxis, 
-  rotationSpeed, 
-  ...props 
-}: ShapeProps & { 
+const InteractiveShape = ({
+  children,
+  rotationAxis,
+  rotationSpeed,
+  ...props
+}: ShapeProps & {
   children: React.ReactNode
   rotationAxis: RotationAxis
   rotationSpeed?: number
 }) => {
-  const { meshRef, hovered, handlers } = useInteractiveMesh(rotationAxis, rotationSpeed)
+  const { meshRef, hovered, handlers } = useInteractiveMesh(
+    rotationAxis,
+    rotationSpeed,
+  )
 
   return (
     <mesh {...props} ref={meshRef} {...handlers}>
@@ -99,28 +110,82 @@ const Sphere = (props: ShapeProps) => (
 
 // Content configuration for cleaner management
 const heroContent = [
-  { type: 'triangle', position: [-9, 4, 0] as [number, number, number], rotation: [0.1, 0.2, 0.1] as [number, number, number], scale: 0.5 },
-  { type: 'line', position: [-5.3, 3, 0] as [number, number, number], color: 'white', text: 'Frad LEE' },
-  { type: 'line', position: [2, 3, 0] as [number, number, number], color: 'gray', text: 'is a self-taught craftier' },
-  { type: 'line', position: [-1.8, 1.8, 0] as [number, number, number], color: 'gray', text: 'who is eager to learn for' },
+  {
+    type: 'triangle',
+    position: [-9, 4, 0] as [number, number, number],
+    rotation: [0.1, 0.2, 0.1] as [number, number, number],
+    scale: 0.5,
+  },
+  {
+    type: 'line',
+    position: [-5.3, 3, 0] as [number, number, number],
+    color: 'white',
+    text: 'Frad LEE',
+  },
+  {
+    type: 'line',
+    position: [2, 3, 0] as [number, number, number],
+    color: 'gray',
+    text: 'is a self-taught craftier',
+  },
+  {
+    type: 'line',
+    position: [-1.8, 1.8, 0] as [number, number, number],
+    color: 'gray',
+    text: 'who is eager to learn for',
+  },
   { type: 'box', position: [5.7, 1.8, 0] as [number, number, number] },
-  { type: 'line', position: [-1, 0.6, 0] as [number, number, number], color: 'gray', text: 'advancement. Whether it is' },
-  { type: 'line', position: [-1.3, -0.6, 0] as [number, number, number], color: 'gray', text: 'coding in a new language,' },
-  { type: 'line', position: [0.1, -1.8, 0] as [number, number, number], color: 'gray', text: 'design with any tool whatsoever' },
-  { type: 'line', position: [-2.5, -3, 0] as [number, number, number], color: 'gray', text: 'or building a startup' },
-  { type: 'sphere', position: [3.2, -4, 0] as [number, number, number] }
+  {
+    type: 'line',
+    position: [-1, 0.6, 0] as [number, number, number],
+    color: 'gray',
+    text: 'advancement. Whether it is',
+  },
+  {
+    type: 'line',
+    position: [-1.3, -0.6, 0] as [number, number, number],
+    color: 'gray',
+    text: 'coding in a new language,',
+  },
+  {
+    type: 'line',
+    position: [0.1, -1.8, 0] as [number, number, number],
+    color: 'gray',
+    text: 'design with any tool whatsoever',
+  },
+  {
+    type: 'line',
+    position: [-2.5, -3, 0] as [number, number, number],
+    color: 'gray',
+    text: 'or building a startup',
+  },
+  { type: 'sphere', position: [3.2, -4, 0] as [number, number, number] },
 ]
 
-const renderElement = (element: typeof heroContent[0], index: number) => {
+const renderElement = (element: (typeof heroContent)[0], index: number) => {
   const key = `${element.type}-${index}`
-  
+
   switch (element.type) {
     case 'line':
-      return <Line key={key} position={element.position} color={element.color!} text={element.text!} />
+      return (
+        <Line
+          key={key}
+          position={element.position}
+          color={element.color!}
+          text={element.text!}
+        />
+      )
     case 'box':
       return <Box key={key} position={element.position} />
     case 'triangle':
-      return <Triangle key={key} position={element.position} rotation={element.rotation} scale={element.scale} />
+      return (
+        <Triangle
+          key={key}
+          position={element.position}
+          rotation={element.rotation}
+          scale={element.scale}
+        />
+      )
     case 'sphere':
       return <Sphere key={key} position={element.position} />
     default:

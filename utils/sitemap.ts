@@ -1,5 +1,5 @@
-import { getAllPosts } from './mdx'
 import { SITE_CONFIG } from './constants'
+import { getAllPosts } from './mdx'
 
 interface SitemapEntry {
   url: string
@@ -28,7 +28,7 @@ export function generateSitemap(): string {
     {
       url: `${SITE_CONFIG.domain}/webxr`,
       lastmod: currentDate,
-      changefreq: 'monthly', 
+      changefreq: 'monthly',
       priority: 0.8,
     },
   ]
@@ -51,7 +51,7 @@ ${allPages
     <lastmod>${page.lastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
-  </url>`
+  </url>`,
   )
   .join('\n')}
 </urlset>`

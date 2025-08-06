@@ -6,7 +6,10 @@ import { motion } from 'framer-motion'
 
 import useMouseContext from '@/hooks/useMouseContext'
 
-import { createVariants, useAnimationGroup } from '@/utils/motion/animationHelpers'
+import {
+  createVariants,
+  useAnimationGroup,
+} from '@/utils/motion/animationHelpers'
 import { getWorkColor } from '@/utils/theme/workColors'
 
 interface IWorkCardProps {
@@ -33,7 +36,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   const backgroundImageClass = classNames(
     'absolute w-full h-full',
-    getWorkColor(props.slug)
+    getWorkColor(props.slug),
   )
 
   const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
@@ -47,8 +50,12 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   })
 
   // * Animation
-  const { controls, startGroup } = useAnimationGroup(['backgroundImage', 'backgroundMask', 'text'])
-  
+  const { controls, startGroup } = useAnimationGroup([
+    'backgroundImage',
+    'backgroundMask',
+    'text',
+  ])
+
   const variants = createVariants({
     backgroundMask: {
       initial: { opacity: 0 },
@@ -69,9 +76,11 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   // * Animation handlers
   const handleHoverStart = () => {
-    const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered'
+    const cursorType = props.isWIP
+      ? 'work-card-hovered-wip'
+      : 'work-card-hovered'
     mouseContext.cursorChangeHandler(cursorType)
-    
+
     startGroup({
       backgroundImage: 'hover',
       backgroundMask: 'hover',
@@ -81,7 +90,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   const handleHoverEnd = () => {
     mouseContext.cursorChangeHandler('default')
-    
+
     startGroup({
       backgroundImage: 'initial',
       backgroundMask: 'initial',

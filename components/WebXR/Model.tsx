@@ -25,13 +25,11 @@ export default function Model() {
   return (
     <>
       {model ? (
-        <group
-          dispose={null}
-        >
+        <group dispose={null}>
           <primitive
             position={[0, 0, 0]}
             rotation={[deg2rad(0), deg2rad(72), deg2rad(0)]}
-              name="Object_0"
+            name="Object_0"
             object={model}
           />
         </group>
