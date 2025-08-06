@@ -1,14 +1,39 @@
-import { generateSitemap } from '@/utils/sitemap'
+import { MetadataRoute } from 'next'
+import { getAllPosts } from '@/utils/mdx'
+import { SITE_CONFIG } from '@/utils/constants'
 
-export default function sitemap() {
-  const sitemapXml = generateSitemap()
+export default function sitemap(): MetadataRoute.Sitemap {
+  const currentDate = new Date().toISOString()
   
-  return new Response(sitemapXml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
-    },
-  })
-}
+  let posts: ReturnType<typeof getAllPosts> = []
+  try {
+    posts = getAllPosts()
+  } catch (error) {
+    console.error('Failed to get posts for sitemap:', error)
+    // Continue with empty posts array to prevent build failure
+  }
 
-export const dynamic = 'force-static'
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE_CONFIG.domain}/`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 1.0,
+    },
+    {
+      url: `${SITE_CONFIG.domain}/webxr`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+  ]
+
+  const workPages: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(post.slug)}`,
+    lastModified: currentDate,
+    changeFrequency: 'yearly' as const,
+    priority: 0.9,
+  }))
+
+  return [...staticPages, ...workPages]
+}

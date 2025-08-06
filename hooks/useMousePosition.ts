@@ -1,15 +1,12 @@
 import { useEffect, useState, useRef } from 'react'
 
-type MousePosition = { x: number; y: number }
+import type { Position } from '@/types/common'
 
 // https://dev.to/holdmypotion/react-custom-cursor-no-extra-dependencies-25ki
 // https://gist.github.com/eldh/54954e01b40ef6fb812e2c8ee13731dc
 
-export default function useMousePosition(): MousePosition {
-  const [mousePosition, setMousePosition] = useState<MousePosition>({
-    x: 0,
-    y: 0,
-  })
+export default function useMousePosition(): Position {
+  const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 })
   const throttleRef = useRef<number | null>(null)
 
   useEffect(() => {

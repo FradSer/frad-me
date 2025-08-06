@@ -17,6 +17,13 @@ const nextConfig = {
     if (process.env.ANALYZE === 'true') {
       console.log(`Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`)
     }
+    
+    // Fix for @bufbuild/protobuf missing dependency in WebXR packages
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      '@bufbuild/protobuf/wire': false,
+    }
+    
     return config
   },
 }
