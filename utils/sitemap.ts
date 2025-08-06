@@ -10,22 +10,28 @@ interface SitemapEntry {
   priority: number
 }
 
-function getFileLastModified(filePath: string): string {
+async function getFileLastModified(filePath: string): Promise<string> {
   try {
-    const stats = fs.statSync(filePath)
+    // Validate and sanitize file path
+    const normalizedPath = path.normalize(filePath)
+    if (!normalizedPath.startsWith(process.cwd())) {
+      throw new Error('Invalid file path - outside project directory')
+    }
+    
+    const stats = await fs.promises.stat(normalizedPath)
     return stats.mtime.toISOString().split('T')[0]
-  } catch {
+  } catch (error) {
+    console.warn(`Failed to get modification time for ${filePath}:`, error instanceof Error ? error.message : String(error))
     return new Date().toISOString().split('T')[0]
   }
 }
 
-export function generateSitemap(): string {
+export async function generateSitemap(): Promise<string> {
   const posts = getAllPosts()
-  const currentDate = new Date().toISOString().split('T')[0]
 
   // Get last modified dates for static pages
-  const indexLastMod = getFileLastModified(path.join(process.cwd(), 'pages/index.tsx'))
-  const webxrLastMod = getFileLastModified(path.join(process.cwd(), 'pages/webxr.tsx'))
+  const indexLastMod = await getFileLastModified(path.join(process.cwd(), 'pages/index.tsx'))
+  const webxrLastMod = await getFileLastModified(path.join(process.cwd(), 'pages/webxr.tsx'))
 
   const staticPages: SitemapEntry[] = [
     {
@@ -42,17 +48,19 @@ export function generateSitemap(): string {
     },
   ]
 
-  const workPages: SitemapEntry[] = posts.map((post) => {
-    const mdxFilePath = path.join(process.cwd(), 'content/works', `${post.slug}.mdx`)
-    const lastmod = getFileLastModified(mdxFilePath)
-    
-    return {
-      url: `${SITE_CONFIG.domain}/works/${post.slug}`,
-      lastmod,
-      changefreq: 'yearly' as const,
-      priority: 0.9,
-    }
-  })
+  const workPages: SitemapEntry[] = await Promise.all(
+    posts.map(async (post) => {
+      const mdxFilePath = path.join(process.cwd(), 'content/works', `${encodeURIComponent(post.slug)}.mdx`)
+      const lastmod = await getFileLastModified(mdxFilePath)
+      
+      return {
+        url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(post.slug)}`,
+        lastmod,
+        changefreq: 'yearly' as const,
+        priority: 0.9,
+      }
+    })
+  )
 
   const allPages = [...staticPages, ...workPages]
 

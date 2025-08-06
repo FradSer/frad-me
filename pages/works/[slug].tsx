@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import Head from 'next/head'
+import { GetStaticProps, GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
 
 import classNames from 'classnames'
@@ -128,7 +129,7 @@ export default function WorkPage({ code, frontmatter }: Readonly<WorkPageProps>)
   )
 }
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   const paths = getAllPosts().map(({ slug }) => ({ params: { slug } }))
   return {
     paths,
@@ -136,9 +137,15 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async ({ params }: any) => {
+export const getStaticProps: GetStaticProps<WorkPageProps, { slug: string }> = async ({ params }) => {
+  if (!params?.slug) {
+    return {
+      notFound: true,
+    }
+  }
+
   const work = await getSinglePost(params.slug)
   return {
-    props: { ...work },
+    props: work as WorkPageProps,
   }
 }
