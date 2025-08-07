@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary'
+import WebXR3DErrorBoundary from '@/components/WebXR/WebXR3DErrorBoundary'
 import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext'
 import { measureChunkLoad } from '@/utils/performance'
 
@@ -61,12 +62,24 @@ export default function WebXR() {
         <WebXRViewProvider>
           <Suspense fallback={<LoadingFallback />}>
             <GenericCanvas>
-              <CameraController3D />
-              <HeroText />
-              <WorkGrid3D />
-              <Navigation3D />
-              <FooterLinks3D />
-              <Stars {...STARS_CONFIG} />
+              <WebXR3DErrorBoundary componentName="CameraController3D">
+                <CameraController3D />
+              </WebXR3DErrorBoundary>
+              <WebXR3DErrorBoundary componentName="HeroText">
+                <HeroText />
+              </WebXR3DErrorBoundary>
+              <WebXR3DErrorBoundary componentName="WorkGrid3D">
+                <WorkGrid3D />
+              </WebXR3DErrorBoundary>
+              <WebXR3DErrorBoundary componentName="Navigation3D">
+                <Navigation3D />
+              </WebXR3DErrorBoundary>
+              <WebXR3DErrorBoundary componentName="FooterLinks3D">
+                <FooterLinks3D />
+              </WebXR3DErrorBoundary>
+              <WebXR3DErrorBoundary componentName="Stars">
+                <Stars {...STARS_CONFIG} />
+              </WebXR3DErrorBoundary>
             </GenericCanvas>
           </Suspense>
         </WebXRViewProvider>
