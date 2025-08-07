@@ -8,8 +8,16 @@ import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext'
 import { measureChunkLoad } from '@/utils/performance'
 
 // Dynamic imports for bundle optimization
-const GenericCanvas = dynamic(
-  () => measureChunkLoad('GenericCanvas', () => import('@/components/WebXR/GeneralCanvas')),
+const WebXRCanvas = dynamic(
+  () => measureChunkLoad('WebXRCanvas', () => import('@/components/WebXR/WebXRCanvas')),
+  { ssr: false }
+)
+const ImmersiveButton = dynamic(
+  () => measureChunkLoad('ImmersiveButton', () => import('@/components/WebXR/ImmersiveButton')),
+  { ssr: false }
+)
+const VisionProInputHandler = dynamic(
+  () => measureChunkLoad('VisionProInputHandler', () => import('@/components/WebXR/VisionProInputHandler')),
   { ssr: false }
 )
 const HeroText = dynamic(
@@ -60,8 +68,20 @@ export default function WebXR() {
     <div className="fixed inset-0 h-screen w-screen bg-black z-50">
       <WebXRErrorBoundary>
         <WebXRViewProvider>
+          {/* Immersive VR Entry Button */}
+          <div className="absolute top-4 right-4 z-20">
+            <Suspense fallback={null}>
+              <ImmersiveButton />
+            </Suspense>
+          </div>
+
           <Suspense fallback={<LoadingFallback />}>
-            <GenericCanvas>
+            <WebXRCanvas>
+              {/* Vision Pro Input Handler */}
+              <VisionProInputHandler 
+                onTransientPointerSelect={(event) => console.log('Vision Pro interaction:', event)}
+              />
+              
               <WebXR3DErrorBoundary componentName="CameraController3D">
                 <CameraController3D />
               </WebXR3DErrorBoundary>
@@ -80,7 +100,7 @@ export default function WebXR() {
               <WebXR3DErrorBoundary componentName="Stars">
                 <Stars {...STARS_CONFIG} />
               </WebXR3DErrorBoundary>
-            </GenericCanvas>
+            </WebXRCanvas>
           </Suspense>
         </WebXRViewProvider>
       </WebXRErrorBoundary>
