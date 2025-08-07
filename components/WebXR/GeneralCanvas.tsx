@@ -92,15 +92,7 @@ function GenericCanvas({ children }: IGenericCanvasProps) {
   if (xrDetect.isVR) {
     return (
       <div className="h-screen w-screen bg-black">
-        <div className="absolute bottom-4 left-0 right-0 z-50 m-auto h-60 w-60 text-5xl font-black text-white">
-          <button onClick={() => handleXRAction(() => store.enterVR())}>
-            Enter VR
-          </button>
-          <button onClick={() => handleXRAction(() => store.enterAR())}>
-            Enter AR
-          </button>
-        </div>
-        <Canvas className="w-full">
+        <Canvas className="w-full h-full">
           <XR store={store}>{children}</XR>
         </Canvas>
       </div>
