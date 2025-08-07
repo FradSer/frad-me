@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
 interface ErrorPayload {
   error: {
@@ -70,26 +70,23 @@ function sanitizeErrorPayload(payload: ErrorPayload): ErrorPayload {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-
-  const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0] || 
-                   (req.connection?.remoteAddress) || 
-                   (req.socket?.remoteAddress) || 
+export async function POST(request: NextRequest) {
+  const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+                   request.headers.get('x-real-ip') ||
                    'unknown'
 
   if (!checkRateLimit(clientIp)) {
-    return res.status(429).json({ error: 'Rate limit exceeded' })
-  }
-
-  if (!validateErrorPayload(req.body)) {
-    return res.status(400).json({ error: 'Invalid error payload' })
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
   }
 
   try {
-    const sanitizedPayload = sanitizeErrorPayload(req.body)
+    const body = await request.json()
+    
+    if (!validateErrorPayload(body)) {
+      return NextResponse.json({ error: 'Invalid error payload' }, { status: 400 })
+    }
+
+    const sanitizedPayload = sanitizeErrorPayload(body)
     
     // Log the error securely
     console.error('[WebXR Error API]', {
@@ -103,9 +100,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // - Send to monitoring systems
     // - Apply additional filtering
 
-    res.status(200).json({ status: 'logged' })
+    return NextResponse.json({ status: 'logged' })
   } catch (error) {
     console.error('[WebXR Error API] Failed to process error:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
