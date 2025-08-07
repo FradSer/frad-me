@@ -82,9 +82,9 @@ function Navigation3D() {
   const { currentView, navigateToView } = useWebXRView()
 
   return (
-    <group position={[0, 0, -2]}>
-      {/* Main Navigation - Top Right */}
-      <group position={[4, 4, 0]}>
+    <group position={[0, 0, -3]}>
+      {/* Main Navigation - More comfortable position for visionOS */}
+      <group position={[2.5, 2, 0]}>
         {currentView === 'home' ? (
           <NavItem
             position={[0, 0, 0]}

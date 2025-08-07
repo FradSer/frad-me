@@ -4,8 +4,9 @@ import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { workCardPositions } from '@/utils/webxr/animationHelpers'
 
-// Navigation button position (from Navigation3D component)
-const NAVIGATION_POSITION = [4, 4, 0] as [number, number, number]
+// Navigation button position (from Navigation3D component) 
+// Combined position: [0, 0, -3] + [2.5, 2, 0] = [2.5, 2, -3]
+const NAVIGATION_POSITION = [2.5, 2, -3] as [number, number, number]
 
 interface WorkLink {
   title: string

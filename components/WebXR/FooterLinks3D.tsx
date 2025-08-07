@@ -53,9 +53,9 @@ function FooterLinks3D() {
   const { currentView } = useWebXRView()
 
   return (
-    <group position={[0, 0, -2]}>
-      {/* External Links - Bottom Right - Only show in home section */}
-      <ExternalLinks position={[4, -4, 0]} show={currentView === 'home'} />
+    <group position={[0, 0, -4]}>
+      {/* External Links - More accessible position for visionOS */}
+      <ExternalLinks position={[2, -2.5, 0]} show={currentView === 'home'} />
     </group>
   )
 }

@@ -22,13 +22,13 @@ export const defaultAnimationState: AnimationState = {
 
 export const heroAnimationStates = {
   home: {
-    position: { x: 0, y: 2, z: -10 },
+    position: { x: 0, y: 1, z: -5 },  // Bring closer and lower for visionOS comfort
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 1, y: 1, z: 1 },
     opacity: 1,
   },
   hidden: {
-    position: { x: 0, y: -5, z: -40 },
+    position: { x: 0, y: -5, z: -20 },  // Not as far when hidden
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.6, y: 0.6, z: 0.6 },
     opacity: 0,
