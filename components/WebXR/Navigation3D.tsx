@@ -62,6 +62,7 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
       anchorX="center"
       anchorY="middle"
       fontSize={0.6}
+      font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
       onClick={() => {
         setHasBeenInteracted(true)
         onClick()
