@@ -134,6 +134,7 @@ const renderElement = (element: typeof heroContent[0], index: number) => {
 
 function HeroText() {
   const { currentView } = useWebXRView()
+  const groupRef = useRef<THREE.Group>(null)
   
   const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
   
@@ -144,18 +145,49 @@ function HeroText() {
     config: springConfigs.heroTransition,
   })
 
+  // Use frame to update material opacity for all child meshes
+  useFrame(() => {
+    if (!groupRef.current) return
+    
+    const currentOpacity = opacity.get()
+    
+    // Hide completely when opacity is near zero for performance
+    groupRef.current.visible = currentOpacity > 0.01
+    
+    // Apply opacity to all materials
+    groupRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh && child.material) {
+        if (Array.isArray(child.material)) {
+          child.material.forEach((material) => {
+            if (material instanceof THREE.MeshStandardMaterial || 
+                material instanceof THREE.MeshBasicMaterial) {
+              material.opacity = currentOpacity
+              material.transparent = true
+            }
+          })
+        } else {
+          const material = child.material
+          if (material instanceof THREE.MeshStandardMaterial || 
+              material instanceof THREE.MeshBasicMaterial) {
+            material.opacity = currentOpacity
+            material.transparent = true
+          }
+        }
+      }
+    })
+  })
+
   return (
     <animated.group 
+      ref={groupRef}
       position={position}
       scale={scale}
     >
       <ambientLight intensity={Math.PI / 10} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      <animated.group 
-        opacity={opacity.to(o => o)}
-      >
+      <group>
         {heroContent.map(renderElement)}
-      </animated.group>
+      </group>
     </animated.group>
   )
 }

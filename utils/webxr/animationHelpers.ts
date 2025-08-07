@@ -28,9 +28,9 @@ export const heroAnimationStates = {
     opacity: 1,
   },
   hidden: {
-    position: { x: 0, y: 2, z: -30 },
+    position: { x: 0, y: -5, z: -40 },
     rotation: { x: 0, y: 0, z: 0 },
-    scale: { x: 0.8, y: 0.8, z: 0.8 },
+    scale: { x: 0.6, y: 0.6, z: 0.6 },
     opacity: 0,
   },
 } as const

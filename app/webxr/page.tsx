@@ -57,7 +57,7 @@ const LoadingFallback = () => (
 
 export default function WebXR() {
   return (
-    <div className="h-screen w-screen">
+    <div className="fixed inset-0 h-screen w-screen bg-black z-50">
       <WebXRErrorBoundary>
         <WebXRViewProvider>
           <Suspense fallback={<LoadingFallback />}>
