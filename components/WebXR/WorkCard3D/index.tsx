@@ -25,7 +25,7 @@ interface WorkCard3DProps {
   onClick?: () => void
 }
 
-const WorkCard3D: React.FC<WorkCard3DProps> = memo(({
+const WorkCard3D: React.FC<WorkCard3DProps> = ({
   work,
   position,
   index,
@@ -35,9 +35,8 @@ const WorkCard3D: React.FC<WorkCard3DProps> = memo(({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
-  const [clicked, setClicked] = useState(false)
   
-  // Load texture for the work cover with memoization
+  // Simple texture loading - memoization not needed for single texture
   const coverTexture = useMemo(() => {
     const loader = new THREE.TextureLoader()
     const texture = loader.load(work.cover)
@@ -45,15 +44,13 @@ const WorkCard3D: React.FC<WorkCard3DProps> = memo(({
     texture.magFilter = THREE.LinearFilter
     return texture
   }, [work.cover])
-  
-  // Memoized animation states
-  const targetPosition = useMemo(() => 
-    visible 
-      ? hovered 
-        ? [position[0], position[1] + workCardPositions.hover.y, position[2] + workCardPositions.hover.z]
-        : [position[0], position[1], position[2]]
-      : [position[0], position[1] + workCardPositions.entrance.y, position[2] + workCardPositions.entrance.z]
-  , [visible, hovered, position])
+
+  // Calculate position dynamically - no need for useMemo overhead
+  const targetPosition = visible 
+    ? hovered 
+      ? [position[0], position[1] + workCardPositions.hover.y, position[2] + workCardPositions.hover.z]
+      : [position[0], position[1], position[2]]
+    : [position[0], position[1] + workCardPositions.entrance.y, position[2] + workCardPositions.entrance.z]
 
   const { animatedPosition, scale, opacity, rotation } = useSpring({
     animatedPosition: targetPosition as [number, number, number],
@@ -71,24 +68,24 @@ const WorkCard3D: React.FC<WorkCard3DProps> = memo(({
     }
   })
 
-  const handlePointerOver = useCallback(() => {
+  // Simplified handlers without useCallback overhead
+  const handlePointerOver = () => {
     setHovered(true)
     onHover?.(true)
-  }, [onHover])
+  }
 
-  const handlePointerOut = useCallback(() => {
+  const handlePointerOut = () => {
     setHovered(false)
     onHover?.(false)
-  }, [onHover])
+  }
 
-  const handleClick = useCallback(() => {
-    setClicked(true)
+  const handleClick = () => {
     onClick?.()
     // Navigate to work detail page
     if (typeof window !== 'undefined') {
       window.location.href = `/works/${work.slug}`
     }
-  }, [onClick, work.slug])
+  }
 
   if (!visible) return null
 

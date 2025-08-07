@@ -19,52 +19,38 @@ interface WorkGrid3DProps {
   visible?: boolean
 }
 
-const WorkGrid3D: React.FC<WorkGrid3DProps> = memo(({ visible = true }) => {
-  const { state } = useWebXRView()
+const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
+  const { currentView } = useWebXRView()
   
-  const shouldShow = useMemo(() => visible && state.currentView === 'work', [visible, state.currentView])
+  const shouldShow = visible && currentView === 'work'
 
-  const { position, opacity, scale } = useSpring({
-    position: shouldShow ? [0, 0, 0] : [0, -10, 0],
-    opacity: shouldShow ? 1 : 0,
-    scale: shouldShow ? 1 : 0.8,
-    config: springConfigs.cardEntrance,
+  const { position, opacity, scale } = useVisibilityAnimation({
+    visible: shouldShow,
+    springConfig: 'cardEntrance',
+    scaleFrom: 0.8,
+    customValues: {
+      position: [[0, -10, 0], [0, 0, 0]]
+    }
   })
 
-  // Calculate positions for work cards in a 3D grid
-  const cardPositions = useMemo(() => {
-    const positions: [number, number, number][] = []
-    const cols = 3
-    const spacing = 4
-    const startX = -(cols - 1) * spacing / 2
+  // Simple card positions - memoization not needed for static layout
+  const cardPositions: [number, number, number][] = []
+  const cols = 3
+  const spacing = 4
+  const startX = -(cols - 1) * spacing / 2
+  
+  workLinks.forEach((_, index) => {
+    const col = index % cols
+    const row = Math.floor(index / cols)
     
-    workLinks.forEach((_, index) => {
-      const col = index % cols
-      const row = Math.floor(index / cols)
-      
-      const x = startX + col * spacing
-      const y = 2 - row * 3 // Start from top and go down
-      const z = 0
-      
-      positions.push([x, y, z])
-    })
+    const x = startX + col * spacing
+    const y = 2 - row * 3 // Start from top and go down
+    const z = 0
     
-    return positions
-  }, [])
+    cardPositions.push([x, y, z])
+  })
 
-  const handleCardClick = useCallback((work: WorkLink) => {
-    // Add any additional click handling if needed
-    console.log('Work card clicked:', work.title)
-  }, [])
-
-  const handleCardHover = useCallback((work: WorkLink, hovered: boolean) => {
-    // Add cursor or other hover effects if needed
-    if (typeof window !== 'undefined') {
-      document.body.style.cursor = hovered ? 'pointer' : 'auto'
-    }
-  }, [])
-
-  if (!visible || !shouldShow) return null
+  if (!shouldShow) return null
 
   return (
     <animated.group
@@ -89,8 +75,6 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = memo(({ visible = true }) => {
           position={cardPositions[index]}
           index={index}
           visible={shouldShow}
-          onHover={(hovered) => handleCardHover(work, hovered)}
-          onClick={() => handleCardClick(work)}
         />
       ))}
 

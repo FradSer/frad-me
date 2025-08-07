@@ -1,40 +1,21 @@
+// Base configurations to eliminate duplication
+const baseConfig = {
+  mass: 1,
+  precision: 0.01,
+} as const
+
+const performantConfig = {
+  ...baseConfig,
+  mass: 0.8,
+} as const
+
 export const springConfigs = {
-  gentle: { 
-    tension: 120, 
-    friction: 14,
-    mass: 1,
-    precision: 0.01,
-  },
-  snappy: { 
-    tension: 180, 
-    friction: 12,
-    mass: 1,
-    precision: 0.01,
-  },
-  wobbly: { 
-    tension: 180, 
-    friction: 20,
-    mass: 1,
-    precision: 0.01,
-  },
-  heroTransition: {
-    tension: 120,
-    friction: 16,
-    mass: 1.2,
-    precision: 0.001,
-  },
-  cardEntrance: {
-    tension: 140,
-    friction: 18,
-    mass: 0.8,
-    precision: 0.01,
-  },
-  navigation: {
-    tension: 200,
-    friction: 10,
-    mass: 0.6,
-    precision: 0.01,
-  },
+  gentle: { ...baseConfig, tension: 120, friction: 14 },
+  snappy: { ...baseConfig, tension: 180, friction: 12 },
+  wobbly: { ...baseConfig, tension: 180, friction: 20 },
+  heroTransition: { ...baseConfig, tension: 120, friction: 16, mass: 1.2, precision: 0.001 },
+  cardEntrance: { ...performantConfig, tension: 140, friction: 18 },
+  navigation: { ...performantConfig, tension: 200, friction: 10, mass: 0.6 },
 } as const
 
 export type SpringConfigKey = keyof typeof springConfigs
@@ -47,14 +28,6 @@ export const transitionTimings = {
   navigationHover: 200,
 } as const
 
-export const easeInOut = (t: number): number => {
-  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
-}
-
-export const easeOut = (t: number): number => {
-  return 1 - Math.pow(1 - t, 3)
-}
-
-export const easeIn = (t: number): number => {
-  return t * t * t
-}
+// Note: These can be replaced with react-spring's built-in easing
+// import { config } from '@react-spring/core'
+// Use config.default, config.gentle, config.wobbly, etc. instead
