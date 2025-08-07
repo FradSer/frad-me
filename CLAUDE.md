@@ -51,36 +51,52 @@ pnpm test:all     # Run all tests (unit + E2E)
   - `works/[slug]/page.tsx`: Dynamic work detail pages from MDX content
   - `api/errors/route.ts`: API endpoint for WebXR error logging
 
+### Dual Layout Architecture
+The application uses smart layout switching based on WebXR capability detection:
+
+- **StandardLayout**: Traditional web experience with Header navigation, mouse interactions, and theme switching
+- **VRLayout**: Immersive WebXR experience with 3D navigation, isolated from global UI elements
+- **ClientLayout Detection**: `useXRDetect` hook determines which layout to render
+
+### WebXR Experience Architecture
+- **Pure 3D Interface**: `/webxr` page uses `fixed inset-0` positioning to completely overlay standard navigation
+- **3D Navigation System**: 
+  - `Navigation3D.tsx`: Single toggle button (home/work) with breathing animation and spring physics
+  - `FooterLinks3D.tsx`: External links (resume, calendly) positioned in 3D space, visible only in home view
+- **WebXRViewContext**: Centralized state management for view transitions (`home` ↔ `work`)
+
 ### Key Components Organization
 - **components/**: Organized by feature/page
   - `Landing/`: Hero section with 3D elements, Work showcase
   - `WebXR/`: VR/AR components using React Three Fiber
-    - `WebXRErrorBoundary.tsx`: Comprehensive error boundary with progressive fallback (webxr → 3d → 2d)
-    - `WebXR2DFallback.tsx`: 2D fallback experience
-    - `WebXR3DFallback.tsx`: 3D fallback with quality-based rendering
-    - `GeneralCanvas.tsx`: WebGL canvas with error handling
-    - `Fallback3D/`: Complete 3D fallback experience components
+    - `HeroText.tsx`: 3D hero content with spring-based fade animations
+    - `WorkGrid3D/`: 3D work portfolio grid with lighting and positioning utilities
+    - `WorkCard3D/`: Individual work cards with hover effects and interactions
+    - `GeneralCanvas.tsx`: WebGL canvas with XR store integration
+    - Error boundaries with progressive fallback (webxr → 3d → 2d)
   - `WorkPage/`: MDX-based work detail components
-  - `Header/`: Navigation with theme switcher
+  - `Header/`: Navigation with theme switcher (hidden in WebXR mode)
   - `common/`: Shared components (LayoutWrapper, ErrorBoundary)
 
 ### Content Management
 - **content/**: MDX files for work portfolio
   - `works/`: Individual work case studies (.mdx files)
-  - Link configuration files for navigation
+  - Link configuration files (`workLinks.ts`, `headerLinks.ts`, `footerLinks.ts`)
 - **utils/mdx.ts**: MDX processing with mdx-bundler
 
-### State Management & Architecture Patterns
+### State Management & Animation System
 - **contexts/**: React contexts for global state
+  - `WebXR/WebXRViewContext.tsx`: WebXR view state and navigation transitions
   - `Mouse/`: Custom mouse cursor functionality and physical attraction effects
 - **hooks/**: Custom React hooks
   - `useXRDetect.ts`: WebXR capability detection with loading states
-  - `useLoading.ts`: Loading state management
-  - `useMouseContext.ts`, `useMousePosition.ts`: Mouse interaction hooks
-  - `usePhysicalAttraction.ts`: Mouse attraction physics
-  - `useSpeechSynthesis.ts`: Web Speech API integration
-  - `useWindowSize.ts`: Responsive design utilities
-  - `use3DFallbackState.ts`: 3D fallback quality management
+  - `useSpringAnimation.ts`: Custom spring physics system for 3D animations
+  - Mouse interaction hooks, window utilities, loading states
+- **utils/webxr/**: WebXR-specific utilities
+  - `animationConstants.ts`: Spring configs and entrance positions
+  - `materialUtils.ts`: 3D material opacity management 
+  - `workGridUtils.ts`: 3D grid layout calculations
+  - `animationHelpers.ts`: Hero text animation states and transitions
 
 ### Error Handling System
 - **Progressive Fallback**: WebXR → 3D → 2D fallback levels
@@ -131,7 +147,19 @@ pnpm test:all     # Run all tests (unit + E2E)
 - Client components are explicitly marked with 'use client'
 - Server components handle static content and SEO
 - Dynamic imports for WebXR components (SSR disabled)
-- XR detection determines layout rendering (Standard vs VR layout)
+- Dual layout system: StandardLayout vs VRLayout determined by XR capability detection
+
+**WebXR Animation System:**
+- Custom spring physics using `useSpringAnimation` hook with `SpringScalar` class
+- Material opacity management through `useFrame` hook traversing Three.js object hierarchies
+- Performance optimization: components hidden when opacity < 0.01
+- Animation states defined in `animationHelpers.ts` with smooth transitions between home/work views
+
+**WebXR Navigation Design:**
+- Single toggle navigation (home ↔ work) with breathing animation effects
+- GT Eesti Display Bold font consistency across all 3D text elements
+- 3D positioned external links (resume, calendly) visible only in home view
+- Complete isolation from global navigation when in WebXR mode
 
 **WebXR Error Handling:**
 - Comprehensive error boundary system with 3-tier fallback
@@ -139,27 +167,17 @@ pnpm test:all     # Run all tests (unit + E2E)
 - Error logging with offline queue and analytics integration
 - Security-focused error collection API with rate limiting
 
-**MDX Content:**
+**Content & Typography:**
 - Work case studies in `/content/works/` as `.mdx` files
-- Custom MDX components in `components/WorkPage/MDXComponents.tsx`
-- Frontmatter includes cover, title, description, platforms, contributors
+- GT Eesti font family with multiple weights and styles
+- Custom Tailwind config extends grid system (16-column grid)
+- Dark mode implemented with class-based switching
 
 **Performance Optimization:**
 - Million.js compiler integration for React optimization
-- Dynamic imports for heavy 3D components
-- Quality-based 3D rendering in fallback scenarios
+- Dynamic imports for heavy 3D components with `measureChunkLoad` performance monitoring
 - Bundle analysis available via `pnpm analyze`
-
-**Mouse Interaction System:**
-- Custom cursor with physical attraction effects
-- Context-based mouse position tracking
-- Optimized for performance with throttling
-
-**Styling System:**
-- Custom Tailwind config extends grid system (16-column grid)
-- Dark mode implemented with class-based switching
-- Custom aspect ratios and font families configured
-- GT Eesti font family with multiple weights and styles
+- Custom mouse cursor with physical attraction effects and throttled position tracking
 
 ## Build Configuration
 
