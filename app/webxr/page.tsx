@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary'
+import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext'
 import { measureChunkLoad } from '@/utils/performance'
 
 // Dynamic imports for bundle optimization
@@ -16,6 +17,18 @@ const HeroText = dynamic(
 )
 const Stars = dynamic(
   () => measureChunkLoad('Stars', () => import('@react-three/drei').then(mod => ({ default: mod.Stars }))),
+  { ssr: false }
+)
+const Navigation3D = dynamic(
+  () => measureChunkLoad('Navigation3D', () => import('@/components/WebXR/Navigation3D')),
+  { ssr: false }
+)
+const FooterLinks3D = dynamic(
+  () => measureChunkLoad('FooterLinks3D', () => import('@/components/WebXR/FooterLinks3D')),
+  { ssr: false }
+)
+const WorkGrid3D = dynamic(
+  () => measureChunkLoad('WorkGrid3D', () => import('@/components/WebXR/WorkGrid3D')),
   { ssr: false }
 )
 
@@ -41,14 +54,17 @@ export default function WebXR() {
   return (
     <div className="h-screen w-screen">
       <WebXRErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <GenericCanvas>
-            <mesh position={[0, 2, -10]}>
+        <WebXRViewProvider>
+          <Suspense fallback={<LoadingFallback />}>
+            <GenericCanvas>
               <HeroText />
-            </mesh>
-            <Stars {...STARS_CONFIG} />
-          </GenericCanvas>
-        </Suspense>
+              <WorkGrid3D />
+              <Navigation3D />
+              <FooterLinks3D />
+              <Stars {...STARS_CONFIG} />
+            </GenericCanvas>
+          </Suspense>
+        </WebXRViewProvider>
       </WebXRErrorBoundary>
     </div>
   )
