@@ -166,7 +166,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       {work.isWIP && (
         <group position={[1.3, 0.8, 0.1]}>
           <Html transform occlude>
-            <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black">
+            <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black shadow-lg">
               WIP
             </div>
           </Html>
