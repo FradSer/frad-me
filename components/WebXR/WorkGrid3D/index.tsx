@@ -129,13 +129,6 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
         )
       })}
 
-      {/* Navigation hint */}
-      <Html position={[0, -6, 0]} transform occlude distanceFactor={15}>
-        <div className="text-center text-white opacity-75">
-          <p className="text-sm">Point and click to explore work details</p>
-          <p className="text-xs mt-2">Use controllers to navigate in VR</p>
-        </div>
-      </Html>
     </group>
   )
 }
