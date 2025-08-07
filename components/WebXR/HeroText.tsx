@@ -1,8 +1,12 @@
 import React, { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
+import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
+import { springConfigs } from '@/utils/webxr/springConfigs'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -129,12 +133,30 @@ const renderElement = (element: typeof heroContent[0], index: number) => {
 }
 
 function HeroText() {
+  const { state } = useWebXRView()
+  
+  const targetState = state.currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
+  
+  const { position, scale, opacity } = useSpring({
+    position: [targetState.position.x, targetState.position.y, targetState.position.z] as [number, number, number],
+    scale: [targetState.scale.x, targetState.scale.y, targetState.scale.z] as [number, number, number],
+    opacity: targetState.opacity,
+    config: springConfigs.heroTransition,
+  })
+
   return (
-    <>
+    <animated.group 
+      position={position}
+      scale={scale}
+    >
       <ambientLight intensity={Math.PI / 10} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      {heroContent.map(renderElement)}
-    </>
+      <animated.group 
+        opacity={opacity.to(o => o)}
+      >
+        {heroContent.map(renderElement)}
+      </animated.group>
+    </animated.group>
   )
 }
 
