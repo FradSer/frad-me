@@ -133,9 +133,9 @@ const renderElement = (element: typeof heroContent[0], index: number) => {
 }
 
 function HeroText() {
-  const { state } = useWebXRView()
+  const { currentView } = useWebXRView()
   
-  const targetState = state.currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
+  const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
   
   const { position, scale, opacity } = useSpring({
     position: [targetState.position.x, targetState.position.y, targetState.position.z] as [number, number, number],

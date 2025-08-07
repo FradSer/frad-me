@@ -1,9 +1,9 @@
 import React from 'react'
 import { Html } from '@react-three/drei'
-import { useSpring, animated } from '@react-spring/three'
-import { useThree } from '@react-three/fiber'
+import { animated } from '@react-spring/three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { springConfigs } from '@/utils/webxr/springConfigs'
+import { useVisibilityAnimation } from '@/hooks/webxr/useVisibilityAnimation'
+import { useViewportPosition } from '@/hooks/webxr/useViewportPosition'
 import footerLinks from '@/content/footerLinks'
 
 interface FooterLinks3DProps {
@@ -11,31 +11,21 @@ interface FooterLinks3DProps {
 }
 
 const FooterLinks3D: React.FC<FooterLinks3DProps> = ({ visible = true }) => {
-  const { viewport } = useThree()
-  const { state } = useWebXRView()
-
-  const { position, opacity, scale } = useSpring({
-    position: visible && state.footerLinksVisible ? [0, 0, 0] : [0, -3, 0],
-    opacity: visible && state.footerLinksVisible ? 1 : 0,
-    scale: visible && state.footerLinksVisible ? 1 : 0.8,
-    config: springConfigs.gentle,
+  const { footerLinksVisible } = useWebXRView()
+  const position = useViewportPosition('bottomRight')
+  
+  const actuallyVisible = visible && footerLinksVisible
+  const { scale, opacity } = useVisibilityAnimation({ 
+    visible: actuallyVisible, 
+    springConfig: 'gentle' 
   })
 
   if (!visible) return null
 
-  const htmlPosition: [number, number, number] = [
-    viewport.width / 2 - 2, 
-    -viewport.height / 2 + 1, 
-    0
-  ]
-
   return (
-    <animated.group 
-      position={position.to((x, y, z) => [x, y, z] as [number, number, number])}
-      scale={scale}
-    >
+    <animated.group scale={scale}>
       <Html
-        position={htmlPosition}
+        position={position}
         transform
         occlude
         style={{
