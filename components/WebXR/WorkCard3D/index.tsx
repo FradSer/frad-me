@@ -169,6 +169,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       )}
     </animated.group>
   )
-})
+}
 
 export default WorkCard3D

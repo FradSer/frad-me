@@ -19,11 +19,11 @@ const cameraStates = {
 } as const
 
 const CameraController3D: React.FC = () => {
-  const { state } = useWebXRView()
+  const { currentView } = useWebXRView()
   const { camera } = useThree()
   const targetRef = useRef(new THREE.Vector3())
   
-  const targetState = cameraStates[state.currentView]
+  const targetState = cameraStates[currentView]
 
   const { position, fov } = useSpring({
     position: targetState.position,

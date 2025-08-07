@@ -90,6 +90,6 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
       )}
     </animated.group>
   )
-})
+}
 
 export default WorkGrid3D

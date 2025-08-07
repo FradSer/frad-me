@@ -35,7 +35,7 @@ export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
     navigationVisible,
     footerLinksVisible,
     navigateToView,
-    setTransitioning,
+    setTransitioning: setIsTransitioning,
   }
 
   return (
