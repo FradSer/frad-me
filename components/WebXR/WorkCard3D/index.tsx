@@ -1,9 +1,7 @@
-import React, { useState, useRef, Suspense, memo, useMemo, useCallback } from 'react'
-import { useFrame, useLoader } from '@react-three/fiber'
-import { useSpring, animated } from '@react-spring/three'
+import React, { useState, useRef, Suspense, useMemo } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
-import { springConfigs } from '@/utils/webxr/springConfigs'
 import { workCardPositions } from '@/utils/webxr/animationHelpers'
 
 interface WorkLink {
@@ -34,9 +32,10 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   onClick,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null)
+  const groupRef = useRef<THREE.Group>(null)
   const [hovered, setHovered] = useState(false)
   
-  // Simple texture loading - memoization not needed for single texture
+  // Simple texture loading
   const coverTexture = useMemo(() => {
     const loader = new THREE.TextureLoader()
     const texture = loader.load(work.cover)
@@ -45,30 +44,54 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     return texture
   }, [work.cover])
 
-  // Calculate position dynamically - no need for useMemo overhead
-  const targetPosition = visible 
-    ? hovered 
-      ? [position[0], position[1] + workCardPositions.hover.y, position[2] + workCardPositions.hover.z]
-      : [position[0], position[1], position[2]]
-    : [position[0], position[1] + workCardPositions.entrance.y, position[2] + workCardPositions.entrance.z]
-
-  const { animatedPosition, scale, opacity, rotation } = useSpring({
-    animatedPosition: targetPosition as [number, number, number],
-    scale: visible ? (hovered ? 1.1 : 1) : 0.8,
-    opacity: visible ? 1 : 0,
-    rotation: hovered ? [0, 0.1, 0] : [0, 0, 0],
-    config: springConfigs.cardEntrance,
-    delay: visible ? index * 100 : 0,
-  })
-
-  useFrame((state) => {
-    if (meshRef.current && !hovered && visible) {
-      // Subtle floating animation when not hovered
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      const targetY = visible 
+        ? hovered 
+          ? position[1] + workCardPositions.hover.y
+          : position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
+        : position[1] + workCardPositions.entrance.y
+      
+      const targetZ = visible 
+        ? hovered 
+          ? position[2] + workCardPositions.hover.z
+          : position[2]
+        : position[2] + workCardPositions.entrance.z
+      
+      const targetScale = visible ? (hovered ? 1.1 : 1) : 0.8
+      const targetOpacity = visible ? 1 : 0
+      
+      // Smooth interpolation using lerp
+      groupRef.current.position.x = position[0]
+      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, delta * 5)
+      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, delta * 5)
+      
+      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 8))
+      
+      // Handle opacity for all materials
+      groupRef.current.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(material => {
+              if ('opacity' in material) {
+                material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 8)
+              }
+            })
+          } else if ('opacity' in child.material) {
+            child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 8)
+          }
+        }
+      })
+      
+      // Subtle rotation when hovered
+      if (hovered) {
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0.1, delta * 5)
+      } else {
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, delta * 5)
+      }
     }
   })
 
-  // Simplified handlers without useCallback overhead
   const handlePointerOver = () => {
     setHovered(true)
     onHover?.(true)
@@ -81,7 +104,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
   const handleClick = () => {
     onClick?.()
-    // Navigate to work detail page
     if (typeof window !== 'undefined') {
       window.location.href = `/works/${work.slug}`
     }
@@ -90,11 +112,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   if (!visible) return null
 
   return (
-    <animated.group
-      position={animatedPosition}
-      scale={scale}
-      rotation={rotation.to((x, y, z) => [x, y, z] as [number, number, number])}
-    >
+    <group ref={groupRef} position={position}>
       {/* Card background/cover */}
       <mesh
         ref={meshRef}
@@ -106,12 +124,11 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         <meshStandardMaterial
           map={coverTexture}
           transparent
-          opacity={opacity.to(o => o)}
         />
       </mesh>
 
       {/* Work title */}
-      <animated.group position={[0, -1.5, 0.1]} opacity={opacity}>
+      <group position={[0, -1.5, 0.1]}>
         <Suspense fallback={null}>
           <Text
             color="white"
@@ -126,10 +143,10 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             {work.title}
           </Text>
         </Suspense>
-      </animated.group>
+      </group>
 
       {/* Work subtitle */}
-      <animated.group position={[0, -2.1, 0.1]} opacity={opacity}>
+      <group position={[0, -2.1, 0.1]}>
         <Suspense fallback={null}>
           <Text
             color="gray"
@@ -143,17 +160,17 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             {work.subTitle}
           </Text>
         </Suspense>
-      </animated.group>
+      </group>
 
       {/* WIP Badge */}
       {work.isWIP && (
-        <animated.group position={[1.3, 0.8, 0.1]} opacity={opacity}>
+        <group position={[1.3, 0.8, 0.1]}>
           <Html transform occlude>
             <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black">
               WIP
             </div>
           </Html>
-        </animated.group>
+        </group>
       )}
 
       {/* Interactive glow effect when hovered */}
@@ -167,7 +184,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
           />
         </mesh>
       )}
-    </animated.group>
+    </group>
   )
 }
 
