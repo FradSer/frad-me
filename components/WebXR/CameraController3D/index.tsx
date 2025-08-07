@@ -1,9 +1,7 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useSpring } from '@react-spring/three'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { springConfigs } from '@/utils/webxr/springConfigs'
 
 const cameraStates = {
   home: { 
@@ -23,27 +21,27 @@ const CameraController3D: React.FC = () => {
   const { camera } = useThree()
   const targetRef = useRef(new THREE.Vector3())
   
+  // Create reusable vector objects to avoid allocation in frame loop
+  const tempVector = useMemo(() => new THREE.Vector3(), [])
+  
   const targetState = cameraStates[currentView]
 
-  const { position, fov } = useSpring({
-    position: targetState.position,
-    fov: targetState.fov,
-    config: springConfigs.gentle,
-  })
+  useFrame((_, delta) => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return
 
-  useFrame(() => {
-    // Smoothly update camera position
-    position.to((x, y, z) => {
-      camera.position.lerp(new THREE.Vector3(x, y, z), 0.05)
-    })
+    // Smooth camera position animation
+    tempVector.set(...targetState.position)
+    camera.position.lerp(tempVector, delta * 2)
 
-    // Update camera fov
-    fov.to((f) => {
-      if (camera instanceof THREE.PerspectiveCamera) {
-        camera.fov = f
-        camera.updateProjectionMatrix()
-      }
-    })
+    // Smooth FOV animation
+    const targetFov = targetState.fov
+    const currentFov = camera.fov
+    const newFov = THREE.MathUtils.lerp(currentFov, targetFov, delta * 3)
+    
+    if (Math.abs(newFov - currentFov) > 0.1) {
+      camera.fov = newFov
+      camera.updateProjectionMatrix()
+    }
 
     // Look at target
     targetRef.current.set(...targetState.lookAt)

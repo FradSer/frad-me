@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
-import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
-import { springConfigs } from '@/utils/webxr/springConfigs'
+import { useSpringScalar } from '@/hooks/useSpringAnimation'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -138,18 +137,46 @@ function HeroText() {
   
   const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
   
-  const { position, scale, opacity } = useSpring({
-    position: [targetState.position.x, targetState.position.y, targetState.position.z] as [number, number, number],
-    scale: [targetState.scale.x, targetState.scale.y, targetState.scale.z] as [number, number, number],
-    opacity: targetState.opacity,
-    config: springConfigs.heroTransition,
-  })
+  // Custom spring configuration equivalent to heroTransition
+  const springConfig = { tension: 120, friction: 16 }
+  
+  const positionX = useSpringScalar(targetState.position.x, springConfig)
+  const positionY = useSpringScalar(targetState.position.y, springConfig)
+  const positionZ = useSpringScalar(targetState.position.z, springConfig)
+  const scaleX = useSpringScalar(targetState.scale.x, springConfig)
+  const scaleY = useSpringScalar(targetState.scale.y, springConfig)
+  const scaleZ = useSpringScalar(targetState.scale.z, springConfig)
+  const opacity = useSpringScalar(targetState.opacity, springConfig)
 
-  // Use frame to update material opacity for all child meshes
-  useFrame(() => {
+  // Update spring targets when view changes
+  React.useEffect(() => {
+    positionX.set(targetState.position.x)
+    positionY.set(targetState.position.y)
+    positionZ.set(targetState.position.z)
+    scaleX.set(targetState.scale.x)
+    scaleY.set(targetState.scale.y)
+    scaleZ.set(targetState.scale.z)
+    opacity.set(targetState.opacity)
+  }, [currentView, targetState, positionX, positionY, positionZ, scaleX, scaleY, scaleZ, opacity])
+
+  // Use frame to update animation and material opacity for all child meshes
+  useFrame((_, delta) => {
     if (!groupRef.current) return
     
-    const currentOpacity = opacity.get()
+    // Update spring animations
+    positionX.update(delta)
+    positionY.update(delta)
+    positionZ.update(delta)
+    scaleX.update(delta)
+    scaleY.update(delta)
+    scaleZ.update(delta)
+    opacity.update(delta)
+    
+    // Apply transforms
+    groupRef.current.position.set(positionX.value, positionY.value, positionZ.value)
+    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value)
+    
+    const currentOpacity = opacity.value
     
     // Hide completely when opacity is near zero for performance
     groupRef.current.visible = currentOpacity > 0.01
@@ -178,17 +205,15 @@ function HeroText() {
   })
 
   return (
-    <animated.group 
+    <group 
       ref={groupRef}
-      position={position}
-      scale={scale}
     >
       <ambientLight intensity={Math.PI / 10} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
       <group>
         {heroContent.map(renderElement)}
       </group>
-    </animated.group>
+    </group>
   )
 }
 

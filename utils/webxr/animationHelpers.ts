@@ -47,4 +47,4 @@ export function createStaggeredDelay(index: number, baseDelay: number = 100): nu
 
 // Note: Interpolation functions removed as they're duplicated in
 // @/components/WebXR/shared/AnimationHelpers.tsx
-// Use react-spring's built-in interpolation instead for better performance
+// Use custom spring animation system for better performance
