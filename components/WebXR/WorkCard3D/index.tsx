@@ -1,8 +1,11 @@
-import React, { useState, useRef, Suspense, useMemo } from 'react'
+import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { workCardPositions } from '@/utils/webxr/animationHelpers'
+
+// Navigation button position (from Navigation3D component)
+const NAVIGATION_POSITION = [4, 4, 0] as [number, number, number]
 
 interface WorkLink {
   title: string
@@ -34,6 +37,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
   const [hovered, setHovered] = useState(false)
+  const [hasAnimated, setHasAnimated] = useState(false)
   
   // Simple texture loading
   const coverTexture = useMemo(() => {
@@ -44,44 +48,88 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     return texture
   }, [work.cover])
 
+  // Initialize position at navigation button when first becoming visible
+  useEffect(() => {
+    if (visible && !hasAnimated && groupRef.current) {
+      groupRef.current.position.set(...NAVIGATION_POSITION)
+      groupRef.current.scale.setScalar(0.1)
+      setHasAnimated(true)
+    }
+  }, [visible, hasAnimated])
+
   useFrame((state, delta) => {
     if (groupRef.current) {
-      const targetY = visible 
-        ? hovered 
+      if (visible) {
+        // Animate from navigation button to final position
+        const targetX = position[0]
+        const targetY = hovered 
           ? position[1] + workCardPositions.hover.y
           : position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
-        : position[1] + workCardPositions.entrance.y
-      
-      const targetZ = visible 
-        ? hovered 
+        const targetZ = hovered 
           ? position[2] + workCardPositions.hover.z
           : position[2]
-        : position[2] + workCardPositions.entrance.z
-      
-      const targetScale = visible ? (hovered ? 1.1 : 1) : 0.8
-      const targetOpacity = visible ? 1 : 0
-      
-      // Smooth interpolation using lerp
-      groupRef.current.position.x = position[0]
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, delta * 5)
-      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, delta * 5)
-      
-      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 8))
-      
-      // Handle opacity for all materials
-      groupRef.current.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach(material => {
-              if ('opacity' in material) {
-                material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 8)
-              }
-            })
-          } else if ('opacity' in child.material) {
-            child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 8)
+        
+        const targetScale = hovered ? 1.1 : 1
+        const targetOpacity = 1
+        
+        // Spring-like animation with staggered delay
+        const animationSpeed = 3 + index * 0.5 // Stagger animation
+        const positionLerpSpeed = delta * animationSpeed
+        const scaleLerpSpeed = delta * (animationSpeed + 2)
+        
+        // Smooth interpolation using lerp
+        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, positionLerpSpeed)
+        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, positionLerpSpeed)
+        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, positionLerpSpeed)
+        
+        groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, scaleLerpSpeed))
+        
+        // Handle opacity for all materials
+        groupRef.current.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach(material => {
+                if ('opacity' in material) {
+                  material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 8)
+                }
+              })
+            } else if ('opacity' in child.material) {
+              child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 8)
+            }
           }
+        })
+      } else {
+        // Animate back to navigation button position when hiding
+        const targetOpacity = 0
+        const targetScale = 0.1
+        
+        // Return to navigation position
+        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, NAVIGATION_POSITION[0], delta * 5)
+        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, NAVIGATION_POSITION[1], delta * 5)
+        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, NAVIGATION_POSITION[2], delta * 5)
+        
+        groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 8))
+        
+        // Fade out materials
+        groupRef.current.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach(material => {
+                if ('opacity' in material) {
+                  material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 10)
+                }
+              })
+            } else if ('opacity' in child.material) {
+              child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 10)
+            }
+          }
+        })
+        
+        // Reset hasAnimated when fully hidden to allow re-animation
+        if (groupRef.current.scale.x < 0.15) {
+          setHasAnimated(false)
         }
-      })
+      }
       
       // Subtle rotation when hovered
       if (hovered) {
