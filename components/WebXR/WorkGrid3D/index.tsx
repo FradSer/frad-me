@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, memo, useCallback } from 'react'
 import { useSpring, animated } from '@react-spring/three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { springConfigs } from '@/utils/webxr/springConfigs'
@@ -19,10 +19,10 @@ interface WorkGrid3DProps {
   visible?: boolean
 }
 
-const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
+const WorkGrid3D: React.FC<WorkGrid3DProps> = memo(({ visible = true }) => {
   const { state } = useWebXRView()
   
-  const shouldShow = visible && state.currentView === 'work'
+  const shouldShow = useMemo(() => visible && state.currentView === 'work', [visible, state.currentView])
 
   const { position, opacity, scale } = useSpring({
     position: shouldShow ? [0, 0, 0] : [0, -10, 0],
@@ -52,17 +52,17 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
     return positions
   }, [])
 
-  const handleCardClick = (work: WorkLink) => {
+  const handleCardClick = useCallback((work: WorkLink) => {
     // Add any additional click handling if needed
     console.log('Work card clicked:', work.title)
-  }
+  }, [])
 
-  const handleCardHover = (work: WorkLink, hovered: boolean) => {
+  const handleCardHover = useCallback((work: WorkLink, hovered: boolean) => {
     // Add cursor or other hover effects if needed
     if (typeof window !== 'undefined') {
       document.body.style.cursor = hovered ? 'pointer' : 'auto'
     }
-  }
+  }, [])
 
   if (!visible || !shouldShow) return null
 
@@ -106,6 +106,6 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
       )}
     </animated.group>
   )
-}
+})
 
 export default WorkGrid3D

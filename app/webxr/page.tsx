@@ -31,6 +31,10 @@ const WorkGrid3D = dynamic(
   () => measureChunkLoad('WorkGrid3D', () => import('@/components/WebXR/WorkGrid3D')),
   { ssr: false }
 )
+const CameraController3D = dynamic(
+  () => measureChunkLoad('CameraController3D', () => import('@/components/WebXR/CameraController3D')),
+  { ssr: false }
+)
 
 const STARS_CONFIG = {
   radius: 5,
@@ -57,6 +61,7 @@ export default function WebXR() {
         <WebXRViewProvider>
           <Suspense fallback={<LoadingFallback />}>
             <GenericCanvas>
+              <CameraController3D />
               <HeroText />
               <WorkGrid3D />
               <Navigation3D />

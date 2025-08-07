@@ -1,4 +1,4 @@
-import React, { useState, useRef, Suspense } from 'react'
+import React, { useState, useRef, Suspense, memo, useMemo, useCallback } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { useSpring, animated } from '@react-spring/three'
 import { Html, Text } from '@react-three/drei'
@@ -25,7 +25,7 @@ interface WorkCard3DProps {
   onClick?: () => void
 }
 
-const WorkCard3D: React.FC<WorkCard3DProps> = ({
+const WorkCard3D: React.FC<WorkCard3DProps> = memo(({
   work,
   position,
   index,
@@ -37,15 +37,23 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
   
-  // Load texture for the work cover
-  const coverTexture = useLoader(THREE.TextureLoader, work.cover)
+  // Load texture for the work cover with memoization
+  const coverTexture = useMemo(() => {
+    const loader = new THREE.TextureLoader()
+    const texture = loader.load(work.cover)
+    texture.minFilter = THREE.LinearFilter
+    texture.magFilter = THREE.LinearFilter
+    return texture
+  }, [work.cover])
   
-  // Animation states
-  const targetPosition = visible 
-    ? hovered 
-      ? [position[0], position[1] + workCardPositions.hover.y, position[2] + workCardPositions.hover.z]
-      : [position[0], position[1], position[2]]
-    : [position[0], position[1] + workCardPositions.entrance.y, position[2] + workCardPositions.entrance.z]
+  // Memoized animation states
+  const targetPosition = useMemo(() => 
+    visible 
+      ? hovered 
+        ? [position[0], position[1] + workCardPositions.hover.y, position[2] + workCardPositions.hover.z]
+        : [position[0], position[1], position[2]]
+      : [position[0], position[1] + workCardPositions.entrance.y, position[2] + workCardPositions.entrance.z]
+  , [visible, hovered, position])
 
   const { animatedPosition, scale, opacity, rotation } = useSpring({
     animatedPosition: targetPosition as [number, number, number],
@@ -57,30 +65,30 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   })
 
   useFrame((state) => {
-    if (meshRef.current && !hovered) {
+    if (meshRef.current && !hovered && visible) {
       // Subtle floating animation when not hovered
       meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
     }
   })
 
-  const handlePointerOver = () => {
+  const handlePointerOver = useCallback(() => {
     setHovered(true)
     onHover?.(true)
-  }
+  }, [onHover])
 
-  const handlePointerOut = () => {
+  const handlePointerOut = useCallback(() => {
     setHovered(false)
     onHover?.(false)
-  }
+  }, [onHover])
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setClicked(true)
     onClick?.()
     // Navigate to work detail page
     if (typeof window !== 'undefined') {
       window.location.href = `/works/${work.slug}`
     }
-  }
+  }, [onClick, work.slug])
 
   if (!visible) return null
 
@@ -164,6 +172,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       )}
     </animated.group>
   )
-}
+})
 
 export default WorkCard3D
