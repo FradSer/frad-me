@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary'
+import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary'
 import WebXR3DErrorBoundary from '@/components/WebXR/WebXR3DErrorBoundary'
 import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext'
 import { measureChunkLoad } from '@/utils/performance'
