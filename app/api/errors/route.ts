@@ -60,7 +60,7 @@ function sanitizeErrorPayload(payload: ErrorPayload): ErrorPayload {
     error: {
       name: payload.error.name.substring(0, 100),
       message: payload.error.message.substring(0, 500),
-      stack: process.env.NODE_ENV === 'development' ? payload.error.stack?.substring(0, 2000) : undefined
+      // Stack traces removed from API response to prevent information disclosure
     },
     userAgent: payload.userAgent?.substring(0, 200),
     timestamp: new Date().toISOString(), // Use server timestamp for security
@@ -88,11 +88,13 @@ export async function POST(request: NextRequest) {
 
     const sanitizedPayload = sanitizeErrorPayload(body)
     
-    // Log the error securely
+    // Log the error securely - stack traces only logged server-side, never in API response
     console.error('[WebXR Error API]', {
       ...sanitizedPayload,
       clientIp,
-      requestTime: new Date().toISOString()
+      requestTime: new Date().toISOString(),
+      // Stack trace logged securely server-side only for debugging
+      serverSideStack: process.env.NODE_ENV === 'development' ? body.error.stack?.substring(0, 2000) : undefined
     })
 
     // In production, you might want to:
