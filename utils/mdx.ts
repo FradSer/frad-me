@@ -2,33 +2,44 @@ import fs from 'fs'
 import matter from 'gray-matter'
 import { bundleMDX } from 'mdx-bundler'
 import path from 'path'
+import type { WorkFrontmatter } from '@/types/work'
 
 const ROOT = process.cwd()
 const POSTS_PATH = path.join(ROOT, 'content', 'works')
 
-// Error handling utility
-const createError = (message: string, cause?: unknown) => 
+/**
+ * Creates a standardized error with optional cause
+ */
+const createError = (message: string, cause?: unknown): Error => 
   Object.assign(new Error(message), { 
     cause: cause instanceof Error ? cause : undefined 
   })
 
-type PostFrontmatter = {
-  title: string
-  description: string
-  cover: string
-  [key: string]: unknown
-}
-
-type Post = {
-  frontmatter: PostFrontmatter
+/**
+ * Represents a blog post with its metadata
+ */
+export interface Post {
+  frontmatter: WorkFrontmatter
   slug: string
 }
 
-type CompiledPost = {
+/**
+ * Represents a compiled MDX post ready for rendering
+ */
+export interface CompiledPost {
   code: string
-  frontmatter: PostFrontmatter
+  frontmatter: WorkFrontmatter
 }
 
+/**
+ * Type definitions for MDX plugins - simplified to avoid unified dependency
+ */
+type RemarkPlugin = any
+type RehypePlugin = any
+
+/**
+ * Reads a file from the posts directory with error handling
+ */
 const getFileContent = (filename: string): string => {
   try {
     return fs.readFileSync(path.join(POSTS_PATH, filename), 'utf8')
@@ -37,17 +48,27 @@ const getFileContent = (filename: string): string => {
   }
 }
 
+/**
+ * Configures the esbuild binary path for MDX compilation
+ */
 const configureEsbuildPath = (): void => {
   const binaryName = process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild'
   const esbuildPath = path.join(ROOT, 'node_modules', 'esbuild', binaryName)
   process.env.ESBUILD_BINARY_PATH = esbuildPath
 }
 
+/**
+ * Compiles MDX content to executable JavaScript code
+ * 
+ * @param content - The raw MDX content to compile
+ * @returns Promise that resolves to bundled MDX code and frontmatter
+ */
 const getCompiledMDX = async (content: string) => {
   configureEsbuildPath()
 
-  const remarkPlugins: any[] = []
-  const rehypePlugins: any[] = []
+  // Define plugin arrays with proper typing
+  const remarkPlugins: RemarkPlugin[] = []
+  const rehypePlugins: RehypePlugin[] = []
 
   try {
     return await bundleMDX({
@@ -69,6 +90,12 @@ const getCompiledMDX = async (content: string) => {
   }
 }
 
+/**
+ * Retrieves and compiles a single MDX post by slug
+ * 
+ * @param slug - The slug identifier for the post (filename without extension)
+ * @returns Promise that resolves to compiled post with code and frontmatter
+ */
 export const getSinglePost = async (slug: string): Promise<CompiledPost> => {
   try {
     const source = getFileContent(`${slug}.mdx`)
@@ -76,24 +103,32 @@ export const getSinglePost = async (slug: string): Promise<CompiledPost> => {
 
     return {
       code,
-      frontmatter: frontmatter as PostFrontmatter,
+      frontmatter: frontmatter as WorkFrontmatter,
     }
   } catch (error) {
     throw createError(`Failed to get post '${slug}'`, error)
   }
 }
 
+/**
+ * Processes a single post file to extract frontmatter and slug
+ */
 const processPostFile = (fileName: string): Post => {
   const source = getFileContent(fileName)
   const slug = fileName.replace(/\.mdx?$/, '')
   const { data } = matter(source)
 
   return {
-    frontmatter: data as PostFrontmatter,
+    frontmatter: data as WorkFrontmatter,
     slug,
   }
 }
 
+/**
+ * Retrieves all available posts from the content directory
+ * 
+ * @returns Array of posts sorted alphabetically by title
+ */
 export const getAllPosts = (): Post[] => {
   try {
     return fs

@@ -1,29 +1,86 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-interface ErrorPayload {
-  error: {
-    name: string
-    message: string
-    stack?: string
-  }
-  userAgent?: string
-  timestamp: string
-  url?: string
-  webxrSupported?: boolean
-  webglSupported?: boolean
+/**
+ * Structure for error information sent from the client
+ */
+interface ClientErrorInfo {
+  readonly name: string
+  readonly message: string
+  readonly stack?: string
 }
 
-interface RateLimitStore {
-  [ip: string]: {
-    count: number
-    resetTime: number
+/**
+ * Complete error payload structure from client
+ */
+interface ErrorPayload {
+  readonly error: ClientErrorInfo
+  readonly userAgent?: string
+  readonly timestamp: string
+  readonly url?: string
+  readonly webxrSupported?: boolean
+  readonly webglSupported?: boolean
+}
+
+/**
+ * Sanitized error payload for logging (removes sensitive information)
+ */
+interface SanitizedErrorPayload {
+  readonly error: {
+    readonly name: string
+    readonly message: string
+    // Stack traces intentionally omitted for security
   }
+  readonly userAgent?: string
+  readonly timestamp: string
+  readonly url?: string
+  readonly webxrSupported?: boolean
+  readonly webglSupported?: boolean
+}
+
+/**
+ * Rate limiting data structure for tracking client requests
+ */
+interface RateLimitEntry {
+  count: number
+  resetTime: number
+}
+
+/**
+ * In-memory rate limit store (in production, use Redis or similar)
+ */
+interface RateLimitStore {
+  [ip: string]: RateLimitEntry
+}
+
+/**
+ * Type guard to validate unknown payload as ErrorPayload
+ */
+function isValidErrorPayload(payload: unknown): payload is ErrorPayload {
+  if (!payload || typeof payload !== 'object') {
+    return false
+  }
+
+  const p = payload as Record<string, unknown>
+  
+  return (
+    p.error !== null &&
+    typeof p.error === 'object' &&
+    typeof (p.error as Record<string, unknown>).name === 'string' &&
+    typeof (p.error as Record<string, unknown>).message === 'string' &&
+    typeof p.timestamp === 'string'
+  )
 }
 
 const rateLimitStore: RateLimitStore = {}
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
 const RATE_LIMIT_MAX_REQUESTS = 10
 
+/**
+ * Checks if a client IP has exceeded the rate limit
+ * 
+ * @param ip - Client IP address
+ * @returns True if request is allowed, false if rate limited
+ */
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const clientData = rateLimitStore[ip]
@@ -44,18 +101,13 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-function validateErrorPayload(payload: any): payload is ErrorPayload {
-  return (
-    payload &&
-    typeof payload === 'object' &&
-    payload.error &&
-    typeof payload.error.name === 'string' &&
-    typeof payload.error.message === 'string' &&
-    typeof payload.timestamp === 'string'
-  )
-}
-
-function sanitizeErrorPayload(payload: ErrorPayload): ErrorPayload {
+/**
+ * Sanitizes error payload by removing sensitive information and enforcing limits
+ * 
+ * @param payload - Raw error payload from client
+ * @returns Sanitized payload safe for logging
+ */
+function sanitizeErrorPayload(payload: ErrorPayload): SanitizedErrorPayload {
   return {
     error: {
       name: payload.error.name.substring(0, 100),
@@ -70,7 +122,11 @@ function sanitizeErrorPayload(payload: ErrorPayload): ErrorPayload {
   }
 }
 
-export async function POST(request: NextRequest) {
+/**
+ * API route handler for error logging
+ * Implements rate limiting and input sanitization for security
+ */
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
                    request.headers.get('x-real-ip') ||
                    'unknown'
@@ -80,9 +136,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json()
+    const body: unknown = await request.json()
     
-    if (!validateErrorPayload(body)) {
+    if (!isValidErrorPayload(body)) {
       return NextResponse.json({ error: 'Invalid error payload' }, { status: 400 })
     }
 

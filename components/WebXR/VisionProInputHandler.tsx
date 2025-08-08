@@ -1,12 +1,15 @@
 import React, { useEffect, useCallback } from 'react'
 import { useXR } from '@react-three/xr'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import type { 
+  VisionProEventHandlers,
+  XRInputSourcesChangeEvent,
+  XRInputSourceEvent,
+  XRSessionEvent,
+  XRTargetRayMode
+} from '@/types/webxr'
 
-interface VisionProInputHandlerProps {
-  onTransientPointerSelect?: (event: any) => void
-  onHandTrackingStart?: (event: any) => void
-  onHandTrackingEnd?: (event: any) => void
-}
+interface VisionProInputHandlerProps extends VisionProEventHandlers {}
 
 // Internal component that uses XR hooks - only rendered when XR is supported
 const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
@@ -17,14 +20,14 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
   const { session } = useXR()
   const { isVisionPro } = useWebXRView()
 
-  const TRANSIENT_POINTER = 'transient-pointer'
+  const TRANSIENT_POINTER: XRTargetRayMode = 'transient-pointer'
 
-  const handleInputSourcesChange = useCallback((event: any) => {
+  const handleInputSourcesChange = useCallback((event: XRInputSourcesChangeEvent) => {
     if (!isVisionPro) return
 
     // Vision Pro uses transient-pointer for gaze + pinch interactions
     const transientInputs = event.session.inputSources.filter(
-      (source: any) => source.targetRayMode === TRANSIENT_POINTER
+      (source) => source.targetRayMode === TRANSIENT_POINTER
     )
 
     if (transientInputs.length > 0 && process.env.NODE_ENV === 'development') {
@@ -32,7 +35,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     }
   }, [isVisionPro])
 
-  const handleSelectStart = useCallback((event: any) => {
+  const handleSelectStart = useCallback((event: XRInputSourceEvent) => {
     if (!isVisionPro) return
 
     const inputSource = event.inputSource
@@ -45,7 +48,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     }
   }, [isVisionPro, onTransientPointerSelect])
 
-  const handleSelectEnd = useCallback((event: any) => {
+  const handleSelectEnd = useCallback((event: XRInputSourceEvent) => {
     if (!isVisionPro) return
 
     const inputSource = event.inputSource
@@ -55,7 +58,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     }
   }, [isVisionPro])
 
-  const handleSessionStart = useCallback((event: any) => {
+  const handleSessionStart = useCallback((event: XRSessionEvent) => {
     if (!isVisionPro) return
     if (process.env.NODE_ENV === 'development') {
       console.log('WebXR session started on Vision Pro')
@@ -70,7 +73,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     }
   }, [isVisionPro, onHandTrackingStart])
 
-  const handleSessionEnd = useCallback((event: any) => {
+  const handleSessionEnd = useCallback((event: XRSessionEvent) => {
     if (!isVisionPro) return
     if (process.env.NODE_ENV === 'development') {
       console.log('WebXR session ended on Vision Pro')
