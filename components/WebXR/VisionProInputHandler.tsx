@@ -8,7 +8,8 @@ interface VisionProInputHandlerProps {
   onHandTrackingEnd?: (event: any) => void
 }
 
-const VisionProInputHandler: React.FC<VisionProInputHandlerProps> = ({
+// Internal component that uses XR hooks - only rendered when XR is supported
+const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
   onTransientPointerSelect,
   onHandTrackingStart,
   onHandTrackingEnd
@@ -98,6 +99,18 @@ const VisionProInputHandler: React.FC<VisionProInputHandlerProps> = ({
 
   // This component doesn't render anything, it just handles events
   return null
+}
+
+// Wrapper component that conditionally renders the XR component
+const VisionProInputHandler: React.FC<VisionProInputHandlerProps> = (props) => {
+  const { webXRSupported, isVisionPro } = useWebXRView()
+  
+  // Only render the XR component when WebXR is supported and it's Vision Pro
+  if (!webXRSupported || !isVisionPro) {
+    return null
+  }
+  
+  return <VisionProInputHandlerInternal {...props} />
 }
 
 export default VisionProInputHandler

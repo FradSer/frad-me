@@ -32,6 +32,9 @@ export class SpringScalar {
   }
 
   update(deltaTime: number = 1/60) {
+    // Clamp deltaTime to prevent physics instability with irregular frame rates
+    const clampedDelta = Math.min(deltaTime, 1/30) // Max 30fps, min stable timestep
+    
     if (Math.abs(this.currentValue - this.targetValue) < 0.001 && 
         Math.abs(this.currentVelocity) < 0.001) {
       this.currentValue = this.targetValue
@@ -43,8 +46,8 @@ export class SpringScalar {
     const damping = -this.config.friction * this.currentVelocity
     const acceleration = force + damping
 
-    this.currentVelocity += acceleration * deltaTime
-    this.currentValue += this.currentVelocity * deltaTime
+    this.currentVelocity += acceleration * clampedDelta
+    this.currentValue += this.currentVelocity * clampedDelta
 
     return this.currentValue
   }

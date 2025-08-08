@@ -135,33 +135,42 @@ function HeroText() {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
-  
   // Custom spring configuration equivalent to heroTransition
   const springConfig = { tension: 120, friction: 16 }
   
-  const positionX = useSpringScalar(targetState.position.x, springConfig)
-  const positionY = useSpringScalar(targetState.position.y, springConfig)
-  const positionZ = useSpringScalar(targetState.position.z, springConfig)
-  const scaleX = useSpringScalar(targetState.scale.x, springConfig)
-  const scaleY = useSpringScalar(targetState.scale.y, springConfig)
-  const scaleZ = useSpringScalar(targetState.scale.z, springConfig)
-  const opacity = useSpringScalar(targetState.opacity, springConfig)
+  // Initialize all springs consistently with home state to avoid race conditions
+  const initialState = heroAnimationStates.home
+  const positionX = useSpringScalar(initialState.position.x, springConfig)
+  const positionY = useSpringScalar(initialState.position.y, springConfig)
+  const positionZ = useSpringScalar(initialState.position.z, springConfig)
+  const scaleX = useSpringScalar(initialState.scale.x, springConfig)
+  const scaleY = useSpringScalar(initialState.scale.y, springConfig)
+  const scaleZ = useSpringScalar(initialState.scale.z, springConfig)
+  const opacity = useSpringScalar(initialState.opacity, springConfig)
 
-  // Update spring targets when view changes
-  React.useEffect(() => {
-    positionX.set(targetState.position.x)
-    positionY.set(targetState.position.y)
-    positionZ.set(targetState.position.z)
-    scaleX.set(targetState.scale.x)
-    scaleY.set(targetState.scale.y)
-    scaleZ.set(targetState.scale.z)
-    opacity.set(targetState.opacity)
-  }, [currentView, targetState, positionX, positionY, positionZ, scaleX, scaleY, scaleZ, opacity])
 
-  // Use frame to update animation and material opacity for all child meshes
+  // Track current view for consistent spring target updates
+  const currentViewRef = useRef(currentView)
+
+  // Use frame for consistent spring target setting and animation updates
   useFrame((_, delta) => {
     if (!groupRef.current) return
+    
+    // Update spring targets when view changes (in frame for consistent timing)
+    if (currentViewRef.current !== currentView) {
+      const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
+      
+      
+      positionX.set(targetState.position.x)
+      positionY.set(targetState.position.y)
+      positionZ.set(targetState.position.z)
+      scaleX.set(targetState.scale.x)
+      scaleY.set(targetState.scale.y)
+      scaleZ.set(targetState.scale.z)
+      opacity.set(targetState.opacity)
+      
+      currentViewRef.current = currentView
+    }
     
     // Update spring animations
     positionX.update(delta)
