@@ -79,7 +79,11 @@ export default function WebXR() {
             <WebXRCanvas>
               {/* Vision Pro Input Handler */}
               <VisionProInputHandler 
-                onTransientPointerSelect={(event) => console.log('Vision Pro interaction:', event)}
+                onTransientPointerSelect={(event) => {
+                  if (process.env.NODE_ENV === 'development') {
+                    console.log('Vision Pro interaction:', event)
+                  }
+                }}
               />
               
               <WebXR3DErrorBoundary componentName="CameraController3D">

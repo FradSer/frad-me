@@ -27,7 +27,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
       (source: any) => source.targetRayMode === TRANSIENT_POINTER
     )
 
-    if (transientInputs.length > 0) {
+    if (transientInputs.length > 0 && process.env.NODE_ENV === 'development') {
       console.log('Vision Pro transient pointer detected:', transientInputs.length)
     }
   }, [isVisionPro])
@@ -38,7 +38,9 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     const inputSource = event.inputSource
     
     if (inputSource.targetRayMode === TRANSIENT_POINTER) {
-      console.log('Vision Pro gaze + pinch interaction started')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Vision Pro gaze + pinch interaction started')
+      }
       onTransientPointerSelect?.(event)
     }
   }, [isVisionPro, onTransientPointerSelect])
@@ -48,25 +50,31 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
 
     const inputSource = event.inputSource
     
-    if (inputSource.targetRayMode === TRANSIENT_POINTER) {
+    if (inputSource.targetRayMode === TRANSIENT_POINTER && process.env.NODE_ENV === 'development') {
       console.log('Vision Pro gaze + pinch interaction ended')
     }
   }, [isVisionPro])
 
   const handleSessionStart = useCallback((event: any) => {
     if (!isVisionPro) return
-    console.log('WebXR session started on Vision Pro')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('WebXR session started on Vision Pro')
+    }
     
     // Request hand tracking if available
     if (event.session.enabledFeatures?.includes('hand-tracking')) {
-      console.log('Hand tracking enabled on Vision Pro')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Hand tracking enabled on Vision Pro')
+      }
       onHandTrackingStart?.(event)
     }
   }, [isVisionPro, onHandTrackingStart])
 
   const handleSessionEnd = useCallback((event: any) => {
     if (!isVisionPro) return
-    console.log('WebXR session ended on Vision Pro')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('WebXR session ended on Vision Pro')
+    }
     onHandTrackingEnd?.(event)
   }, [isVisionPro, onHandTrackingEnd])
 

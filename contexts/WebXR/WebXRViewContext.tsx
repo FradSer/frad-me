@@ -38,7 +38,9 @@ export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
           const vrSupported = await navigator.xr.isSessionSupported('immersive-vr')
           setWebXRSupported(vrSupported)
         } catch (error) {
-          console.log('WebXR detection failed:', error)
+          if (process.env.NODE_ENV === 'development') {
+            console.log('WebXR detection failed:', error)
+          }
           setWebXRSupported(false)
         }
       }
