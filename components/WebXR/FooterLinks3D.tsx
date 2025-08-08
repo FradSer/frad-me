@@ -2,6 +2,7 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { measureChunkLoad } from '@/utils/performance'
+import { FOOTER_POSITIONS } from '@/utils/webxr/animationConstants'
 
 const Html = dynamic(
   () => measureChunkLoad('Html', () => 
@@ -53,9 +54,9 @@ function FooterLinks3D() {
   const { currentView } = useWebXRView()
 
   return (
-    <group position={[0, 0, -4]}>
+    <group position={FOOTER_POSITIONS.footerGroup}>
       {/* External Links - More accessible position for visionOS */}
-      <ExternalLinks position={[2, -2.5, 0]} show={currentView === 'home'} />
+      <ExternalLinks position={FOOTER_POSITIONS.externalLinks} show={currentView === 'home'} />
     </group>
   )
 }

@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { useXR } from '@react-three/xr'
 import { xrStore } from './WebXRCanvas'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { IMMERSIVE_BUTTON_POSITIONS } from '@/utils/webxr/animationConstants'
 
 interface ImmersiveButtonProps {
   className?: string
@@ -101,14 +102,14 @@ export const ExitImmersiveButton: React.FC = () => {
   }, [])
 
   return (
-    <mesh position={[0, -2, -3]} onClick={handleExit}>
+    <mesh position={IMMERSIVE_BUTTON_POSITIONS.button} onClick={handleExit}>
       <planeGeometry args={[2, 0.5]} />
       <meshBasicMaterial 
         color={isExiting ? '#666' : '#ff4444'} 
         transparent 
         opacity={0.8} 
       />
-      <group position={[0, 0, 0.001]}>
+      <group position={IMMERSIVE_BUTTON_POSITIONS.textGroup}>
         <meshBasicMaterial attach="material" color="white" />
       </group>
     </mesh>

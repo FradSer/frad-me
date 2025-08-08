@@ -6,7 +6,7 @@ import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { useSpringScalar } from '@/hooks/useSpringAnimation'
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils'
 import { measureChunkLoad } from '@/utils/performance'
-import { SPRING_CONFIGS, ENTRANCE_POSITIONS } from '@/utils/webxr/animationConstants'
+import { SPRING_CONFIGS, ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants'
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
 import WorkCard3D from '../WorkCard3D'
 import workLinks from '@/content/workLinks'
@@ -106,11 +106,11 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
     <group ref={groupRef}>
       {/* Enhanced lighting for work section */}
       <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      <pointLight position={[-5, 3, 2]} intensity={0.6} color="#60a5fa" />
+      <directionalLight position={WORK_GRID_POSITIONS.directionalLight} intensity={0.8} />
+      <pointLight position={WORK_GRID_POSITIONS.pointLight} intensity={0.6} color="#60a5fa" />
 
       {/* Work Title */}
-      <WorkTitle position={[0, 5, 0]} currentSection={currentView} />
+      <WorkTitle position={WORK_GRID_POSITIONS.title} currentSection={currentView} />
 
       {/* Work Cards */}
       {workLinks.slice(0, MAX_DISPLAY_WORKS).map((work, index) => {

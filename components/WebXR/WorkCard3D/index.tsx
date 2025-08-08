@@ -3,10 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { workCardPositions } from '@/utils/webxr/animationHelpers'
-
-// Navigation button position (from Navigation3D component) 
-// Combined position: [0, 0, -3] + [2.5, 2, 0] = [2.5, 2, -3]
-const NAVIGATION_POSITION = [2.5, 2, -3] as [number, number, number]
+import { NAVIGATION_POSITIONS, WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants'
 
 interface WorkLink {
   title: string
@@ -52,7 +49,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   // Initialize position at navigation button when first becoming visible
   useEffect(() => {
     if (visible && !hasAnimated && groupRef.current) {
-      groupRef.current.position.set(...NAVIGATION_POSITION)
+      groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
       groupRef.current.scale.setScalar(0.1)
       setHasAnimated(true)
     }
@@ -105,9 +102,9 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         const targetScale = 0.1
         
         // Return to navigation position
-        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, NAVIGATION_POSITION[0], delta * 5)
-        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, NAVIGATION_POSITION[1], delta * 5)
-        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, NAVIGATION_POSITION[2], delta * 5)
+        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, NAVIGATION_POSITIONS.navigationButtonAbsolute[0], delta * 5)
+        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, NAVIGATION_POSITIONS.navigationButtonAbsolute[1], delta * 5)
+        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, NAVIGATION_POSITIONS.navigationButtonAbsolute[2], delta * 5)
         
         groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 8))
         
@@ -169,7 +166,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         onPointerOut={handlePointerOut}
         onClick={handleClick}
       >
-        <planeGeometry args={[3, 2, 1]} />
+        <planeGeometry args={WORK_CARD_POSITIONS.cardGeometry} />
         <meshStandardMaterial
           map={coverTexture}
           transparent
@@ -177,7 +174,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       </mesh>
 
       {/* Work title */}
-      <group position={[0, -1.5, 0.1]}>
+      <group position={WORK_CARD_POSITIONS.titleGroup}>
         <Suspense fallback={null}>
           <Text
             color="white"
@@ -195,7 +192,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       </group>
 
       {/* Work subtitle */}
-      <group position={[0, -2.1, 0.1]}>
+      <group position={WORK_CARD_POSITIONS.descriptionGroup}>
         <Suspense fallback={null}>
           <Text
             color="gray"
@@ -213,7 +210,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
       {/* WIP Badge */}
       {work.isWIP && (
-        <group position={[1.3, 0.8, 0.1]}>
+        <group position={WORK_CARD_POSITIONS.wipBadgeGroup}>
           <Html transform occlude>
             <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black shadow-lg">
               WIP
@@ -224,7 +221,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
       {/* Interactive glow effect when hovered */}
       {hovered && (
-        <mesh position={[0, 0, -0.1]}>
+        <mesh position={WORK_CARD_POSITIONS.wipBadgeBackground}>
           <planeGeometry args={[3.2, 2.2]} />
           <meshBasicMaterial
             color="#4f46e5"

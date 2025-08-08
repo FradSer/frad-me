@@ -2,17 +2,18 @@ import React, { useRef, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { CAMERA_POSITIONS } from '@/utils/webxr/animationConstants'
 
 const cameraStates = {
   home: { 
-    position: [0, 0, 5] as [number, number, number], 
+    position: CAMERA_POSITIONS.home.position, 
     fov: 75,
-    lookAt: [0, 0, 0] as [number, number, number]
+    lookAt: CAMERA_POSITIONS.home.lookAt
   },
   work: { 
-    position: [0, 2, 8] as [number, number, number], 
+    position: CAMERA_POSITIONS.work.position, 
     fov: 65,
-    lookAt: [0, 0, 0] as [number, number, number]
+    lookAt: CAMERA_POSITIONS.work.lookAt
   }
 } as const
 

@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { useSpringScalar } from '@/hooks/useSpringAnimation'
 import { measureChunkLoad } from '@/utils/performance'
-import { SPRING_CONFIGS } from '@/utils/webxr/animationConstants'
+import { SPRING_CONFIGS, NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => 
@@ -82,9 +82,9 @@ function Navigation3D() {
   const { currentView, navigateToView } = useWebXRView()
 
   return (
-    <group position={[0, 0, -3]}>
+    <group position={NAVIGATION_POSITIONS.navigationGroup}>
       {/* Main Navigation - More comfortable position for visionOS */}
-      <group position={[2.5, 2, 0]}>
+      <group position={NAVIGATION_POSITIONS.navigationButton}>
         {currentView === 'home' ? (
           <NavItem
             position={[0, 0, 0]}
