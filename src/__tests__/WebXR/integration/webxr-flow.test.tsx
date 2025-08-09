@@ -2,10 +2,23 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
+// Test constants
+const TEST_IDS = {
+  webxrViewProvider: 'webxr-view-provider',
+  webxrCanvas: 'webxr-canvas',
+  heroText: 'hero-text',
+  navigation3d: 'navigation-3d',
+  footerLinks3d: 'footer-links-3d',
+  cameraController3d: 'camera-controller-3d',
+  workGrid3d: 'work-grid-3d',
+  r3fCanvas: 'r3f-canvas',
+  xrCanvas: 'xr-canvas',
+} as const
+
 // Mock WebXR components and dependencies
 jest.mock('@react-three/fiber', () => ({
   Canvas: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="r3f-canvas">{children}</div>
+    <div data-testid={TEST_IDS.r3fCanvas}>{children}</div>
   ),
   useFrame: () => {},
   useThree: () => ({
@@ -20,7 +33,7 @@ jest.mock('@react-three/xr', () => ({
     isPresenting: false
   }),
   XRCanvas: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="xr-canvas">{children}</div>
+    <div data-testid={TEST_IDS.xrCanvas}>{children}</div>
   )
 }))
 
@@ -82,7 +95,7 @@ jest.mock('@/components/WebXR/WorkGrid3D', () => {
 
 jest.mock('@/components/WebXR/FooterLinks3D', () => {
   return function FooterLinks3D() {
-    return <div data-testid="footer-links-3d">Footer Links Component</div>
+    return <div data-testid={TEST_IDS.footerLinks3d}>Footer Links Component</div>
   }
 })
 
@@ -96,7 +109,7 @@ jest.mock('@/components/WebXR/WebXRCanvas', () => {
   return function WebXRCanvas({ children }: { children: React.ReactNode }) {
     return (
       <div data-testid="webxr-canvas">
-        <div data-testid="xr-canvas">{children}</div>
+        <div data-testid={TEST_IDS.xrCanvas}>{children}</div>
       </div>
     )
   }
@@ -117,12 +130,12 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // Check that all major components are present
-      expect(screen.getByTestId('webxr-view-provider')).toBeInTheDocument()
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
-      expect(screen.getByTestId('hero-text')).toBeInTheDocument()
-      expect(screen.getByTestId('navigation-3d')).toBeInTheDocument()
-      expect(screen.getByTestId('footer-links-3d')).toBeInTheDocument()
-      expect(screen.getByTestId('camera-controller-3d')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.heroText)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.navigation3d)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.footerLinks3d)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.cameraController3d)).toBeInTheDocument()
     })
 
     it('should handle view transitions from home to work', async () => {
@@ -139,14 +152,14 @@ describe('WebXR Experience Integration', () => {
       mockWebXRContext.currentView = 'work'
       render(<WebXRPage />)
 
-      expect(screen.getByTestId('work-grid-3d')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.workGrid3d)).toBeInTheDocument()
     })
 
     it('should hide work grid when in home view', () => {
       mockWebXRContext.currentView = 'home'
       render(<WebXRPage />)
 
-      expect(screen.queryByTestId('work-grid-3d')).not.toBeInTheDocument()
+      expect(screen.queryByTestId(TEST_IDS.workGrid3d)).not.toBeInTheDocument()
     })
   })
 
@@ -155,7 +168,7 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // VisionProInputHandler would be rendered but doesn't have visible output
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
 
     it('should handle Vision Pro specific interactions', () => {
@@ -163,7 +176,7 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // Vision Pro specific behavior would be tested
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
   })
 
@@ -172,7 +185,7 @@ describe('WebXR Experience Integration', () => {
       mockWebXRContext.webXRSupported = true
       render(<WebXRPage />)
 
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
 
     it('should handle browsers without WebXR support', () => {
@@ -180,14 +193,14 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // Should still render but potentially with fallbacks
-      expect(screen.getByTestId('webxr-view-provider')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument()
     })
 
     it('should handle WebXR detection loading state', () => {
       mockWebXRContext.loading = true
       render(<WebXRPage />)
 
-      expect(screen.getByTestId('webxr-view-provider')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument()
     })
   })
 
@@ -216,7 +229,7 @@ describe('WebXR Experience Integration', () => {
         rerender(<WebXRPage />)
       }
 
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
 
     it('should maintain performance with complex scene', async () => {
@@ -233,7 +246,7 @@ describe('WebXR Experience Integration', () => {
       
       // Should render reasonably quickly
       expect(renderTime).toBeLessThan(1000)
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
   })
 
@@ -262,7 +275,7 @@ describe('WebXR Experience Integration', () => {
       
       render(<WebXRPage />)
 
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
       
       jest.restoreAllMocks()
     })
@@ -280,7 +293,7 @@ describe('WebXR Experience Integration', () => {
       rerender(<WebXRPage />)
 
       await waitFor(() => {
-        expect(screen.getByTestId('work-grid-3d')).toBeInTheDocument()
+        expect(screen.getByTestId(TEST_IDS.workGrid3d)).toBeInTheDocument()
       })
     })
 
@@ -288,16 +301,16 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // All animated components should be present
-      expect(screen.getByTestId('hero-text')).toBeInTheDocument()
-      expect(screen.getByTestId('navigation-3d')).toBeInTheDocument()
-      expect(screen.getByTestId('footer-links-3d')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.heroText)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.navigation3d)).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.footerLinks3d)).toBeInTheDocument()
 
       // Should handle simultaneous animations without conflicts
       await act(async () => {
         await new Promise(resolve => setTimeout(resolve, 100))
       })
 
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
   })
 
@@ -306,7 +319,7 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />)
 
       // Immersive button should be present
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
 
     it('should handle immersive mode transitions', async () => {
@@ -318,7 +331,7 @@ describe('WebXR Experience Integration', () => {
         await new Promise(resolve => setTimeout(resolve, 50))
       })
 
-      expect(screen.getByTestId('webxr-canvas')).toBeInTheDocument()
+      expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument()
     })
   })
 
@@ -348,8 +361,8 @@ describe('WebXR Experience Integration', () => {
 
       // All components should load successfully
       await waitFor(() => {
-        expect(screen.getByTestId('hero-text')).toBeInTheDocument()
-        expect(screen.getByTestId('navigation-3d')).toBeInTheDocument()
+        expect(screen.getByTestId(TEST_IDS.heroText)).toBeInTheDocument()
+        expect(screen.getByTestId(TEST_IDS.navigation3d)).toBeInTheDocument()
       })
     })
 
