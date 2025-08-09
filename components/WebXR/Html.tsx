@@ -6,16 +6,24 @@ import html2canvas from 'html2canvas'
 import { renderToString } from 'react-dom/server'
 import * as THREE from 'three'
 
-// Prevents html2canvas warnings
+/**
+ * Type for the original getContext method with proper overloads
+ */
+type OriginalGetContext = HTMLCanvasElement['getContext']
 
-// Prevents html2canvas warnings by monkey-patching canvas context
-;(HTMLCanvasElement.prototype.getContext as any) = (function (origFn: any) {
-  return function (this: any, type: any, attribs: any) {
-    attribs = attribs || {}
-    attribs.preserveDrawingBuffer = true
-    return origFn.call(this, type, attribs)
-  }
-})(HTMLCanvasElement.prototype.getContext)
+// Prevents html2canvas warnings by monkey-patching canvas context with proper typing
+const originalGetContext: OriginalGetContext = HTMLCanvasElement.prototype.getContext
+
+// Override the getContext method with proper type handling
+;(HTMLCanvasElement.prototype.getContext as any) = function (
+  this: HTMLCanvasElement,
+  type: string,
+  attribs?: any
+): RenderingContext | null {
+  const attributes = attribs || {}
+  attributes.preserveDrawingBuffer = true
+  return originalGetContext.call(this, type as any, attributes)
+}
 
 let container: HTMLElement | null = document.querySelector('#htmlContainer')
 
@@ -29,19 +37,26 @@ if (!container) {
   container = node
 }
 
-type IHtmlProps = {
+/**
+ * Props for the Html component
+ */
+interface HtmlProps {
   children: React.ReactNode
   width?: number
   height?: number
   color?: string
 }
 
+/**
+ * Html component that renders React children to a 3D plane texture
+ * Converts HTML content to canvas and applies it as a material texture
+ */
 export default function Html({
   children,
   width,
   height,
   color = 'transparent',
-}: Readonly<IHtmlProps>) {
+}: Readonly<HtmlProps>) {
   const { camera, size: viewSize, gl } = useThree()
 
   const sceneSize = useMemo(() => {

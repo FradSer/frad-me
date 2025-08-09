@@ -26,19 +26,9 @@ import {
 } from '@/components/WorkPage/WorkImage'
 import WorkInformation from '@/components/WorkPage/WorkInformation'
 import WorkSite from '@/components/WorkPage/WorkSite'
+import type { WorkFrontmatter } from '@/types/work'
 
-type WorkFrontmatter = {
-  title: string
-  description: string
-  cover: string
-  coverBackground?: string
-  platforms?: string[]
-  contributors?: string[]
-  site?: string
-  nextWork?: string
-}
-
-type WorkPageClientProps = {
+interface WorkPageClientProps {
   code: string
   frontmatter: WorkFrontmatter
 }

@@ -3,6 +3,9 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
+import { useSpringScalar } from '@/hooks/useSpringAnimation'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -129,12 +132,97 @@ const renderElement = (element: typeof heroContent[0], index: number) => {
 }
 
 function HeroText() {
+  const { currentView } = useWebXRView()
+  const groupRef = useRef<THREE.Group>(null)
+  
+  // Custom spring configuration equivalent to heroTransition
+  const springConfig = { tension: 120, friction: 16 }
+  
+  // Initialize all springs consistently with home state to avoid race conditions
+  const initialState = heroAnimationStates.home
+  const positionX = useSpringScalar(initialState.position.x, springConfig)
+  const positionY = useSpringScalar(initialState.position.y, springConfig)
+  const positionZ = useSpringScalar(initialState.position.z, springConfig)
+  const scaleX = useSpringScalar(initialState.scale.x, springConfig)
+  const scaleY = useSpringScalar(initialState.scale.y, springConfig)
+  const scaleZ = useSpringScalar(initialState.scale.z, springConfig)
+  const opacity = useSpringScalar(initialState.opacity, springConfig)
+
+
+  // Track current view for consistent spring target updates
+  const currentViewRef = useRef(currentView)
+
+  // Use frame for consistent spring target setting and animation updates
+  useFrame((_, delta) => {
+    if (!groupRef.current) return
+    
+    // Update spring targets when view changes (in frame for consistent timing)
+    if (currentViewRef.current !== currentView) {
+      const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
+      
+      
+      positionX.set(targetState.position.x)
+      positionY.set(targetState.position.y)
+      positionZ.set(targetState.position.z)
+      scaleX.set(targetState.scale.x)
+      scaleY.set(targetState.scale.y)
+      scaleZ.set(targetState.scale.z)
+      opacity.set(targetState.opacity)
+      
+      currentViewRef.current = currentView
+    }
+    
+    // Update spring animations
+    positionX.update(delta)
+    positionY.update(delta)
+    positionZ.update(delta)
+    scaleX.update(delta)
+    scaleY.update(delta)
+    scaleZ.update(delta)
+    opacity.update(delta)
+    
+    // Apply transforms
+    groupRef.current.position.set(positionX.value, positionY.value, positionZ.value)
+    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value)
+    
+    const currentOpacity = opacity.value
+    
+    // Hide completely when opacity is near zero for performance
+    groupRef.current.visible = currentOpacity > 0.01
+    
+    // Apply opacity to all materials
+    groupRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh && child.material) {
+        if (Array.isArray(child.material)) {
+          child.material.forEach((material) => {
+            if (material instanceof THREE.MeshStandardMaterial || 
+                material instanceof THREE.MeshBasicMaterial) {
+              material.opacity = currentOpacity
+              material.transparent = true
+            }
+          })
+        } else {
+          const material = child.material
+          if (material instanceof THREE.MeshStandardMaterial || 
+              material instanceof THREE.MeshBasicMaterial) {
+            material.opacity = currentOpacity
+            material.transparent = true
+          }
+        }
+      }
+    })
+  })
+
   return (
-    <>
+    <group 
+      ref={groupRef}
+    >
       <ambientLight intensity={Math.PI / 10} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      {heroContent.map(renderElement)}
-    </>
+      <group>
+        {heroContent.map(renderElement)}
+      </group>
+    </group>
   )
 }
 

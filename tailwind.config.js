@@ -11,8 +11,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['GT Eesti Text Trial', ...defaultTheme.fontFamily.sans],
-        mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
+        sans: ['var(--font-gt-eesti-text)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-fira-code)', ...defaultTheme.fontFamily.mono],
+        display: ['var(--font-gt-eesti-display)', 'var(--font-gt-eesti-text)', ...defaultTheme.fontFamily.sans],
+      },
+      fontWeight: {
+        black: '700', // Map font-black to 700 (bold) since we don't have 900 weight
       },
       aspectRatio: {
         '100/62': '100 / 62',
