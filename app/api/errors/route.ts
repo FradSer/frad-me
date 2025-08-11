@@ -1,34 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createRateLimiter } from '@/utils/rateLimiter'
 
 /**
- * Structure for error information sent from the client
+ * Unified error data structure with optional fields
  */
-interface ClientErrorInfo {
-  readonly name: string
-  readonly message: string
-  readonly stack?: string
-}
-
-/**
- * Complete error payload structure from client
- */
-interface ErrorPayload {
-  readonly error: ClientErrorInfo
-  readonly userAgent?: string
-  readonly timestamp: string
-  readonly url?: string
-  readonly webxrSupported?: boolean
-  readonly webglSupported?: boolean
-}
-
-/**
- * Sanitized error payload for logging (removes sensitive information)
- */
-interface SanitizedErrorPayload {
-  readonly error: {
-    readonly name: string
-    readonly message: string
-    // Stack traces intentionally omitted for security
+interface ErrorData {
+  readonly error: { 
+    name: string
+    message: string
+    stack?: string 
   }
   readonly userAgent?: string
   readonly timestamp: string
@@ -38,87 +18,44 @@ interface SanitizedErrorPayload {
 }
 
 /**
- * Rate limiting data structure for tracking client requests
+ * Sanitized error data (omits sensitive stack trace)
  */
-interface RateLimitEntry {
-  count: number
-  resetTime: number
+type SanitizedErrorData = Omit<ErrorData, 'error'> & { 
+  error: Omit<ErrorData['error'], 'stack'> 
 }
 
 /**
- * In-memory rate limit store (in production, use Redis or similar)
+ * Simplified type guard to validate error data
  */
-interface RateLimitStore {
-  [ip: string]: RateLimitEntry
+function isValidErrorData(data: unknown): data is ErrorData {
+  const error = (data as any)?.error
+  return error?.name && error?.message && (data as any)?.timestamp
 }
 
-/**
- * Type guard to validate unknown payload as ErrorPayload
- */
-function isValidErrorPayload(payload: unknown): payload is ErrorPayload {
-  if (!payload || typeof payload !== 'object') {
-    return false
-  }
-
-  const p = payload as Record<string, unknown>
-  
-  return (
-    p.error !== null &&
-    typeof p.error === 'object' &&
-    typeof (p.error as Record<string, unknown>).name === 'string' &&
-    typeof (p.error as Record<string, unknown>).message === 'string' &&
-    typeof p.timestamp === 'string'
-  )
-}
-
-const rateLimitStore: RateLimitStore = {}
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
-const RATE_LIMIT_MAX_REQUESTS = 10
+// Create rate limiter instance
+const rateLimiter = createRateLimiter({ 
+  window: 15 * 60 * 1000, // 15 minutes
+  max: 10 
+})
 
 /**
- * Checks if a client IP has exceeded the rate limit
+ * Sanitizes error data by removing sensitive information and enforcing limits
  * 
- * @param ip - Client IP address
- * @returns True if request is allowed, false if rate limited
+ * @param data - Raw error data from client
+ * @returns Sanitized data safe for logging
  */
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const clientData = rateLimitStore[ip]
-
-  if (!clientData || now > clientData.resetTime) {
-    rateLimitStore[ip] = {
-      count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW
-    }
-    return true
-  }
-
-  if (clientData.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return false
-  }
-
-  clientData.count++
-  return true
-}
-
-/**
- * Sanitizes error payload by removing sensitive information and enforcing limits
- * 
- * @param payload - Raw error payload from client
- * @returns Sanitized payload safe for logging
- */
-function sanitizeErrorPayload(payload: ErrorPayload): SanitizedErrorPayload {
+function sanitizeErrorData(data: ErrorData): SanitizedErrorData {
   return {
     error: {
-      name: payload.error.name.substring(0, 100),
-      message: payload.error.message.substring(0, 500),
+      name: data.error.name.substring(0, 100),
+      message: data.error.message.substring(0, 500),
       // Stack traces removed from API response to prevent information disclosure
     },
-    userAgent: payload.userAgent?.substring(0, 200),
+    userAgent: data.userAgent?.substring(0, 200),
     timestamp: new Date().toISOString(), // Use server timestamp for security
-    url: payload.url?.substring(0, 300),
-    webxrSupported: payload.webxrSupported,
-    webglSupported: payload.webglSupported
+    url: data.url?.substring(0, 300),
+    webxrSupported: data.webxrSupported,
+    webglSupported: data.webglSupported
   }
 }
 
@@ -131,22 +68,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                    request.headers.get('x-real-ip') ||
                    'unknown'
 
-  if (!checkRateLimit(clientIp)) {
+  if (!rateLimiter.check(clientIp)) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
   }
 
   try {
     const body: unknown = await request.json()
     
-    if (!isValidErrorPayload(body)) {
+    if (!isValidErrorData(body)) {
       return NextResponse.json({ error: 'Invalid error payload' }, { status: 400 })
     }
 
-    const sanitizedPayload = sanitizeErrorPayload(body)
+    const sanitizedData = sanitizeErrorData(body)
     
     // Log the error securely - stack traces only logged server-side, never in API response
     console.error('[WebXR Error API]', {
-      ...sanitizedPayload,
+      ...sanitizedData,
       clientIp,
       requestTime: new Date().toISOString(),
       // Stack trace logged securely server-side only for debugging
