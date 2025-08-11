@@ -86,6 +86,8 @@ export const ENTRANCE_POSITIONS = {
 } as const
 
 export const ANIMATION_DELAYS = {
-  cardStagger: 0.1,
+  cardStagger: 0.15,  // Increased for more noticeable staggered effect
   sectionTransition: 0.3,
+  cardEntranceDelay: 0.4,  // Increased base delay for better visual impact
+  cardAnimationDuration: 1200,  // Extended animation duration in ms
 } as const
