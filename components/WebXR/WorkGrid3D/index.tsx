@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { useSpringScalar } from '@/hooks/useSpringAnimation'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils'
 import { measureChunkLoad } from '@/utils/performance'
 import { SPRING_CONFIGS, ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants'
@@ -33,7 +33,7 @@ interface WorkGrid3DProps {
 
 const WorkTitle = ({ position, currentSection }: { position: [number, number, number], currentSection: string }) => {
   const textRef = useRef<THREE.Mesh>(null)
-  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.normal)
+  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.normal) })
 
   useEffect(() => {
     if (currentSection === 'work') {
@@ -45,7 +45,7 @@ const WorkTitle = ({ position, currentSection }: { position: [number, number, nu
 
   useFrame(() => {
     if (!textRef.current) return
-    opacitySpring.update()
+    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
     
     if (textRef.current.material) {
       const material = textRef.current.material as THREE.MeshBasicMaterial
@@ -73,7 +73,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const groupRef = useRef<THREE.Group>(null)
   
   // Simplified visibility control - no position animation at container level
-  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.normal)
+  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.normal) })
 
   useEffect(() => {
     if (currentView === 'work') {
@@ -87,7 +87,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
 
   useFrame(() => {
     if (!groupRef.current) return
-    opacitySpring.update()
+    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
 
     // Fixed position at main content layer
     groupRef.current.position.set(...ENTRANCE_POSITIONS.workDefault)

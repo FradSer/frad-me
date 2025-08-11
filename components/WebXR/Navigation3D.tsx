@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { useSpringScalar } from '@/hooks/useSpringAnimation'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 import { measureChunkLoad } from '@/utils/performance'
 import { SPRING_CONFIGS, NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants'
 
@@ -26,7 +26,7 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false)
   const textRef = useRef<THREE.Mesh>(null)
 
-  const scaleSpring = useSpringScalar(1, SPRING_CONFIGS.fast)
+  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) })
 
   // Breathing effect when never interacted
   useEffect(() => {
@@ -50,7 +50,7 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
 
   useFrame(() => {
     if (!textRef.current) return
-    scaleSpring.update()
+    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
     textRef.current.scale.setScalar(scaleSpring.value)
   })
 

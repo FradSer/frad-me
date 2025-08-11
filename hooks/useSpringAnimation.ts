@@ -1,5 +1,9 @@
 import { useRef, useMemo } from 'react'
 
+/**
+ * @deprecated Use useSimpleLerp from '@/hooks/useSimpleLerp' instead for better performance with R3F built-in features
+ */
+
 interface SpringConfig {
   tension: number
   friction: number
@@ -11,6 +15,9 @@ interface SpringValue {
   target: number
 }
 
+/**
+ * @deprecated Use THREE.MathUtils.lerp with useFrame directly, or useSimpleLerp hook
+ */
 export class SpringScalar {
   private currentValue: number = 0
   private currentVelocity: number = 0
@@ -53,10 +60,16 @@ export class SpringScalar {
   }
 }
 
+/**
+ * @deprecated Use useSimpleLerp hook for better performance
+ */
 export const useSpringScalar = (initialValue: number, config: SpringConfig) => {
   return useMemo(() => new SpringScalar(initialValue, config), [initialValue, config.tension, config.friction])
 }
 
+/**
+ * @deprecated Use useTripleLerp hook for better performance
+ */
 export const useSpringAnimation = (
   from: [number, number, number], 
   config: SpringConfig

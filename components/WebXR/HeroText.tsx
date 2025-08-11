@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
-import { useSpringScalar } from '@/hooks/useSpringAnimation'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -138,15 +138,16 @@ function HeroText() {
   // Custom spring configuration equivalent to heroTransition
   const springConfig = { tension: 120, friction: 16 }
   
-  // Initialize all springs consistently with home state to avoid race conditions
+  // Initialize all lerp values consistently with home state to avoid race conditions
   const initialState = heroAnimationStates.home
-  const positionX = useSpringScalar(initialState.position.x, springConfig)
-  const positionY = useSpringScalar(initialState.position.y, springConfig)
-  const positionZ = useSpringScalar(initialState.position.z, springConfig)
-  const scaleX = useSpringScalar(initialState.scale.x, springConfig)
-  const scaleY = useSpringScalar(initialState.scale.y, springConfig)
-  const scaleZ = useSpringScalar(initialState.scale.z, springConfig)
-  const opacity = useSpringScalar(initialState.opacity, springConfig)
+  const lerpConfig = { speed: springConfigToLerpSpeed(springConfig) }
+  const positionX = useSimpleLerp(initialState.position.x, lerpConfig)
+  const positionY = useSimpleLerp(initialState.position.y, lerpConfig)
+  const positionZ = useSimpleLerp(initialState.position.z, lerpConfig)
+  const scaleX = useSimpleLerp(initialState.scale.x, lerpConfig)
+  const scaleY = useSimpleLerp(initialState.scale.y, lerpConfig)
+  const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig)
+  const opacity = useSimpleLerp(initialState.opacity, lerpConfig)
 
 
   // Track current view for consistent spring target updates
@@ -172,14 +173,7 @@ function HeroText() {
       currentViewRef.current = currentView
     }
     
-    // Update spring animations
-    positionX.update(delta)
-    positionY.update(delta)
-    positionZ.update(delta)
-    scaleX.update(delta)
-    scaleY.update(delta)
-    scaleZ.update(delta)
-    opacity.update(delta)
+    // Lerp values are automatically updated via useFrame in useSimpleLerp hook
     
     // Apply transforms
     groupRef.current.position.set(positionX.value, positionY.value, positionZ.value)
