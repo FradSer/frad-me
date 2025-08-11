@@ -95,9 +95,9 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             color="white"
             anchorX="center"
             anchorY="top"
-            fontSize={0.3}
+            fontSize={0.4}
             fontWeight="bold"
-            maxWidth={3}
+            maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
           >
@@ -113,8 +113,8 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             color="gray"
             anchorX="center"
             anchorY="top"
-            fontSize={0.2}
-            maxWidth={3}
+            fontSize={0.25}
+            maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Regular-Trial.woff"
           >
@@ -134,10 +134,10 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         </group>
       )}
 
-      {/* Interactive glow effect when hovered */}
+      {/* Interactive glow effect when hovered - adjusted for larger cards */}
       {hovered && (
         <mesh position={WORK_CARD_POSITIONS.wipBadgeBackground}>
-          <planeGeometry args={[3.2, 2.2]} />
+          <planeGeometry args={[4.8, 3.3]} />
           <meshBasicMaterial
             color="#4f46e5"
             transparent

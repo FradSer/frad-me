@@ -1,8 +1,10 @@
-// Simplified semantic spring configurations
+// Enhanced spring configurations for more dynamic animations
 export const SPRING_CONFIGS = {
-  slow: { tension: 120, friction: 14 },    // Gentle animations like gentle fade ins
-  normal: { tension: 200, friction: 25 },  // Standard position changes and navigation
-  fast: { tension: 400, friction: 30 },    // Quick responses like hover effects
+  slow: { tension: 180, friction: 20 },     // Enhanced gentle animations with more spring
+  normal: { tension: 280, friction: 28 },   // Enhanced standard animations with bouncy feel
+  fast: { tension: 450, friction: 35 },     // Enhanced quick responses with strong spring
+  bouncy: { tension: 320, friction: 22 },   // New config for extra bouncy effects
+  elastic: { tension: 400, friction: 25 },  // New config for elastic entrance effects
 } as const
 
 // Utility function to combine positions
@@ -57,11 +59,11 @@ export const WORK_GRID_POSITIONS = {
   pointLight: [-5, 3, 2] as [number, number, number],
 } as const
 
-// Base card dimensions and spacing
+// Base card dimensions and spacing - enlarged for better visibility
 const CARD_BASE = {
-  geometry: [3, 2, 1] as [number, number, number], // planeGeometry args
-  titleOffset: -1.5,    // Distance below card center for title
-  badgeOffset: [1.3, 0.8] as [number, number], // Badge position from center
+  geometry: [4.5, 3, 1] as [number, number, number], // Larger planeGeometry args
+  titleOffset: -2,      // Adjusted distance below card center for title
+  badgeOffset: [2, 1.2] as [number, number], // Adjusted badge position for larger cards
   layerSpacing: 0.1,    // Z-spacing between elements
 } as const
 
@@ -69,7 +71,7 @@ const CARD_BASE = {
 export const WORK_CARD_POSITIONS = {
   cardGeometry: CARD_BASE.geometry,
   titleGroup: [0, CARD_BASE.titleOffset, CARD_BASE.layerSpacing] as [number, number, number],
-  descriptionGroup: [0, CARD_BASE.titleOffset - 0.6, CARD_BASE.layerSpacing] as [number, number, number],
+  descriptionGroup: [0, CARD_BASE.titleOffset - 0.8, CARD_BASE.layerSpacing] as [number, number, number],
   wipBadgeGroup: [CARD_BASE.badgeOffset[0], CARD_BASE.badgeOffset[1], CARD_BASE.layerSpacing] as [number, number, number],
   wipBadgeBackground: [0, 0, -CARD_BASE.layerSpacing] as [number, number, number],
 } as const
@@ -86,6 +88,8 @@ export const ENTRANCE_POSITIONS = {
 } as const
 
 export const ANIMATION_DELAYS = {
-  cardStagger: 0.1,
+  cardStagger: 0.15,  // Increased for more noticeable staggered effect
   sectionTransition: 0.3,
+  cardEntranceDelay: 0.4,  // Increased base delay for better visual impact
+  cardAnimationDuration: 1200,  // Extended animation duration in ms
 } as const
