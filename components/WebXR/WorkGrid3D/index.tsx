@@ -25,7 +25,7 @@ const Text = dynamic(
   { ssr: false }
 )
 
-const MAX_DISPLAY_WORKS = 3  // Single row of 3 cards
+const MAX_DISPLAY_WORKS = 5  // Display all works with 3 per row layout
 
 interface WorkGrid3DProps {
   visible?: boolean
@@ -93,6 +93,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
         const position = calculateCardPosition(
           index + 1,
           work.isFullScreen || false,
+          workLinks.length  // Pass total number of works
         )
         return (
           <WorkCard3D
