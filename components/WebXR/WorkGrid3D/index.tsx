@@ -25,7 +25,7 @@ const Text = dynamic(
   { ssr: false }
 )
 
-const MAX_DISPLAY_WORKS = 5
+const MAX_DISPLAY_WORKS = 3  // Single row of 3 cards
 
 interface WorkGrid3DProps {
   visible?: boolean
