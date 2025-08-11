@@ -31,42 +31,6 @@ interface WorkGrid3DProps {
   visible?: boolean
 }
 
-const WorkTitle = ({ position, currentSection }: { position: [number, number, number], currentSection: string }) => {
-  const textRef = useRef<THREE.Mesh>(null)
-  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.normal) })
-
-  useEffect(() => {
-    if (currentSection === 'work') {
-      opacitySpring.set(1)
-    } else {
-      opacitySpring.set(0)
-    }
-  }, [currentSection, opacitySpring])
-
-  useFrame(() => {
-    if (!textRef.current) return
-    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
-    
-    if (textRef.current.material) {
-      const material = textRef.current.material as THREE.MeshBasicMaterial
-      material.opacity = opacitySpring.value
-      material.transparent = true
-    }
-  })
-
-  return (
-    <Text
-      ref={textRef}
-      position={position}
-      color="#ffffff"
-      anchorX="center"
-      anchorY="middle"
-      fontSize={1.2}
-    >
-      Selected Work
-    </Text>
-  )
-}
 
 const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const { currentView } = useWebXRView()
@@ -109,8 +73,6 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
       <directionalLight position={WORK_GRID_POSITIONS.directionalLight} intensity={0.8} />
       <pointLight position={WORK_GRID_POSITIONS.pointLight} intensity={0.6} color="#60a5fa" />
 
-      {/* Work Title */}
-      <WorkTitle position={WORK_GRID_POSITIONS.title} currentSection={currentView} />
 
       {/* Work Cards */}
       {workLinks.slice(0, MAX_DISPLAY_WORKS).map((work, index) => {

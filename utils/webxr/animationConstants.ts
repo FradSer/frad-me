@@ -14,7 +14,7 @@ const addPositions = (
 // Base navigation positions
 const NAVIGATION_BASE = {
   group: [0, 0, -3] as [number, number, number],
-  buttonOffset: [2.5, 2, 0] as [number, number, number],
+  buttonOffset: [2.5, 2.8, 0] as [number, number, number], // Raised navigation higher
 } as const
 
 // Navigation positions (computed)
