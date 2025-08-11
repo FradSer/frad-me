@@ -1,9 +1,8 @@
-import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
+import React, { useState, useRef, Suspense, useMemo } from 'react'
 import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
-import { workCardPositions } from '@/utils/webxr/animationHelpers'
-import { NAVIGATION_POSITIONS, WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants'
+import { WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants'
+import { useCardAnimation } from '@/hooks/useCardAnimation'
 
 interface WorkLink {
   title: string
@@ -35,7 +34,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
   const [hovered, setHovered] = useState(false)
-  const [hasAnimated, setHasAnimated] = useState(false)
   
   // Simple texture loading
   const coverTexture = useMemo(() => {
@@ -46,96 +44,13 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     return texture
   }, [work.cover])
 
-  // Initialize position at navigation button when first becoming visible
-  useEffect(() => {
-    if (visible && !hasAnimated && groupRef.current) {
-      groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
-      groupRef.current.scale.setScalar(0.1)
-      setHasAnimated(true)
-    }
-  }, [visible, hasAnimated])
-
-  useFrame((state, delta) => {
-    if (groupRef.current) {
-      if (visible) {
-        // Animate from navigation button to final position
-        const targetX = position[0]
-        const targetY = hovered 
-          ? position[1] + workCardPositions.hover.y
-          : position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
-        const targetZ = hovered 
-          ? position[2] + workCardPositions.hover.z
-          : position[2]
-        
-        const targetScale = hovered ? 1.1 : 1
-        const targetOpacity = 1
-        
-        // Spring-like animation with staggered delay
-        const animationSpeed = 3 + index * 0.5 // Stagger animation
-        const positionLerpSpeed = delta * animationSpeed
-        const scaleLerpSpeed = delta * (animationSpeed + 2)
-        
-        // Smooth interpolation using lerp
-        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, positionLerpSpeed)
-        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, positionLerpSpeed)
-        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, positionLerpSpeed)
-        
-        groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, scaleLerpSpeed))
-        
-        // Handle opacity for all materials
-        groupRef.current.traverse((child) => {
-          if (child instanceof THREE.Mesh && child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach(material => {
-                if ('opacity' in material) {
-                  material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 8)
-                }
-              })
-            } else if ('opacity' in child.material) {
-              child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 8)
-            }
-          }
-        })
-      } else {
-        // Animate back to navigation button position when hiding
-        const targetOpacity = 0
-        const targetScale = 0.1
-        
-        // Return to navigation position
-        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, NAVIGATION_POSITIONS.navigationButtonAbsolute[0], delta * 5)
-        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, NAVIGATION_POSITIONS.navigationButtonAbsolute[1], delta * 5)
-        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, NAVIGATION_POSITIONS.navigationButtonAbsolute[2], delta * 5)
-        
-        groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 8))
-        
-        // Fade out materials
-        groupRef.current.traverse((child) => {
-          if (child instanceof THREE.Mesh && child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach(material => {
-                if ('opacity' in material) {
-                  material.opacity = THREE.MathUtils.lerp(material.opacity, targetOpacity, delta * 10)
-                }
-              })
-            } else if ('opacity' in child.material) {
-              child.material.opacity = THREE.MathUtils.lerp(child.material.opacity, targetOpacity, delta * 10)
-            }
-          }
-        })
-        
-        // Reset hasAnimated when fully hidden to allow re-animation
-        if (groupRef.current.scale.x < 0.15) {
-          setHasAnimated(false)
-        }
-      }
-      
-      // Subtle rotation when hovered
-      if (hovered) {
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0.1, delta * 5)
-      } else {
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, 0, delta * 5)
-      }
-    }
+  // Use simplified animation hook
+  useCardAnimation({
+    groupRef,
+    visible,
+    hovered,
+    position,
+    index
   })
 
   const handlePointerOver = () => {
