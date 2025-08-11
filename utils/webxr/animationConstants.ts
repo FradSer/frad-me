@@ -1,18 +1,28 @@
+// Simplified semantic spring configurations
 export const SPRING_CONFIGS = {
-  gentle: { tension: 120, friction: 14 },
-  navScale: { tension: 300, friction: 30 },
-  workOpacity: { tension: 280, friction: 60 },
-  cardHover: { tension: 400, friction: 30 },
-  cardPosition: { tension: 200, friction: 25 },
+  slow: { tension: 120, friction: 14 },    // Gentle animations like gentle fade ins
+  normal: { tension: 200, friction: 25 },  // Standard position changes and navigation
+  fast: { tension: 400, friction: 30 },    // Quick responses like hover effects
 } as const
 
-// Navigation and UI positions
+// Utility function to combine positions
+const addPositions = (
+  a: [number, number, number], 
+  b: [number, number, number]
+): [number, number, number] => [a[0] + b[0], a[1] + b[1], a[2] + b[2]]
+
+// Base navigation positions
+const NAVIGATION_BASE = {
+  group: [0, 0, -3] as [number, number, number],
+  buttonOffset: [2.5, 2, 0] as [number, number, number],
+} as const
+
+// Navigation positions (computed)
 export const NAVIGATION_POSITIONS = {
-  // Navigation3D positioning
-  navigationGroup: [0, 0, -3] as [number, number, number],
-  navigationButton: [2.5, 2, 0] as [number, number, number],
-  // Combined position: [0, 0, -3] + [2.5, 2, 0] = [2.5, 2, -3]
-  navigationButtonAbsolute: [2.5, 2, -3] as [number, number, number],
+  navigationGroup: NAVIGATION_BASE.group,
+  navigationButton: NAVIGATION_BASE.buttonOffset,
+  // Computed absolute position
+  navigationButtonAbsolute: addPositions(NAVIGATION_BASE.group, NAVIGATION_BASE.buttonOffset),
 } as const
 
 // Camera positions for different views
@@ -27,10 +37,17 @@ export const CAMERA_POSITIONS = {
   }
 } as const
 
-// Footer and external links positioning
+// Base positions for related elements
+const FOOTER_BASE = {
+  group: [0, 0, -4] as [number, number, number],
+  linksOffset: [2, -2.5, 0] as [number, number, number],
+} as const
+
+// Footer positions (computed)
 export const FOOTER_POSITIONS = {
-  footerGroup: [0, 0, -4] as [number, number, number],
-  externalLinks: [2, -2.5, 0] as [number, number, number],
+  footerGroup: FOOTER_BASE.group,
+  externalLinks: FOOTER_BASE.linksOffset,
+  // Could add computed absolute positions if needed
 } as const
 
 // Work grid and lighting positions
@@ -40,13 +57,21 @@ export const WORK_GRID_POSITIONS = {
   pointLight: [-5, 3, 2] as [number, number, number],
 } as const
 
-// WorkCard3D internal positions
+// Base card dimensions and spacing
+const CARD_BASE = {
+  geometry: [3, 2, 1] as [number, number, number], // planeGeometry args
+  titleOffset: -1.5,    // Distance below card center for title
+  badgeOffset: [1.3, 0.8] as [number, number], // Badge position from center
+  layerSpacing: 0.1,    // Z-spacing between elements
+} as const
+
+// WorkCard3D positions (computed)
 export const WORK_CARD_POSITIONS = {
-  cardGeometry: [3, 2, 1] as [number, number, number], // planeGeometry args
-  titleGroup: [0, -1.5, 0.1] as [number, number, number],
-  descriptionGroup: [0, -2.1, 0.1] as [number, number, number],
-  wipBadgeGroup: [1.3, 0.8, 0.1] as [number, number, number],
-  wipBadgeBackground: [0, 0, -0.1] as [number, number, number],
+  cardGeometry: CARD_BASE.geometry,
+  titleGroup: [0, CARD_BASE.titleOffset, CARD_BASE.layerSpacing] as [number, number, number],
+  descriptionGroup: [0, CARD_BASE.titleOffset - 0.6, CARD_BASE.layerSpacing] as [number, number, number],
+  wipBadgeGroup: [CARD_BASE.badgeOffset[0], CARD_BASE.badgeOffset[1], CARD_BASE.layerSpacing] as [number, number, number],
+  wipBadgeBackground: [0, 0, -CARD_BASE.layerSpacing] as [number, number, number],
 } as const
 
 // Immersive button positioning

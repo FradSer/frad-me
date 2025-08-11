@@ -26,7 +26,7 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false)
   const textRef = useRef<THREE.Mesh>(null)
 
-  const scaleSpring = useSpringScalar(1, SPRING_CONFIGS.navScale)
+  const scaleSpring = useSpringScalar(1, SPRING_CONFIGS.fast)
 
   // Breathing effect when never interacted
   useEffect(() => {

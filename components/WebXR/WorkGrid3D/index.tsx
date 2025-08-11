@@ -33,7 +33,7 @@ interface WorkGrid3DProps {
 
 const WorkTitle = ({ position, currentSection }: { position: [number, number, number], currentSection: string }) => {
   const textRef = useRef<THREE.Mesh>(null)
-  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.workOpacity)
+  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.normal)
 
   useEffect(() => {
     if (currentSection === 'work') {
@@ -73,7 +73,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const groupRef = useRef<THREE.Group>(null)
   
   // Simplified visibility control - no position animation at container level
-  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.workOpacity)
+  const opacitySpring = useSpringScalar(0, SPRING_CONFIGS.normal)
 
   useEffect(() => {
     if (currentView === 'work') {
