@@ -14,7 +14,7 @@ const addPositions = (
 // Base navigation positions
 const NAVIGATION_BASE = {
   group: [0, 0, -3] as [number, number, number],
-  buttonOffset: [2.5, 2.8, 0] as [number, number, number], // Raised navigation higher
+  buttonOffset: [2.5, 2.8, 2] as [number, number, number], // Right-aligned with hero + distance
 } as const
 
 // Navigation positions (computed)
@@ -40,7 +40,7 @@ export const CAMERA_POSITIONS = {
 // Base positions for related elements
 const FOOTER_BASE = {
   group: [0, 0, -4] as [number, number, number],
-  linksOffset: [2, -2.5, 0] as [number, number, number],
+  linksOffset: [2.4, -2.5, 2] as [number, number, number], // Right-aligned with hero + distance
 } as const
 
 // Footer positions (computed)
