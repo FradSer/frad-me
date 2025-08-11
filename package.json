@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "next dev",
+    "dev:https": "node scripts/dev-https.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -22,12 +23,13 @@
     "test:e2e:headed": "playwright test --headed",
     "test:all": "npm run test:ci && npm run test:e2e",
     "analyze": "cross-env ANALYZE=true next build",
-    "release": "release-it"
+    "release": "release-it",
+    "certs:generate": "./scripts/generate-certs.sh"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
-    "@react-three/xr": "^6.6.19",
+    "@react-three/xr": "^6.6.22",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",

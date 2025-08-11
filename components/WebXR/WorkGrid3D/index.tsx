@@ -1,0 +1,98 @@
+import React, { useRef, useEffect } from 'react'
+import dynamic from 'next/dynamic'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
+import { calculateCardPosition } from '@/utils/webxr/workGridUtils'
+import { measureChunkLoad } from '@/utils/performance'
+import { SPRING_CONFIGS, ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants'
+import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
+import WorkCard3D from '../WorkCard3D'
+import workLinks from '@/content/workLinks'
+
+const Html = dynamic(
+  () => measureChunkLoad('Html', () => 
+    import('@react-three/drei').then((mod) => ({ default: mod.Html }))
+  ),
+  { ssr: false }
+)
+
+const Text = dynamic(
+  () => measureChunkLoad('Text', () => 
+    import('@react-three/drei').then((mod) => ({ default: mod.Text }))
+  ),
+  { ssr: false }
+)
+
+const MAX_DISPLAY_WORKS = 5
+
+interface WorkGrid3DProps {
+  visible?: boolean
+}
+
+
+const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
+  const { currentView } = useWebXRView()
+  const groupRef = useRef<THREE.Group>(null)
+  
+  // Simplified visibility control - no position animation at container level
+  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.normal) })
+
+  useEffect(() => {
+    if (currentView === 'work') {
+      // Immediately show work section when active
+      opacitySpring.set(1)
+    } else {
+      // Hide work section when not active  
+      opacitySpring.set(0)
+    }
+  }, [currentView, opacitySpring])
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
+
+    // Fixed position at main content layer
+    groupRef.current.position.set(...ENTRANCE_POSITIONS.workDefault)
+
+    // Handle visibility - completely hide when opacity is near 0
+    const currentOpacity = opacitySpring.value
+    groupRef.current.visible = currentOpacity > 0.01
+    
+    // Apply opacity using optimized utility
+    if (groupRef.current.visible) {
+      applyOpacityToObject(groupRef.current, currentOpacity)
+    }
+  })
+
+  return (
+    <group ref={groupRef}>
+      {/* Enhanced lighting for work section */}
+      <ambientLight intensity={0.4} />
+      <directionalLight position={WORK_GRID_POSITIONS.directionalLight} intensity={0.8} />
+      <pointLight position={WORK_GRID_POSITIONS.pointLight} intensity={0.6} color="#60a5fa" />
+
+
+      {/* Work Cards */}
+      {workLinks.slice(0, MAX_DISPLAY_WORKS).map((work, index) => {
+        const position = calculateCardPosition(
+          index + 1,
+          work.isFullScreen || false,
+        )
+        return (
+          <WorkCard3D
+            key={work.slug}
+            work={work}
+            position={position}
+            index={index}
+            visible={currentView === 'work'}
+          />
+        )
+      })}
+
+    </group>
+  )
+}
+
+export default WorkGrid3D

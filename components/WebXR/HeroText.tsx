@@ -3,6 +3,9 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
+import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -129,12 +132,91 @@ const renderElement = (element: typeof heroContent[0], index: number) => {
 }
 
 function HeroText() {
+  const { currentView } = useWebXRView()
+  const groupRef = useRef<THREE.Group>(null)
+  
+  // Custom spring configuration equivalent to heroTransition
+  const springConfig = { tension: 120, friction: 16 }
+  
+  // Initialize all lerp values consistently with home state to avoid race conditions
+  const initialState = heroAnimationStates.home
+  const lerpConfig = { speed: springConfigToLerpSpeed(springConfig) }
+  const positionX = useSimpleLerp(initialState.position.x, lerpConfig)
+  const positionY = useSimpleLerp(initialState.position.y, lerpConfig)
+  const positionZ = useSimpleLerp(initialState.position.z, lerpConfig)
+  const scaleX = useSimpleLerp(initialState.scale.x, lerpConfig)
+  const scaleY = useSimpleLerp(initialState.scale.y, lerpConfig)
+  const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig)
+  const opacity = useSimpleLerp(initialState.opacity, lerpConfig)
+
+
+  // Track current view for consistent spring target updates
+  const currentViewRef = useRef(currentView)
+
+  // Use frame for consistent spring target setting and animation updates
+  useFrame((_, delta) => {
+    if (!groupRef.current) return
+    
+    // Update spring targets when view changes (in frame for consistent timing)
+    if (currentViewRef.current !== currentView) {
+      const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
+      
+      
+      positionX.set(targetState.position.x)
+      positionY.set(targetState.position.y)
+      positionZ.set(targetState.position.z)
+      scaleX.set(targetState.scale.x)
+      scaleY.set(targetState.scale.y)
+      scaleZ.set(targetState.scale.z)
+      opacity.set(targetState.opacity)
+      
+      currentViewRef.current = currentView
+    }
+    
+    // Lerp values are automatically updated via useFrame in useSimpleLerp hook
+    
+    // Apply transforms
+    groupRef.current.position.set(positionX.value, positionY.value, positionZ.value)
+    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value)
+    
+    const currentOpacity = opacity.value
+    
+    // Hide completely when opacity is near zero for performance
+    groupRef.current.visible = currentOpacity > 0.01
+    
+    // Apply opacity to all materials
+    groupRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh && child.material) {
+        if (Array.isArray(child.material)) {
+          child.material.forEach((material) => {
+            if (material instanceof THREE.MeshStandardMaterial || 
+                material instanceof THREE.MeshBasicMaterial) {
+              material.opacity = currentOpacity
+              material.transparent = true
+            }
+          })
+        } else {
+          const material = child.material
+          if (material instanceof THREE.MeshStandardMaterial || 
+              material instanceof THREE.MeshBasicMaterial) {
+            material.opacity = currentOpacity
+            material.transparent = true
+          }
+        }
+      }
+    })
+  })
+
   return (
-    <>
+    <group 
+      ref={groupRef}
+    >
       <ambientLight intensity={Math.PI / 10} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      {heroContent.map(renderElement)}
-    </>
+      <group>
+        {heroContent.map(renderElement)}
+      </group>
+    </group>
   )
 }
 
