@@ -26,32 +26,42 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false)
   const textRef = useRef<THREE.Mesh>(null)
 
-  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) })
+  // Enhanced bouncy spring for navigation interactions
+  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
+  const rotationSpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
 
-  // Breathing effect when never interacted
+  // Enhanced breathing effect with rotation
   useEffect(() => {
     if (!hasBeenInteracted) {
       const breathingAnimation = setInterval(() => {
-        scaleSpring.set(1.05)
-        setTimeout(() => scaleSpring.set(1), 800)
-      }, 2000)
+        scaleSpring.set(1.08)  // Slightly more pronounced breathing
+        rotationSpring.set(0.05) // Add subtle rotation
+        setTimeout(() => {
+          scaleSpring.set(1)
+          rotationSpring.set(0)
+        }, 1000)
+      }, 2500)
       
       return () => clearInterval(breathingAnimation)
     }
-  }, [hasBeenInteracted, scaleSpring])
+  }, [hasBeenInteracted, scaleSpring, rotationSpring])
 
   useEffect(() => {
     if (hovered || isActive) {
-      scaleSpring.set(1.1)
+      scaleSpring.set(1.15)  // More pronounced hover effect
+      rotationSpring.set(hovered ? 0.1 : 0) // Rotation on hover
     } else if (hasBeenInteracted) {
       scaleSpring.set(1)
+      rotationSpring.set(0)
     }
-  }, [hovered, isActive, hasBeenInteracted, scaleSpring])
+  }, [hovered, isActive, hasBeenInteracted, scaleSpring, rotationSpring])
 
   useFrame(() => {
     if (!textRef.current) return
-    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
+    // Apply spring values with enhanced effects
     textRef.current.scale.setScalar(scaleSpring.value)
+    textRef.current.rotation.y = rotationSpring.value
+    textRef.current.rotation.z = rotationSpring.value * 0.5 // Subtle z-rotation
   })
 
   return (

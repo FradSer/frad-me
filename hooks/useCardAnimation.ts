@@ -63,9 +63,13 @@ export const useCardAnimation = ({
       // Calculate time since animation should have started for this card
       const animationProgress = Math.min(1, (currentTime - animationState.current.startTime) / ANIMATION_DELAYS.cardAnimationDuration)
       
-      // Use easing function for smooth entrance
-      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
-      const easedProgress = easeOutCubic(animationProgress)
+      // Enhanced spring easing with more bounce
+      const easeOutBack = (t: number) => {
+        const c1 = 1.70158
+        const c3 = c1 + 1
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2)
+      }
+      const easedProgress = easeOutBack(animationProgress)
       
       // Calculate target values
       const targetX = position[0]
@@ -79,11 +83,12 @@ export const useCardAnimation = ({
       const targetScale = hovered ? 1.1 : 1
       const targetOpacity = 1
       
-      // Enhanced spring-like animation with better entrance transition
-      const baseSpeed = animationProgress < 1 ? 5 : 3 // Slower for longer, more elegant animation
-      const animationSpeed = baseSpeed * (1 + easedProgress * 0.5)
+      // Enhanced spring-like animation with stronger bounce effect
+      const baseSpeed = animationProgress < 1 ? 6 : 4 // Enhanced speed for spring effect
+      const springMultiplier = 1 + Math.sin(easedProgress * Math.PI) * 0.3 // Add oscillation
+      const animationSpeed = baseSpeed * springMultiplier
       const positionLerpSpeed = delta * animationSpeed
-      const scaleLerpSpeed = delta * (animationSpeed + 1)
+      const scaleLerpSpeed = delta * (animationSpeed + 2) // More responsive scaling
       
       // Animate position and scale with spring effect
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, positionLerpSpeed)

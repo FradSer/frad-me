@@ -36,25 +36,39 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  // Simplified visibility control - no position animation at container level
-  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.normal) })
+  // Enhanced spring control with bouncy entrance effect
+  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
+  const scaleSpring = useSimpleLerp(0.8, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
+  const positionYSpring = useSimpleLerp(-2, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
 
   useEffect(() => {
     if (currentView === 'work') {
-      // Immediately show work section when active
+      // Enhanced entrance with spring effects
       opacitySpring.set(1)
+      scaleSpring.set(1)
+      positionYSpring.set(0)
     } else {
-      // Hide work section when not active  
+      // Enhanced exit with spring effects
       opacitySpring.set(0)
+      scaleSpring.set(0.8)
+      positionYSpring.set(-2)
     }
-  }, [currentView, opacitySpring])
+  }, [currentView, opacitySpring, scaleSpring, positionYSpring])
 
   useFrame(() => {
     if (!groupRef.current) return
-    // Lerp value is automatically updated via useFrame in useSimpleLerp hook
+    // Lerp values are automatically updated via useFrame in useSimpleLerp hooks
 
-    // Fixed position at main content layer
-    groupRef.current.position.set(...ENTRANCE_POSITIONS.workDefault)
+    // Apply spring-based position with Y offset for bouncy entrance
+    const basePosition = ENTRANCE_POSITIONS.workDefault
+    groupRef.current.position.set(
+      basePosition[0], 
+      basePosition[1] + positionYSpring.value, 
+      basePosition[2]
+    )
+
+    // Apply spring-based scale
+    groupRef.current.scale.setScalar(scaleSpring.value)
 
     // Handle visibility - completely hide when opacity is near 0
     const currentOpacity = opacitySpring.value

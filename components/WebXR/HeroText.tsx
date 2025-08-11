@@ -6,6 +6,7 @@ import { measureChunkLoad } from '@/utils/performance'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
+import { SPRING_CONFIGS } from '@/utils/webxr/animationConstants'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -26,22 +27,49 @@ interface ShapeProps {
 
 type RotationAxis = 'x' | 'y' | 'z'
 
-// Custom hook for interactive mesh behavior
+// Enhanced interactive mesh with spring animations
 const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
 
+  // Enhanced springs for interactive elements
+  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
+  const rotationSpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) })
+
   useFrame((_, delta) => {
     if (meshRef.current) {
+      // Base rotation
       meshRef.current.rotation[rotationAxis] += delta / rotationSpeed
+      
+      // Apply spring scale and additional rotation
+      meshRef.current.scale.setScalar(scaleSpring.value)
+      
+      // Add spring-based secondary rotation on different axes
+      if (rotationAxis !== 'y') meshRef.current.rotation.y += rotationSpring.value * delta
+      if (rotationAxis !== 'x') meshRef.current.rotation.x += rotationSpring.value * delta * 0.5
     }
   })
 
   const handlers = {
-    onClick: () => setActive(!active),
-    onPointerOver: () => setHovered(true),
-    onPointerOut: () => setHovered(false)
+    onClick: () => {
+      setActive(!active)
+      // Spring bounce effect on click
+      scaleSpring.set(active ? 1 : 1.3)
+      rotationSpring.set(active ? 0 : 2)
+    },
+    onPointerOver: () => {
+      setHovered(true)
+      scaleSpring.set(1.1)
+      rotationSpring.set(1)
+    },
+    onPointerOut: () => {
+      setHovered(false)
+      if (!active) {
+        scaleSpring.set(1)
+        rotationSpring.set(0)
+      }
+    }
   }
 
   return { meshRef, hovered, active, handlers }
@@ -135,8 +163,8 @@ function HeroText() {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  // Custom spring configuration equivalent to heroTransition
-  const springConfig = { tension: 120, friction: 16 }
+  // Enhanced spring configuration for more dynamic hero transitions
+  const springConfig = SPRING_CONFIGS.elastic
   
   // Initialize all lerp values consistently with home state to avoid race conditions
   const initialState = heroAnimationStates.home

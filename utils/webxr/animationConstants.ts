@@ -1,8 +1,10 @@
-// Simplified semantic spring configurations
+// Enhanced spring configurations for more dynamic animations
 export const SPRING_CONFIGS = {
-  slow: { tension: 120, friction: 14 },    // Gentle animations like gentle fade ins
-  normal: { tension: 200, friction: 25 },  // Standard position changes and navigation
-  fast: { tension: 400, friction: 30 },    // Quick responses like hover effects
+  slow: { tension: 180, friction: 20 },     // Enhanced gentle animations with more spring
+  normal: { tension: 280, friction: 28 },   // Enhanced standard animations with bouncy feel
+  fast: { tension: 450, friction: 35 },     // Enhanced quick responses with strong spring
+  bouncy: { tension: 320, friction: 22 },   // New config for extra bouncy effects
+  elastic: { tension: 400, friction: 25 },  // New config for elastic entrance effects
 } as const
 
 // Utility function to combine positions
