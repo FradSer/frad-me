@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 
+/**
+ * Chrome-specific API for device memory detection
+ */
+interface NavigatorDeviceMemory extends Navigator {
+  deviceMemory?: number
+}
+
 export type Quality = 'high' | 'medium' | 'low'
 export type FallbackMode = 'webxr' | '3d' | '2d'
 
@@ -111,9 +118,9 @@ const detectDeviceCapabilities = async (): Promise<DeviceCapabilities> => {
     
     canvas.remove()
 
-    // Get device memory if available
+    // Get device memory if available (Chrome only)
     if ('deviceMemory' in navigator) {
-      baseCapabilities.deviceMemory = (navigator as any).deviceMemory
+      baseCapabilities.deviceMemory = (navigator as NavigatorDeviceMemory).deviceMemory
     }
   }
 

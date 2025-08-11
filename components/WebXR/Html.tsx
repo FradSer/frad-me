@@ -7,6 +7,19 @@ import { renderToString } from 'react-dom/server'
 import * as THREE from 'three'
 
 /**
+ * Type definitions for canvas context attributes
+ */
+interface CanvasContextAttributes {
+  preserveDrawingBuffer?: boolean
+  antialias?: boolean
+  alpha?: boolean
+  depth?: boolean
+  stencil?: boolean
+  premultipliedAlpha?: boolean
+  [key: string]: unknown
+}
+
+/**
  * Type for the original getContext method with proper overloads
  */
 type OriginalGetContext = HTMLCanvasElement['getContext']
@@ -14,15 +27,18 @@ type OriginalGetContext = HTMLCanvasElement['getContext']
 // Prevents html2canvas warnings by monkey-patching canvas context with proper typing
 const originalGetContext: OriginalGetContext = HTMLCanvasElement.prototype.getContext
 
-// Override the getContext method with proper type handling
-;(HTMLCanvasElement.prototype.getContext as any) = function (
+// Override the getContext method with proper type handling to ensure preserveDrawingBuffer is set
+;(HTMLCanvasElement.prototype.getContext as unknown as (
   this: HTMLCanvasElement,
   type: string,
-  attribs?: any
+  attributes?: CanvasContextAttributes
+) => RenderingContext | null) = function (
+  this: HTMLCanvasElement,
+  type: string,
+  attribs?: CanvasContextAttributes
 ): RenderingContext | null {
-  const attributes = attribs || {}
-  attributes.preserveDrawingBuffer = true
-  return originalGetContext.call(this, type as any, attributes)
+  const attributes: CanvasContextAttributes = { ...attribs, preserveDrawingBuffer: true }
+  return originalGetContext.call(this, type, attributes)
 }
 
 let container: HTMLElement | null = document.querySelector('#htmlContainer')
