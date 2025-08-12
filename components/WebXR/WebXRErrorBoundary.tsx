@@ -1,7 +1,5 @@
 import React, { Component, ReactNode, ErrorInfo } from 'react'
 
-import WebXR2DFallback from './WebXR2DFallback'
-import WebXR3DFallback from './WebXR3DFallback'
 import { ErrorFallback } from './shared/FallbackUI'
 import { sanitizeError } from './shared/BaseErrorBoundary'
 import { webxrErrorLogger } from '@/utils/errorLogger'
@@ -87,22 +85,12 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
   }
 
   private renderFallbackByLevel(): ReactNode {
-    const { fallbackLevel, retryCount } = this.state
-    const { maxRetries = FALLBACK_DEFAULTS.maxRetries, fallback } = this.props
+    const { fallback } = this.props
 
     if (fallback) return fallback
 
-    const fallbackComponents = {
-      '3d': () => retryCount <= maxRetries ? (
-        <WebXR3DFallback 
-          onError={(err) => this.componentDidCatch(err, { componentStack: '' })}
-        />
-      ) : <WebXR2DFallback />,
-      '2d': () => <WebXR2DFallback />,
-      'webxr': () => this.renderErrorFallback()
-    }
-
-    return fallbackComponents[fallbackLevel]?.() || this.renderErrorFallback()
+    // Since fallback components were removed, always render the error fallback
+    return this.renderErrorFallback()
   }
 
   private renderErrorFallback(): ReactNode {
