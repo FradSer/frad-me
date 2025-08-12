@@ -3,9 +3,9 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
+import { useWebXRBreathing, useWebXRHover } from '@/hooks/useWebXRAnimation'
 import { measureChunkLoad } from '@/utils/performance'
-import { SPRING_CONFIGS, NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants'
+import WEBXR_ANIMATION_CONFIG from '@/utils/webxr/animationConfig'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => 
@@ -26,42 +26,33 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false)
   const textRef = useRef<THREE.Mesh>(null)
 
-  // Enhanced bouncy spring for navigation interactions
-  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
-  const rotationSpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
+  // Use centralized animation hooks
+  const breathing = useWebXRBreathing()
+  const hover = useWebXRHover()
 
-  // Enhanced breathing effect with rotation
+  // Start breathing animation on mount
   useEffect(() => {
-    if (!hasBeenInteracted) {
-      const breathingAnimation = setInterval(() => {
-        scaleSpring.set(1.08)  // Slightly more pronounced breathing
-        rotationSpring.set(0.05) // Add subtle rotation
-        setTimeout(() => {
-          scaleSpring.set(1)
-          rotationSpring.set(0)
-        }, 1000)
-      }, 2500)
-      
-      return () => clearInterval(breathingAnimation)
-    }
-  }, [hasBeenInteracted, scaleSpring, rotationSpring])
+    return breathing.startBreathing()
+  }, [breathing])
 
   useEffect(() => {
     if (hovered || isActive) {
-      scaleSpring.set(1.15)  // More pronounced hover effect
-      rotationSpring.set(hovered ? 0.1 : 0) // Rotation on hover
-    } else if (hasBeenInteracted) {
-      scaleSpring.set(1)
-      rotationSpring.set(0)
+      hover.onHover()
+      breathing.stopBreathing()
+    } else if (!hovered && !isActive && !breathing.hasInteracted) {
+      hover.onHoverEnd()
     }
-  }, [hovered, isActive, hasBeenInteracted, scaleSpring, rotationSpring])
+  }, [hovered, isActive, breathing, hover])
 
   useFrame(() => {
     if (!textRef.current) return
-    // Apply spring values with enhanced effects
-    textRef.current.scale.setScalar(scaleSpring.value)
-    textRef.current.rotation.y = rotationSpring.value
-    textRef.current.rotation.z = rotationSpring.value * 0.5 // Subtle z-rotation
+    // Apply centralized animation values
+    const scale = hovered || isActive ? hover.scale : breathing.scaleValue
+    const rotation = breathing.rotationValue
+    
+    textRef.current.scale.setScalar(scale)
+    textRef.current.rotation.y = rotation
+    textRef.current.rotation.z = rotation * 0.5 // Subtle z-rotation
   })
 
   return (
@@ -73,14 +64,8 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
       anchorY="middle"
       fontSize={0.6}
       font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
-      onClick={() => {
-        setHasBeenInteracted(true)
-        onClick()
-      }}
-      onPointerOver={() => {
-        setHasBeenInteracted(true)
-        setHovered(true)
-      }}
+      onClick={onClick}
+      onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
       {text}
@@ -90,11 +75,12 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
 
 function Navigation3D() {
   const { currentView, navigateToView } = useWebXRView()
+  const { navigation } = WEBXR_ANIMATION_CONFIG.spatial
 
   return (
-    <group position={NAVIGATION_POSITIONS.navigationGroup}>
+    <group position={navigation.group}>
       {/* Main Navigation - More comfortable position for visionOS */}
-      <group position={NAVIGATION_POSITIONS.navigationButton}>
+      <group position={navigation.buttonOffset}>
         {currentView === 'home' ? (
           <NavItem
             position={[0, 0, 0]}
