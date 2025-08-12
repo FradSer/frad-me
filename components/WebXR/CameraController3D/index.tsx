@@ -31,7 +31,7 @@ const CameraController3D: React.FC = () => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return
 
     // Smooth camera position animation
-    tempVector.set(...targetState.position)
+    tempVector.set(targetState.position[0], targetState.position[1], targetState.position[2])
     camera.position.lerp(tempVector, delta * 2)
 
     // Smooth FOV animation
@@ -45,7 +45,7 @@ const CameraController3D: React.FC = () => {
     }
 
     // Look at target
-    targetRef.current.set(...targetState.lookAt)
+    targetRef.current.set(targetState.lookAt[0], targetState.lookAt[1], targetState.lookAt[2])
     camera.lookAt(targetRef.current)
   })
 

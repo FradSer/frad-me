@@ -3,10 +3,10 @@ import dynamic from 'next/dynamic'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
+import { useWebXRWorkGrid } from '@/hooks/useWebXRAnimation'
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils'
 import { measureChunkLoad } from '@/utils/performance'
-import { SPRING_CONFIGS, ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants'
+import WEBXR_ANIMATION_CONFIG from '@/utils/webxr/animationConfig'
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
 import WorkCard3D from '../WorkCard3D'
 import workLinks from '@/content/workLinks'
@@ -36,56 +36,45 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  // Enhanced spring control with bouncy entrance effect
-  const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
-  const scaleSpring = useSimpleLerp(0.8, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
-  const positionYSpring = useSimpleLerp(-2, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
-
-  useEffect(() => {
-    if (currentView === 'work') {
-      // Enhanced entrance with spring effects
-      opacitySpring.set(1)
-      scaleSpring.set(1)
-      positionYSpring.set(0)
-    } else {
-      // Enhanced exit with spring effects
-      opacitySpring.set(0)
-      scaleSpring.set(0.8)
-      positionYSpring.set(-2)
-    }
-  }, [currentView, opacitySpring, scaleSpring, positionYSpring])
+  // Use centralized work grid animation
+  const workGridAnim = useWebXRWorkGrid(currentView)
 
   useFrame(() => {
     if (!groupRef.current) return
-    // Lerp values are automatically updated via useFrame in useSimpleLerp hooks
 
-    // Apply spring-based position with Y offset for bouncy entrance
-    const basePosition = ENTRANCE_POSITIONS.workDefault
+    // Apply centralized work grid animation values
+    const basePosition = WEBXR_ANIMATION_CONFIG.spatial.entrance.workDefault
     groupRef.current.position.set(
       basePosition[0], 
-      basePosition[1] + positionYSpring.value, 
+      basePosition[1] + workGridAnim.positionY, 
       basePosition[2]
     )
 
-    // Apply spring-based scale
-    groupRef.current.scale.setScalar(scaleSpring.value)
+    // Apply centralized scale animation
+    groupRef.current.scale.setScalar(workGridAnim.scale)
 
-    // Handle visibility - completely hide when opacity is near 0
-    const currentOpacity = opacitySpring.value
-    groupRef.current.visible = currentOpacity > 0.01
+    // Handle visibility using centralized threshold
+    groupRef.current.visible = !workGridAnim.shouldHide
     
     // Apply opacity using optimized utility
     if (groupRef.current.visible) {
-      applyOpacityToObject(groupRef.current, currentOpacity)
+      applyOpacityToObject(groupRef.current, workGridAnim.opacity)
     }
   })
 
   return (
     <group ref={groupRef}>
       {/* Enhanced lighting for work section */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={WORK_GRID_POSITIONS.directionalLight} intensity={0.8} />
-      <pointLight position={WORK_GRID_POSITIONS.pointLight} intensity={0.6} color="#60a5fa" />
+      <ambientLight intensity={WEBXR_ANIMATION_CONFIG.effects.lighting.ambient} />
+      <directionalLight 
+        position={WEBXR_ANIMATION_CONFIG.spatial.workGrid.directionalLight} 
+        intensity={WEBXR_ANIMATION_CONFIG.effects.lighting.directional} 
+      />
+      <pointLight 
+        position={WEBXR_ANIMATION_CONFIG.spatial.workGrid.pointLight} 
+        intensity={WEBXR_ANIMATION_CONFIG.effects.lighting.point} 
+        color="#60a5fa" 
+      />
 
 
       {/* Work Cards */}

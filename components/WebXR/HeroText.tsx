@@ -4,9 +4,8 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { measureChunkLoad } from '@/utils/performance'
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { heroAnimationStates } from '@/utils/webxr/animationHelpers'
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
-import { SPRING_CONFIGS } from '@/utils/webxr/animationConstants'
+import { useWebXRHeroText } from '@/hooks/useWebXRAnimation'
+import WEBXR_ANIMATION_CONFIG from '@/utils/webxr/animationConfig'
 
 const Text = dynamic(
   () => measureChunkLoad('Text', () => import('@react-three/drei').then(mod => ({ default: mod.Text }))),
@@ -27,47 +26,50 @@ interface ShapeProps {
 
 type RotationAxis = 'x' | 'y' | 'z'
 
-// Enhanced interactive mesh with spring animations
+// Enhanced interactive mesh with centralized animation configuration
 const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
   const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
+  const { heroScale, heroActiveScale } = WEBXR_ANIMATION_CONFIG.timing.hover
 
-  // Enhanced springs for interactive elements
-  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
-  const rotationSpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) })
+  // Use centralized hero text animation hook
+  const heroAnim = useWebXRHeroText()
 
   useFrame((_, delta) => {
     if (meshRef.current) {
       // Base rotation
       meshRef.current.rotation[rotationAxis] += delta / rotationSpeed
       
-      // Apply spring scale and additional rotation
-      meshRef.current.scale.setScalar(scaleSpring.value)
+      // Apply centralized interactive scale
+      meshRef.current.scale.setScalar(heroAnim.interactiveScale)
       
-      // Add spring-based secondary rotation on different axes
-      if (rotationAxis !== 'y') meshRef.current.rotation.y += rotationSpring.value * delta
-      if (rotationAxis !== 'x') meshRef.current.rotation.x += rotationSpring.value * delta * 0.5
+      // Add interactive rotation based on interaction state
+      const rotationIntensity = active ? 2 : hovered ? 1 : 0
+      if (rotationAxis !== 'y') meshRef.current.rotation.y += rotationIntensity * delta
+      if (rotationAxis !== 'x') meshRef.current.rotation.x += rotationIntensity * delta * 0.5
     }
   })
 
   const handlers = {
     onClick: () => {
       setActive(!active)
-      // Spring bounce effect on click
-      scaleSpring.set(active ? 1 : 1.3)
-      rotationSpring.set(active ? 0 : 2)
+      if (active) {
+        heroAnim.onInteractionEnd()
+      } else {
+        heroAnim.onInteractionStart()
+      }
     },
     onPointerOver: () => {
       setHovered(true)
-      scaleSpring.set(1.1)
-      rotationSpring.set(1)
+      if (!active) {
+        heroAnim.onHover()
+      }
     },
     onPointerOut: () => {
       setHovered(false)
       if (!active) {
-        scaleSpring.set(1)
-        rotationSpring.set(0)
+        heroAnim.onInteractionEnd()
       }
     }
   }
@@ -163,76 +165,57 @@ function HeroText() {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  // Enhanced spring configuration for more dynamic hero transitions
-  const springConfig = SPRING_CONFIGS.elastic
+  // Use centralized hero text animation
+  const heroAnim = useWebXRHeroText()
   
-  // Initialize all lerp values consistently with home state to avoid race conditions
-  const initialState = heroAnimationStates.home
-  const lerpConfig = { speed: springConfigToLerpSpeed(springConfig) }
-  const positionX = useSimpleLerp(initialState.position.x, lerpConfig)
-  const positionY = useSimpleLerp(initialState.position.y, lerpConfig)
-  const positionZ = useSimpleLerp(initialState.position.z, lerpConfig)
-  const scaleX = useSimpleLerp(initialState.scale.x, lerpConfig)
-  const scaleY = useSimpleLerp(initialState.scale.y, lerpConfig)
-  const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig)
-  const opacity = useSimpleLerp(initialState.opacity, lerpConfig)
-
-
-  // Track current view for consistent spring target updates
+  // Track current view for consistent updates
   const currentViewRef = useRef(currentView)
 
-  // Use frame for consistent spring target setting and animation updates
-  useFrame((_, delta) => {
+  // Use frame for consistent animation updates
+  useFrame(() => {
     if (!groupRef.current) return
     
-    // Update spring targets when view changes (in frame for consistent timing)
+    // Update animation targets when view changes
     if (currentViewRef.current !== currentView) {
-      const targetState = currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home
-      
-      
-      positionX.set(targetState.position.x)
-      positionY.set(targetState.position.y)
-      positionZ.set(targetState.position.z)
-      scaleX.set(targetState.scale.x)
-      scaleY.set(targetState.scale.y)
-      scaleZ.set(targetState.scale.z)
-      opacity.set(targetState.opacity)
-      
+      if (currentView === 'work') {
+        heroAnim.hide()
+      } else {
+        heroAnim.showHome()
+      }
       currentViewRef.current = currentView
     }
     
-    // Lerp values are automatically updated via useFrame in useSimpleLerp hook
+    // Apply centralized animation transforms
+    groupRef.current.position.set(heroAnim.position[0], heroAnim.position[1], heroAnim.position[2])
+    groupRef.current.scale.set(heroAnim.scale[0], heroAnim.scale[1], heroAnim.scale[2])
     
-    // Apply transforms
-    groupRef.current.position.set(positionX.value, positionY.value, positionZ.value)
-    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value)
+    // Handle visibility using centralized threshold
+    const shouldHide = heroAnim.opacity < WEBXR_ANIMATION_CONFIG.effects.opacity.visibilityThreshold
+    groupRef.current.visible = !shouldHide
     
-    const currentOpacity = opacity.value
-    
-    // Hide completely when opacity is near zero for performance
-    groupRef.current.visible = currentOpacity > 0.01
-    
-    // Apply opacity to all materials
-    groupRef.current.traverse((child) => {
-      if (child instanceof THREE.Mesh && child.material) {
-        if (Array.isArray(child.material)) {
-          child.material.forEach((material) => {
+    // Apply centralized opacity to all materials
+    if (groupRef.current.visible) {
+      groupRef.current.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((material) => {
+              if (material instanceof THREE.MeshStandardMaterial || 
+                  material instanceof THREE.MeshBasicMaterial) {
+                material.opacity = heroAnim.opacity
+                material.transparent = true
+              }
+            })
+          } else {
+            const material = child.material
             if (material instanceof THREE.MeshStandardMaterial || 
                 material instanceof THREE.MeshBasicMaterial) {
-              material.opacity = currentOpacity
+              material.opacity = heroAnim.opacity
               material.transparent = true
             }
-          })
-        } else {
-          const material = child.material
-          if (material instanceof THREE.MeshStandardMaterial || 
-              material instanceof THREE.MeshBasicMaterial) {
-            material.opacity = currentOpacity
-            material.transparent = true
           }
         }
-      }
-    })
+      })
+    }
   })
 
   return (
