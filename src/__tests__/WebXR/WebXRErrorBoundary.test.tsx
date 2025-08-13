@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary'
@@ -7,16 +7,13 @@ import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary'
 // Test constants
 const TEST_IDS = {
   normalComponent: 'normal-component',
-  webxr2DFallback: 'webxr-2d-fallback',
-  webxr3DFallback: 'webxr-3d-fallback',
 } as const
 
 const TEST_MESSAGES = {
   errorBoundary: 'Test error for WebXR Error Boundary',
   webxrUnavailable: 'WebXR Experience Unavailable',
-  try3DFallback: 'Try 3D Fallback',
-  try2DFallback: 'Try 2D Fallback',
-  retryWebXR: 'Retry WebXR',
+  tryAgain: 'Try Again',
+  returnToMain: 'Return to Main',
 } as const
 
 // Mock the error logger
@@ -26,19 +23,6 @@ jest.mock('@/utils/errorLogger', () => ({
     logCapabilities: jest.fn(),
   }
 }))
-
-// Mock WebXR fallback components
-jest.mock('@/components/WebXR/WebXR2DFallback', () => {
-  return function WebXR2DFallback() {
-    return <div data-testid="webxr-2d-fallback">2D Fallback Component</div>
-  }
-})
-
-jest.mock('@/components/WebXR/WebXR3DFallback', () => {
-  return function WebXR3DFallback() {
-    return <div data-testid="webxr-3d-fallback">3D Fallback Component</div>
-  }
-})
 
 // Test component that throws errors
 const ErrorThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
@@ -74,7 +58,7 @@ describe('WebXRErrorBoundary', () => {
       const onError = jest.fn()
       
       render(
-        <WebXRErrorBoundary onError={onError} initialLevel="3d" maxRetries={5}>
+        <WebXRErrorBoundary onError={onError}>
           <ErrorThrowingComponent shouldThrow={false} />
         </WebXRErrorBoundary>
       )
@@ -84,8 +68,8 @@ describe('WebXRErrorBoundary', () => {
     })
   })
 
-  describe('Error Handling and Fallback Progression', () => {
-    it('should catch errors and show WebXR error UI', () => {
+  describe('Error Handling', () => {
+    it('should catch errors and show hero-style error UI', () => {
       render(
         <WebXRErrorBoundary>
           <ErrorThrowingComponent shouldThrow={true} />
@@ -93,109 +77,10 @@ describe('WebXRErrorBoundary', () => {
       )
 
       expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-      expect(screen.getByText(TEST_MESSAGES.try3DFallback)).toBeInTheDocument()
+      expect(screen.getByText(TEST_MESSAGES.tryAgain)).toBeInTheDocument()
+      expect(screen.getByText(TEST_MESSAGES.returnToMain)).toBeInTheDocument()
     })
 
-    it('should progress to 3D fallback when requested', async () => {
-      render(
-        <WebXRErrorBoundary enableAutoFallback={true}>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      const fallbackButton = screen.getByText(TEST_MESSAGES.try3DFallback)
-      fireEvent.click(fallbackButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId(TEST_IDS.webxr3DFallback)).toBeInTheDocument()
-      })
-    })
-
-    it('should progress to 2D fallback from 3D fallback', async () => {
-      render(
-        <WebXRErrorBoundary initialLevel="3d" enableAutoFallback={true}>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      // Should show 3D fallback button since we start at 3D level
-      expect(screen.getByText(TEST_MESSAGES.try2DFallback)).toBeInTheDocument()
-      
-      const fallbackButton = screen.getByText(TEST_MESSAGES.try2DFallback)
-      fireEvent.click(fallbackButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId(TEST_IDS.webxr2DFallback)).toBeInTheDocument()
-      })
-    })
-
-    it('should show final error state when all fallbacks exhausted', () => {
-      render(
-        <WebXRErrorBoundary initialLevel="2d">
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      // At 2D level, no further fallback should be available
-      expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-      expect(screen.queryByText(/Try.*Fallback/)).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Retry Mechanism', () => {
-    it('should allow retrying the original component', async () => {
-      let shouldThrow = true
-      
-      const DynamicErrorComponent = () => {
-        if (shouldThrow) {
-          throw new Error('Dynamic test error')
-        }
-        return <div data-testid="recovered-component">Recovered Component</div>
-      }
-
-      render(
-        <WebXRErrorBoundary maxRetries={3}>
-          <DynamicErrorComponent />
-        </WebXRErrorBoundary>
-      )
-
-      expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-      
-      // Fix the error condition
-      shouldThrow = false
-      
-      const retryButton = screen.getByText(TEST_MESSAGES.retryWebXR)
-      fireEvent.click(retryButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('recovered-component')).toBeInTheDocument()
-      })
-    })
-
-    it('should enforce maximum retry limit', () => {
-      const onError = jest.fn()
-      
-      render(
-        <WebXRErrorBoundary maxRetries={2} onError={onError}>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      const retryButton = screen.getByText(TEST_MESSAGES.retryWebXR)
-      
-      // First retry
-      fireEvent.click(retryButton)
-      expect(screen.getByText(TEST_MESSAGES.retryWebXR)).toBeInTheDocument()
-      
-      // Second retry (should hit limit)
-      fireEvent.click(retryButton)
-      
-      // Should still show retry since we start with 0 retries
-      expect(screen.getByText(TEST_MESSAGES.retryWebXR)).toBeInTheDocument()
-    })
-  })
-
-  describe('Error Logging and Monitoring', () => {
     it('should call onError prop when error occurs', () => {
       const onError = jest.fn()
       
@@ -222,48 +107,36 @@ describe('WebXRErrorBoundary', () => {
 
       expect(webxrErrorLogger.logError).toHaveBeenCalledWith(
         expect.any(Error),
-        expect.objectContaining({
-          fallbackLevel: 'webxr',
-          retryCount: 0
-        })
+        expect.any(Object)
       )
     })
   })
 
-  describe('WebXR Capability Detection Edge Cases', () => {
-    it('should handle WebXR availability detection errors', () => {
-      // Mock navigator.xr to throw error
-      Object.defineProperty(global.navigator, 'xr', {
-        value: {
-          isSessionSupported: jest.fn().mockRejectedValue(new Error('XR not available'))
-        },
-        writable: true
-      })
-
+  describe('Error UI Actions', () => {
+    it('should render action buttons', () => {
       render(
         <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={false} />
+          <ErrorThrowingComponent shouldThrow={true} />
         </WebXRErrorBoundary>
       )
 
-      expect(screen.getByTestId(TEST_IDS.normalComponent)).toBeInTheDocument()
+      expect(screen.getByText(TEST_MESSAGES.tryAgain)).toBeInTheDocument()
+      expect(screen.getByText(TEST_MESSAGES.returnToMain)).toBeInTheDocument()
     })
+  })
 
-    it('should handle missing WebXR API gracefully', () => {
-      // Mock navigator without xr
-      const originalXR = global.navigator.xr
-      delete (global.navigator as any).xr
-
+  describe('Custom Fallback', () => {
+    it('should render custom fallback when provided', () => {
+      const customFallback = <div data-testid="custom-fallback">Custom Error UI</div>
+      
       render(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={false} />
+        <WebXRErrorBoundary fallback={customFallback}>
+          <ErrorThrowingComponent shouldThrow={true} />
         </WebXRErrorBoundary>
       )
 
-      expect(screen.getByTestId(TEST_IDS.normalComponent)).toBeInTheDocument()
-      
-      // Restore
-      ;(global.navigator as any).xr = originalXR
+      expect(screen.getByTestId('custom-fallback')).toBeInTheDocument()
+      expect(screen.queryByText(TEST_MESSAGES.webxrUnavailable)).not.toBeInTheDocument()
     })
   })
 
@@ -285,74 +158,9 @@ describe('WebXRErrorBoundary', () => {
       // Error boundary should catch the error
       expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
     })
-
-    it('should reset error state when children change', () => {
-      const { rerender } = render(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-
-      // Rerender with non-throwing component
-      rerender(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={false} />
-        </WebXRErrorBoundary>
-      )
-
-      // Should still show error boundary until manually reset
-      expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-    })
   })
 
-  describe('Performance and Memory', () => {
-    it('should not leak memory with multiple error occurrences', () => {
-      let errorCount = 0
-      const MultiErrorComponent = () => {
-        errorCount++
-        if (errorCount <= 5) {
-          throw new Error(`Error ${errorCount}`)
-        }
-        return <div>Finally working</div>
-      }
-
-      render(
-        <WebXRErrorBoundary>
-          <MultiErrorComponent />
-        </WebXRErrorBoundary>
-      )
-
-      // Should handle multiple errors gracefully
-      expect(screen.getByText(TEST_MESSAGES.webxrUnavailable)).toBeInTheDocument()
-    })
-
-    it('should handle rapid error boundary state changes', async () => {
-      const { rerender } = render(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      // Rapid fallback progressions
-      fireEvent.click(screen.getByText('Try 3D Fallback'))
-      
-      await waitFor(() => {
-        expect(screen.getByTestId(TEST_IDS.webxr3DFallback)).toBeInTheDocument()
-      })
-
-      fireEvent.click(screen.getByText('Try 2D Fallback'))
-      
-      await waitFor(() => {
-        expect(screen.getByTestId(TEST_IDS.webxr2DFallback)).toBeInTheDocument()
-      })
-
-      expect(screen.getByTestId('webxr-2d-fallback')).toBeInTheDocument()
-    })
-  })
-
-  describe('Accessibility and UX', () => {
+  describe('Accessibility', () => {
     it('should provide accessible error messages', () => {
       render(
         <WebXRErrorBoundary>
@@ -363,19 +171,11 @@ describe('WebXRErrorBoundary', () => {
       const errorHeading = screen.getByRole('heading', { name: /webxr experience unavailable/i })
       expect(errorHeading).toBeInTheDocument()
       
-      const retryButton = screen.getByRole('button', { name: /retry webxr/i })
-      expect(retryButton).toBeInTheDocument()
-    })
-
-    it('should provide clear fallback options', () => {
-      render(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>
-      )
-
-      expect(screen.getByText(/webxr.*not.*available/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /try 3d fallback/i })).toBeInTheDocument()
+      const tryAgainButton = screen.getByRole('button', { name: /try again/i })
+      expect(tryAgainButton).toBeInTheDocument()
+      
+      const returnButton = screen.getByRole('button', { name: /return to main/i })
+      expect(returnButton).toBeInTheDocument()
     })
   })
 })

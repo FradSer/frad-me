@@ -71,7 +71,9 @@ class WebXRErrorLogger {
       webglSupported: this.checkWebGLSupport()
     }
 
-    console.error('WebXR Error logged:', errorDetails)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('WebXR Error logged:', errorDetails)
+    }
 
     if (this.isOnline) {
       await this.sendError(errorDetails)
