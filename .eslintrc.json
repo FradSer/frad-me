@@ -6,6 +6,17 @@
     "plugin:sonarjs/recommended-legacy"
   ],
   "rules": {
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "sonarjs/cognitive-complexity": ["error", 15],
+    "sonarjs/no-duplicate-string": ["error", { "threshold": 3 }],
+    "sonarjs/no-identical-expressions": "error",
+    "sonarjs/no-redundant-boolean": "error",
+    "sonarjs/prefer-immediate-return": "error",
+    "sonarjs/prefer-object-literal": "error",
+    "sonarjs/prefer-single-boolean-return": "error",
+    "sonarjs/no-nested-template-literals": "error",
+    "sonarjs/no-inverted-boolean-check": "error",
+    "sonarjs/no-small-switch": "error",
+    "sonarjs/prefer-while": "error"
   }
 }

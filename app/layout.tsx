@@ -60,6 +60,7 @@ const gtEestiDisplay = localFont({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://frad.me'),
   title: {
     default: 'Frad LEE',
     template: '%s | Frad LEE',

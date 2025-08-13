@@ -32,10 +32,13 @@ export interface CompiledPost {
 }
 
 /**
- * Type definitions for MDX plugins - simplified to avoid unified dependency
+ * Type definitions for MDX plugins - using Parameters to extract from bundleMDX
  */
-type RemarkPlugin = any
-type RehypePlugin = any
+type BundleMDXParams = Parameters<typeof bundleMDX>[0]
+type MDXOptionsFunction = NonNullable<BundleMDXParams['mdxOptions']>
+type MDXOptionsParams = Parameters<MDXOptionsFunction>[0]
+type RemarkPlugin = NonNullable<MDXOptionsParams['remarkPlugins']>[number]
+type RehypePlugin = NonNullable<MDXOptionsParams['rehypePlugins']>[number]
 
 /**
  * Reads a file from the posts directory with error handling

@@ -25,7 +25,9 @@ const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({ className = '' }) => 
     try {
       await xrStore.enterVR()
     } catch (err) {
-      console.error('Failed to enter immersive mode:', err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to enter immersive mode:', err)
+      }
       setError('Failed to start immersive experience')
     } finally {
       setIsLoading(false)
@@ -36,7 +38,9 @@ const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({ className = '' }) => 
     try {
       await xrStore.exitXR()
     } catch (err) {
-      console.error('Failed to exit immersive mode:', err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to exit immersive mode:', err)
+      }
     }
   }, [])
 
@@ -95,7 +99,9 @@ export const ExitImmersiveButton: React.FC = () => {
     try {
       await xrStore.exitXR()
     } catch (err) {
-      console.error('Failed to exit immersive mode:', err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to exit immersive mode:', err)
+      }
     } finally {
       setIsExiting(false)
     }

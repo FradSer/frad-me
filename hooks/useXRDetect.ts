@@ -38,7 +38,9 @@ export default function useXRDetect(): XRDetectResult {
           setIsVR(vrSupported)
         }
       } catch (error) {
-        console.warn('WebXR detection failed:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('WebXR detection failed:', error)
+        }
         if (isMounted) {
           setIsVR(false)
         }
