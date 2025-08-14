@@ -46,7 +46,7 @@ const WebXRCanvas: React.FC<WebXRCanvasProps> = ({ children }) => {
   }
 
   return (
-    <Canvas {...canvasSettings}>
+    <Canvas {...canvasSettings} data-testid="webxr-canvas">
       {webXRSupported ? (
         <XR store={xrStore}>
           {children}
