@@ -31,14 +31,14 @@ export const handleErrorLogging = async (
     try {
       await webxrErrorLogger.logError(error, errorInfo)
     } catch (loggingError) {
-      console.warn(`Failed to log error from ${componentName}:`, loggingError)
+      console.warn(`Failed to log error from ${componentName || 'unknown component'}:`, loggingError)
     }
   }
 }
 
 // Shared error sanitization
 export const sanitizeError = (error: Error): string => {
-  const sanitizedMessage = error.message.replace(/\/[^\s]+/g, '[PATH]')
+  const sanitizedMessage = error.message.replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]')
   return `${error.name}: ${sanitizedMessage}`
 }
 

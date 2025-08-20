@@ -16,6 +16,7 @@ interface UseCardAnimationProps {
 interface AnimationState {
   isInitialized: boolean
   startTime: number
+  shouldShow: boolean
 }
 
 export const useCardAnimation = ({ 
@@ -25,7 +26,7 @@ export const useCardAnimation = ({
   position, 
   index 
 }: UseCardAnimationProps) => {
-  const animationState = useRef<AnimationState>({ isInitialized: false, startTime: 0 })
+  const animationState = useRef<AnimationState>({ isInitialized: false, startTime: 0, shouldShow: false })
 
   // Initialize position when first becoming visible or reinitialize when switching back to visible
   useEffect(() => {
@@ -33,16 +34,23 @@ export const useCardAnimation = ({
       // Reset to navigation position and small scale
       groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
       groupRef.current.scale.setScalar(0.1)
+      // Hide initially until animation starts
+      groupRef.current.visible = false
       
       // Always reinitialize animation state when becoming visible
       animationState.current.isInitialized = true
+      animationState.current.shouldShow = false // Start hidden, will show when animation starts
       animationState.current.startTime = Date.now() + (ANIMATION_DELAYS.cardEntranceDelay + index * ANIMATION_DELAYS.cardStagger) * 1000
       
       // Reset opacity to 0 for smooth fade-in
       applyOpacityToObject(groupRef.current, 0)
     } else if (!visible) {
-      // Immediately mark as not initialized when hidden to allow immediate re-animation
+      // Immediately hide and mark as not initialized when hidden
+      if (groupRef.current) {
+        groupRef.current.visible = false
+      }
       animationState.current.isInitialized = false
+      animationState.current.shouldShow = false
       animationState.current.startTime = 0
     }
   }, [visible, groupRef, index])
@@ -56,8 +64,14 @@ export const useCardAnimation = ({
       const shouldAnimate = currentTime >= animationState.current.startTime
       
       if (!shouldAnimate) {
-        // Stay at starting position until it's this card's turn
+        // Hide the card completely until it's this card's turn to animate
+        groupRef.current.visible = false
+        animationState.current.shouldShow = false
         return
+      } else {
+        // Ensure card is visible when animation starts
+        groupRef.current.visible = true
+        animationState.current.shouldShow = true
       }
       
       // Calculate time since animation should have started for this card
@@ -103,22 +117,13 @@ export const useCardAnimation = ({
       const newOpacity = THREE.MathUtils.lerp(currentOpacity, targetOpacity * easedProgress, delta * 6) // Slower opacity transition
       applyOpacityToObject(groupRef.current, newOpacity)
     } else {
-      // Animate back to navigation button position when hiding
-      const targetOpacity = 0
-      const targetScale = 0.1
+      // Hide immediately when not visible
+      groupRef.current.visible = false
       
-      // Return to navigation position with faster exit animation
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, NAVIGATION_POSITIONS.navigationButtonAbsolute[0], delta * 8)
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, NAVIGATION_POSITIONS.navigationButtonAbsolute[1], delta * 8)
-      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, NAVIGATION_POSITIONS.navigationButtonAbsolute[2], delta * 8)
-      
-      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, delta * 10))
-      
-      // Fade out using utility with faster exit
-      const firstMesh = groupRef.current.children.find(child => child instanceof THREE.Mesh) as THREE.Mesh | undefined
-      const currentOpacity = firstMesh?.material && 'opacity' in firstMesh.material ? firstMesh.material.opacity : 1
-      const newOpacity = THREE.MathUtils.lerp(currentOpacity, targetOpacity, delta * 12)
-      applyOpacityToObject(groupRef.current, newOpacity)
+      // Reset position and scale for next animation
+      groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
+      groupRef.current.scale.setScalar(0.1)
+      applyOpacityToObject(groupRef.current, 0)
     }
     
     // Handle rotation animation
@@ -127,6 +132,7 @@ export const useCardAnimation = ({
   })
 
   return {
-    isAnimated: animationState.current.isInitialized
+    isAnimated: animationState.current.isInitialized,
+    shouldShow: animationState.current.shouldShow
   }
 }

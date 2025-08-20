@@ -52,7 +52,7 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
   }
 
   private sanitizeError = (error: Error): string => {
-    const sanitizedMessage = error.message.replace(/\b[a-zA-Z]:[\\\//][^\s]*\b/g, '[PATH]')
+    const sanitizedMessage = error.message.replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]')
     return `${error.name}: ${sanitizedMessage}`
   }
 

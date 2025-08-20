@@ -10,7 +10,7 @@ const nextConfig = {
     // Exclude test files from TypeScript compilation during build
     ignoreBuildErrors: false,
   },
-  // Exclude test directories from build
+  // Define file extensions for pages, including MDX
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   experimental: {
     // Exclude test files from bundling

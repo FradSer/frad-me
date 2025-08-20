@@ -236,7 +236,7 @@ test.describe('WebXR Error Boundary Integration', () => {
         // Should sanitize file paths and scripts
         expect(errorData.error.message).not.toContain('<script>')
         expect(errorData.error.message).not.toContain('/sensitive/path')
-        // Note: The actual sanitization behavior would depend on your implementation
+        expect(errorData.error.message).toContain('[PATH]')
       }
     })
 

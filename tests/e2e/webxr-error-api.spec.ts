@@ -347,31 +347,17 @@ test.describe('WebXR Error Logging API Integration', () => {
     })
 
     test('should handle malformed JSON requests gracefully', async ({ page }) => {
-      let apiResponse: any = null
-      
-      await page.route('/api/errors', async (route) => {
-        apiResponse = {
-          status: 400,
-          body: { error: 'Invalid error payload' }
-        }
-        
-        await route.fulfill({
-          status: 400,
-          contentType: 'application/json',
-          body: JSON.stringify({ error: 'Invalid error payload' })
-        })
-      })
-      
-      // Send malformed request
-      await page.evaluate(() => {
-        fetch('/api/errors', {
+      const response = await page.evaluate(async () => {
+        const res = await fetch('/api/errors', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: 'invalid json'
-        }).catch(() => {}) // Ignore fetch errors
-      })
+          body: 'this is not valid json',
+        });
+        return { status: res.status, body: await res.json().catch(() => null) };
+      });
       
-      expect(apiResponse?.status).toBe(400)
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Invalid error payload' });
     })
   })
 

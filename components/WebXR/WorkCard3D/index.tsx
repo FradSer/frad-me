@@ -45,7 +45,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   }, [work.cover])
 
   // Use simplified animation hook
-  useCardAnimation({
+  const { shouldShow } = useCardAnimation({
     groupRef,
     visible,
     hovered,
@@ -70,7 +70,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     }
   }
 
-  if (!visible) return null
+  if (!visible || !shouldShow) return null
 
   return (
     <group ref={groupRef} position={position}>

@@ -146,15 +146,13 @@ export class WebXRMockUtils {
     await page.addInitScript(() => {
       // Override performance.now to simulate slow frame rates
       const originalNow = performance.now.bind(performance)
-      let frameCount = 0
       let lastTime = originalNow()
       
       performance.now = function(): number {
-        frameCount++
         const currentTime = originalNow()
         
-        // Simulate 15 FPS instead of 60 FPS (4x slower)
-        const simulatedTime = lastTime + (frameCount * 66.67) // 66.67ms per frame = 15 FPS
+        // Simulate 15 FPS by adding a fixed delay (66.67ms) to the last simulated time
+        const simulatedTime = lastTime + 66.67
         lastTime = Math.max(currentTime, simulatedTime)
         
         return lastTime
