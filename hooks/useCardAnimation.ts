@@ -36,7 +36,7 @@ export const useCardAnimation = ({
   const bouncyConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) }
   
   // Focus on scale, opacity, and rotation - position is handled by direct prop
-  const springScale = useSimpleLerp(0.1, bouncyConfig) // Start small for entrance effect
+  const springScale = useSimpleLerp(0.1, fastConfig) // Use fast config for smoother scale animation
   const springOpacity = useSimpleLerp(0, elasticConfig) // Smooth fade
   const springRotation = useSimpleLerp(0, fastConfig) // Responsive hover feedback
 
@@ -69,7 +69,7 @@ export const useCardAnimation = ({
       animationState.current.isInitialized = false
       animationState.current.startTime = 0
     }
-  }, [visible, groupRef, index, springScale, springOpacity, springRotation])
+  }, [visible, index])
 
   useFrame((state, delta) => {
     if (!groupRef.current) return
@@ -81,6 +81,13 @@ export const useCardAnimation = ({
       
       
       if (!shouldAnimate) {
+        // Calculate target values even during wait state to prepare for smooth entrance
+        const targetScale = hovered ? 1.1 : 1
+        const targetRotation = hovered ? 0.1 : 0
+        
+        // Set targets but don't animate scale/rotation until entrance time
+        springRotation.set(targetRotation)
+        
         // Apply current spring values while waiting to start
         groupRef.current.scale.setScalar(springScale.value)
         groupRef.current.rotation.y = springRotation.value
@@ -113,6 +120,8 @@ export const useCardAnimation = ({
       // Apply spring values to 3D object (except position which is handled above)
       groupRef.current.scale.setScalar(springScale.value)
       groupRef.current.rotation.y = springRotation.value
+      
+      // Render order is now handled at individual element level
       
       // Apply spring-driven opacity
       applyOpacityToObject(groupRef.current, springOpacity.value)
