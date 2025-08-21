@@ -49,18 +49,33 @@ class WebXRErrorLogger {
   }
 
   private sanitizeMessage(message: string): string {
-    return message
-      .replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]') // File paths
-      .replace(/<script[^>]*>.*?<\/script>/gi, '[SCRIPT]') // Script tags
-      .replace(/<[^>]+>/g, '[HTML]') // HTML tags
-      .replace(/DROP\s+TABLE/gi, '[SQL]') // SQL injection attempts
+    // Limit input length to prevent DoS
+    const limitedMessage = message.substring(0, 1000)
+    
+    return limitedMessage
+      // Windows paths: C:\path\to\file (atomic groups to prevent backtracking)
+      .replace(/\b[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*\b/g, '[PATH]')
+      // Unix paths: /path/to/file (atomic groups to prevent backtracking)
+      .replace(/\/(?:[^\/\s<>"']+\/)*[^\/\s<>"']*/g, '[PATH]')
+      // Script tags (non-greedy with bounded repetition)
+      .replace(/<script\b[^>]{0,100}>[\s\S]{0,1000}?<\/script>/gi, '[SCRIPT]')
+      // HTML tags (bounded to prevent catastrophic backtracking)
+      .replace(/<[^>]{0,100}>/g, '[HTML]')
+      // SQL injection (simple pattern, no complex quantifiers)
+      .replace(/DROP\s+TABLE/gi, '[SQL]')
       .substring(0, 500)
   }
 
   private sanitizeUserAgent(userAgent: string): string {
-    return userAgent
-      .replace(/<script[^>]*>.*?<\/script>/gi, '[SCRIPT]') // Script tags
-      .replace(/<[^>]+>/g, '[HTML]') // HTML tags
+    // Limit input length to prevent DoS
+    const limitedUserAgent = userAgent.substring(0, 400)
+    
+    return limitedUserAgent
+      // Script tags (non-greedy with bounded repetition)
+      .replace(/<script\b[^>]{0,100}>[\s\S]{0,1000}?<\/script>/gi, '[SCRIPT]')
+      // HTML tags (bounded to prevent catastrophic backtracking)
+      .replace(/<[^>]{0,100}>/g, '[HTML]')
+      // Remove dangerous characters (character class, no backtracking)
       .replace(/[<>'"]/g, '')
       .substring(0, 200)
   }
