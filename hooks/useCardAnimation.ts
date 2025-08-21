@@ -35,10 +35,15 @@ export const useCardAnimation = ({
   const fastConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) }
   const bouncyConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) }
   
-  // Focus on scale, opacity, and rotation - position is handled by direct prop
+  // Focus on scale, opacity, rotation, and entrance position animation
   const springScale = useSimpleLerp(0.1, fastConfig) // Use fast config for smoother scale animation
   const springOpacity = useSimpleLerp(0, elasticConfig) // Smooth fade
   const springRotation = useSimpleLerp(0, fastConfig) // Responsive hover feedback
+  
+  // Position animation for spray effect from navigation button
+  const springPosX = useSimpleLerp(workCardPositions.entrance.x, elasticConfig) // X position animation
+  const springPosY = useSimpleLerp(workCardPositions.entrance.y, elasticConfig) // Y position animation
+  const springPosZ = useSimpleLerp(workCardPositions.entrance.z, elasticConfig) // Z position animation
 
   // Initialize spring animations when visibility changes
   useEffect(() => {
@@ -47,6 +52,11 @@ export const useCardAnimation = ({
       springScale.set(0.1) // Start small for entrance effect
       springOpacity.set(0)
       springRotation.set(0)
+      
+      // Set entrance position as starting point for spray effect
+      springPosX.set(workCardPositions.entrance.x)
+      springPosY.set(workCardPositions.entrance.y)
+      springPosZ.set(workCardPositions.entrance.z)
       
       // Initialize animation timing with staggered delays
       animationState.current.isInitialized = true
@@ -66,6 +76,11 @@ export const useCardAnimation = ({
       springOpacity.set(0)
       springRotation.set(0)
       
+      // Reset position to entrance point
+      springPosX.set(workCardPositions.entrance.x)
+      springPosY.set(workCardPositions.entrance.y)
+      springPosZ.set(workCardPositions.entrance.z)
+      
       animationState.current.isInitialized = false
       animationState.current.startTime = 0
     }
@@ -81,6 +96,11 @@ export const useCardAnimation = ({
       
       
       if (!shouldAnimate) {
+        // Keep cards at entrance position while waiting
+        groupRef.current.position.x = springPosX.value
+        groupRef.current.position.y = springPosY.value
+        groupRef.current.position.z = springPosZ.value
+        
         // Calculate target values even during wait state to prepare for smooth entrance
         const targetScale = hovered ? 1.1 : 1
         const targetRotation = hovered ? 0.1 : 0
@@ -103,16 +123,23 @@ export const useCardAnimation = ({
       const targetOpacity = 1
       const targetRotation = hovered ? 0.1 : 0
       
-      // Add subtle floating animation by adjusting position relative to base
+      // Calculate target positions for spray effect animation
       const floatingOffset = Math.sin(state.clock.elapsedTime + index) * 0.1
-      const hoverYOffset = hovered ? workCardPositions.hover.y : floatingOffset
-      const hoverZOffset = hovered ? workCardPositions.hover.z : 0
+      const finalX = position[0] // Use prop position as final target
+      const finalY = position[1] + (hovered ? workCardPositions.hover.y : floatingOffset)
+      const finalZ = position[2] + (hovered ? workCardPositions.hover.z : 0)
       
-      // Apply relative position offsets for hover and floating effects
-      groupRef.current.position.y = position[1] + hoverYOffset
-      groupRef.current.position.z = position[2] + hoverZOffset
+      // Update position spring targets for spray effect
+      springPosX.set(finalX)
+      springPosY.set(finalY)
+      springPosZ.set(finalZ)
       
-      // Update spring targets
+      // Apply animated positions
+      groupRef.current.position.x = springPosX.value
+      groupRef.current.position.y = springPosY.value
+      groupRef.current.position.z = springPosZ.value
+      
+      // Update other spring targets
       springScale.set(targetScale)
       springOpacity.set(targetOpacity)
       springRotation.set(targetRotation)
@@ -130,12 +157,20 @@ export const useCardAnimation = ({
       onOpacityChange?.(springOpacity.value)
       
     } else {
-      // Use springs for smooth exit animation
+      // Use springs for smooth exit animation - return to entrance position
       springScale.set(0.1) // Match initial scale
       springOpacity.set(0)
       springRotation.set(0)
       
-      // Apply spring values during exit (position stays at prop value)
+      // Return to entrance position for exit
+      springPosX.set(workCardPositions.entrance.x)
+      springPosY.set(workCardPositions.entrance.y)
+      springPosZ.set(workCardPositions.entrance.z)
+      
+      // Apply spring values during exit
+      groupRef.current.position.x = springPosX.value
+      groupRef.current.position.y = springPosY.value
+      groupRef.current.position.z = springPosZ.value
       groupRef.current.scale.setScalar(springScale.value)
       groupRef.current.rotation.y = springRotation.value
       
