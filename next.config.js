@@ -6,6 +6,18 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  typescript: {
+    // Exclude test files from TypeScript compilation during build
+    ignoreBuildErrors: false,
+  },
+  // Define file extensions for pages, including MDX
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  experimental: {
+    // Exclude test files from bundling
+    outputFileTracingExcludes: {
+      '*': ['./tests/**/*'],
+    },
+  },
   transpilePackages: [
     '@react-three/fiber',
     '@react-three/xr',

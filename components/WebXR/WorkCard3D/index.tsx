@@ -74,17 +74,32 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Card background/cover */}
+      {/* Invisible hover detection area covering entire card including text */}
       <mesh
-        ref={meshRef}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
+        position={[0, -1, -0.2]} // Positioned to cover card + text area, behind all other elements
+      >
+        <planeGeometry args={[5.5, 5]} /> {/* Larger area covering card + text */}
+        <meshBasicMaterial 
+          transparent 
+          opacity={0} 
+          depthWrite={false}
+          colorWrite={false}
+        />
+      </mesh>
+      
+      {/* Card background/cover */}
+      <mesh 
+        ref={meshRef}
+        renderOrder={hovered ? 1001 : 1} // Higher than background when hovered
       >
         <planeGeometry args={WORK_CARD_POSITIONS.cardGeometry} />
         <meshStandardMaterial
           map={coverTexture}
           transparent
+          depthTest={!hovered} // Disable depth test when hovered to ensure it renders on top
         />
       </mesh>
 
@@ -100,6 +115,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
+            renderOrder={hovered ? 1002 : 2} // Ensure text is above background
           >
             {work.title}
           </Text>
@@ -117,6 +133,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Regular-Trial.woff"
+            renderOrder={hovered ? 1002 : 2} // Ensure text is above background
           >
             {work.subTitle}
           </Text>
@@ -125,7 +142,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
       {/* WIP Badge */}
       {work.isWIP && (
-        <group position={WORK_CARD_POSITIONS.wipBadgeGroup}>
+        <group position={[WORK_CARD_POSITIONS.wipBadgeGroup[0], WORK_CARD_POSITIONS.wipBadgeGroup[1], 0.2]}>
           <Html transform occlude>
             <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black shadow-lg">
               WIP
@@ -136,12 +153,16 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
 
       {/* Interactive glow effect when hovered - adjusted for larger cards */}
       {hovered && (
-        <mesh position={WORK_CARD_POSITIONS.wipBadgeBackground}>
+        <mesh 
+          position={WORK_CARD_POSITIONS.wipBadgeBackground}
+          renderOrder={1000} // Below card image and text, but above other cards
+        >
           <planeGeometry args={[4.8, 3.3]} />
           <meshBasicMaterial
             color="#4f46e5"
             transparent
             opacity={0.2}
+            depthTest={false} // Disable depth test to ensure it renders on top
           />
         </mesh>
       )}

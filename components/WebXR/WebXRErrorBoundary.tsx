@@ -51,8 +51,8 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
     }
   }
 
-  private sanitizeError(error: Error): string {
-    const sanitizedMessage = error.message.replace(/\/[^\s]+/g, '[PATH]')
+  private sanitizeError = (error: Error): string => {
+    const sanitizedMessage = error.message.replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]')
     return `${error.name}: ${sanitizedMessage}`
   }
 
@@ -104,11 +104,11 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
             ))}
           </div>
           {isDevMode && error && (
-            <details className="mt-6 text-left">
-              <summary className="cursor-pointer text-sm text-gray-400">
+            <details className="mt-6 text-left max-w-md mx-auto">
+              <summary className="cursor-pointer text-sm text-gray-400 mb-2">
                 Error Details (Development)
               </summary>
-              <pre className="mt-2 overflow-auto bg-gray-800 p-2 text-xs text-red-300">
+              <pre className="bg-gray-900 text-red-300 p-3 rounded text-xs overflow-auto max-h-32">
                 {this.sanitizeError(error)}
               </pre>
             </details>
