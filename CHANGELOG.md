@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.11.0](https://github.com/FradSer/frad-me/compare/v0.10.0...v0.11.0) (2025-08-21)
+
+### Features
+
+- **webxr:** add animated spray effect for work cards - Cards animate from navigation button position to final grid positions creating a burst effect
+- **webxr:** implement spray effect starting position - Change card entrance position to start from behind navigation button
+
+### Bug Fixes
+
+- **webxr:** enhance hover interaction and render layering - Add invisible hover detection area covering entire card including text, implement proper renderOrder system for layered hover effects, fix WIP badge z-fighting by adjusting position
+- **webxr:** improve hover card positioning for forward movement - Change hover z position from 2 to -2 for forward movement toward camera
+- **webxr:** stabilize card hover animations - Remove unstable spring object dependencies from useEffect to prevent animation resets, switch scale animation from bouncy to fast config for smoother transitions
+
+### Maintenance
+
+- **chore:** add packageManager field to package.json - Specify pnpm version for consistent package management
+
 ## [0.9.10](https://github.com/FradSer/frad-me/compare/v0.9.8...v0.9.10) (2025-04-27)
 
 ### Features
