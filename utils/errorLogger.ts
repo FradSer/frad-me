@@ -49,11 +49,20 @@ class WebXRErrorLogger {
   }
 
   private sanitizeMessage(message: string): string {
-    return message.replace(/\/[^\s]+/g, '[PATH]').substring(0, 500)
+    return message
+      .replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]') // File paths
+      .replace(/<script[^>]*>.*?<\/script>/gi, '[SCRIPT]') // Script tags
+      .replace(/<[^>]+>/g, '[HTML]') // HTML tags
+      .replace(/DROP\s+TABLE/gi, '[SQL]') // SQL injection attempts
+      .substring(0, 500)
   }
 
   private sanitizeUserAgent(userAgent: string): string {
-    return userAgent.replace(/[<>'"]/g, '').substring(0, 200)
+    return userAgent
+      .replace(/<script[^>]*>.*?<\/script>/gi, '[SCRIPT]') // Script tags
+      .replace(/<[^>]+>/g, '[HTML]') // HTML tags
+      .replace(/[<>'"]/g, '')
+      .substring(0, 200)
   }
 
   public async logError(error: Error, errorInfo?: React.ErrorInfo): Promise<void> {
