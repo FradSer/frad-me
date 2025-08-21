@@ -38,7 +38,7 @@ export const heroAnimationStates = {
 export const workCardPositions = {
   entrance: { x: 0, y: -15, z: -5 },
   display: { x: 0, y: 0, z: 0 },
-  hover: { x: 0, y: 1, z: 2 },
+  hover: { x: 0, y: 1, z: -2 }, // Increased forward movement for more noticeable hover effect
 } as const
 
 export function createStaggeredDelay(index: number, baseDelay: number = 100): number {
