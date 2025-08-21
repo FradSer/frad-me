@@ -9,7 +9,10 @@ export const applyOpacityToObject = (object: THREE.Object3D, opacity: number) =>
               material instanceof THREE.MeshStandardMaterial ||
               material instanceof THREE.MeshLambertMaterial) {
             material.opacity = opacity
-            material.transparent = opacity < 1
+            // Always set transparent to true for opacity animations
+            material.transparent = true
+            // Force material update to ensure proper rendering
+            material.needsUpdate = true
           }
         })
       } else {
@@ -18,9 +21,26 @@ export const applyOpacityToObject = (object: THREE.Object3D, opacity: number) =>
             material instanceof THREE.MeshStandardMaterial ||
             material instanceof THREE.MeshLambertMaterial) {
           material.opacity = opacity
-          material.transparent = opacity < 1
+          // Always set transparent to true for opacity animations
+          material.transparent = true
+          // Force material update to ensure proper rendering
+          material.needsUpdate = true
         }
       }
     }
   })
+}
+
+/**
+ * Initialize material with proper transparency settings for animations
+ * This ensures materials are ready for opacity animations from the start
+ */
+export const initializeMaterialForOpacity = (material: THREE.Material, initialOpacity = 0) => {
+  if (material instanceof THREE.MeshBasicMaterial || 
+      material instanceof THREE.MeshStandardMaterial ||
+      material instanceof THREE.MeshLambertMaterial) {
+    material.opacity = initialOpacity
+    material.transparent = true
+    material.needsUpdate = true
+  }
 }

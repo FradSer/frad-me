@@ -2,8 +2,9 @@ import { useRef, useEffect, RefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { workCardPositions } from '@/utils/webxr/animationHelpers'
-import { NAVIGATION_POSITIONS, ANIMATION_DELAYS } from '@/utils/webxr/animationConstants'
+import { ANIMATION_DELAYS, SPRING_CONFIGS } from '@/utils/webxr/animationConstants'
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 
 interface UseCardAnimationProps {
   groupRef: RefObject<THREE.Group>
@@ -11,12 +12,12 @@ interface UseCardAnimationProps {
   hovered: boolean
   position: [number, number, number]
   index: number
+  onOpacityChange?: (opacity: number) => void
 }
 
 interface AnimationState {
   isInitialized: boolean
   startTime: number
-  shouldShow: boolean
 }
 
 export const useCardAnimation = ({ 
@@ -24,36 +25,51 @@ export const useCardAnimation = ({
   visible, 
   hovered, 
   position, 
-  index 
+  index,
+  onOpacityChange
 }: UseCardAnimationProps) => {
-  const animationState = useRef<AnimationState>({ isInitialized: false, startTime: 0, shouldShow: false })
+  const animationState = useRef<AnimationState>({ isInitialized: false, startTime: 0 })
+  
+  // Simplified spring-based animation system focusing on scale and opacity
+  const elasticConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) }
+  const fastConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) }
+  const bouncyConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) }
+  
+  // Focus on scale, opacity, and rotation - position is handled by direct prop
+  const springScale = useSimpleLerp(0.1, bouncyConfig) // Start small for entrance effect
+  const springOpacity = useSimpleLerp(0, elasticConfig) // Smooth fade
+  const springRotation = useSimpleLerp(0, fastConfig) // Responsive hover feedback
 
-  // Initialize position when first becoming visible or reinitialize when switching back to visible
+  // Initialize spring animations when visibility changes
   useEffect(() => {
     if (visible && groupRef.current) {
-      // Reset to navigation position and small scale
-      groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
-      groupRef.current.scale.setScalar(0.1)
-      // Hide initially until animation starts
-      groupRef.current.visible = false
+      // Reset spring values to starting state
+      springScale.set(0.1) // Start small for entrance effect
+      springOpacity.set(0)
+      springRotation.set(0)
       
-      // Always reinitialize animation state when becoming visible
+      // Initialize animation timing with staggered delays
       animationState.current.isInitialized = true
-      animationState.current.shouldShow = false // Start hidden, will show when animation starts
       animationState.current.startTime = Date.now() + (ANIMATION_DELAYS.cardEntranceDelay + index * ANIMATION_DELAYS.cardStagger) * 1000
       
-      // Reset opacity to 0 for smooth fade-in
-      applyOpacityToObject(groupRef.current, 0)
+      // Ensure opacity is properly reset for each card individually
+      const timeoutId = setTimeout(() => {
+        if (groupRef.current) {
+          applyOpacityToObject(groupRef.current, 0)
+        }
+      }, 50)
+      
+      return () => clearTimeout(timeoutId)
     } else if (!visible) {
-      // Immediately hide and mark as not initialized when hidden
-      if (groupRef.current) {
-        groupRef.current.visible = false
-      }
+      // Reset to hidden state when not visible
+      springScale.set(0.1)
+      springOpacity.set(0)
+      springRotation.set(0)
+      
       animationState.current.isInitialized = false
-      animationState.current.shouldShow = false
       animationState.current.startTime = 0
     }
-  }, [visible, groupRef, index])
+  }, [visible, groupRef, index, springScale, springOpacity, springRotation])
 
   useFrame((state, delta) => {
     if (!groupRef.current) return
@@ -63,76 +79,64 @@ export const useCardAnimation = ({
       const currentTime = Date.now()
       const shouldAnimate = currentTime >= animationState.current.startTime
       
+      
       if (!shouldAnimate) {
-        // Hide the card completely until it's this card's turn to animate
-        groupRef.current.visible = false
-        animationState.current.shouldShow = false
+        // Apply current spring values while waiting to start
+        groupRef.current.scale.setScalar(springScale.value)
+        groupRef.current.rotation.y = springRotation.value
+        
+        // Always apply opacity even during wait state
+        applyOpacityToObject(groupRef.current, springOpacity.value)
+        onOpacityChange?.(springOpacity.value)
         return
-      } else {
-        // Ensure card is visible when animation starts
-        groupRef.current.visible = true
-        animationState.current.shouldShow = true
       }
       
-      // Calculate time since animation should have started for this card
-      const animationProgress = Math.min(1, (currentTime - animationState.current.startTime) / ANIMATION_DELAYS.cardAnimationDuration)
-      
-      // Enhanced spring easing with more bounce
-      const easeOutBack = (t: number) => {
-        const c1 = 1.70158
-        const c3 = c1 + 1
-        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2)
-      }
-      const easedProgress = easeOutBack(animationProgress)
-      
-      // Calculate target values
-      const targetX = position[0]
-      const targetY = hovered 
-        ? position[1] + workCardPositions.hover.y
-        : position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1
-      const targetZ = hovered 
-        ? position[2] + workCardPositions.hover.z
-        : position[2]
-      
+      // Calculate target values - position is handled by direct prop, focus on scale/opacity/rotation
       const targetScale = hovered ? 1.1 : 1
       const targetOpacity = 1
+      const targetRotation = hovered ? 0.1 : 0
       
-      // Enhanced spring-like animation with stronger bounce effect
-      const baseSpeed = animationProgress < 1 ? 6 : 4 // Enhanced speed for spring effect
-      const springMultiplier = 1 + Math.sin(easedProgress * Math.PI) * 0.3 // Add oscillation
-      const animationSpeed = baseSpeed * springMultiplier
-      const positionLerpSpeed = delta * animationSpeed
-      const scaleLerpSpeed = delta * (animationSpeed + 2) // More responsive scaling
+      // Add subtle floating animation by adjusting position relative to base
+      const floatingOffset = Math.sin(state.clock.elapsedTime + index) * 0.1
+      const hoverYOffset = hovered ? workCardPositions.hover.y : floatingOffset
+      const hoverZOffset = hovered ? workCardPositions.hover.z : 0
       
-      // Animate position and scale with spring effect
-      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, positionLerpSpeed)
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, positionLerpSpeed)
-      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, positionLerpSpeed)
+      // Apply relative position offsets for hover and floating effects
+      groupRef.current.position.y = position[1] + hoverYOffset
+      groupRef.current.position.z = position[2] + hoverZOffset
       
-      groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, scaleLerpSpeed))
+      // Update spring targets
+      springScale.set(targetScale)
+      springOpacity.set(targetOpacity)
+      springRotation.set(targetRotation)
       
-      // Apply opacity using utility with smooth fade-in
-      const firstMesh = groupRef.current.children.find(child => child instanceof THREE.Mesh) as THREE.Mesh | undefined
-      const currentOpacity = firstMesh?.material && 'opacity' in firstMesh.material ? firstMesh.material.opacity : 0
-      const newOpacity = THREE.MathUtils.lerp(currentOpacity, targetOpacity * easedProgress, delta * 6) // Slower opacity transition
-      applyOpacityToObject(groupRef.current, newOpacity)
+      // Apply spring values to 3D object (except position which is handled above)
+      groupRef.current.scale.setScalar(springScale.value)
+      groupRef.current.rotation.y = springRotation.value
+      
+      // Apply spring-driven opacity
+      applyOpacityToObject(groupRef.current, springOpacity.value)
+      
+      // Notify parent component of opacity changes for HTML elements
+      onOpacityChange?.(springOpacity.value)
+      
     } else {
-      // Hide immediately when not visible
-      groupRef.current.visible = false
+      // Use springs for smooth exit animation
+      springScale.set(0.1) // Match initial scale
+      springOpacity.set(0)
+      springRotation.set(0)
       
-      // Reset position and scale for next animation
-      groupRef.current.position.set(...NAVIGATION_POSITIONS.navigationButtonAbsolute)
-      groupRef.current.scale.setScalar(0.1)
-      applyOpacityToObject(groupRef.current, 0)
+      // Apply spring values during exit (position stays at prop value)
+      groupRef.current.scale.setScalar(springScale.value)
+      groupRef.current.rotation.y = springRotation.value
+      
+      // Apply spring-driven opacity during exit
+      applyOpacityToObject(groupRef.current, springOpacity.value)
+      onOpacityChange?.(springOpacity.value)
     }
-    
-    // Handle rotation animation
-    const targetRotation = hovered ? 0.1 : 0
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotation, delta * 5)
   })
 
   return {
-    isAnimated: animationState.current.isInitialized,
-    shouldShow: animationState.current.shouldShow
+    isAnimated: animationState.current.isInitialized
   }
 }

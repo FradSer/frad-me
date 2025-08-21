@@ -25,7 +25,7 @@ const workLinks = [
     subTitle: 'Design Research / XR Prototyper',
     slug: 'interactive-cross-platform-mixed-reality-video-player',
     cover:
-      '/works/interactive-cross-iplatform-mixed-reality-video-player/cover.png',
+      '/works/interactive-cross-platform-mixed-reality-video-player/cover.png',
     isWIP: true,
   },
   {
