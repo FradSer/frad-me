@@ -15,8 +15,8 @@ const addPositions = (
 
 // Base navigation positions
 const NAVIGATION_BASE = {
-  group: [0, 0, -10] as [number, number, number], // Match hero text depth
-  buttonOffset: [2.5, 2.8, 2] as [number, number, number], // Right-aligned with hero + distance
+  group: [0, 0, -1] as [number, number, number],
+  buttonOffset: [2.5, 2.5, 0] as [number, number, number],
 } as const
 
 // Navigation positions (computed)
@@ -42,7 +42,7 @@ export const CAMERA_POSITIONS = {
 // Base positions for related elements
 const FOOTER_BASE = {
   group: [0, 0, -4] as [number, number, number],
-  linksOffset: [2.4, -2.5, 2] as [number, number, number], // Right-aligned with hero + distance
+  linksOffset: [3, -3, 0] as [number, number, number],
 } as const
 
 // Footer positions (computed)
@@ -84,7 +84,7 @@ export const IMMERSIVE_BUTTON_POSITIONS = {
 
 export const ENTRANCE_POSITIONS = {
   workDefault: [0, 0, -8] as [number, number, number],  // Push work section further back
-  heroDefault: [0, 0, -10] as [number, number, number], // Hero text depth matches navigation
+  heroDefault: [0, 0, -5] as [number, number, number], // Hero text at comfortable distance
 } as const
 
 export const ANIMATION_DELAYS = {
