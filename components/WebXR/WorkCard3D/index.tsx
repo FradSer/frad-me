@@ -1,8 +1,9 @@
-import React, { useState, useRef, Suspense, useMemo } from 'react'
+import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react'
 import { Html, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants'
 import { useCardAnimation } from '@/hooks/useCardAnimation'
+import { forceInitializeTransparency } from '@/utils/webxr/materialUtils'
 
 interface WorkLink {
   title: string
@@ -44,6 +45,13 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     return texture
   }, [work.cover])
 
+  // Force initialize transparency immediately on mount for WebXR best practices
+  useEffect(() => {
+    if (groupRef.current) {
+      forceInitializeTransparency(groupRef.current)
+    }
+  }, [])
+
   // Use simplified animation hook
   useCardAnimation({
     groupRef,
@@ -70,10 +78,15 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     }
   }
 
-  if (!visible) return null
+  // Remove early return - cards should always render but with opacity 0 when not visible
+  // This allows for proper WebXR transparency animation from navigation position
 
   return (
-    <group ref={groupRef} position={position}>
+    <group 
+      ref={groupRef} 
+      position={position}
+      renderOrder={hovered ? 9999 : 0} // Entire card on top when hovered
+    >
       {/* Invisible hover detection area covering entire card including text */}
       <mesh
         onPointerOver={handlePointerOver}
@@ -93,12 +106,14 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       {/* Card background/cover */}
       <mesh 
         ref={meshRef}
-        renderOrder={hovered ? 1001 : 1} // Higher than background when hovered
       >
         <planeGeometry args={WORK_CARD_POSITIONS.cardGeometry} />
         <meshStandardMaterial
           map={coverTexture}
           transparent
+          opacity={0} // Start with complete transparency for WebXR best practices
+          depthWrite={false} // WebXR best practice: disable depth write for transparent materials
+          side={THREE.DoubleSide} // Ensure both sides are visible
           depthTest={!hovered} // Disable depth test when hovered to ensure it renders on top
         />
       </mesh>
@@ -115,7 +130,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
-            renderOrder={hovered ? 1002 : 2} // Ensure text is above background
           >
             {work.title}
           </Text>
@@ -133,7 +147,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
             maxWidth={4}
             lineHeight={1.2}
             font="/fonts/GT-Eesti-Display-Regular-Trial.woff"
-            renderOrder={hovered ? 1002 : 2} // Ensure text is above background
           >
             {work.subTitle}
           </Text>
@@ -143,7 +156,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       {/* WIP Badge */}
       {work.isWIP && (
         <group position={[WORK_CARD_POSITIONS.wipBadgeGroup[0], WORK_CARD_POSITIONS.wipBadgeGroup[1], 0.2]}>
-          <Html transform occlude>
+          <Html transform>
             <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black shadow-lg">
               WIP
             </div>
@@ -155,7 +168,6 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       {hovered && (
         <mesh 
           position={WORK_CARD_POSITIONS.wipBadgeBackground}
-          renderOrder={1000} // Below card image and text, but above other cards
         >
           <planeGeometry args={[4.8, 3.3]} />
           <meshBasicMaterial

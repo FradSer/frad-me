@@ -5,6 +5,7 @@ import { workCardPositions } from '@/utils/webxr/animationHelpers'
 import { ANIMATION_DELAYS, SPRING_CONFIGS } from '@/utils/webxr/animationConstants'
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
 
 interface UseCardAnimationProps {
   groupRef: RefObject<THREE.Group>
@@ -28,7 +29,11 @@ export const useCardAnimation = ({
   index,
   onOpacityChange
 }: UseCardAnimationProps) => {
+  const { currentView } = useWebXRView()
   const animationState = useRef<AnimationState>({ isInitialized: false, startTime: 0 })
+  
+  // Determine if cards should be visible based on current view, not visible prop
+  const shouldShowCards = currentView === 'work'
   
   // Simplified spring-based animation system focusing on scale and opacity
   const elasticConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) }
@@ -45,12 +50,12 @@ export const useCardAnimation = ({
   const springPosY = useSimpleLerp(workCardPositions.entrance.y, elasticConfig) // Y position animation
   const springPosZ = useSimpleLerp(workCardPositions.entrance.z, elasticConfig) // Z position animation
 
-  // Initialize spring animations when visibility changes
+  // Initialize spring animations when view changes
   useEffect(() => {
-    if (visible && groupRef.current) {
-      // Reset spring values to starting state
+    if (shouldShowCards && groupRef.current) {
+      // Reset spring values to starting state - ensure opacity starts at 0
       springScale.set(0.1) // Start small for entrance effect
-      springOpacity.set(0)
+      springOpacity.set(0) // Must start at 0 for proper fade-in
       springRotation.set(0)
       
       // Set entrance position as starting point for spray effect
@@ -62,16 +67,11 @@ export const useCardAnimation = ({
       animationState.current.isInitialized = true
       animationState.current.startTime = Date.now() + (ANIMATION_DELAYS.cardEntranceDelay + index * ANIMATION_DELAYS.cardStagger) * 1000
       
-      // Ensure opacity is properly reset for each card individually
-      const timeoutId = setTimeout(() => {
-        if (groupRef.current) {
-          applyOpacityToObject(groupRef.current, 0)
-        }
-      }, 50)
+      // Immediately apply opacity 0 to ensure cards start transparent
+      applyOpacityToObject(groupRef.current, 0)
       
-      return () => clearTimeout(timeoutId)
-    } else if (!visible) {
-      // Reset to hidden state when not visible
+    } else if (!shouldShowCards) {
+      // Reset to hidden state when not in work view
       springScale.set(0.1)
       springOpacity.set(0)
       springRotation.set(0)
@@ -83,13 +83,18 @@ export const useCardAnimation = ({
       
       animationState.current.isInitialized = false
       animationState.current.startTime = 0
+      
+      // Immediately apply opacity 0 when hidden
+      if (groupRef.current) {
+        applyOpacityToObject(groupRef.current, 0)
+      }
     }
-  }, [visible, index])
+  }, [shouldShowCards, index])
 
   useFrame((state, delta) => {
     if (!groupRef.current) return
 
-    if (visible) {
+    if (shouldShowCards) {
       // Check if this card should start animating yet
       const currentTime = Date.now()
       const shouldAnimate = currentTime >= animationState.current.startTime

@@ -7,7 +7,7 @@ import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils'
 import { measureChunkLoad } from '@/utils/performance'
 import { SPRING_CONFIGS, ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants'
-import { applyOpacityToObject } from '@/utils/webxr/materialUtils'
+import { applyOpacityToObject, forceInitializeTransparency } from '@/utils/webxr/materialUtils'
 import WorkCard3D from '../WorkCard3D'
 import workLinks from '@/content/workLinks'
 
@@ -36,7 +36,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const { currentView } = useWebXRView()
   const groupRef = useRef<THREE.Group>(null)
   
-  // Enhanced spring control with bouncy entrance effect
+  // Enhanced spring control with bouncy entrance effect - start with opacity 0
   const opacitySpring = useSimpleLerp(0, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
   const scaleSpring = useSimpleLerp(0.8, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy) })
   const positionYSpring = useSimpleLerp(-2, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic) })
@@ -48,12 +48,26 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
       scaleSpring.set(1)
       positionYSpring.set(0)
     } else {
-      // Enhanced exit with spring effects
+      // Enhanced exit with spring effects - ensure opacity is 0
       opacitySpring.set(0)
       scaleSpring.set(0.8)
       positionYSpring.set(-2)
     }
   }, [currentView, opacitySpring, scaleSpring, positionYSpring])
+
+  // Force initialize complete transparency on mount for WebXR best practices
+  useEffect(() => {
+    if (groupRef.current) {
+      forceInitializeTransparency(groupRef.current)
+    }
+  }, [])
+
+  // Ensure work grid starts completely transparent
+  useEffect(() => {
+    if (groupRef.current && currentView !== 'work') {
+      applyOpacityToObject(groupRef.current, 0)
+    }
+  }, [currentView])
 
   useFrame(() => {
     if (!groupRef.current) return
@@ -101,7 +115,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
             work={work}
             position={position}
             index={index}
-            visible={currentView === 'work'}
+            visible={true} // Always render cards, transparency controlled by animation
           />
         )
       })}
