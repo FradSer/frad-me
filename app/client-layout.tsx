@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 
 import { ThemeProvider } from 'next-themes'
 
@@ -45,7 +46,13 @@ const VRLayout = () => (
 )
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
+  const pathname = usePathname()
   const { isVR, isLoading } = useXRDetect()
+
+  // If user is explicitly on /webxr route, render VR layout directly
+  if (pathname === '/webxr') {
+    return <VRLayout />
+  }
 
   if (isLoading) {
     return (

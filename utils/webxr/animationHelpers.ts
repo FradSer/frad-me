@@ -36,7 +36,7 @@ export const heroAnimationStates = {
 } as const
 
 export const workCardPositions = {
-  entrance: { x: 2.5, y: 2.8, z: -6 }, // Start from behind navigation button for spray effect
+  entrance: { x: 2.5, y: 2.5, z: -8 }, // Start from navigation button position but further back
   display: { x: 0, y: 0, z: 0 },
   hover: { x: 0, y: 1, z: -2 }, // Increased forward movement for more noticeable hover effect
 } as const
