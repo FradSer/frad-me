@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/FradSer/frad-me/compare/v0.11.0...v0.11.1) (2025-08-22)
+
+### Bug Fixes
+
+- **webxr:** implement proper work cards transparency and rendering
+- **webxr:** correct navigation positioning and route handling
+
 ## [0.11.0](https://github.com/FradSer/frad-me/compare/v0.10.0...v0.11.0) (2025-08-21)
 
 ### Features
