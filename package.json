@@ -47,7 +47,8 @@
     "react-dom": "^18.3.1",
     "react-scroll": "^1.9.3",
     "three": "^0.169.0",
-    "three-stdlib": "^2.36.0"
+    "three-stdlib": "^2.36.0",
+    "zod": "^4.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

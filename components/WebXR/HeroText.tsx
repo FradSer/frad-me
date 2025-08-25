@@ -7,7 +7,7 @@ import { measureChunkLoad } from '@/utils/performance';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
-import { SPRING_CONFIGS } from '@/utils/webxr/animationConstants';
+import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
 
 const Text = dynamic(
   () =>
@@ -39,10 +39,10 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
 
   // Enhanced springs for interactive elements
   const scaleSpring = useSimpleLerp(1, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
   });
   const rotationSpring = useSimpleLerp(0, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast),
   });
 
   useFrame((_, delta) => {
@@ -233,7 +233,7 @@ function HeroText() {
   const groupRef = useRef<THREE.Group>(null);
 
   // Enhanced spring configuration for more dynamic hero transitions
-  const springConfig = SPRING_CONFIGS.elastic;
+  const springConfig = WEBXR_ANIMATION_CONFIG.springs.elastic;
 
   // Initialize all lerp values consistently with home state to avoid race conditions
   const initialState = heroAnimationStates.home;

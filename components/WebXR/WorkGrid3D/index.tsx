@@ -8,7 +8,9 @@ import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
 import { measureChunkLoad } from '@/utils/performance';
 import {
-  SPRING_CONFIGS,
+  WEBXR_ANIMATION_CONFIG,
+} from '@/utils/webxr/animationConfig';
+import {
   ENTRANCE_POSITIONS,
   WORK_GRID_POSITIONS,
 } from '@/utils/webxr/animationConstants';
@@ -47,13 +49,13 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
 
   // Enhanced spring control with bouncy entrance effect - start with opacity 0
   const opacitySpring = useSimpleLerp(0, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
   });
   const scaleSpring = useSimpleLerp(0.8, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
   });
   const positionYSpring = useSimpleLerp(-2, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
   });
 
   useEffect(() => {

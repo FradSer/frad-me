@@ -6,7 +6,9 @@ import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { measureChunkLoad } from '@/utils/performance';
 import {
-  SPRING_CONFIGS,
+  WEBXR_ANIMATION_CONFIG,
+} from '@/utils/webxr/animationConfig';
+import {
   NAVIGATION_POSITIONS,
 } from '@/utils/webxr/animationConstants';
 
@@ -31,16 +33,17 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
   const textRef = useRef<THREE.Mesh>(null);
 
   const scaleSpring = useSimpleLerp(1, {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast),
   });
 
   // Breathing effect when never interacted
   useEffect(() => {
     if (!hasBeenInteracted) {
       const breathingAnimation = setInterval(() => {
-        scaleSpring.set(1.05);
-        setTimeout(() => scaleSpring.set(1), 1000);
-      }, 2500);
+        scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
+        setTimeout(() => scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default), 
+          WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration);
+      }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
 
       return () => clearInterval(breathingAnimation);
     }
@@ -48,9 +51,9 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
 
   useEffect(() => {
     if (hovered || isActive) {
-      scaleSpring.set(1.1);
+      scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.hover);
     } else if (hasBeenInteracted) {
-      scaleSpring.set(1);
+      scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default);
     }
   }, [hovered, isActive, hasBeenInteracted, scaleSpring]);
 

@@ -3,8 +3,10 @@ import { useFrame } from '@react-three/fiber';
 import type * as THREE from 'three';
 import { workCardPositions } from '@/utils/webxr/animationHelpers';
 import {
+  WEBXR_ANIMATION_CONFIG,
+} from '@/utils/webxr/animationConfig';
+import {
   ANIMATION_DELAYS,
-  SPRING_CONFIGS,
 } from '@/utils/webxr/animationConstants';
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
@@ -43,16 +45,16 @@ export const useCardAnimation = ({
 
   // Simplified spring-based animation system focusing on scale and opacity
   const elasticConfig = {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
   };
-  const fastConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) };
+  const fastConfig = { speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast) };
   const bouncyConfig = {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
   };
 
   // Focus on scale, opacity, rotation, and entrance position animation
-  const springScale = useSimpleLerp(0.1, fastConfig); // Use fast config for smoother scale animation
-  const springOpacity = useSimpleLerp(0, elasticConfig); // Smooth fade
+  const springScale = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.entrance, fastConfig); // Use fast config for smoother scale animation
+  const springOpacity = useSimpleLerp(WEBXR_ANIMATION_CONFIG.opacity.hidden, elasticConfig); // Smooth fade
   const springRotation = useSimpleLerp(0, fastConfig); // Responsive hover feedback
 
   // Position animation for spray effect from navigation button
@@ -64,8 +66,8 @@ export const useCardAnimation = ({
   useEffect(() => {
     if (shouldShowCards && groupRef.current) {
       // Reset spring values to starting state - ensure opacity starts at 0
-      springScale.set(0.1); // Start small for entrance effect
-      springOpacity.set(0); // Must start at 0 for proper fade-in
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance); // Start small for entrance effect
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden); // Must start at 0 for proper fade-in
       springRotation.set(0);
 
       // Set entrance position as starting point for spray effect
@@ -82,11 +84,11 @@ export const useCardAnimation = ({
           1000;
 
       // Immediately apply opacity 0 to ensure cards start transparent
-      applyOpacityToObject(groupRef.current, 0);
+      applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
     } else if (!shouldShowCards) {
       // Reset to hidden state when not in work view
-      springScale.set(0.1);
-      springOpacity.set(0);
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance);
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden);
       springRotation.set(0);
 
       // Reset position to entrance point
@@ -99,7 +101,7 @@ export const useCardAnimation = ({
 
       // Immediately apply opacity 0 when hidden
       if (groupRef.current) {
-        applyOpacityToObject(groupRef.current, 0);
+        applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
       }
     }
   }, [shouldShowCards, index]);
@@ -136,8 +138,8 @@ export const useCardAnimation = ({
       }
 
       // Calculate target values - position is handled by direct prop, focus on scale/opacity/rotation
-      const targetScale = hovered ? 1.1 : 1;
-      const targetOpacity = 1;
+      const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
+      const targetOpacity = WEBXR_ANIMATION_CONFIG.opacity.visible;
       const targetRotation = hovered ? 0.1 : 0;
 
       // Calculate target positions for spray effect animation
@@ -175,8 +177,8 @@ export const useCardAnimation = ({
       onOpacityChange?.(springOpacity.value);
     } else {
       // Use springs for smooth exit animation - return to entrance position
-      springScale.set(0.1); // Match initial scale
-      springOpacity.set(0);
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance); // Match initial scale
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden);
       springRotation.set(0);
 
       // Return to entrance position for exit
