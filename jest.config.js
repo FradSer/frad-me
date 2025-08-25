@@ -20,26 +20,28 @@ const customJestConfig = {
 
   // Test file patterns
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
-    '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)',
+    '<rootDir>/**/__tests__/**/*.(test|spec).(ts|tsx|js)',
+    '<rootDir>/**/*.(test|spec).(ts|tsx|js)',
   ],
 
   // Ignore patterns
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
-    '<rootDir>/tests/e2e/', // E2E tests are handled by Playwright
   ],
 
   // Coverage configuration
   collectCoverageFrom: [
-    'src/**/*.(ts|tsx)',
     'components/**/*.(ts|tsx)',
     'utils/**/*.(ts|tsx)',
     'hooks/**/*.(ts|tsx)',
+    'app/**/*.(ts|tsx)',
+    'contexts/**/*.(ts|tsx)',
     '!**/*.d.ts',
     '!**/node_modules/**',
     '!**/.next/**',
+    '!**/__tests__/**',
+    '!**/webxr-mocks.ts',
   ],
 
   // Coverage thresholds (disabled for initial setup)

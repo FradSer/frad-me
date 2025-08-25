@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { getAllPosts, getSinglePost } from '../../utils/mdx';
+import { getAllPosts, getSinglePost } from '../utils/mdx';
 
 // Mock fs module
 jest.mock('fs');
