@@ -1,33 +1,35 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react';
 
-import type { Position } from '@/types/common'
+import type { Position } from '@/types/common';
 
 // https://dev.to/holdmypotion/react-custom-cursor-no-extra-dependencies-25ki
 // https://gist.github.com/eldh/54954e01b40ef6fb812e2c8ee13731dc
 
 export default function useMousePosition(): Position {
-  const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 })
-  const throttleRef = useRef<number | null>(null)
+  const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 });
+  const throttleRef = useRef<number | null>(null);
 
   useEffect(() => {
     const updateMousePosition = (event: MouseEvent) => {
-      if (throttleRef.current) return
-      
+      if (throttleRef.current) return;
+
       throttleRef.current = window.setTimeout(() => {
-        setMousePosition({ x: event.clientX, y: event.clientY })
-        throttleRef.current = null
-      }, 16) // ~60fps
-    }
+        setMousePosition({ x: event.clientX, y: event.clientY });
+        throttleRef.current = null;
+      }, 16); // ~60fps
+    };
 
-    document.addEventListener('mousemove', updateMousePosition, { passive: true })
-    
+    document.addEventListener('mousemove', updateMousePosition, {
+      passive: true,
+    });
+
     return () => {
-      document.removeEventListener('mousemove', updateMousePosition)
+      document.removeEventListener('mousemove', updateMousePosition);
       if (throttleRef.current) {
-        clearTimeout(throttleRef.current)
+        clearTimeout(throttleRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return mousePosition
+  return mousePosition;
 }

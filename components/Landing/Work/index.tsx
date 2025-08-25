@@ -1,11 +1,11 @@
-import { Element } from 'react-scroll'
+import { Element } from 'react-scroll';
 
-import WorkCard from '@/components/Landing/Work/WorkCard'
-import WorkTitle from '@/components/Landing/Work/WorkTitle'
+import WorkCard from '@/components/Landing/Work/WorkCard';
+import WorkTitle from '@/components/Landing/Work/WorkTitle';
 
-import workLinks from '@/content/workLinks'
+import workLinks from '@/content/workLinks';
 
-const MAX_DISPLAY_WORKS = 5
+const MAX_DISPLAY_WORKS = 5;
 
 export default function Work() {
   return (
@@ -29,5 +29,5 @@ export default function Work() {
         ))}
       </Element>
     </section>
-  )
+  );
 }

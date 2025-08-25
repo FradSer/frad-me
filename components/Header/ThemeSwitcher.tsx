@@ -1,37 +1,40 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react';
 
-import { motion } from 'framer-motion'
-import { useTheme } from 'next-themes'
+import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 
-import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
-import { SunIcon, MoonIcon } from '@/components/common/Icons'
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
+import { SunIcon, MoonIcon } from '@/components/common/Icons';
 
 import {
   primaryTransition,
   secondaryTransition,
-} from '@/utils/motion/springTransitions'
+} from '@/utils/motion/springTransitions';
 
 export default function ThemeSwitcher() {
   // * Hooks
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), [])
+  useEffect(() => setMounted(true), []);
 
-  const hoverVariants = useMemo(() => ({
-    initial: {
-      scale: 1,
-      transition: primaryTransition,
-    },
-    hover: {
-      scale: 1.1,
-      transition: secondaryTransition,
-    },
-  }), [])
+  const hoverVariants = useMemo(
+    () => ({
+      initial: {
+        scale: 1,
+        transition: primaryTransition,
+      },
+      hover: {
+        scale: 1.1,
+        transition: secondaryTransition,
+      },
+    }),
+    [],
+  );
 
-  const isDark = mounted && (theme === 'dark' || resolvedTheme === 'dark')
-  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark')
+  const isDark = mounted && (theme === 'dark' || resolvedTheme === 'dark');
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
 
   // * Render
   return (
@@ -52,5 +55,5 @@ export default function ThemeSwitcher() {
         )}
       </motion.button>
     </CursorProvider>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-import FLogo from '@/components/Header/FLogo'
-import ThemeSwitcher from '@/components/Header/ThemeSwitcher'
-import { CommonLink } from '@/components/common/CommonLink'
+import FLogo from '@/components/Header/FLogo';
+import ThemeSwitcher from '@/components/Header/ThemeSwitcher';
+import { CommonLink } from '@/components/common/CommonLink';
 
-import headerLinks from '@/content/headerLinks'
+import headerLinks from '@/content/headerLinks';
 
 function Header() {
   return (
@@ -29,7 +29,7 @@ function Header() {
         </li>
       </ul>
     </nav>
-  )
+  );
 }
 
-export default Header
+export default Header;

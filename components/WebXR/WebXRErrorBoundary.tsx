@@ -1,97 +1,112 @@
-import React, { Component, ReactNode } from 'react'
+import type React from 'react';
+import { Component, type ReactNode } from 'react';
 
-import { webxrErrorLogger } from '@/utils/errorLogger'
+import { webxrErrorLogger } from '@/utils/errorLogger';
 
 interface ActionButton {
-  text: string
-  onClick: () => void
-  className: string
+  text: string;
+  onClick: () => void;
+  className: string;
 }
 
 interface WebXRErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-  errorInfo?: React.ErrorInfo
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: React.ErrorInfo;
 }
 
 interface WebXRErrorBoundaryProps {
-  children: ReactNode
-  fallback?: ReactNode
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
+  children: ReactNode;
+  fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBoundaryState> {
+class WebXRErrorBoundary extends Component<
+  WebXRErrorBoundaryProps,
+  WebXRErrorBoundaryState
+> {
   constructor(props: WebXRErrorBoundaryProps) {
-    super(props)
-    this.state = { 
-      hasError: false
-    }
+    super(props);
+    this.state = {
+      hasError: false,
+    };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<WebXRErrorBoundaryState> {
-    return { hasError: true, error }
+  static getDerivedStateFromError(
+    error: Error,
+  ): Partial<WebXRErrorBoundaryState> {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    this.setState({ errorInfo })
-    
+    this.setState({ errorInfo });
+
     // Handle logging and external error callback
-    this.handleErrorLogging(error, errorInfo)
-    this.props.onError?.(error, errorInfo)
+    this.handleErrorLogging(error, errorInfo);
+    this.props.onError?.(error, errorInfo);
   }
 
-  private async handleErrorLogging(error: Error, errorInfo: React.ErrorInfo): Promise<void> {
-    const logMessage = 'WebXR Error Boundary'
-    console.error(logMessage, error, errorInfo)
-    
+  private async handleErrorLogging(
+    error: Error,
+    errorInfo: React.ErrorInfo,
+  ): Promise<void> {
+    const logMessage = 'WebXR Error Boundary';
+    console.error(logMessage, error, errorInfo);
+
     try {
-      await webxrErrorLogger.logError(error, errorInfo)
+      await webxrErrorLogger.logError(error, errorInfo);
     } catch (loggingError) {
-      console.warn('Failed to log error:', loggingError)
+      console.warn('Failed to log error:', loggingError);
     }
   }
 
   private sanitizeError = (error: Error): string => {
-    const sanitizedMessage = error.message.replace(/(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g, '[PATH]')
-    return `${error.name}: ${sanitizedMessage}`
-  }
+    const sanitizedMessage = error.message.replace(
+      /(?:\b[a-zA-Z]:)?(?:\\|\/)[^\s'"]+/g,
+      '[PATH]',
+    );
+    return `${error.name}: ${sanitizedMessage}`;
+  };
 
   private renderErrorFallback(): ReactNode {
-    const { fallback } = this.props
-    if (fallback) return fallback
-    return this.renderHeroStyleError()
+    const { fallback } = this.props;
+    if (fallback) return fallback;
+    return this.renderHeroStyleError();
   }
 
   private renderHeroStyleError(): ReactNode {
-    const { error } = this.state
-    const isDevMode = process.env.NODE_ENV === 'development'
+    const { error } = this.state;
+    const isDevMode = process.env.NODE_ENV === 'development';
 
     const actionButtons: readonly ActionButton[] = [
       {
         text: 'Try Again',
         onClick: () => {
           if (typeof window !== 'undefined') {
-            window.location.reload()
+            window.location.reload();
           }
         },
-        className: 'bg-white text-black hover:bg-gray-200'
+        className: 'bg-white text-black hover:bg-gray-200',
       },
       {
         text: 'Return to Main',
         onClick: () => {
           if (typeof window !== 'undefined') {
-            const homeUrl = new URL('/', window.location.origin)
-            window.location.href = homeUrl.toString()
+            const homeUrl = new URL('/', window.location.origin);
+            window.location.href = homeUrl.toString();
           }
         },
-        className: 'bg-gray-800 text-white hover:bg-gray-700 border border-white'
-      }
-    ] as const
+        className:
+          'bg-gray-800 text-white hover:bg-gray-700 border border-white',
+      },
+    ] as const;
 
     return (
       <div className="h-screen w-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-white text-2xl font-bold mb-6">WebXR Experience Unavailable</h1>
+          <h1 className="text-white text-2xl font-bold mb-6">
+            WebXR Experience Unavailable
+          </h1>
           <div className="space-y-3 mb-6">
             {actionButtons.map(({ text, onClick, className }) => (
               <button
@@ -115,12 +130,14 @@ class WebXRErrorBoundary extends Component<WebXRErrorBoundaryProps, WebXRErrorBo
           )}
         </div>
       </div>
-    )
+    );
   }
 
   render() {
-    return this.state.hasError ? this.renderErrorFallback() : this.props.children
+    return this.state.hasError
+      ? this.renderErrorFallback()
+      : this.props.children;
   }
 }
 
-export default WebXRErrorBoundary
+export default WebXRErrorBoundary;

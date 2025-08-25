@@ -1,15 +1,15 @@
-import classNames from 'classnames'
+import classNames from 'classnames';
 
-import DotCircle from '@/components/Landing/Hero/DotCircle'
-import Rectangle from '@/components/Landing/Hero/Rectangle'
-import Triangle from '@/components/Landing/Hero/Triangle'
-import ScrollLink from '@/components/common/ScrollLink'
+import DotCircle from '@/components/Landing/Hero/DotCircle';
+import Rectangle from '@/components/Landing/Hero/Rectangle';
+import Triangle from '@/components/Landing/Hero/Triangle';
+import ScrollLink from '@/components/common/ScrollLink';
 
-import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
-import { PlayIcon, StopIcon } from '@/components/common/Icons'
+import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
+import { PlayIcon, StopIcon } from '@/components/common/Icons';
 
 interface IHeroProps {
-  isWebXR?: boolean
+  isWebXR?: boolean;
 }
 
 // Combine the text content for speaking
@@ -19,17 +19,18 @@ who is eager to learn for advancement. Whether it's
 coding in a new language,
 design with any tool whatsoever
 or building a startup.
-`
+`;
 
-const trianglePositionClass = 'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20'
-const mutedTextClass = 'text-gray-400'
+const trianglePositionClass =
+  'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20';
+const mutedTextClass = 'text-gray-400';
 
 function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
-  const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis()
+  const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis();
 
   const heroH1 = classNames(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
-  )
+  );
 
   return (
     <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
@@ -81,7 +82,7 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
         </div>
       </h1>
     </section>
-  )
+  );
 }
 
-export default Hero
+export default Hero;

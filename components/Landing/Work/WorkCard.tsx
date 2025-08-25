@@ -1,22 +1,25 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from 'next/image';
+import Link from 'next/link';
 
-import classNames from 'classnames'
-import { motion } from 'framer-motion'
+import classNames from 'classnames';
+import { motion } from 'framer-motion';
 
-import useMouseContext from '@/hooks/useMouseContext'
+import useMouseContext from '@/hooks/useMouseContext';
 
-import { createVariants, useAnimationGroup } from '@/utils/motion/animationHelpers'
-import { getWorkColor } from '@/utils/theme/workColors'
+import {
+  createVariants,
+  useAnimationGroup,
+} from '@/utils/motion/animationHelpers';
+import { getWorkColor } from '@/utils/theme/workColors';
 
 interface IWorkCardProps {
-  title: string
-  subTitle: string
-  slug: string
-  cover: string
-  isFullScreen?: boolean
-  isCenter?: boolean
-  isWIP?: boolean
+  title: string;
+  subTitle: string;
+  slug: string;
+  cover: string;
+  isFullScreen?: boolean;
+  isCenter?: boolean;
+  isWIP?: boolean;
 }
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
@@ -29,26 +32,30 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       'hover:cursor-not-allowed': props.isWIP,
       'hover:cursor-pointer': !props.isWIP,
     },
-  )
+  );
 
   const backgroundImageClass = classNames(
     'absolute w-full h-full',
-    getWorkColor(props.slug)
-  )
+    getWorkColor(props.slug),
+  );
 
   const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
     'text-left md:text-center': props.isCenter,
     'text-left': !props.isCenter,
-  })
+  });
 
   const textTitleClass = classNames('font-bold text-white', {
     'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
     'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
-  })
+  });
 
   // * Animation
-  const { controls, startGroup } = useAnimationGroup(['backgroundImage', 'backgroundMask', 'text'])
-  
+  const { controls, startGroup } = useAnimationGroup([
+    'backgroundImage',
+    'backgroundMask',
+    'text',
+  ]);
+
   const variants = createVariants({
     backgroundMask: {
       initial: { opacity: 0 },
@@ -62,38 +69,40 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       initial: { opacity: 0, y: -20 },
       hover: { opacity: 1, y: 0 },
     },
-  })
+  });
 
   // * Hooks
-  const mouseContext = useMouseContext()
+  const mouseContext = useMouseContext();
 
   // * Animation handlers
   const handleHoverStart = () => {
-    const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered'
-    mouseContext.cursorChangeHandler(cursorType)
-    
+    const cursorType = props.isWIP
+      ? 'work-card-hovered-wip'
+      : 'work-card-hovered';
+    mouseContext.cursorChangeHandler(cursorType);
+
     startGroup({
       backgroundImage: 'hover',
       backgroundMask: 'hover',
       text: 'hover',
-    })
-  }
+    });
+  };
 
   const handleHoverEnd = () => {
-    mouseContext.cursorChangeHandler('default')
-    
+    mouseContext.cursorChangeHandler('default');
+
     startGroup({
       backgroundImage: 'initial',
       backgroundMask: 'initial',
       text: 'initial',
-    })
-  }
+    });
+  };
 
   const handleClick = () => {
     if (!props.isWIP) {
-      mouseContext.cursorChangeHandler('default')
+      mouseContext.cursorChangeHandler('default');
     }
-  }
+  };
 
   const workCard = (
     <motion.div
@@ -133,18 +142,18 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
         <div className={textTitleClass}>{props.title}</div>
       </motion.div>
     </motion.div>
-  )
+  );
 
   // * Render
   if (props.isWIP) {
-    return workCard
+    return workCard;
   } else {
     return (
       <Link href={`/works/${props.slug}`} passHref legacyBehavior>
         {workCard}
       </Link>
-    )
+    );
   }
 }
 
-export default WorkCard
+export default WorkCard;

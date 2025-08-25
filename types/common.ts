@@ -3,22 +3,22 @@
  */
 
 export type Position = {
-  readonly x: number
-  readonly y: number
-}
+  readonly x: number;
+  readonly y: number;
+};
 
 export type Size = {
-  readonly width: number
-  readonly height: number
-}
+  readonly width: number;
+  readonly height: number;
+};
 
-export type Dimensions = Position & Size
+export type Dimensions = Position & Size;
 
-export type AnimationState = 'initial' | 'animate' | 'exit'
+export type AnimationState = 'initial' | 'animate' | 'exit';
 
-export type ThemeMode = 'light' | 'dark' | 'system'
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 // Utility types for better type safety
-export type NonEmptyArray<T> = readonly [T, ...T[]]
+export type NonEmptyArray<T> = readonly [T, ...T[]];
 
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 interface ErrorPageProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
-export default function Error({ error, reset }: ErrorPageProps) {
+export default function ErrorPage({ error, reset }: ErrorPageProps) {
   useEffect(() => {
-    console.error('App Router Error:', error)
-  }, [error])
+    console.error('App Router Error:', error);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white dark:bg-black">
@@ -23,15 +23,17 @@ export default function Error({ error, reset }: ErrorPageProps) {
         </p>
         <div className="space-y-4">
           <button
+            type="button"
             onClick={reset}
             className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
           >
             Try Again
           </button>
           <button
+            type="button"
             onClick={() => {
               if (typeof window !== 'undefined') {
-                window.location.href = '/'
+                window.location.href = '/';
               }
             }}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
@@ -51,5 +53,5 @@ export default function Error({ error, reset }: ErrorPageProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

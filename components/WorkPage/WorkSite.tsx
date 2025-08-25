@@ -1,9 +1,9 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-import { ExternalLinkIcon } from '@/components/common/Icons'
+import { ExternalLinkIcon } from '@/components/common/Icons';
 
 export default function WorkSite(props: Readonly<{ href?: string }>) {
-  if (!props.href) return null
+  if (!props.href) return null;
   return (
     <div className="col-span-3">
       <p className="uppercase">site</p>
@@ -16,5 +16,5 @@ export default function WorkSite(props: Readonly<{ href?: string }>) {
         <ExternalLinkIcon className="h-4 w-4 fill-gray-500 dark:fill-gray-400" />
       </Link>
     </div>
-  )
+  );
 }

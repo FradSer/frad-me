@@ -1,25 +1,29 @@
-import Image from 'next/image'
-import classNames from 'classnames'
+import Image from 'next/image';
+import classNames from 'classnames';
 
-import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider'
-import { WorkImageProps, WorkBeforeAfterImagesProps, ImagePosition } from '@/types/work'
-import { IMAGE_POSITION_CLASSES, COMMON_CLASSES } from '@/utils/constants'
+import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
+import {
+  type WorkImageProps,
+  type WorkBeforeAfterImagesProps,
+  ImagePosition,
+} from '@/types/work';
+import { IMAGE_POSITION_CLASSES, COMMON_CLASSES } from '@/utils/constants';
 
 // Shared optimized image component
-function OptimizedImage({ 
-  src, 
-  width, 
-  height, 
-  alt, 
-  priority = false, 
-  unoptimized = false 
+function OptimizedImage({
+  src,
+  width,
+  height,
+  alt,
+  priority = false,
+  unoptimized = false,
 }: {
-  src: string
-  width: number
-  height: number
-  alt: string
-  priority?: boolean
-  unoptimized?: boolean
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  priority?: boolean;
+  unoptimized?: boolean;
 }) {
   return (
     <Image
@@ -28,10 +32,10 @@ function OptimizedImage({
       height={height}
       alt={alt}
       priority={priority}
-      loading={priority ? undefined : "lazy"}
+      loading={priority ? undefined : 'lazy'}
       unoptimized={unoptimized}
     />
-  )
+  );
 }
 
 function WorkSingleImage({
@@ -45,8 +49,8 @@ function WorkSingleImage({
 }: Readonly<WorkImageProps>) {
   const workImageClass = classNames(
     COMMON_CLASSES.imageContainer,
-    IMAGE_POSITION_CLASSES[position]
-  )
+    IMAGE_POSITION_CLASSES[position],
+  );
 
   return (
     <MDXComponentProvider className={workImageClass}>
@@ -62,7 +66,7 @@ function WorkSingleImage({
         <span className={COMMON_CLASSES.workCaption}>{alt}</span>
       </div>
     </MDXComponentProvider>
-  )
+  );
 }
 
 function WorkBeforeAfterImages({
@@ -78,7 +82,7 @@ function WorkBeforeAfterImages({
     height,
     alt: description,
     priority,
-  }
+  };
 
   return (
     <MDXComponentProvider className="work-component-layout col-span-16">
@@ -90,7 +94,7 @@ function WorkBeforeAfterImages({
       </div>
       <span className={COMMON_CLASSES.workCaption}>{description}</span>
     </MDXComponentProvider>
-  )
+  );
 }
 
-export { WorkSingleImage, WorkBeforeAfterImages }
+export { WorkSingleImage, WorkBeforeAfterImages };

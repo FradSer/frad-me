@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { getMDXComponent } from 'mdx-bundler/client'
+import { getMDXComponent } from 'mdx-bundler/client';
 
-import Topography from '@/components/WorkPage/BearyChat/Topography'
-import ComfortableFontSFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula'
-import ComfortableFontYong from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong'
-import EyeComfortDFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula'
+import Topography from '@/components/WorkPage/BearyChat/Topography';
+import ComfortableFontSFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula';
+import ComfortableFontYong from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong';
+import EyeComfortDFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula';
 import {
   Blockquote,
   H1,
@@ -17,20 +17,20 @@ import {
   OL,
   P,
   UL,
-} from '@/components/WorkPage/MDXComponents'
-import NextWork from '@/components/WorkPage/NextWork'
-import WorkCover from '@/components/WorkPage/WorkCover'
+} from '@/components/WorkPage/MDXComponents';
+import NextWork from '@/components/WorkPage/NextWork';
+import WorkCover from '@/components/WorkPage/WorkCover';
 import {
   WorkSingleImage,
   WorkBeforeAfterImages,
-} from '@/components/WorkPage/WorkImage'
-import WorkInformation from '@/components/WorkPage/WorkInformation'
-import WorkSite from '@/components/WorkPage/WorkSite'
-import type { WorkFrontmatter } from '@/types/work'
+} from '@/components/WorkPage/WorkImage';
+import WorkInformation from '@/components/WorkPage/WorkInformation';
+import WorkSite from '@/components/WorkPage/WorkSite';
+import type { WorkFrontmatter } from '@/types/work';
 
 interface WorkPageClientProps {
-  code: string
-  frontmatter: WorkFrontmatter
+  code: string;
+  frontmatter: WorkFrontmatter;
 }
 
 const mdxComponents = {
@@ -48,15 +48,15 @@ const mdxComponents = {
   ComfortableFontSFormula,
   ComfortableFontYong,
   EyeComfortDFormula,
-}
+};
 
-const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6'
+const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6';
 
 export default function WorkPageClient({
   code,
   frontmatter,
 }: Readonly<WorkPageClientProps>) {
-  const Component = useMemo(() => getMDXComponent(code), [code])
+  const Component = useMemo(() => getMDXComponent(code), [code]);
 
   return (
     <main className="flex flex-col items-center justify-center">
@@ -99,5 +99,5 @@ export default function WorkPageClient({
         <span className="col-span-16 h-16" />
       </section>
     </main>
-  )
+  );
 }
