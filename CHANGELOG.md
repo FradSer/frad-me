@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/FradSer/frad-me/compare/v0.11.1...v0.11.2) (2025-08-25)
+
+### Changed
+
+- reorganize test structure to follow best practices
+- replace eslint/prettier with biome code formatter
+
 ## [0.11.1](https://github.com/FradSer/frad-me/compare/v0.11.0...v0.11.1) (2025-08-22)
 
 ### Bug Fixes
