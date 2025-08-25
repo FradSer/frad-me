@@ -131,8 +131,8 @@ test.describe('Theme and Responsive Integration', () => {
         el.classList.contains('dark'),
       );
 
-      // Log for debugging - adjust assertion based on your implementation
-      console.log('System dark mode respected:', isDark);
+      // Verify system dark mode is respected on first visit
+      expect(isDark).toBeTruthy();
     });
 
     test('should override system preference when user makes explicit choice', async ({
@@ -156,7 +156,7 @@ test.describe('Theme and Responsive Integration', () => {
       // Reload page - should maintain user choice
       await page.reload();
       await homePage.header.verifyHeaderVisible();
-      // await homePage.header.verifyTheme(targetTheme) // Uncomment if persistence is implemented
+      await homePage.header.verifyTheme(targetTheme);
     });
   });
 
