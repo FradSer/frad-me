@@ -1,19 +1,19 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
-import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
-import { primaryTransition } from '@/utils/motion/springTransitions'
+import { primaryTransition } from '@/utils/motion/springTransitions';
 
 interface IDotCircleProps {
-  isInteractive?: boolean
+  isInteractive?: boolean;
 }
 
 function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
-  let animationCircleDelay = 2.5
-  let animationArrowDelay = 0.6
-  const [hovered, setHovered] = useState<boolean>(false)
+  const animationCircleDelay = 2.5;
+  const animationArrowDelay = 0.6;
+  const [hovered, setHovered] = useState<boolean>(false);
 
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
@@ -50,7 +50,7 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
         </motion.div>
       </motion.div>
     </CursorProvider>
-  )
+  );
 }
 
-export default DotCircle
+export default DotCircle;

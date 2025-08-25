@@ -1,49 +1,81 @@
-'use client'
+'use client';
 
-import { Suspense } from 'react'
-import dynamic from 'next/dynamic'
-import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary'
-import WebXR3DErrorBoundary from '@/components/WebXR/WebXR3DErrorBoundary'
-import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext'
-import { measureChunkLoad } from '@/utils/performance'
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary';
+import WebXR3DErrorBoundary from '@/components/WebXR/WebXR3DErrorBoundary';
+import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
+import { measureChunkLoad } from '@/utils/performance';
 
 // Dynamic imports for bundle optimization
 const WebXRCanvas = dynamic(
-  () => measureChunkLoad('WebXRCanvas', () => import('@/components/WebXR/WebXRCanvas')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'WebXRCanvas',
+      () => import('@/components/WebXR/WebXRCanvas'),
+    ),
+  { ssr: false },
+);
 const ImmersiveButton = dynamic(
-  () => measureChunkLoad('ImmersiveButton', () => import('@/components/WebXR/ImmersiveButton')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'ImmersiveButton',
+      () => import('@/components/WebXR/ImmersiveButton'),
+    ),
+  { ssr: false },
+);
 const VisionProInputHandler = dynamic(
-  () => measureChunkLoad('VisionProInputHandler', () => import('@/components/WebXR/VisionProInputHandler')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'VisionProInputHandler',
+      () => import('@/components/WebXR/VisionProInputHandler'),
+    ),
+  { ssr: false },
+);
 const HeroText = dynamic(
-  () => measureChunkLoad('HeroText', () => import('@/components/WebXR/HeroText')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad('HeroText', () => import('@/components/WebXR/HeroText')),
+  { ssr: false },
+);
 const Stars = dynamic(
-  () => measureChunkLoad('Stars', () => import('@react-three/drei').then(mod => ({ default: mod.Stars }))),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad('Stars', () =>
+      import('@react-three/drei').then((mod) => ({ default: mod.Stars })),
+    ),
+  { ssr: false },
+);
 const Navigation3D = dynamic(
-  () => measureChunkLoad('Navigation3D', () => import('@/components/WebXR/Navigation3D')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'Navigation3D',
+      () => import('@/components/WebXR/Navigation3D'),
+    ),
+  { ssr: false },
+);
 const FooterLinks3D = dynamic(
-  () => measureChunkLoad('FooterLinks3D', () => import('@/components/WebXR/FooterLinks3D')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'FooterLinks3D',
+      () => import('@/components/WebXR/FooterLinks3D'),
+    ),
+  { ssr: false },
+);
 const WorkGrid3D = dynamic(
-  () => measureChunkLoad('WorkGrid3D', () => import('@/components/WebXR/WorkGrid3D')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'WorkGrid3D',
+      () => import('@/components/WebXR/WorkGrid3D'),
+    ),
+  { ssr: false },
+);
 const CameraController3D = dynamic(
-  () => measureChunkLoad('CameraController3D', () => import('@/components/WebXR/CameraController3D')),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad(
+      'CameraController3D',
+      () => import('@/components/WebXR/CameraController3D'),
+    ),
+  { ssr: false },
+);
 
 const STARS_CONFIG = {
   radius: 5,
@@ -52,7 +84,7 @@ const STARS_CONFIG = {
   factor: 10,
   saturation: 0,
   fade: true,
-} as const
+} as const;
 
 const LoadingFallback = () => (
   <div className="h-screen w-screen bg-black flex items-center justify-center">
@@ -61,7 +93,7 @@ const LoadingFallback = () => (
       <p className="text-white text-sm">Loading WebXR Experience...</p>
     </div>
   </div>
-)
+);
 
 export default function WebXR() {
   return (
@@ -78,14 +110,14 @@ export default function WebXR() {
           <Suspense fallback={<LoadingFallback />}>
             <WebXRCanvas>
               {/* Vision Pro Input Handler */}
-              <VisionProInputHandler 
+              <VisionProInputHandler
                 onTransientPointerSelect={(event) => {
                   if (process.env.NODE_ENV === 'development') {
-                    console.log('Vision Pro interaction:', event)
+                    console.log('Vision Pro interaction:', event);
                   }
                 }}
               />
-              
+
               <WebXR3DErrorBoundary componentName="CameraController3D">
                 <CameraController3D />
               </WebXR3DErrorBoundary>
@@ -109,5 +141,5 @@ export default function WebXR() {
         </WebXRViewProvider>
       </WebXRErrorBoundary>
     </div>
-  )
+  );
 }

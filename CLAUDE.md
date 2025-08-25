@@ -19,8 +19,9 @@ This is a Next.js personal website for Frad LEE built with TypeScript, featuring
 pnpm dev          # Start development server on localhost:3000
 pnpm build        # Build for production
 pnpm start        # Start production server
-pnpm lint         # Run ESLint with Next.js rules
-pnpm format       # Format code with Prettier and import ordering
+pnpm format       # Format all files with Biome
+pnpm lint         # Lint and apply safe fixes with Biome  
+pnpm check        # Format, lint, and organize imports with Biome
 pnpm release      # Create release with conventional changelog
 ```
 

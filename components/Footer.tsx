@@ -1,6 +1,6 @@
-import { CommonLink } from '@/components/common/CommonLink'
+import { CommonLink } from '@/components/common/CommonLink';
 
-import footerLinks from '@/content/footerLinks'
+import footerLinks from '@/content/footerLinks';
 
 function Footer() {
   return (
@@ -16,7 +16,7 @@ function Footer() {
         Made by Frad © {new Date().getFullYear()}
       </span>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

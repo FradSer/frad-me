@@ -1,7 +1,7 @@
-const million = require('million/compiler')
+const million = require('million/compiler');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-})
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,17 +27,19 @@ const nextConfig = {
   ],
   webpack: (config, { isServer }) => {
     if (process.env.ANALYZE === 'true') {
-      console.log(`Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`)
+      console.log(
+        `Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`,
+      );
     }
-    
+
     // Fix for @bufbuild/protobuf missing dependency in WebXR packages
     config.resolve.fallback = {
       ...config.resolve.fallback,
       '@bufbuild/protobuf/wire': false,
-    }
-    
-    return config
-  },
-}
+    };
 
-module.exports = withBundleAnalyzer(million.next(nextConfig))
+    return config;
+  },
+};
+
+module.exports = withBundleAnalyzer(million.next(nextConfig));

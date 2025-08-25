@@ -1,57 +1,63 @@
-import React, { useRef, useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
-import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
-import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp'
-import { measureChunkLoad } from '@/utils/performance'
-import { SPRING_CONFIGS, NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants'
+import React, { useRef, useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { useFrame } from '@react-three/fiber';
+import type * as THREE from 'three';
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
+import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
+import { measureChunkLoad } from '@/utils/performance';
+import {
+  SPRING_CONFIGS,
+  NAVIGATION_POSITIONS,
+} from '@/utils/webxr/animationConstants';
 
 const Text = dynamic(
-  () => measureChunkLoad('Text', () => 
-    import('@react-three/drei').then((mod) => ({ default: mod.Text }))
-  ),
-  { ssr: false }
-)
+  () =>
+    measureChunkLoad('Text', () =>
+      import('@react-three/drei').then((mod) => ({ default: mod.Text })),
+    ),
+  { ssr: false },
+);
 
 interface NavItemProps {
-  position: [number, number, number]
-  text: string
-  isActive: boolean
-  onClick: () => void
+  position: [number, number, number];
+  text: string;
+  isActive: boolean;
+  onClick: () => void;
 }
 
 const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
-  const [hovered, setHovered] = useState(false)
-  const [hasBeenInteracted, setHasBeenInteracted] = useState(false)
-  const textRef = useRef<THREE.Mesh>(null)
+  const [hovered, setHovered] = useState(false);
+  const [hasBeenInteracted, setHasBeenInteracted] = useState(false);
+  const textRef = useRef<THREE.Mesh>(null);
 
-  const scaleSpring = useSimpleLerp(1, { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) })
+  const scaleSpring = useSimpleLerp(1, {
+    speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast),
+  });
 
   // Breathing effect when never interacted
   useEffect(() => {
     if (!hasBeenInteracted) {
       const breathingAnimation = setInterval(() => {
-        scaleSpring.set(1.05)
-        setTimeout(() => scaleSpring.set(1), 1000)
-      }, 2500)
-      
-      return () => clearInterval(breathingAnimation)
+        scaleSpring.set(1.05);
+        setTimeout(() => scaleSpring.set(1), 1000);
+      }, 2500);
+
+      return () => clearInterval(breathingAnimation);
     }
-  }, [hasBeenInteracted, scaleSpring])
+  }, [hasBeenInteracted, scaleSpring]);
 
   useEffect(() => {
     if (hovered || isActive) {
-      scaleSpring.set(1.1)
+      scaleSpring.set(1.1);
     } else if (hasBeenInteracted) {
-      scaleSpring.set(1)
+      scaleSpring.set(1);
     }
-  }, [hovered, isActive, hasBeenInteracted, scaleSpring])
+  }, [hovered, isActive, hasBeenInteracted, scaleSpring]);
 
   useFrame(() => {
-    if (!textRef.current) return
-    textRef.current.scale.setScalar(scaleSpring.value)
-  })
+    if (!textRef.current) return;
+    textRef.current.scale.setScalar(scaleSpring.value);
+  });
 
   return (
     <Text
@@ -63,22 +69,22 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
       fontSize={0.6}
       font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
       onClick={() => {
-        setHasBeenInteracted(true)
-        onClick()
+        setHasBeenInteracted(true);
+        onClick();
       }}
       onPointerOver={() => {
-        setHasBeenInteracted(true)
-        setHovered(true)
+        setHasBeenInteracted(true);
+        setHovered(true);
       }}
       onPointerOut={() => setHovered(false)}
     >
       {text}
     </Text>
-  )
-}
+  );
+};
 
 function Navigation3D() {
-  const { currentView, navigateToView } = useWebXRView()
+  const { currentView, navigateToView } = useWebXRView();
 
   return (
     <group position={NAVIGATION_POSITIONS.navigationGroup}>
@@ -100,7 +106,7 @@ function Navigation3D() {
         )}
       </group>
     </group>
-  )
+  );
 }
 
-export default Navigation3D
+export default Navigation3D;

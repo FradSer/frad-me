@@ -1,5 +1,5 @@
 // Learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
 
 // Mock Next.js router
 const mockRouter = {
@@ -17,11 +17,11 @@ const mockRouter = {
   isLocaleDomain: false,
   isReady: true,
   isPreview: false,
-}
+};
 
 jest.mock('next/router', () => ({
   useRouter: () => mockRouter,
-}))
+}));
 
 // Mock next-themes
 jest.mock('next-themes', () => ({
@@ -31,7 +31,7 @@ jest.mock('next-themes', () => ({
     resolvedTheme: 'light',
   }),
   ThemeProvider: ({ children }) => children,
-}))
+}));
 
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
@@ -48,7 +48,7 @@ jest.mock('framer-motion', () => ({
     start: jest.fn(),
     stop: jest.fn(),
   }),
-}))
+}));
 
 // Mock three.js and React Three Fiber
 jest.mock('@react-three/fiber', () => ({
@@ -59,19 +59,19 @@ jest.mock('@react-three/fiber', () => ({
     scene: {},
     gl: {},
   }),
-}))
+}));
 
 jest.mock('@react-three/drei', () => ({
   OrbitControls: () => null,
   Text: ({ children }) => children,
   Box: () => null,
   Sphere: () => null,
-}))
+}));
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -81,36 +81,36 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Suppress console errors in tests
-const originalError = console.error
+const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is deprecated')
     ) {
-      return
+      return;
     }
-    originalError.call(console, ...args)
-  }
-})
+    originalError.call(console, ...args);
+  };
+});
 
 afterAll(() => {
-  console.error = originalError
-})
+  console.error = originalError;
+});

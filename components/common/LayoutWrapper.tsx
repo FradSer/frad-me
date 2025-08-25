@@ -1,21 +1,21 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
-import Header from '@/components/Header'
+import Header from '@/components/Header';
 
-import useLoading from '@/hooks/useLoading'
-import { 
-  createPageVariants, 
-  createHeaderVariants, 
-  createStaggerChildren, 
-  createLoadingDots 
-} from '@/utils/motion/animationUtils'
-import { createCursorClasses, LAYOUT_CLASSES } from '@/utils/classNames'
+import useLoading from '@/hooks/useLoading';
+import {
+  createPageVariants,
+  createHeaderVariants,
+  createStaggerChildren,
+  createLoadingDots,
+} from '@/utils/motion/animationUtils';
+import { createCursorClasses, LAYOUT_CLASSES } from '@/utils/classNames';
 
 const LoadingDots = () => {
-  const containerVariants = createStaggerChildren(0.4)
-  const dotVariants = createLoadingDots()
+  const containerVariants = createStaggerChildren(0.4);
+  const dotVariants = createLoadingDots();
 
   return (
     <motion.span variants={containerVariants} animate="animate">
@@ -25,15 +25,15 @@ const LoadingDots = () => {
         </motion.span>
       ))}
     </motion.span>
-  )
-}
+  );
+};
 
 type LayoutWrapperProps = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
-const pageVariants = createPageVariants()
-const headerVariants = createHeaderVariants()
+const pageVariants = createPageVariants();
+const headerVariants = createHeaderVariants();
 
 const LoadingScreen = () => (
   <motion.div
@@ -41,23 +41,25 @@ const LoadingScreen = () => (
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     className={createCursorClasses(
-      `${LAYOUT_CLASSES.fullScreen} bg-white dark:bg-black`
+      `${LAYOUT_CLASSES.fullScreen} bg-white dark:bg-black`,
     )}
   >
-    <div className={createCursorClasses(
-      `${LAYOUT_CLASSES.loadingText} text-black dark:text-white`
-    )}>
+    <div
+      className={createCursorClasses(
+        `${LAYOUT_CLASSES.loadingText} text-black dark:text-white`,
+      )}
+    >
       loading
       <LoadingDots />
     </div>
   </motion.div>
-)
+);
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
-  const { isLoading } = useLoading()
+  const { isLoading } = useLoading();
 
   if (isLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   return (
@@ -81,5 +83,5 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         {children}
       </motion.main>
     </div>
-  )
+  );
 }

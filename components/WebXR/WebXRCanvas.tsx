@@ -1,26 +1,27 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { XR, createXRStore } from '@react-three/xr'
-import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext'
-import type { XRStoreState } from '@/types/webxr'
+import type React from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { XR, createXRStore } from '@react-three/xr';
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
+import type { XRStoreState } from '@/types/webxr';
 
 interface WebXRCanvasProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 // Create a shared XR store for the entire application
-export const xrStore = createXRStore()
+export const xrStore = createXRStore();
 
 const WebXRCanvas: React.FC<WebXRCanvasProps> = ({ children }) => {
-  const { webXRSupported, isVisionPro } = useWebXRView()
-  const [isXRActive, setIsXRActive] = useState(false)
+  const { webXRSupported, isVisionPro } = useWebXRView();
+  const [isXRActive, setIsXRActive] = useState(false);
 
   useEffect(() => {
     // Listen to XR state changes with properly typed callback
     return xrStore.subscribe((state: XRStoreState) => {
-      setIsXRActive(!!state.session)
-    })
-  }, [])
+      setIsXRActive(!!state.session);
+    });
+  }, []);
 
   // Enhanced WebGL settings for Vision Pro
   const canvasSettings = {
@@ -42,20 +43,14 @@ const WebXRCanvas: React.FC<WebXRCanvasProps> = ({ children }) => {
       background: isXRActive ? 'transparent' : 'black',
       width: '100%',
       height: '100%',
-    }
-  }
+    },
+  };
 
   return (
     <Canvas {...canvasSettings} data-testid="webxr-canvas">
-      {webXRSupported ? (
-        <XR store={xrStore}>
-          {children}
-        </XR>
-      ) : (
-        children
-      )}
+      {webXRSupported ? <XR store={xrStore}>{children}</XR> : children}
     </Canvas>
-  )
-}
+  );
+};
 
-export default WebXRCanvas
+export default WebXRCanvas;

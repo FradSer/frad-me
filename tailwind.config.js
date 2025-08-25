@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   mode: 'jit',
@@ -13,7 +13,11 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-gt-eesti-text)', ...defaultTheme.fontFamily.sans],
         mono: ['var(--font-fira-code)', ...defaultTheme.fontFamily.mono],
-        display: ['var(--font-gt-eesti-display)', 'var(--font-gt-eesti-text)', ...defaultTheme.fontFamily.sans],
+        display: [
+          'var(--font-gt-eesti-display)',
+          'var(--font-gt-eesti-text)',
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
       fontWeight: {
         black: '700', // Map font-black to 700 (bold) since we don't have 900 weight
@@ -23,7 +27,7 @@ module.exports = {
         '100/31': '100 / 31',
       },
       gridTemplateColumns: {
-        '16': 'repeat(16, minmax(0, 1fr))',
+        16: 'repeat(16, minmax(0, 1fr))',
       },
       gridColumn: {
         'span-15': 'span 15 / span 15',
@@ -35,4 +39,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-}
+};

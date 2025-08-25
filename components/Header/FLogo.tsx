@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
-import { CursorProvider, CursorType } from '@/components/common/CursorProvider'
+import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
 export default function FLogo() {
-  const [hovered, setHovered] = useState<boolean>(false)
+  const [hovered, setHovered] = useState<boolean>(false);
 
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
@@ -26,5 +26,5 @@ export default function FLogo() {
         <path d="M383.436 458.906C376.377 458.906 370.071 463.318 367.652 469.949L351.559 514.055C347.56 525.016 355.676 536.617 367.343 536.617H563.87C570.929 536.617 577.235 532.205 579.654 525.573L595.747 481.468C599.746 470.506 591.631 458.906 579.963 458.906H383.436Z" />
       </motion.svg>
     </CursorProvider>
-  )
+  );
 }

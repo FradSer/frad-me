@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
+  hasError: boolean;
+  error?: Error;
 }
 
 interface ErrorBoundaryProps {
-  children: ReactNode
-  fallback?: ReactNode
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 export default class ErrorBoundary extends Component<
@@ -17,22 +17,22 @@ export default class ErrorBoundary extends Component<
   ErrorBoundaryState
 > {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback
+        return this.props.fallback;
       }
 
       return (
@@ -47,7 +47,7 @@ export default class ErrorBoundary extends Component<
             <button
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  window.location.reload()
+                  window.location.reload();
                 }
               }}
               className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
@@ -56,9 +56,9 @@ export default class ErrorBoundary extends Component<
             </button>
           </div>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
