@@ -14,31 +14,24 @@ class WebXRErrorBoundaryPage extends BasePage {
       this.page.locator('[data-testid="webxr-canvas"]'),
     ).toBeVisible();
     await expect(
-      this.page.getByText('WebXR Experience Unavailable'),
+      this.page.getByText('WebXR Error'),
     ).not.toBeVisible();
   }
 
   async verifyErrorBoundaryMessage() {
     await expect(
-      this.page.getByText('WebXR Experience Unavailable'),
-    ).toBeVisible();
-  }
-
-  async verifyErrorButtons() {
-    await expect(
-      this.page.locator('button:has-text("Try Again")'),
+      this.page.getByText('WebXR Error'),
     ).toBeVisible();
     await expect(
-      this.page.locator('button:has-text("Return to Main")'),
+      this.page.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
     ).toBeVisible();
   }
 
-  async clickTryAgainButton() {
-    await this.page.locator('button:has-text("Try Again")').click();
-  }
-
-  async clickReturnMainButton() {
-    await this.page.locator('button:has-text("Return to Main")').click();
+  async verifyErrorDisplay() {
+    // New ErrorBoundary shows simple error message for WebXR components
+    await expect(
+      this.page.getByText('WebXR Error'),
+    ).toBeVisible();
   }
 
   async verifyHeroStyleErrorUI() {

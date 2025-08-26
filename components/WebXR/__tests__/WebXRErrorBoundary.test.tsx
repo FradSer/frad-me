@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 // Test constants
 const TEST_IDS = {
@@ -32,7 +32,7 @@ const ErrorThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
   return <div data-testid={TEST_IDS.normalComponent}>Normal Component</div>;
 };
 
-describe('WebXRErrorBoundary', () => {
+describe('ErrorBoundary (WebXR)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Suppress console.error for error boundary tests
@@ -46,9 +46,9 @@ describe('WebXRErrorBoundary', () => {
   describe('Normal Operation', () => {
     it('should render children when no error occurs', () => {
       render(
-        <WebXRErrorBoundary>
+        <ErrorBoundary componentName="WebXR">
           <ErrorThrowingComponent shouldThrow={false} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
       expect(screen.getByTestId(TEST_IDS.normalComponent)).toBeInTheDocument();
@@ -58,9 +58,9 @@ describe('WebXRErrorBoundary', () => {
       const onError = jest.fn();
 
       render(
-        <WebXRErrorBoundary onError={onError}>
+        <ErrorBoundary componentName="WebXR" onError={onError}>
           <ErrorThrowingComponent shouldThrow={false} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
       expect(screen.getByTestId(TEST_IDS.normalComponent)).toBeInTheDocument();
@@ -69,28 +69,30 @@ describe('WebXRErrorBoundary', () => {
   });
 
   describe('Error Handling', () => {
-    it('should catch errors and show hero-style error UI', () => {
+    it('should catch errors and show WebXR error UI', () => {
       render(
-        <WebXRErrorBoundary>
+        <ErrorBoundary componentName="WebXR">
           <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
+      expect(screen.getByText('WebXR Error')).toBeInTheDocument();
       expect(
-        screen.getByText(TEST_MESSAGES.webxrUnavailable),
+        screen.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
       ).toBeInTheDocument();
-      expect(screen.getByText(TEST_MESSAGES.tryAgain)).toBeInTheDocument();
-      expect(screen.getByText(TEST_MESSAGES.returnToMain)).toBeInTheDocument();
     });
 
-    it('should call onError prop when error occurs', () => {
+    it('should call onError prop when error occurs', async () => {
       const onError = jest.fn();
 
       render(
-        <WebXRErrorBoundary onError={onError}>
+        <ErrorBoundary componentName="WebXR" onError={onError}>
           <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
+
+      // Wait a bit for the error handling to complete
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       expect(onError).toHaveBeenCalledWith(
         expect.any(Error),
@@ -102,28 +104,15 @@ describe('WebXRErrorBoundary', () => {
       const { webxrErrorLogger } = require('@/utils/errorLogger');
 
       render(
-        <WebXRErrorBoundary>
+        <ErrorBoundary componentName="WebXR">
           <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
       expect(webxrErrorLogger.logError).toHaveBeenCalledWith(
         expect.any(Error),
         expect.any(Object),
       );
-    });
-  });
-
-  describe('Error UI Actions', () => {
-    it('should render action buttons', () => {
-      render(
-        <WebXRErrorBoundary>
-          <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
-      );
-
-      expect(screen.getByText(TEST_MESSAGES.tryAgain)).toBeInTheDocument();
-      expect(screen.getByText(TEST_MESSAGES.returnToMain)).toBeInTheDocument();
     });
   });
 
@@ -134,15 +123,13 @@ describe('WebXRErrorBoundary', () => {
       );
 
       render(
-        <WebXRErrorBoundary fallback={customFallback}>
+        <ErrorBoundary componentName="WebXR" fallback={customFallback}>
           <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
       expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
-      expect(
-        screen.queryByText(TEST_MESSAGES.webxrUnavailable),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText('WebXR Error')).not.toBeInTheDocument();
     });
   });
 
@@ -155,41 +142,31 @@ describe('WebXRErrorBoundary', () => {
       render(
         <div>
           <OuterComponent />
-          <WebXRErrorBoundary>
+          <ErrorBoundary componentName="WebXR">
             <ErrorThrowingComponent shouldThrow={true} />
-          </WebXRErrorBoundary>
+          </ErrorBoundary>
         </div>,
       );
 
       // Outer component should still render normally
       expect(screen.getByTestId('outer')).toBeInTheDocument();
       // Error boundary should catch the error
-      expect(
-        screen.getByText(TEST_MESSAGES.webxrUnavailable),
-      ).toBeInTheDocument();
+      expect(screen.getByText('WebXR Error')).toBeInTheDocument();
     });
   });
 
   describe('Accessibility', () => {
     it('should provide accessible error messages', () => {
       render(
-        <WebXRErrorBoundary>
+        <ErrorBoundary componentName="WebXR">
           <ErrorThrowingComponent shouldThrow={true} />
-        </WebXRErrorBoundary>,
+        </ErrorBoundary>,
       );
 
       const errorHeading = screen.getByRole('heading', {
-        name: /webxr experience unavailable/i,
+        name: /webxr error/i,
       });
       expect(errorHeading).toBeInTheDocument();
-
-      const tryAgainButton = screen.getByRole('button', { name: /try again/i });
-      expect(tryAgainButton).toBeInTheDocument();
-
-      const returnButton = screen.getByRole('button', {
-        name: /return to main/i,
-      });
-      expect(returnButton).toBeInTheDocument();
     });
   });
 });
