@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants';
 import { useCardAnimation } from '@/hooks/useCardAnimation';
 import { forceInitializeTransparency } from '@/utils/webxr/materialUtils';
+import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 
 interface WorkLink {
   title: string;
@@ -33,6 +34,7 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
   onHover,
   onClick,
 }) => {
+  const { currentView } = useWebXRView();
   const meshRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
@@ -153,8 +155,8 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         </Suspense>
       </group>
 
-      {/* WIP Badge */}
-      {work.isWIP && (
+      {/* WIP Badge - show only on hover in work view */}
+      {work.isWIP && currentView === 'work' && hovered && (
         <group
           position={[
             WORK_CARD_POSITIONS.wipBadgeGroup[0],

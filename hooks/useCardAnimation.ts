@@ -3,9 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import type * as THREE from 'three';
 import { workCardPositions } from '@/utils/webxr/animationHelpers';
 import {
-  ANIMATION_DELAYS,
-  SPRING_CONFIGS,
-} from '@/utils/webxr/animationConstants';
+  WEBXR_ANIMATION_CONFIG,
+} from '@/utils/webxr/animationConfig';
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
@@ -43,16 +42,16 @@ export const useCardAnimation = ({
 
   // Simplified spring-based animation system focusing on scale and opacity
   const elasticConfig = {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.elastic),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
   };
-  const fastConfig = { speed: springConfigToLerpSpeed(SPRING_CONFIGS.fast) };
+  const fastConfig = { speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast) };
   const bouncyConfig = {
-    speed: springConfigToLerpSpeed(SPRING_CONFIGS.bouncy),
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
   };
 
   // Focus on scale, opacity, rotation, and entrance position animation
-  const springScale = useSimpleLerp(0.1, fastConfig); // Use fast config for smoother scale animation
-  const springOpacity = useSimpleLerp(0, elasticConfig); // Smooth fade
+  const springScale = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.entrance, fastConfig); // Use fast config for smoother scale animation
+  const springOpacity = useSimpleLerp(WEBXR_ANIMATION_CONFIG.opacity.hidden, elasticConfig); // Smooth fade
   const springRotation = useSimpleLerp(0, fastConfig); // Responsive hover feedback
 
   // Position animation for spray effect from navigation button
@@ -64,8 +63,8 @@ export const useCardAnimation = ({
   useEffect(() => {
     if (shouldShowCards && groupRef.current) {
       // Reset spring values to starting state - ensure opacity starts at 0
-      springScale.set(0.1); // Start small for entrance effect
-      springOpacity.set(0); // Must start at 0 for proper fade-in
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance); // Start small for entrance effect
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden); // Must start at 0 for proper fade-in
       springRotation.set(0);
 
       // Set entrance position as starting point for spray effect
@@ -77,16 +76,16 @@ export const useCardAnimation = ({
       animationState.current.isInitialized = true;
       animationState.current.startTime =
         Date.now() +
-        (ANIMATION_DELAYS.cardEntranceDelay +
-          index * ANIMATION_DELAYS.cardStagger) *
-          1000;
+        (WEBXR_ANIMATION_CONFIG.timing.delays.cardEntranceDelay +
+          index * WEBXR_ANIMATION_CONFIG.timing.delays.cardStagger);
 
-      // Immediately apply opacity 0 to ensure cards start transparent
-      applyOpacityToObject(groupRef.current, 0);
+      // Immediately apply opacity 0 and hide the entire group to ensure cards start completely hidden
+      applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
+      groupRef.current.visible = false;
     } else if (!shouldShowCards) {
       // Reset to hidden state when not in work view
-      springScale.set(0.1);
-      springOpacity.set(0);
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance);
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden);
       springRotation.set(0);
 
       // Reset position to entrance point
@@ -97,9 +96,10 @@ export const useCardAnimation = ({
       animationState.current.isInitialized = false;
       animationState.current.startTime = 0;
 
-      // Immediately apply opacity 0 when hidden
+      // Immediately apply opacity 0 and hide when not in work view
       if (groupRef.current) {
-        applyOpacityToObject(groupRef.current, 0);
+        applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
+        groupRef.current.visible = false;
       }
     }
   }, [shouldShowCards, index]);
@@ -113,14 +113,17 @@ export const useCardAnimation = ({
       const shouldAnimate = currentTime >= animationState.current.startTime;
 
       if (!shouldAnimate) {
+        // Keep cards completely hidden while waiting for their turn
+        groupRef.current.visible = false;
+        
         // Keep cards at entrance position while waiting
         groupRef.current.position.x = springPosX.value;
         groupRef.current.position.y = springPosY.value;
         groupRef.current.position.z = springPosZ.value;
 
         // Calculate target values even during wait state to prepare for smooth entrance
-        const targetScale = hovered ? 1.1 : 1;
-        const targetRotation = hovered ? 0.1 : 0;
+        const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
+        const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
         // Set targets but don't animate scale/rotation until entrance time
         springRotation.set(targetRotation);
@@ -129,16 +132,19 @@ export const useCardAnimation = ({
         groupRef.current.scale.setScalar(springScale.value);
         groupRef.current.rotation.y = springRotation.value;
 
-        // Always apply opacity even during wait state
-        applyOpacityToObject(groupRef.current, springOpacity.value);
-        onOpacityChange?.(springOpacity.value);
+        // Keep opacity at 0 during wait state
+        applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
+        onOpacityChange?.(WEBXR_ANIMATION_CONFIG.opacity.hidden);
         return;
       }
 
+      // Card should now become visible and start animating
+      groupRef.current.visible = true;
+
       // Calculate target values - position is handled by direct prop, focus on scale/opacity/rotation
-      const targetScale = hovered ? 1.1 : 1;
-      const targetOpacity = 1;
-      const targetRotation = hovered ? 0.1 : 0;
+      const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
+      const targetOpacity = WEBXR_ANIMATION_CONFIG.opacity.visible;
+      const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
       // Calculate target positions for spray effect animation
       const floatingOffset = Math.sin(state.clock.elapsedTime + index) * 0.1;
@@ -175,8 +181,8 @@ export const useCardAnimation = ({
       onOpacityChange?.(springOpacity.value);
     } else {
       // Use springs for smooth exit animation - return to entrance position
-      springScale.set(0.1); // Match initial scale
-      springOpacity.set(0);
+      springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance); // Match initial scale
+      springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden);
       springRotation.set(0);
 
       // Return to entrance position for exit
@@ -184,16 +190,23 @@ export const useCardAnimation = ({
       springPosY.set(workCardPositions.entrance.y);
       springPosZ.set(workCardPositions.entrance.z);
 
-      // Apply spring values during exit
-      groupRef.current.position.x = springPosX.value;
-      groupRef.current.position.y = springPosY.value;
-      groupRef.current.position.z = springPosZ.value;
-      groupRef.current.scale.setScalar(springScale.value);
-      groupRef.current.rotation.y = springRotation.value;
+      // Handle visibility during exit - hide when opacity is very low
+      const currentOpacity = springOpacity.value;
+      groupRef.current.visible = currentOpacity > 0.01;
 
-      // Apply spring-driven opacity during exit
-      applyOpacityToObject(groupRef.current, springOpacity.value);
-      onOpacityChange?.(springOpacity.value);
+      if (groupRef.current.visible) {
+        // Apply spring values during exit
+        groupRef.current.position.x = springPosX.value;
+        groupRef.current.position.y = springPosY.value;
+        groupRef.current.position.z = springPosZ.value;
+        groupRef.current.scale.setScalar(springScale.value);
+        groupRef.current.rotation.y = springRotation.value;
+
+        // Apply spring-driven opacity during exit
+        applyOpacityToObject(groupRef.current, currentOpacity);
+      }
+      
+      onOpacityChange?.(currentOpacity);
     }
   });
 
