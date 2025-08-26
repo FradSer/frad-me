@@ -139,6 +139,38 @@ describe('WebXR Animation Configuration', () => {
           timing: {
             delays: { cardStagger: 150 },
             durations: { cardAnimation: 1200 }
+          },
+          positions: {
+            workCards: {
+              entrance: [0, 0, 0],
+              grid: {},
+              exit: [0, 0, 0],
+              geometry: [1, 1, 1],
+              hover: { x: 0, y: 0, z: 0 }
+            },
+            camera: {
+              home: { position: [0, 0, 5], lookAt: [0, 0, 0], fov: 75 },
+              work: { position: [0, 2, 8], lookAt: [0, 0, 0], fov: 65 }
+            },
+            navigation: {
+              group: [0, 0, -1],
+              button: [2.5, 2.5, 0],
+              absolutePosition: [2.5, 2.5, -1],
+              breathingAmplitude: 0.1
+            },
+            footer: {
+              group: [0, 0, -4],
+              externalLinks: [3.5, -3, 0]
+            },
+            workGrid: {
+              title: [0, 5, 0],
+              directionalLight: [5, 5, 5],
+              pointLight: [-5, 3, 2]
+            },
+            hero: {
+              visible: [0, 1, -10],
+              hidden: [0, -5, -40]
+            }
           }
         };
         
