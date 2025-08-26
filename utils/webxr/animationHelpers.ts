@@ -1,10 +1,8 @@
 import { Vector3 } from 'three';
+import type { Position } from '@/types/common';
 
-export interface AnimationPosition {
-  x: number;
-  y: number;
-  z: number;
-}
+// Use consistent Position type from common types
+export type AnimationPosition = Position & { z: number };
 
 export interface AnimationState {
   position: AnimationPosition;
@@ -13,32 +11,39 @@ export interface AnimationState {
   opacity: number;
 }
 
+// Utility to create consistent animation position
+export const createAnimationPosition = (
+  x = 0,
+  y = 0,
+  z = 0
+): AnimationPosition => ({ x, y, z });
+
 export const defaultAnimationState: AnimationState = {
-  position: { x: 0, y: 0, z: 0 },
-  rotation: { x: 0, y: 0, z: 0 },
-  scale: { x: 1, y: 1, z: 1 },
+  position: createAnimationPosition(),
+  rotation: createAnimationPosition(),
+  scale: createAnimationPosition(1, 1, 1),
   opacity: 1,
 };
 
 export const heroAnimationStates = {
   home: {
-    position: { x: 0, y: 1, z: -10 }, // Lowered hero text position
-    rotation: { x: 0, y: 0, z: 0 },
-    scale: { x: 1, y: 1, z: 1 },
+    position: createAnimationPosition(0, 1, -10), // Lowered hero text position
+    rotation: createAnimationPosition(),
+    scale: createAnimationPosition(1, 1, 1),
     opacity: 1,
   },
   hidden: {
-    position: { x: 0, y: -5, z: -40 },
-    rotation: { x: 0, y: 0, z: 0 },
-    scale: { x: 0.6, y: 0.6, z: 0.6 },
+    position: createAnimationPosition(0, -5, -40),
+    rotation: createAnimationPosition(),
+    scale: createAnimationPosition(0.6, 0.6, 0.6),
     opacity: 0,
   },
 } as const;
 
 export const workCardPositions = {
-  entrance: { x: 2.5, y: 2.5, z: -8 }, // Start from navigation button position but further back
-  display: { x: 0, y: 0, z: 0 },
-  hover: { x: 0, y: 1, z: -2 }, // Increased forward movement for more noticeable hover effect
+  entrance: createAnimationPosition(2.5, 2.5, -8), // Start from navigation button position but further back
+  display: createAnimationPosition(),
+  hover: createAnimationPosition(0, 1, -2), // Increased forward movement for more noticeable hover effect
 } as const;
 
 export function createStaggeredDelay(
