@@ -42,7 +42,7 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
       const breathingAnimation = setInterval(() => {
         scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
         setTimeout(() => scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default), 
-          WEBXR_ANIMATION_CONFIG.timing.durations.breathingDuration);
+          WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration);
       }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
 
       return () => clearInterval(breathingAnimation);
