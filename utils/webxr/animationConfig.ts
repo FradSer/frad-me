@@ -21,6 +21,7 @@ export const WEBXR_ANIMATION_CONFIG = {
   timing: {
     delays: {
       cardStagger: 150,
+      cardEntranceDelay: 400,
       breathingInterval: 2500,
       breathingDuration: 1000,
     },
@@ -36,6 +37,10 @@ export const WEBXR_ANIMATION_CONFIG = {
       entrance: [2.5, 2.5, -8] as Vec3,
       geometry: [4.5, 3, 1] as Vec3,
       hover: { x: 0, y: 1, z: -2 },
+      rotation: {
+        idle: 0,
+        hover: 0.1,
+      },
     },
     camera: {
       home: { position: [0, 0, 5] as Vec3, lookAt: [0, 0, 0] as Vec3, fov: 75 },
@@ -55,6 +60,12 @@ export const WEBXR_ANIMATION_CONFIG = {
     default: 1.0,
     hover: 1.1,
     breathing: 1.05,
+    entrance: 0.8,
+  } as const,
+  
+  opacity: {
+    visible: 1.0,
+    hidden: 0.0,
   } as const,
   
   performance: {
