@@ -103,7 +103,8 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
 
     // Handle visibility - completely hide when opacity is near 0
     const currentOpacity = opacitySpring.value;
-    groupRef.current.visible = currentOpacity > 0.01;
+    const shouldBeVisible = currentOpacity > 0.01 && currentView === 'work';
+    groupRef.current.visible = shouldBeVisible;
 
     // Apply opacity using optimized utility
     if (groupRef.current.visible) {
