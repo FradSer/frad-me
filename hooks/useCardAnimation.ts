@@ -5,9 +5,6 @@ import { workCardPositions } from '@/utils/webxr/animationHelpers';
 import {
   WEBXR_ANIMATION_CONFIG,
 } from '@/utils/webxr/animationConfig';
-import {
-  ANIMATION_DELAYS,
-} from '@/utils/webxr/animationConstants';
 import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
@@ -79,9 +76,8 @@ export const useCardAnimation = ({
       animationState.current.isInitialized = true;
       animationState.current.startTime =
         Date.now() +
-        (ANIMATION_DELAYS.cardEntranceDelay +
-          index * ANIMATION_DELAYS.cardStagger) *
-          1000;
+        (WEBXR_ANIMATION_CONFIG.timing.delays.cardEntranceDelay +
+          index * WEBXR_ANIMATION_CONFIG.timing.delays.cardStagger);
 
       // Immediately apply opacity 0 to ensure cards start transparent
       applyOpacityToObject(groupRef.current, WEBXR_ANIMATION_CONFIG.opacity.hidden);
