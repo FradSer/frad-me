@@ -120,7 +120,6 @@ export const WEBXR_ANIMATION_CONFIG = {
       sectionTransition: 300,     // ms for section transitions (converted from 0.3s)
       cardEntranceDelay: 400,     // ms base delay for card entrance (converted from 0.4s)
       breathingInterval: 2500,    // ms breathing animation interval
-      breathingDuration: 1000,    // ms breathing animation duration
     },
     durations: {
       cardAnimation: 1200,        // ms for card animation duration
@@ -129,6 +128,7 @@ export const WEBXR_ANIMATION_CONFIG = {
       fadeTransition: 800,        // ms for opacity transitions
       cameraTransition: 1200,     // ms for camera movements
       navigationToggle: 300,      // ms for nav button states
+      breathingDuration: 1000,    // ms breathing animation duration
     },
   } as const,
   
@@ -329,15 +329,62 @@ const AnimationConfigSchema = z.object({
   performance: PerformanceConfigSchema,
 });
 
+// Deep merge utility for configuration objects
+function deepMerge(target: any, source: any): any {
+  const result = { ...target };
+  
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  
+  return result;
+}
+
 // Configuration validation function
 export function validateAnimationConfig(config: unknown): any {
   try {
     // For partial configs (like in tests), provide default structure
     const partialConfig = config as Record<string, any>;
-    const configToValidate = {
+    const defaultConfig = {
       springs: {},
       timing: { delays: {}, durations: {} },
-      positions: {},
+      positions: {
+        workCards: {
+          entrance: [2.5, 2.5, -8],
+          grid: {},
+          exit: [2.5, 2.5, -8],
+          geometry: [4.5, 3, 1],
+          hover: { x: 0, y: 1, z: -2 },
+          rotation: { hover: 0.1, idle: 0 }
+        },
+        camera: {
+          home: { position: [0, 0, 5], lookAt: [0, 0, 0], fov: 75 },
+          work: { position: [0, 2, 8], lookAt: [0, 0, 0], fov: 65 }
+        },
+        navigation: {
+          group: [0, 0, -1],
+          button: [2.5, 2.5, 0],
+          absolutePosition: [2.5, 2.5, -1],
+          breathingAmplitude: 0.1
+        },
+        footer: {
+          group: [0, 0, -4],
+          externalLinks: [3.5, -3, 0]
+        },
+        workGrid: {
+          title: [0, 5, 0],
+          directionalLight: [5, 5, 5],
+          pointLight: [-5, 3, 2]
+        },
+        hero: {
+          visible: [0, 1, -10],
+          hidden: [0, -5, -40]
+        }
+      },
       scales: {},
       opacity: {},
       curves: {},
@@ -355,8 +402,10 @@ export function validateAnimationConfig(config: unknown): any {
           frictionIncrease: 1.2,
         },
       },
-      ...partialConfig,
     };
+    
+    // Deep merge partial config with defaults
+    const configToValidate = deepMerge(defaultConfig, partialConfig);
     
     return AnimationConfigSchema.parse(configToValidate);
   } catch (error) {

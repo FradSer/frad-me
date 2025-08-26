@@ -152,6 +152,8 @@ describe('WebXR Animation Integration', () => {
           timing: {
             delays: {
               breathingInterval: 2500,
+            },
+            durations: {
               breathingDuration: 1000,
             },
           },
@@ -230,7 +232,7 @@ describe('WebXR Animation Integration', () => {
           positions: {
             workCards: {
               entrance: [2.5, 2.5, -8] as const,
-              hover: [0, 1, -2] as const,
+              hover: { x: 0, y: 1, z: -2 },
               geometry: [4.5, 3, 1] as const,
             },
           },
