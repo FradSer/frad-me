@@ -117,8 +117,8 @@ export const useCardAnimation = ({
         groupRef.current.position.z = springPosZ.value;
 
         // Calculate target values even during wait state to prepare for smooth entrance
-        const targetScale = hovered ? 1.1 : 1;
-        const targetRotation = hovered ? 0.1 : 0;
+        const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
+        const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
         // Set targets but don't animate scale/rotation until entrance time
         springRotation.set(targetRotation);
@@ -136,7 +136,7 @@ export const useCardAnimation = ({
       // Calculate target values - position is handled by direct prop, focus on scale/opacity/rotation
       const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
       const targetOpacity = WEBXR_ANIMATION_CONFIG.opacity.visible;
-      const targetRotation = hovered ? 0.1 : 0;
+      const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
       // Calculate target positions for spray effect animation
       const floatingOffset = Math.sin(state.clock.elapsedTime + index) * 0.1;

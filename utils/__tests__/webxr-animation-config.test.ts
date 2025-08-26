@@ -73,7 +73,7 @@ describe('WebXR Animation Configuration', () => {
         expect(springs.bouncy.friction).toBeLessThan(springs.normal.friction);
         
         // Verify all springs produce stable animations
-        Object.values(springs).forEach((spring: any) => {
+        Object.values(springs).forEach((spring: { tension: number; friction: number }) => {
           const dampingRatio = spring.friction / (2 * Math.sqrt(spring.tension));
           expect(dampingRatio).toBeGreaterThan(0); // Must be positive
           expect(dampingRatio).toBeLessThan(2); // Avoid overdamping
@@ -146,7 +146,8 @@ describe('WebXR Animation Configuration', () => {
               grid: {},
               exit: [0, 0, 0],
               geometry: [1, 1, 1],
-              hover: { x: 0, y: 0, z: 0 }
+              hover: { x: 0, y: 0, z: 0 },
+              rotation: { hover: 0.1, idle: 0 }
             },
             camera: {
               home: { position: [0, 0, 5], lookAt: [0, 0, 0], fov: 75 },

@@ -21,7 +21,7 @@ interface PerformanceOptions {
 export function useAnimationPerformance(options: PerformanceOptions = {}) {
   const {
     warnThreshold = WEBXR_ANIMATION_CONFIG.performance.fpsThreshold,
-    sampleSize = 60
+    sampleSize = WEBXR_ANIMATION_CONFIG.performance.sampleSize
   } = options;
 
   const metricsRef = useRef<PerformanceMetrics>({
@@ -53,7 +53,7 @@ export function useAnimationPerformance(options: PerformanceOptions = {}) {
 
     // Determine quality level
     let quality: 'reduced' | 'normal' | 'high' = 'normal';
-    if (fps >= 50) quality = 'high';
+    if (fps >= WEBXR_ANIMATION_CONFIG.performance.highQualityThreshold) quality = 'high';
     else if (fps < warnThreshold) quality = 'reduced';
 
     metricsRef.current = {
@@ -94,7 +94,7 @@ export function useAnimationPerformance(options: PerformanceOptions = {}) {
     // Allow manual FPS reporting for testing
     metricsRef.current.fps = fps;
     metricsRef.current.frameTime = 1000 / fps;
-    metricsRef.current.quality = fps >= 50 ? 'high' : fps >= warnThreshold ? 'normal' : 'reduced';
+    metricsRef.current.quality = fps >= WEBXR_ANIMATION_CONFIG.performance.highQualityThreshold ? 'high' : fps >= warnThreshold ? 'normal' : 'reduced';
     
     if (fps < warnThreshold && !warningShownRef.current) {
       console.warn(

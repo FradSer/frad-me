@@ -144,6 +144,10 @@ export const WEBXR_ANIMATION_CONFIG = {
         y: 1,         // Increased forward movement
         z: -2,        // More noticeable hover effect
       },
+      rotation: {
+        hover: 0.1,   // Subtle rotation on hover for interactive feedback
+        idle: 0,      // No rotation when not hovered
+      },
     },
     camera: {
       home: {
@@ -257,6 +261,10 @@ const WorkCardsPositionSchema = z.object({
   exit: PositionArraySchema,
   geometry: PositionArraySchema,
   hover: HoverOffsetSchema,
+  rotation: z.object({
+    hover: z.number().min(-Math.PI).max(Math.PI),
+    idle: z.number().min(-Math.PI).max(Math.PI),
+  }),
 });
 
 const CameraPositionSchema = z.object({

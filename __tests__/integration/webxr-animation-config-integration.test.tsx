@@ -334,30 +334,45 @@ describe('WebXR Animation Integration', () => {
     });
 
     it('should support adaptive quality based on performance', () => {
-      // This test will fail until adaptive quality is implemented
-      expect(() => {
-        const mockConfig = {
-          performance: {
-            adaptiveQuality: true,
-            fpsThreshold: 30,
-            qualityLevels: ['reduced', 'normal', 'high'],
-          },
-          springs: {
-            normal: { tension: 280, friction: 28 },
-            reduced: { tension: 400, friction: 40 }, // Faster, more damped
-          },
-        };
-
-        jest.doMock('@/utils/webxr/animationConfig', () => ({
-          WEBXR_ANIMATION_CONFIG: mockConfig,
-        }));
-
-        // Should adapt spring configurations based on performance
-        const currentFPS = 25; // Below threshold
-        const shouldUseReducedQuality = currentFPS < mockConfig.performance.fpsThreshold;
-        
-        expect(shouldUseReducedQuality).toBe(true);
-      }).not.toThrow();
+      // Test actual adaptive animation behavior in components
+      const { useAdaptiveAnimation } = require('@/hooks/useWebXRAnimation');
+      const { AnimationConfigManager } = require('@/utils/webxr/animationConfig');
+      
+      // Get manager instance and simulate low FPS
+      const manager = AnimationConfigManager.getInstance();
+      manager.updateFrameMetrics(20); // Simulate poor performance
+      
+      // Test that adaptive config changes based on performance
+      const lowFpsConfig = manager.getAdaptiveConfig('normal');
+      expect(lowFpsConfig.tension).toBeGreaterThan(280); // Should be 280 * 1.5 = 420
+      expect(lowFpsConfig.friction).toBeGreaterThan(28);  // Should be 28 * 1.2 = 33.6
+      
+      // Simulate high FPS
+      manager.updateFrameMetrics(60);
+      const highFpsConfig = manager.getAdaptiveConfig('normal');
+      expect(highFpsConfig.tension).toBe(280); // Should remain at base value
+      expect(highFpsConfig.friction).toBe(28);  // Should remain at base value
+      
+      // Test that components using adaptive animation reflect these changes
+      const { renderHook, act } = require('@testing-library/react');
+      const { result } = renderHook(() => useAdaptiveAnimation('normal'));
+      
+      // Simulate performance degradation
+      act(() => {
+        result.current.updateFPS(15); // Very low FPS
+      });
+      
+      // Verify the component's configuration adapts
+      expect(result.current.config.tension).toBeGreaterThan(280);
+      expect(result.current.config.friction).toBeGreaterThan(28);
+      expect(result.current.performance.quality).toBe('reduced');
+      
+      // Simulate performance improvement
+      act(() => {
+        result.current.updateFPS(60); // High FPS
+      });
+      
+      expect(result.current.performance.quality).toBe('high');
     });
   });
 
