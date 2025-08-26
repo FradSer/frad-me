@@ -291,30 +291,46 @@ describe('WebXR Animation Integration', () => {
 
   describe('Performance Integration', () => {
     it('should respect performance thresholds from centralized config', () => {
-      // This test will fail until performance settings are integrated
-      expect(() => {
-        const mockConfig = {
-          performance: {
-            hideThreshold: 0.01,
-            frameSkip: false,
-            lerpFactor: 0.1,
-          },
-          springs: {
-            normal: { tension: 280, friction: 28 },
-          },
-        };
+      // Test actual performance adaptation behavior
+      const { AnimationConfigManager } = require('@/utils/webxr/animationConfig');
+      
+      // Get a fresh instance to ensure clean state
+      const manager = AnimationConfigManager.getInstance();
+      
+      // Test high FPS performance 
+      manager.updateFrameMetrics(60);
+      const highQualityLevel = manager.getQualityLevel();
+      expect(highQualityLevel).toBe('high');
+      
+      // Test normal FPS performance
+      manager.updateFrameMetrics(40);
+      const normalQualityLevel = manager.getQualityLevel();
+      expect(normalQualityLevel).toBe('normal');
+      
+      // Test low FPS performance
+      manager.updateFrameMetrics(20);
+      const reducedQualityLevel = manager.getQualityLevel();
+      expect(reducedQualityLevel).toBe('reduced');
+      
+      // Test adaptive configuration changes
+      const baseConfig = manager.getAdaptiveConfig('normal');
+      const adaptiveConfig = manager.getAdaptiveConfig('normal');
+      
+      // When FPS is low (20), adaptive config should modify tension and friction
+      expect(adaptiveConfig.tension).toBeGreaterThan(280); // Base tension * tensionIncrease
+      expect(adaptiveConfig.friction).toBeGreaterThan(28);  // Base friction * frictionIncrease
+      expect(adaptiveConfig.tension).toBe(280 * 1.5);
+      expect(adaptiveConfig.friction).toBe(28 * 1.2);
 
-        jest.doMock('@/utils/webxr/animationConfig', () => ({
-          WEBXR_ANIMATION_CONFIG: mockConfig,
-        }));
-
-        // Components should use centralized performance thresholds
-        // This is critical for WebXR where opacity < 0.01 elements should be hidden
-        const mockOpacity = 0.005; // Below threshold
-        const shouldHide = mockOpacity < mockConfig.performance.hideThreshold;
-        
-        expect(shouldHide).toBe(true);
-      }).not.toThrow();
+      // Test performance threshold usage for component visibility
+      const mockOpacity = 0.005; // Below threshold
+      const shouldHide = manager.shouldHideComponent(mockOpacity);
+      expect(shouldHide).toBe(true);
+      
+      // Test opacity above threshold
+      const visibleOpacity = 0.5;
+      const shouldNotHide = manager.shouldHideComponent(visibleOpacity);
+      expect(shouldNotHide).toBe(false);
     });
 
     it('should support adaptive quality based on performance', () => {

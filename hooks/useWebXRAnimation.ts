@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { 
   WEBXR_ANIMATION_CONFIG, 
@@ -38,6 +38,7 @@ export function useWebXRAnimation(preset: AnimationPreset, initialValue: number 
  */
 export function useAdaptiveAnimation(preset: AnimationPreset, initialValue: number = 0) {
   const manager = AnimationConfigManager.getInstance();
+  const [, forceUpdate] = useState({});
   
   const adaptiveConfig = useMemo(() => {
     return manager.getAdaptiveConfig(preset);
@@ -49,12 +50,18 @@ export function useAdaptiveAnimation(preset: AnimationPreset, initialValue: numb
 
   const animation = useSimpleLerp(initialValue, lerpConfig);
 
+  const updateFPS = useCallback((fps: number) => {
+    manager.updateFrameMetrics(fps);
+    // Force re-render to get updated quality level
+    forceUpdate({});
+  }, [manager]);
+
   return {
     ...animation,
     config: adaptiveConfig,
     performance: {
       quality: manager.getQualityLevel(),
     },
-    updateFPS: (fps: number) => manager.updateFrameMetrics(fps),
+    updateFPS,
   };
 }

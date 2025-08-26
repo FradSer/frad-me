@@ -4,6 +4,7 @@
 
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
+import React, { ReactNode } from 'react';
 
 // Mock Three.js and react-three-fiber
 jest.mock('three', () => ({
@@ -19,6 +20,12 @@ jest.mock('@react-three/fiber', () => ({
   }),
 }));
 
+// Mock WebXRViewProvider for context-dependent tests
+const MockWebXRViewProvider = ({ children }: { children: ReactNode }) => {
+  const { WebXRViewProvider } = require('@/contexts/WebXR/WebXRViewContext');
+  return React.createElement(WebXRViewProvider, null, children);
+};
+
 // These imports will fail initially - that's expected for TDD
 // import { useWebXRAnimation } from '@/hooks/useWebXRAnimation';
 // import { useAdaptiveAnimation } from '@/hooks/useAdaptiveAnimation';
@@ -27,6 +34,12 @@ describe('WebXR Animation Hooks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     delete (global as any).__r3f_frame_callback;
+    
+    // Reset AnimationConfigManager singleton state between tests
+    const { AnimationConfigManager } = require('@/utils/webxr/animationConfig');
+    const manager = AnimationConfigManager.getInstance();
+    // Reset FPS to default state
+    manager.updateFrameMetrics(60); // Reset to default FPS
   });
 
   describe('useWebXRAnimation', () => {
@@ -125,7 +138,7 @@ describe('WebXR Animation Hooks', () => {
           result.current.updateFPS(60);
         });
         
-        expect(result.current.performance.quality).toBe('full');
+        expect(result.current.performance.quality).toBe('high');
       }).not.toThrow();
     });
   });
@@ -158,13 +171,16 @@ describe('WebXR Animation Hooks', () => {
       const mockGroupRef = { current: null };
       
       expect(() => {
-        renderHook(() => useCardAnimation({
-          groupRef: mockGroupRef,
-          visible: true,
-          hovered: false,
-          position: [0, 0, 0],
-          index: 0,
-        }));
+        renderHook(
+          () => useCardAnimation({
+            groupRef: mockGroupRef,
+            visible: true,
+            hovered: false,
+            position: [0, 0, 0],
+            index: 0,
+          }),
+          { wrapper: MockWebXRViewProvider }
+        );
       }).not.toThrow();
     });
   });

@@ -210,8 +210,14 @@ export const WEBXR_ANIMATION_CONFIG = {
     frameSkip: false,           // Skip frames during heavy operations
     lerpFactor: 0.1,           // Default lerp interpolation factor
     adaptiveQuality: true,      // Enable adaptive quality based on performance
-    fpsThreshold: 30,          // FPS threshold for quality reduction
+    fpsThreshold: 30,          // FPS threshold for quality reduction (normal/reduced boundary)
+    highQualityThreshold: 50,  // FPS threshold for high quality level
+    sampleSize: 10,            // Number of frames to sample for performance metrics
     qualityLevels: ['reduced', 'normal', 'high'] as const,
+    adaptiveMultipliers: {
+      tensionIncrease: 1.5,    // Multiplier to speed up animations on low FPS
+      frictionIncrease: 1.2,   // Multiplier to add dampening on low FPS
+    },
   } as const,
 } as const;
 
@@ -233,18 +239,82 @@ const TimingConfigSchema = z.object({
 
 const PositionArraySchema = z.tuple([z.number(), z.number(), z.number()]);
 
+const HoverOffsetSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  z: z.number(),
+});
+
+const CameraViewSchema = z.object({
+  position: PositionArraySchema,
+  lookAt: PositionArraySchema,
+  fov: z.number().min(10).max(180),
+});
+
+const WorkCardsPositionSchema = z.object({
+  entrance: PositionArraySchema,
+  grid: z.record(z.string(), PositionArraySchema),
+  exit: PositionArraySchema,
+  geometry: PositionArraySchema,
+  hover: HoverOffsetSchema,
+});
+
+const CameraPositionSchema = z.object({
+  home: CameraViewSchema,
+  work: CameraViewSchema,
+});
+
+const NavigationPositionSchema = z.object({
+  group: PositionArraySchema,
+  button: PositionArraySchema,
+  absolutePosition: PositionArraySchema,
+  breathingAmplitude: z.number().min(0).max(1),
+});
+
+const FooterPositionSchema = z.object({
+  group: PositionArraySchema,
+  externalLinks: PositionArraySchema,
+});
+
+const WorkGridPositionSchema = z.object({
+  title: PositionArraySchema,
+  directionalLight: PositionArraySchema,
+  pointLight: PositionArraySchema,
+});
+
+const HeroPositionSchema = z.object({
+  visible: PositionArraySchema,
+  hidden: PositionArraySchema,
+});
+
+const PositionsConfigSchema = z.object({
+  workCards: WorkCardsPositionSchema,
+  camera: CameraPositionSchema,
+  navigation: NavigationPositionSchema,
+  footer: FooterPositionSchema,
+  workGrid: WorkGridPositionSchema,
+  hero: HeroPositionSchema,
+});
+
 const PerformanceConfigSchema = z.object({
   hideThreshold: z.number().min(0).max(1),
   frameSkip: z.boolean(),
   lerpFactor: z.number().min(0).max(1),
   adaptiveQuality: z.boolean(),
   fpsThreshold: z.number().min(10).max(120),
+  highQualityThreshold: z.number().min(30).max(120),
+  sampleSize: z.number().min(1).max(100),
+  qualityLevels: z.array(z.enum(['reduced', 'normal', 'high'])),
+  adaptiveMultipliers: z.object({
+    tensionIncrease: z.number().min(1).max(3),
+    frictionIncrease: z.number().min(1).max(3),
+  }),
 });
 
 const AnimationConfigSchema = z.object({
   springs: z.record(z.string(), SpringConfigSchema),
   timing: TimingConfigSchema,
-  positions: z.any(), // Complex nested structure, validated separately
+  positions: PositionsConfigSchema,
   scales: z.record(z.string(), z.number().min(0).max(10)),
   opacity: z.record(z.string(), z.number().min(0).max(1)),
   curves: z.record(z.string(), z.object({ speed: z.number().min(0) })),
@@ -269,6 +339,13 @@ export function validateAnimationConfig(config: unknown): any {
         lerpFactor: 0.1,
         adaptiveQuality: true,
         fpsThreshold: 30,
+        highQualityThreshold: 50,
+        sampleSize: 10,
+        qualityLevels: ['reduced', 'normal', 'high'],
+        adaptiveMultipliers: {
+          tensionIncrease: 1.5,
+          frictionIncrease: 1.2,
+        },
       },
       ...partialConfig,
     };
@@ -343,8 +420,8 @@ export class AnimationConfigManager {
     
     // Reduce animation complexity if FPS drops
     if (this.averageFPS < this.config.performance.fpsThreshold) {
-      baseConfig.tension *= 1.5; // Faster animations
-      baseConfig.friction *= 1.2; // More dampening
+      baseConfig.tension *= this.config.performance.adaptiveMultipliers.tensionIncrease; // Faster animations
+      baseConfig.friction *= this.config.performance.adaptiveMultipliers.frictionIncrease; // More dampening
     }
     
     return baseConfig;
@@ -352,7 +429,7 @@ export class AnimationConfigManager {
   
   // Get current performance quality level
   getQualityLevel(): QualityLevel {
-    if (this.averageFPS >= 50) return 'high';
+    if (this.averageFPS >= this.config.performance.highQualityThreshold) return 'high';
     if (this.averageFPS >= this.config.performance.fpsThreshold) return 'normal';
     return 'reduced';
   }
@@ -396,16 +473,46 @@ export class PositionManager {
   getAbsolutePosition(parent: keyof typeof WEBXR_ANIMATION_CONFIG.positions, child: string): THREE.Vector3 {
     const cacheKey = `${parent}:${child}`;
     if (!this.computedCache.has(cacheKey)) {
-      const parentConfig = WEBXR_ANIMATION_CONFIG.positions[parent] as any;
-      const parentPos = parentConfig?.group;
-      const childPos = parentConfig?.[child];
+      const parentConfig = WEBXR_ANIMATION_CONFIG.positions[parent] as Record<string, any>;
       
-      if (parentPos && childPos) {
-        const computed = new THREE.Vector3().addVectors(
-          new THREE.Vector3().fromArray(parentPos),
-          new THREE.Vector3().fromArray(childPos)
-        );
+      // Handle different position configuration structures flexibly
+      let parentPos: readonly [number, number, number] | null = null;
+      let childPos: readonly [number, number, number] | null = null;
+      
+      // Try to find parent position (group, position, or base position)
+      if (parentConfig?.group) {
+        parentPos = parentConfig.group;
+      } else if (parentConfig?.position) {
+        parentPos = parentConfig.position;
+      }
+      
+      // Try to find child position
+      const childConfig = parentConfig?.[child];
+      if (Array.isArray(childConfig) && childConfig.length === 3) {
+        childPos = childConfig;
+      } else if (childConfig?.position) {
+        childPos = childConfig.position;
+      }
+      
+      if (childPos) {
+        let computed: THREE.Vector3;
+        if (parentPos) {
+          // Compute absolute position by adding parent and child vectors
+          computed = new THREE.Vector3().addVectors(
+            new THREE.Vector3().fromArray(parentPos),
+            new THREE.Vector3().fromArray(childPos)
+          );
+        } else {
+          // If no parent position, use child position directly
+          computed = new THREE.Vector3().fromArray(childPos);
+        }
         this.computedCache.set(cacheKey, computed);
+      } else {
+        // If child not found, create a default position and warn in development
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Position not found for ${parent}:${child}, using default [0,0,0]`);
+        }
+        this.computedCache.set(cacheKey, new THREE.Vector3());
       }
     }
     return this.computedCache.get(cacheKey) || new THREE.Vector3();
