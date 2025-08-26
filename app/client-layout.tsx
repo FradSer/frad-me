@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
 import { ThemeProvider } from 'next-themes';
-import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LayoutWrapper from '@/components/common/LayoutWrapper';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 import DotRing from '@/components/Mouse/DotRing';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
 import useXRDetect from '@/hooks/useXRDetect';
@@ -24,7 +24,7 @@ type ClientLayoutProps = {
 };
 
 const StandardLayout = ({ children }: ClientLayoutProps) => (
-  <ErrorBoundary>
+  <ErrorBoundary componentName="StandardLayout">
     <MouseContextProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <DotRing />
@@ -35,7 +35,7 @@ const StandardLayout = ({ children }: ClientLayoutProps) => (
 );
 
 const VRLayout = () => (
-  <ErrorBoundary>
+  <ErrorBoundary componentName="VRLayout">
     <div className="flex h-screen w-screen flex-col bg-black">
       <WebXR />
     </div>
