@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.11.3](https://github.com/FradSer/frad-me/compare/v0.11.2...v0.11.3) (2025-08-26)
+
+### Features
+
+- **webxr:** centralize animation constants into type-safe configuration system
+- **webxr:** add animation performance monitoring hooks
+
+### Bug Fixes
+
+- **webxr:** improve work card and WIP badge visibility behavior
+- **webxr:** add missing animation config properties for work cards
+- **webxr:** resolve TypeScript type conversion issue in PositionManager
+- **tests:** update validation tests to include required position schemas
+
+### Changed
+
+- **webxr:** simplify animation config system architecture
+- **webxr:** complete migration of animation timing constants to centralized config
+- **tests:** add comprehensive integration and unit tests for WebXR animation system
+
 ## [0.11.2](https://github.com/FradSer/frad-me/compare/v0.11.1...v0.11.2) (2025-08-25)
 
 ### Changed
