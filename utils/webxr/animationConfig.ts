@@ -489,7 +489,7 @@ export class PositionManager {
       // Try to find child position
       const childConfig = parentConfig?.[child];
       if (Array.isArray(childConfig) && childConfig.length === 3) {
-        childPos = childConfig;
+        childPos = childConfig as unknown as readonly [number, number, number];
       } else if (childConfig?.position) {
         childPos = childConfig.position;
       }
