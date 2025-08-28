@@ -1,22 +1,27 @@
-import { SpringScalar } from '@/hooks/useSpringAnimation';
+import { SpringScalar, SPRING_PRESETS } from '@/utils/animation/springUtils';
 
 describe('SpringScalar Physics System', () => {
-  const DEFAULT_CONFIG = { tension: 170, friction: 26 };
+  const DEFAULT_CONFIG = { tension: 170, friction: 26, precision: 0.001 };
 
   describe('Basic Functionality', () => {
     it('should initialize with correct values', () => {
       const spring = new SpringScalar(10, DEFAULT_CONFIG);
       expect(spring.value).toBe(10);
+      expect(spring.isAtRest).toBe(true);
     });
 
     it('should set target value correctly', () => {
       const spring = new SpringScalar(0, DEFAULT_CONFIG);
       spring.set(5);
 
+      // Initially should not be at rest
+      expect(spring.isAtRest).toBe(false);
+
       // After update, should move toward target
       const initialValue = spring.value;
       spring.update();
       expect(spring.value).not.toBe(initialValue);
+      expect(spring.value).toBeGreaterThan(0);
     });
   });
 
@@ -31,7 +36,8 @@ describe('SpringScalar Physics System', () => {
       }
 
       // Should be very close to target (within convergence threshold)
-      expect(Math.abs(spring.value - 10)).toBeLessThan(0.001);
+      expect(Math.abs(spring.value - 10)).toBeLessThan(DEFAULT_CONFIG.precision);
+      expect(spring.isAtRest).toBe(true);
     });
 
     it('should handle negative target values', () => {
@@ -42,7 +48,8 @@ describe('SpringScalar Physics System', () => {
         spring.update(1 / 60);
       }
 
-      expect(Math.abs(spring.value - -5)).toBeLessThan(0.001);
+      expect(Math.abs(spring.value - -5)).toBeLessThan(DEFAULT_CONFIG.precision);
+      expect(spring.isAtRest).toBe(true);
     });
 
     it('should handle zero target from positive value', () => {
@@ -53,7 +60,8 @@ describe('SpringScalar Physics System', () => {
         spring.update(1 / 60);
       }
 
-      expect(Math.abs(spring.value)).toBeLessThan(0.001);
+      expect(Math.abs(spring.value)).toBeLessThan(DEFAULT_CONFIG.precision);
+      expect(spring.isAtRest).toBe(true);
     });
   });
 

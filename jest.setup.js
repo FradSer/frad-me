@@ -1,5 +1,6 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+import React from 'react';
 
 // Mock Next.js router
 const mockRouter = {
@@ -52,20 +53,74 @@ jest.mock('framer-motion', () => ({
 
 // Mock three.js and React Three Fiber
 jest.mock('@react-three/fiber', () => ({
-  Canvas: ({ children }) => children,
-  useFrame: () => {},
-  useThree: () => ({
-    camera: {},
-    scene: {},
-    gl: {},
+  Canvas: ({ children, ...props }) => {
+    const { forwardRef } = jest.requireActual('react');
+    return React.createElement('div', {
+      'data-testid': 'react-three-fiber-canvas',
+      ...props
+    }, children);
+  },
+  useFrame: jest.fn((callback) => {
+    // Mock useFrame to not execute callback in tests
+    return () => {};
   }),
+  useThree: () => ({
+    camera: {
+      position: { set: jest.fn(), copy: jest.fn() },
+      lookAt: jest.fn(),
+      updateProjectionMatrix: jest.fn(),
+    },
+    scene: {
+      add: jest.fn(),
+      remove: jest.fn(),
+      children: [],
+    },
+    gl: {
+      setSize: jest.fn(),
+      render: jest.fn(),
+      setPixelRatio: jest.fn(),
+      getPixelRatio: jest.fn(() => 1),
+      domElement: document.createElement('canvas'),
+    },
+    size: { width: 800, height: 600 },
+    viewport: { width: 800, height: 600, factor: 1 },
+    invalidate: jest.fn(),
+    setSize: jest.fn(),
+  }),
+  extend: jest.fn(),
 }));
 
 jest.mock('@react-three/drei', () => ({
-  OrbitControls: () => null,
-  Text: ({ children }) => children,
-  Box: () => null,
-  Sphere: () => null,
+  OrbitControls: ({ children, ...props }) => {
+    return React.createElement('div', {
+      'data-testid': 'orbit-controls',
+      ...props
+    }, children);
+  },
+  Text: ({ children, ...props }) => {
+    return React.createElement('div', {
+      'data-testid': 'three-text',
+      ...props
+    }, children);
+  },
+  Box: ({ children, ...props }) => {
+    return React.createElement('div', {
+      'data-testid': 'three-box',
+      ...props
+    }, children);
+  },
+  Sphere: ({ children, ...props }) => {
+    return React.createElement('div', {
+      'data-testid': 'three-sphere',
+      ...props
+    }, children);
+  },
+  Html: ({ children, ...props }) => {
+    return React.createElement('div', {
+      'data-testid': 'html-content',
+      ...props
+    }, children);
+  },
 }));
 
 // Mock window.matchMedia
@@ -97,20 +152,33 @@ global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// Suppress console errors in tests
-const originalError = console.error;
-beforeAll(() => {
-  console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is deprecated')
-    ) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
-});
+// Mock fetch for error logger tests
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    json: () => Promise.resolve({ status: 'logged' }),
+    text: () => Promise.resolve('success'),
+  })
+);
 
-afterAll(() => {
-  console.error = originalError;
-});
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.localStorage = localStorageMock;
+
+// Mock performance.mark and performance.measure
+if (!global.performance.mark) {
+  global.performance.mark = jest.fn();
+}
+if (!global.performance.measure) {
+  global.performance.measure = jest.fn();
+}
+
+// Keep original console methods for tests that need to spy on them
+// Tests will mock these individually as needed

@@ -219,6 +219,79 @@ export class WorkDetailPage extends BasePage {
   }
 }
 
+// WebXR Error Boundary page object
+export class WebXRErrorBoundaryPage extends BasePage {
+  readonly errorBoundary: Locator;
+  readonly errorMessage: Locator;
+  readonly tryAgainButton: Locator;
+  readonly returnMainButton: Locator;
+
+  constructor(page: Page) {
+    super(page);
+    this.errorBoundary = page.locator('[data-testid="webxr-error-boundary"]');
+    this.errorMessage = page.locator('[data-testid="webxr-error-message"]');
+    this.tryAgainButton = page.locator('button:has-text("Try Again")');
+    this.returnMainButton = page.locator('button:has-text("Return to Main")');
+  }
+
+  async navigateToWebXR() {
+    await this.page.goto('/webxr');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async verifyWebXRMode() {
+    await expect(
+      this.page.locator('[data-testid="webxr-canvas"]'),
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('WebXR Error'),
+    ).not.toBeVisible();
+  }
+
+  async verifyErrorBoundaryMessage() {
+    await expect(
+      this.page.getByText('WebXR Error'),
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
+    ).toBeVisible();
+  }
+
+  async verifyErrorDisplay() {
+    // New ErrorBoundary shows simple error message for WebXR components
+    await expect(
+      this.page.getByText('WebXR Error'),
+    ).toBeVisible();
+  }
+
+  async verifyHeroStyleErrorUI() {
+    // Verify hero-style error UI with black background
+    const errorContainer = this.page.locator('.bg-black');
+    await expect(errorContainer).toBeVisible();
+
+    // Verify centered layout
+    await expect(
+      this.page.locator('.items-center.justify-center'),
+    ).toBeVisible();
+
+    // Verify white text
+    await expect(this.page.locator('.text-white')).toBeVisible();
+  }
+
+  async verifyErrorButtons() {
+    await expect(this.tryAgainButton).toBeVisible();
+    await expect(this.returnMainButton).toBeVisible();
+  }
+
+  async clickTryAgainButton() {
+    await this.tryAgainButton.click();
+  }
+
+  async clickReturnMainButton() {
+    await this.returnMainButton.click();
+  }
+}
+
 // Homepage combined page object
 export class HomePage extends BasePage {
   readonly header: HeaderPage;

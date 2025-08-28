@@ -72,7 +72,7 @@ describe('Error Logger Utility', () => {
       const requestBody = JSON.parse(fetchCall[1].body);
 
       expect(requestBody.context).toMatchObject(context);
-      expect(requestBody.message).toBe('Context test error');
+      expect(requestBody.error.message).toBe('Context test error');
     });
 
     it('should log to Google Analytics when available', async () => {
