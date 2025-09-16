@@ -201,14 +201,14 @@ export const QUALITY_CONFIGS: Record<'low' | 'medium' | 'high', QualityConfig> =
   medium: {
     antialias: true,
     shadows: false,
-    pixelRatio: Math.min(window?.devicePixelRatio || 1, 1.5),
+    pixelRatio: typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1.5,
     powerPreference: 'default',
     maxLights: 4
   },
   high: {
     antialias: true,
     shadows: true,
-    pixelRatio: Math.min(window?.devicePixelRatio || 1, 2),
+    pixelRatio: typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 2,
     powerPreference: 'high-performance',
     maxLights: 8
   }
@@ -233,23 +233,28 @@ export const detectPerformanceLevel = (): keyof typeof QUALITY_CONFIGS => {
 
   // Check WebGL capabilities
   const canvas = document.createElement('canvas');
-  const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+  try {
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
 
-  if (!gl) {
-    return 'low';
+    if (!gl) {
+      return 'low';
+    }
+
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : '';
+
+    // High-end GPU indicators
+    const isHighEndGPU = /RTX|GTX|Radeon RX|AMD|Intel Iris|Apple M[0-9]|Apple GPU/.test(renderer);
+
+    if (isHighEndGPU && !isMobile) {
+      return 'high';
+    }
+
+    return 'medium';
+  } finally {
+    // Clean up canvas to prevent memory leak
+    canvas.remove();
   }
-
-  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-  const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : '';
-
-  // High-end GPU indicators
-  const isHighEndGPU = /RTX|GTX|Radeon RX|AMD|Intel Iris|Apple M[0-9]|Apple GPU/.test(renderer);
-
-  if (isHighEndGPU && !isMobile) {
-    return 'high';
-  }
-
-  return 'medium';
 };
 
 /**

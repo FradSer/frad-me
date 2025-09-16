@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useMemo } from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text, Box, Sphere, Torus } from '@react-three/drei';
 import type {
@@ -61,14 +61,13 @@ const TextPlaneComponent = ({ plane }: { plane: TextPlane }) => {
 
 const PlatformComponent = ({ platform }: { platform: PlatformElement }) => {
   return (
-    <mesh position={platform.position}>
-      <boxGeometry args={platform.dimensions} />
+    <Box position={platform.position} args={platform.dimensions}>
       <meshStandardMaterial
         color={platform.material.color}
         roughness={platform.material.roughness}
         metalness={platform.material.metalness}
       />
-    </mesh>
+    </Box>
   );
 };
 
@@ -147,37 +146,47 @@ const AsyncSceneContent = () => {
   } | null>(null);
 
   React.useEffect(() => {
+    let isMounted = true;
+
     loadConstants().then(({
       FLOATING_SHAPES,
       TEXT_PLANES,
       PLATFORM_ELEMENTS,
       getQualityConfig
     }) => {
-      setConstants({
-        floatingShapes: FLOATING_SHAPES,
-        textPlanes: TEXT_PLANES,
-        platformElements: PLATFORM_ELEMENTS,
-        qualityConfig: getQualityConfig()
-      });
+      if (isMounted) {
+        setConstants({
+          floatingShapes: FLOATING_SHAPES,
+          textPlanes: TEXT_PLANES,
+          platformElements: PLATFORM_ELEMENTS,
+          qualityConfig: getQualityConfig()
+        });
+      }
     }).catch(error => {
-      console.error('Failed to load fallback constants:', error);
-      // Provide minimal fallback data
-      setConstants({
-        floatingShapes: [],
-        textPlanes: [{
-          text: 'Fallback Loading Error',
-          position: [0, 0, -2],
-          fontSize: 0.5,
-          color: '#FF6B6B'
-        }],
-        platformElements: [],
-        qualityConfig: {
-          antialias: false,
-          shadows: false,
-          pixelRatio: 1
-        }
-      });
+      if (isMounted) {
+        console.error('Failed to load fallback constants:', error);
+        // Provide minimal fallback data
+        setConstants({
+          floatingShapes: [],
+          textPlanes: [{
+            text: 'Fallback Loading Error',
+            position: [0, 0, -2],
+            fontSize: 0.5,
+            color: '#FF6B6B'
+          }],
+          platformElements: [],
+          qualityConfig: {
+            antialias: false,
+            shadows: false,
+            pixelRatio: 1
+          }
+        });
+      }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (!constants) {

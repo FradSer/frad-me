@@ -61,19 +61,17 @@ class WebXR3DErrorBoundary extends Component<
     const { enableLogging = true, onError, maxRetries = 2 } = this.props;
 
     // Detect device capabilities if not already done
-    if (!this.state.capabilities) {
-      const capabilities = DeviceCapabilityService.detectCapabilities();
-      this.setState({ capabilities });
-    }
+    const capabilities = this.state.capabilities ?? DeviceCapabilityService.detectCapabilities();
 
     // Determine next fallback level
-    const nextFallbackLevel = this.determineNextFallback(error);
+    const nextFallbackLevel = this.determineNextFallback(error, capabilities, maxRetries);
 
     // Update state with error info and next fallback
     this.setState(prevState => ({
       errorInfo,
       fallbackLevel: nextFallbackLevel,
-      retryCount: prevState.retryCount + 1
+      retryCount: prevState.retryCount + 1,
+      capabilities
     }));
 
     // Log error
@@ -100,15 +98,20 @@ class WebXR3DErrorBoundary extends Component<
     onError?.(error, errorInfo, nextFallbackLevel);
   }
 
-  private determineNextFallback(error: Error): FallbackLevel {
-    const { capabilities } = this.state;
+  private determineNextFallback(error: Error, capabilities: DeviceCapabilities, maxRetries: number): FallbackLevel {
     const currentLevel = this.state.fallbackLevel;
+    const retryCount = this.state.retryCount;
+
+    // Force final fallback if max retries exceeded
+    if (retryCount >= maxRetries) {
+      return 'final';
+    }
 
     // Progressive fallback logic
     switch (currentLevel) {
       case 'webxr':
         // WebXR failed, try 3D fallback if WebGL is available and circuit isn't open
-        if (capabilities?.hasWebGL && !circuitBreaker.isOpen('fallback3d')) {
+        if (capabilities.hasWebGL && !circuitBreaker.isOpen('fallback3d')) {
           return 'fallback3d';
         }
         return 'fallback2d';
