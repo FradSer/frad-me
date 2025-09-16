@@ -147,45 +147,61 @@ const AsyncSceneContent = () => {
 
   React.useEffect(() => {
     let isMounted = true;
+    let loadingPromise: Promise<any> | null = null;
 
-    loadConstants().then(({
-      FLOATING_SHAPES,
-      TEXT_PLANES,
-      PLATFORM_ELEMENTS,
-      getQualityConfig
-    }) => {
-      if (isMounted) {
-        setConstants({
-          floatingShapes: FLOATING_SHAPES,
-          textPlanes: TEXT_PLANES,
-          platformElements: PLATFORM_ELEMENTS,
-          qualityConfig: getQualityConfig()
-        });
+    const loadConstantsAsync = async () => {
+      try {
+        loadingPromise = loadConstants();
+        const {
+          FLOATING_SHAPES,
+          TEXT_PLANES,
+          PLATFORM_ELEMENTS,
+          getQualityConfig
+        } = await loadingPromise;
+
+        if (isMounted) {
+          setConstants({
+            floatingShapes: FLOATING_SHAPES,
+            textPlanes: TEXT_PLANES,
+            platformElements: PLATFORM_ELEMENTS,
+            qualityConfig: getQualityConfig()
+          });
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Failed to load fallback constants:', error);
+          // Provide minimal fallback data
+          setConstants({
+            floatingShapes: [],
+            textPlanes: [{
+              text: 'Fallback Loading Error',
+              position: [0, 0, -2],
+              fontSize: 0.5,
+              color: '#FF6B6B',
+              maxWidth: 200
+            }],
+            platformElements: [],
+            qualityConfig: {
+              antialias: false,
+              shadows: false,
+              pixelRatio: 1,
+              powerPreference: 'low-power' as const
+            }
+          });
+        }
+      } finally {
+        loadingPromise = null;
       }
-    }).catch(error => {
-      if (isMounted) {
-        console.error('Failed to load fallback constants:', error);
-        // Provide minimal fallback data
-        setConstants({
-          floatingShapes: [],
-          textPlanes: [{
-            text: 'Fallback Loading Error',
-            position: [0, 0, -2],
-            fontSize: 0.5,
-            color: '#FF6B6B'
-          }],
-          platformElements: [],
-          qualityConfig: {
-            antialias: false,
-            shadows: false,
-            pixelRatio: 1
-          }
-        });
-      }
-    });
+    };
+
+    loadConstantsAsync();
 
     return () => {
       isMounted = false;
+      // Cancel any pending promises if possible
+      if (loadingPromise) {
+        loadingPromise = null;
+      }
     };
   }, []);
 

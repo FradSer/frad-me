@@ -11,52 +11,100 @@ export class DeviceCapabilityService {
   }
 
   private static detectWebGLSupport(): { hasWebGL: boolean; hasWebGL2: boolean } {
-    const canvas = this.createCanvas();
-    const webglContext = canvas.getContext('webgl');
-    const webgl2Context = canvas.getContext('webgl2');
+    // Add SSR compatibility check
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return { hasWebGL: false, hasWebGL2: false };
+    }
 
-    const hasWebGL = !!webglContext;
-    const hasWebGL2 = !!webgl2Context;
+    let canvas: HTMLCanvasElement | null = null;
+    try {
+      canvas = this.createCanvas();
+      const webglContext = canvas.getContext('webgl');
+      const webgl2Context = canvas.getContext('webgl2');
 
-    // Clean up canvas
-    canvas.remove();
+      const hasWebGL = !!webglContext;
+      const hasWebGL2 = !!webgl2Context;
 
-    return { hasWebGL, hasWebGL2 };
+      return { hasWebGL, hasWebGL2 };
+    } catch (error) {
+      console.warn('Failed to detect WebGL support:', error);
+      return { hasWebGL: false, hasWebGL2: false };
+    } finally {
+      // Ensure canvas cleanup in all cases
+      if (canvas) {
+        try {
+          canvas.remove();
+        } catch (cleanupError) {
+          console.warn('Failed to cleanup canvas:', cleanupError);
+        }
+      }
+    }
   }
 
   private static detectWebXRSupport(): boolean {
-    return 'xr' in navigator && !!(navigator as any).xr;
+    // Add SSR compatibility check
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+
+    try {
+      return 'xr' in navigator && !!(navigator as any).xr;
+    } catch (error) {
+      console.warn('Failed to detect WebXR support:', error);
+      return false;
+    }
   }
 
   private static detectPerformanceLevel(): 'low' | 'medium' | 'high' {
-    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator?.userAgent || ''
-    );
-    const deviceMemory = (navigator as any)?.deviceMemory || 4;
-    const pixelRatio = window?.devicePixelRatio || 1;
-
-    if (isMobile && deviceMemory < 4) {
-      return 'low';
+    // Add SSR compatibility check
+    if (typeof navigator === 'undefined' || typeof window === 'undefined') {
+      return 'medium'; // Default to medium performance on server
     }
 
-    const { hasWebGL2 } = this.detectWebGLSupport();
-    if (!isMobile && hasWebGL2 && pixelRatio > 1.5) {
-      return 'high';
-    }
+    try {
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator?.userAgent || ''
+      );
+      const deviceMemory = (navigator as any)?.deviceMemory || 4;
+      const pixelRatio = window?.devicePixelRatio || 1;
 
-    return 'medium';
+      if (isMobile && deviceMemory < 4) {
+        return 'low';
+      }
+
+      const { hasWebGL2 } = this.detectWebGLSupport();
+      if (!isMobile && hasWebGL2 && pixelRatio > 1.5) {
+        return 'high';
+      }
+
+      return 'medium';
+    } catch (error) {
+      console.warn('Failed to detect performance level:', error);
+      return 'medium';
+    }
   }
 
   public static detectCapabilities(): DeviceCapabilities {
-    const { hasWebGL, hasWebGL2 } = this.detectWebGLSupport();
-    const hasWebXR = this.detectWebXRSupport();
-    const performanceLevel = this.detectPerformanceLevel();
+    try {
+      const { hasWebGL, hasWebGL2 } = this.detectWebGLSupport();
+      const hasWebXR = this.detectWebXRSupport();
+      const performanceLevel = this.detectPerformanceLevel();
 
-    return {
-      hasWebGL,
-      hasWebGL2,
-      hasWebXR,
-      performanceLevel,
-    };
+      return {
+        hasWebGL,
+        hasWebGL2,
+        hasWebXR,
+        performanceLevel,
+      };
+    } catch (error) {
+      console.warn('Failed to detect device capabilities:', error);
+      // Return safe defaults on error
+      return {
+        hasWebGL: false,
+        hasWebGL2: false,
+        hasWebXR: false,
+        performanceLevel: 'low',
+      };
+    }
   }
 }

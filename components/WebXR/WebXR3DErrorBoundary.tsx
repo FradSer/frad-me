@@ -63,31 +63,35 @@ class WebXR3DErrorBoundary extends Component<
     // Detect device capabilities if not already done
     const capabilities = this.state.capabilities ?? DeviceCapabilityService.detectCapabilities();
 
-    // Determine next fallback level
-    const nextFallbackLevel = this.determineNextFallback(error, capabilities, maxRetries);
+    // Calculate next retry count
+    const nextRetryCount = this.state.retryCount + 1;
+
+    // Determine next fallback level using current state values
+    const currentFallbackLevel = this.state.fallbackLevel;
+    const nextFallbackLevel = this.determineNextFallback(error, capabilities, maxRetries, nextRetryCount, currentFallbackLevel);
+
+    // Record failure in circuit breaker using current level
+    circuitBreaker.recordFailure(currentFallbackLevel);
 
     // Update state with error info and next fallback
     this.setState(prevState => ({
       errorInfo,
       fallbackLevel: nextFallbackLevel,
-      retryCount: prevState.retryCount + 1,
+      retryCount: nextRetryCount,
       capabilities
     }));
 
-    // Log error
-    console.error(`[WebXR3DErrorBoundary] Error in ${this.state.fallbackLevel}:`, error, errorInfo);
-
-    // Record failure in circuit breaker
-    circuitBreaker.recordFailure(this.state.fallbackLevel);
+    // Log error using current values (not state which may be stale)
+    console.error(`[WebXR3DErrorBoundary] Error in ${currentFallbackLevel}:`, error, errorInfo);
 
     // Log to external service if enabled
     if (enableLogging) {
       try {
         await webxrErrorLogger.logError(error, {
           ...errorInfo,
-          fallbackLevel: this.state.fallbackLevel,
-          capabilities: this.state.capabilities,
-          retryCount: this.state.retryCount
+          fallbackLevel: currentFallbackLevel,
+          capabilities,
+          retryCount: nextRetryCount
         });
       } catch (loggingError) {
         console.warn('Failed to log WebXR error:', loggingError);
@@ -98,12 +102,16 @@ class WebXR3DErrorBoundary extends Component<
     onError?.(error, errorInfo, nextFallbackLevel);
   }
 
-  private determineNextFallback(error: Error, capabilities: DeviceCapabilities, maxRetries: number): FallbackLevel {
-    const currentLevel = this.state.fallbackLevel;
-    const retryCount = this.state.retryCount;
-
+  private determineNextFallback(
+    error: Error,
+    capabilities: DeviceCapabilities,
+    maxRetries: number,
+    retryCount: number,
+    currentLevel: FallbackLevel
+  ): FallbackLevel {
     // Force final fallback if max retries exceeded
     if (retryCount >= maxRetries) {
+      console.warn(`[WebXR3DErrorBoundary] Max retries (${maxRetries}) exceeded, forcing final fallback`);
       return 'final';
     }
 
@@ -112,19 +120,24 @@ class WebXR3DErrorBoundary extends Component<
       case 'webxr':
         // WebXR failed, try 3D fallback if WebGL is available and circuit isn't open
         if (capabilities.hasWebGL && !circuitBreaker.isOpen('fallback3d')) {
+          console.info(`[WebXR3DErrorBoundary] Falling back to 3D (WebGL available: ${capabilities.hasWebGL})`);
           return 'fallback3d';
         }
+        console.info(`[WebXR3DErrorBoundary] Skipping 3D fallback (WebGL: ${capabilities.hasWebGL}, Circuit open: ${circuitBreaker.isOpen('fallback3d')})`);
         return 'fallback2d';
 
       case 'fallback3d':
         // 3D fallback failed, fall back to 2D
+        console.info('[WebXR3DErrorBoundary] 3D fallback failed, falling back to 2D');
         return 'fallback2d';
 
       case 'fallback2d':
         // 2D fallback failed, use final fallback
+        console.warn('[WebXR3DErrorBoundary] 2D fallback failed, using final fallback');
         return 'final';
 
       default:
+        console.warn(`[WebXR3DErrorBoundary] Unknown fallback level: ${currentLevel}, using final fallback`);
         return 'final';
     }
   }
@@ -164,6 +177,18 @@ class WebXR3DErrorBoundary extends Component<
   }
 
   private render2DFallback(): ReactNode {
+    const handleRefresh = () => {
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
+    };
+
+    const handleReturnHome = () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    };
+
     return (
       <ErrorFallback
         title="3D Experience Unavailable"
@@ -176,12 +201,12 @@ class WebXR3DErrorBoundary extends Component<
         actions={[
           {
             label: 'Refresh Page',
-            onClick: () => window.location.reload(),
+            onClick: handleRefresh,
             variant: 'primary',
           },
           {
             label: 'Return Home',
-            onClick: () => (window.location.href = '/'),
+            onClick: handleReturnHome,
             variant: 'secondary',
           },
         ]}
@@ -191,6 +216,17 @@ class WebXR3DErrorBoundary extends Component<
   }
 
   private renderFinalFallback(): ReactNode {
+    const handleResetAndRefresh = () => {
+      try {
+        circuitBreaker.reset();
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Failed to reset and refresh:', error);
+      }
+    };
+
     return (
       <ErrorFallback
         title="Critical Error"
@@ -198,10 +234,7 @@ class WebXR3DErrorBoundary extends Component<
         actions={[
           {
             label: 'Reset & Refresh',
-            onClick: () => {
-              circuitBreaker.reset();
-              window.location.reload();
-            },
+            onClick: handleResetAndRefresh,
             variant: 'primary',
           },
         ]}
