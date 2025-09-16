@@ -68,6 +68,7 @@ class WebXRErrorLogger {
     totalErrors: 0,
     errorsByComponent: {},
     averageErrorsPerHour: 0,
+    queueSize: 0,
   };
   private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
   private readonly maxRequestsPerHour: number =
@@ -180,7 +181,7 @@ class WebXRErrorLogger {
 
   private async sendError(errorDetails: WebXRErrorDetails): Promise<void> {
     // In test environment, always attempt to send (don't skip based on NODE_ENV)
-    const isTestEnvironment = typeof jest !== 'undefined';
+    const isTestEnvironment = typeof global !== 'undefined' && 'jest' in global;
     if (
       !isTestEnvironment &&
       typeof process !== 'undefined' &&
