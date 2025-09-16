@@ -203,8 +203,8 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     );
   } else {
     return (
-      <Link href={`/works/${props.slug}`} passHref legacyBehavior>
-        <a className={linkClass}>{workCardContent}</a>
+      <Link href={`/works/${props.slug}`} className={linkClass}>
+        {workCardContent}
       </Link>
     );
   }
