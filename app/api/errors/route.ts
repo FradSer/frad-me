@@ -1,5 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/utils/rateLimiter';
+import { API_RATE_LIMITS, SANITIZATION_LIMITS } from '@/utils/errorConstants';
+import {
+  sanitizeString,
+  sanitizeErrorMessage,
+  sanitizeUserAgent,
+  sanitizeErrorName,
+  sanitizeUrl,
+} from '@/utils/sanitization';
 
 /**
  * Unified error data structure with optional fields
@@ -34,37 +42,10 @@ function isValidErrorData(data: unknown): data is ErrorData {
 
 // Create rate limiter instance
 const rateLimiter = createRateLimiter({
-  window: 15 * 60 * 1000, // 15 minutes
-  max: 10,
+  window: API_RATE_LIMITS.WINDOW_MS,
+  max: API_RATE_LIMITS.MAX_REQUESTS,
 });
 
-/**
- * Sanitizes a string by removing XSS and injection attempts
- * Uses ReDoS-safe regex patterns with limited backtracking
- */
-function sanitizeString(input: string): string {
-  // Limit input length to prevent DoS
-  const limitedInput = input.substring(0, 2000);
-
-  return (
-    limitedInput
-      // Windows paths: C:\path\to\file (atomic groups to prevent backtracking)
-      .replace(
-        /\b[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*\b/g,
-        '[PATH]',
-      )
-      // Unix paths: /path/to/file (atomic groups to prevent backtracking)
-      .replace(/\/(?:[^/\s<>"']+\/)*[^/\s<>"']*/g, '[PATH]')
-      // Script tags (non-greedy with bounded repetition)
-      .replace(/<script\b[^>]{0,100}>[\s\S]{0,1000}?<\/script>/gi, '[SCRIPT]')
-      // HTML tags (bounded to prevent catastrophic backtracking)
-      .replace(/<[^>]{0,100}>/g, '[HTML]')
-      // SQL injection (simple pattern, no complex quantifiers)
-      .replace(/DROP\s+TABLE/gi, '[SQL]')
-      // Remove dangerous characters (character class, no backtracking)
-      .replace(/[<>'"]/g, '')
-  );
-}
 
 /**
  * Sanitizes error data by removing sensitive information and enforcing limits
@@ -75,13 +56,13 @@ function sanitizeString(input: string): string {
 function sanitizeErrorData(data: ErrorData): SanitizedErrorData {
   return {
     error: {
-      name: sanitizeString(data.error.name).substring(0, 100),
-      message: sanitizeString(data.error.message).substring(0, 500),
+      name: sanitizeErrorName(data.error.name),
+      message: sanitizeErrorMessage(data.error.message),
       // Stack traces removed from API response to prevent information disclosure
     },
-    userAgent: sanitizeString(data.userAgent || '').substring(0, 200),
+    userAgent: sanitizeUserAgent(data.userAgent || ''),
     timestamp: new Date().toISOString(), // Use server timestamp for security
-    url: sanitizeString(data.url || '').substring(0, 300),
+    url: sanitizeUrl(data.url || ''),
     webxrSupported: data.webxrSupported,
     webglSupported: data.webglSupported,
   };
@@ -121,7 +102,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Stack trace logged securely server-side only for debugging
       serverSideStack:
         process.env.NODE_ENV === 'development'
-          ? body.error.stack?.substring(0, 2000)
+          ? body.error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
           : undefined,
     });
 

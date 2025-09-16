@@ -1,3 +1,17 @@
+import {
+  ERROR_QUEUE_CONFIG,
+  STORAGE_KEYS,
+  ANALYTICS_SERVICES,
+  COMPONENT_NAMES,
+  SANITIZATION_LIMITS,
+} from './errorConstants';
+import {
+  sanitizeErrorMessage,
+  sanitizeUserAgent,
+  sanitizeErrorName,
+  sanitizeUrl,
+} from './sanitization';
+
 interface WebXRErrorDetails {
   error: Error;
   errorInfo?: React.ErrorInfo;
@@ -55,8 +69,8 @@ class WebXRErrorLogger {
     errorsByComponent: {},
     averageErrorsPerHour: 0,
   };
-  private readonly maxQueueSize: number = 100;
-  private readonly maxRequestsPerHour: number = 10;
+  private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
+  private readonly maxRequestsPerHour: number = ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
   private requestTimestamps: number[] = [];
 
   constructor() {
@@ -97,44 +111,6 @@ class WebXRErrorLogger {
     }
   }
 
-  private sanitizeMessage(message: string): string {
-    // Limit input length to prevent DoS
-    const limitedMessage = message.substring(0, 1000);
-
-    return (
-      limitedMessage
-        // Windows paths: C:\path\to\file (atomic groups to prevent backtracking)
-        .replace(
-          /\b[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*\b/g,
-          '[PATH]',
-        )
-        // Unix paths: /path/to/file (atomic groups to prevent backtracking)
-        .replace(/\/(?:[^/\s<>"']+\/)*[^/\s<>"']*/g, '[PATH]')
-        // Script tags (non-greedy with bounded repetition)
-        .replace(/<script\b[^>]{0,100}>[\s\S]{0,1000}?<\/script>/gi, '[SCRIPT]')
-        // HTML tags (bounded to prevent catastrophic backtracking)
-        .replace(/<[^>]{0,100}>/g, '[HTML]')
-        // SQL injection (simple pattern, no complex quantifiers)
-        .replace(/DROP\s+TABLE/gi, '[SQL]')
-        .substring(0, 500)
-    );
-  }
-
-  private sanitizeUserAgent(userAgent: string): string {
-    // Limit input length to prevent DoS
-    const limitedUserAgent = userAgent.substring(0, 400);
-
-    return (
-      limitedUserAgent
-        // Script tags (non-greedy with bounded repetition)
-        .replace(/<script\b[^>]{0,100}>[\s\S]{0,1000}?<\/script>/gi, '[SCRIPT]')
-        // HTML tags (bounded to prevent catastrophic backtracking)
-        .replace(/<[^>]{0,100}>/g, '[HTML]')
-        // Remove dangerous characters (character class, no backtracking)
-        .replace(/[<>'"]/g, '')
-        .substring(0, 200)
-    );
-  }
 
   public async logError(
     error: Error,
@@ -159,14 +135,16 @@ class WebXRErrorLogger {
 
     const errorDetails: WebXRErrorDetails = {
       error: {
-        name: error.name.substring(0, 100),
-        message: this.sanitizeMessage(error.message),
-        stack: (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') ? error.stack : undefined,
+        name: sanitizeErrorName(error.name),
+        message: sanitizeErrorMessage(error.message),
+        stack: (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development')
+          ? error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
+          : undefined,
       } as Error,
       errorInfo: actualErrorInfo,
-      userAgent: this.sanitizeUserAgent(navigator?.userAgent || 'Unknown'),
+      userAgent: sanitizeUserAgent(navigator?.userAgent || 'Unknown'),
       timestamp: new Date().toISOString(),
-      url: window?.location.href || 'Unknown',
+      url: sanitizeUrl(window?.location.href || 'Unknown'),
       webxrSupported: await this.checkWebXRSupport(),
       webglSupported: this.checkWebGLSupport(),
     };
@@ -226,8 +204,8 @@ class WebXRErrorLogger {
     const { error, webxrSupported, webglSupported, context } = errorDetails;
 
     // Google Analytics
-    if (typeof window !== 'undefined' && 'gtag' in window) {
-      const componentName = (context as any)?.component || 'WebXR';
+    if (typeof window !== 'undefined' && ANALYTICS_SERVICES.GOOGLE in window) {
+      const componentName = (context as any)?.component || COMPONENT_NAMES.WEBXR_DEFAULT;
       (window as WindowWithGtag).gtag('event', 'exception', {
         description: error.message,
         fatal: false,
@@ -241,10 +219,10 @@ class WebXRErrorLogger {
     }
 
     // Sentry
-    if (typeof window !== 'undefined' && 'Sentry' in window) {
+    if (typeof window !== 'undefined' && ANALYTICS_SERVICES.SENTRY in window) {
       (window as WindowWithSentry).Sentry.captureException(error, {
         tags: {
-          component: 'WebXR',
+          component: COMPONENT_NAMES.WEBXR_DEFAULT,
           webxr_supported: webxrSupported,
           webgl_supported: webglSupported,
         },
@@ -271,7 +249,7 @@ class WebXRErrorLogger {
   // Rate limiting methods
   private isRateLimited(): boolean {
     const now = Date.now();
-    const oneHourAgo = now - 60 * 60 * 1000;
+    const oneHourAgo = now - ERROR_QUEUE_CONFIG.MILLISECONDS_PER_HOUR;
 
     // Remove old timestamps
     this.requestTimestamps = this.requestTimestamps.filter(
@@ -287,7 +265,7 @@ class WebXRErrorLogger {
 
   private shouldRateLimit(): boolean {
     // Always allow first few requests, then apply rate limiting
-    return this.requestCount >= 5 && this.isRateLimited();
+    return this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD && this.isRateLimited();
   }
 
   // Queue management methods
@@ -305,7 +283,7 @@ class WebXRErrorLogger {
   private saveQueueToStorage(): void {
     if (typeof localStorage !== 'undefined') {
       try {
-        localStorage.setItem('webxr_error_queue', JSON.stringify(this.errorQueue));
+        localStorage.setItem(STORAGE_KEYS.ERROR_QUEUE, JSON.stringify(this.errorQueue));
       } catch (error) {
         // localStorage might be full or unavailable
         console.warn('Failed to save error queue to localStorage:', error);
@@ -316,7 +294,7 @@ class WebXRErrorLogger {
   private loadQueueFromStorage(): void {
     if (typeof localStorage !== 'undefined') {
       try {
-        const stored = localStorage.getItem('webxr_error_queue');
+        const stored = localStorage.getItem(STORAGE_KEYS.ERROR_QUEUE);
         if (stored) {
           const parsedQueue = JSON.parse(stored);
           if (Array.isArray(parsedQueue)) {
@@ -333,7 +311,7 @@ class WebXRErrorLogger {
   private updateErrorStats(errorDetails: WebXRErrorDetails): void {
     this.errorStats.totalErrors++;
 
-    const component = 'WebXR'; // Default component
+    const component = COMPONENT_NAMES.WEBXR_DEFAULT;
     this.errorStats.errorsByComponent[component] =
       (this.errorStats.errorsByComponent[component] || 0) + 1;
 
@@ -373,7 +351,7 @@ class WebXRErrorLogger {
   public clearQueue(): void {
     this.errorQueue = [];
     if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('webxr_error_queue');
+      localStorage.removeItem(STORAGE_KEYS.ERROR_QUEUE);
     }
   }
 
