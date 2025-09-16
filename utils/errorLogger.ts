@@ -1,15 +1,15 @@
 import {
-  ERROR_QUEUE_CONFIG,
-  STORAGE_KEYS,
   ANALYTICS_SERVICES,
   COMPONENT_NAMES,
+  ERROR_QUEUE_CONFIG,
   SANITIZATION_LIMITS,
+  STORAGE_KEYS,
 } from './errorConstants';
 import {
   sanitizeErrorMessage,
-  sanitizeUserAgent,
   sanitizeErrorName,
   sanitizeUrl,
+  sanitizeUserAgent,
 } from './sanitization';
 
 interface WebXRErrorDetails {
@@ -70,7 +70,8 @@ class WebXRErrorLogger {
     averageErrorsPerHour: 0,
   };
   private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
-  private readonly maxRequestsPerHour: number = ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
+  private readonly maxRequestsPerHour: number =
+    ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
   private requestTimestamps: number[] = [];
 
   constructor() {
@@ -111,7 +112,6 @@ class WebXRErrorLogger {
     }
   }
 
-
   public async logError(
     error: Error,
     errorInfoOrContext?: React.ErrorInfo | Record<string, unknown>,
@@ -123,7 +123,10 @@ class WebXRErrorLogger {
 
     if (errorInfoOrContext && typeof errorInfoOrContext === 'object') {
       // Check if it has React error info properties
-      if ('componentStack' in errorInfoOrContext || 'errorBoundary' in errorInfoOrContext) {
+      if (
+        'componentStack' in errorInfoOrContext ||
+        'errorBoundary' in errorInfoOrContext
+      ) {
         actualErrorInfo = errorInfoOrContext as React.ErrorInfo;
         actualContext = context;
       } else {
@@ -137,9 +140,11 @@ class WebXRErrorLogger {
       error: {
         name: sanitizeErrorName(error.name),
         message: sanitizeErrorMessage(error.message),
-        stack: (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development')
-          ? error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
-          : undefined,
+        stack:
+          typeof process !== 'undefined' &&
+          process.env?.NODE_ENV === 'development'
+            ? error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
+            : undefined,
       } as Error,
       errorInfo: actualErrorInfo,
       userAgent: sanitizeUserAgent(navigator?.userAgent || 'Unknown'),
@@ -150,12 +155,17 @@ class WebXRErrorLogger {
     };
 
     // Add context if provided
-    const errorWithContext = actualContext ? { ...errorDetails, context: actualContext } : errorDetails;
+    const errorWithContext = actualContext
+      ? { ...errorDetails, context: actualContext }
+      : errorDetails;
 
     // Update error statistics
     this.updateErrorStats(errorWithContext);
 
-    if ((typeof process !== 'undefined' && process.env?.NODE_ENV === 'development')) {
+    if (
+      typeof process !== 'undefined' &&
+      process.env?.NODE_ENV === 'development'
+    ) {
       console.error('WebXR Error logged:', errorWithContext);
     }
 
@@ -171,7 +181,11 @@ class WebXRErrorLogger {
   private async sendError(errorDetails: WebXRErrorDetails): Promise<void> {
     // In test environment, always attempt to send (don't skip based on NODE_ENV)
     const isTestEnvironment = typeof jest !== 'undefined';
-    if (!isTestEnvironment && (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development')) {
+    if (
+      !isTestEnvironment &&
+      typeof process !== 'undefined' &&
+      process.env?.NODE_ENV === 'development'
+    ) {
       console.warn('Error logging skipped in development mode:', errorDetails);
       return;
     }
@@ -205,7 +219,9 @@ class WebXRErrorLogger {
 
     // Google Analytics
     if (typeof window !== 'undefined' && ANALYTICS_SERVICES.GOOGLE in window) {
-      const componentName = (context as any)?.component || COMPONENT_NAMES.WEBXR_DEFAULT;
+      const componentName =
+        ((context as Record<string, unknown>)?.component as string) ||
+        COMPONENT_NAMES.WEBXR_DEFAULT;
       (window as WindowWithGtag).gtag('event', 'exception', {
         description: error.message,
         fatal: false,
@@ -253,7 +269,7 @@ class WebXRErrorLogger {
 
     // Remove old timestamps
     this.requestTimestamps = this.requestTimestamps.filter(
-      timestamp => timestamp > oneHourAgo
+      (timestamp) => timestamp > oneHourAgo,
     );
 
     return this.requestTimestamps.length >= this.maxRequestsPerHour;
@@ -265,7 +281,10 @@ class WebXRErrorLogger {
 
   private shouldRateLimit(): boolean {
     // Always allow first few requests, then apply rate limiting
-    return this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD && this.isRateLimited();
+    return (
+      this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD &&
+      this.isRateLimited()
+    );
   }
 
   // Queue management methods
@@ -283,26 +302,13 @@ class WebXRErrorLogger {
   private saveQueueToStorage(): void {
     if (typeof localStorage !== 'undefined') {
       try {
-        localStorage.setItem(STORAGE_KEYS.ERROR_QUEUE, JSON.stringify(this.errorQueue));
+        localStorage.setItem(
+          STORAGE_KEYS.ERROR_QUEUE,
+          JSON.stringify(this.errorQueue),
+        );
       } catch (error) {
         // localStorage might be full or unavailable
         console.warn('Failed to save error queue to localStorage:', error);
-      }
-    }
-  }
-
-  private loadQueueFromStorage(): void {
-    if (typeof localStorage !== 'undefined') {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEYS.ERROR_QUEUE);
-        if (stored) {
-          const parsedQueue = JSON.parse(stored);
-          if (Array.isArray(parsedQueue)) {
-            this.errorQueue = parsedQueue.slice(0, this.maxQueueSize);
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to load error queue from localStorage:', error);
       }
     }
   }
@@ -319,8 +325,11 @@ class WebXRErrorLogger {
 
     // Calculate average errors per hour (simple moving average)
     const now = Date.now();
-    const hoursSinceStart = (now - (window as any).__webxrStartTime || now) / (60 * 60 * 1000);
-    this.errorStats.averageErrorsPerHour = this.errorStats.totalErrors / Math.max(hoursSinceStart, 1);
+    const startTime = (window as Window & { __webxrStartTime?: number })
+      .__webxrStartTime;
+    const hoursSinceStart = (now - (startTime || now)) / (60 * 60 * 1000);
+    this.errorStats.averageErrorsPerHour =
+      this.errorStats.totalErrors / Math.max(hoursSinceStart, 1);
   }
 
   // Public API methods
