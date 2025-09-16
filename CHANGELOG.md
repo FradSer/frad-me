@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.11.4](https://github.com/FradSer/frad-me/compare/v0.11.3...v0.11.4) (2025-09-16)
+
+### Features
+
+- **webxr:** implement comprehensive WebXR test coverage with enhanced Playwright configuration
+
+### Bug Fixes
+
+- **typescript:** resolve typescript errors in errorlogger - add missing queueSize property and fix jest reference
+
+### Refactoring
+
+- **webxr:** simplify workgrid3d animation logic and improve structure
+- **error-handling:** extract error handling constants and sanitization utilities
+- **architecture:** remove redundant error boundaries and simplify architecture
+- **animation:** consolidate animation utilities and improve code organization
+
+### Documentation
+
+- **docs:** improve claude.md with consolidated architecture info
+
+### Maintenance
+
+- **chore:** apply code formatting improvements and import ordering
+- **tests:** update error boundary tests after component consolidation
+
 ## [0.11.3](https://github.com/FradSer/frad-me/compare/v0.11.2...v0.11.3) (2025-08-26)
 
 ### Features
