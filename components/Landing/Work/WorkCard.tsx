@@ -20,6 +20,7 @@ interface IWorkCardProps {
   isFullScreen?: boolean;
   isCenter?: boolean;
   isWIP?: boolean;
+  externalLink?: string;
 }
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
@@ -27,7 +28,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   const linkClass = classNames(
     'relative flex w-full items-center justify-center overflow-hidden',
     {
-      'col-span-2 aspect-100/62 md:aspect-100/31': props.isFullScreen,
+      'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,
       'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
       'hover:cursor-not-allowed': props.isWIP,
       'hover:cursor-pointer': !props.isWIP,
@@ -40,7 +41,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   );
 
   const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
-    'text-left md:text-center': props.isCenter,
+    'text-center': props.isCenter,
     'text-left': !props.isCenter,
   });
 
@@ -147,6 +148,53 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Render
   if (props.isWIP) {
     return workCard;
+  } else if (props.externalLink) {
+    return (
+      <a
+        href={props.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={linkClass}
+      >
+        <motion.div
+          onHoverStart={handleHoverStart}
+          onHoverEnd={handleHoverEnd}
+          onClick={handleClick}
+          className="relative flex w-full h-full items-center justify-center overflow-hidden"
+        >
+          <motion.div // Background Image
+            animate={controls.backgroundImage}
+            initial="initial"
+            variants={variants.backgroundImage}
+            className={backgroundImageClass}
+          >
+            <Image
+              src={props.cover}
+              alt={'Cover for ' + props.title}
+              fill
+              className="object-cover"
+            />
+          </motion.div>
+          <motion.div // Background Image Mask
+            animate={controls.backgroundMask}
+            initial="initial"
+            variants={variants.backgroundMask}
+            className="absolute h-full w-full bg-black bg-opacity-50"
+          />
+          <motion.div // Text
+            animate={controls.text}
+            initial="initial"
+            variants={variants.text}
+            className={textLayoutClass}
+          >
+            <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
+              {props.subTitle}
+            </div>
+            <div className={textTitleClass}>{props.title}</div>
+          </motion.div>
+        </motion.div>
+      </a>
+    );
   } else {
     return (
       <Link href={`/works/${props.slug}`} passHref legacyBehavior>
