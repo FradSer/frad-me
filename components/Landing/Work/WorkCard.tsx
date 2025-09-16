@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { forwardRef } from 'react';
 
 import classNames from 'classnames';
 import { motion } from 'framer-motion';
@@ -10,6 +11,7 @@ import {
   createVariants,
   useAnimationGroup,
 } from '@/utils/motion/animationHelpers';
+import type { AnimationControls } from 'framer-motion';
 import { getWorkColor } from '@/utils/theme/workColors';
 
 interface IWorkCardProps {
@@ -23,6 +25,82 @@ interface IWorkCardProps {
   externalLink?: string;
 }
 
+interface IWorkCardContentProps {
+  title: string;
+  subTitle: string;
+  cover: string;
+  slug: string;
+  isFullScreen?: boolean;
+  isCenter?: boolean;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
+  onClick: () => void;
+  controls: Record<string, AnimationControls>;
+  variants: Record<string, any>;
+}
+
+const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
+  (props, ref) => {
+    const backgroundImageClass = classNames(
+      'absolute w-full h-full',
+      getWorkColor(props.slug),
+    );
+
+    const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
+      'text-center': props.isCenter,
+      'text-left': !props.isCenter,
+    });
+
+    const textTitleClass = classNames('font-bold text-white', {
+      'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
+      'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
+    });
+
+    return (
+      <motion.div
+        ref={ref}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onClick={props.onClick}
+        className="relative flex w-full h-full items-center justify-center overflow-hidden"
+      >
+        <motion.div
+          animate={props.controls.backgroundImage}
+          initial="initial"
+          variants={props.variants.backgroundImage}
+          className={backgroundImageClass}
+        >
+          <Image
+            src={props.cover}
+            alt={'Cover for ' + props.title}
+            fill
+            className="object-cover"
+          />
+        </motion.div>
+        <motion.div
+          animate={props.controls.backgroundMask}
+          initial="initial"
+          variants={props.variants.backgroundMask}
+          className="absolute h-full w-full bg-black bg-opacity-50"
+        />
+        <motion.div
+          animate={props.controls.text}
+          initial="initial"
+          variants={props.variants.text}
+          className={textLayoutClass}
+        >
+          <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
+            {props.subTitle}
+          </div>
+          <div className={textTitleClass}>{props.title}</div>
+        </motion.div>
+      </motion.div>
+    );
+  },
+);
+
+WorkCardContent.displayName = 'WorkCardContent';
+
 function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
   const linkClass = classNames(
@@ -34,21 +112,6 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       'hover:cursor-pointer': !props.isWIP,
     },
   );
-
-  const backgroundImageClass = classNames(
-    'absolute w-full h-full',
-    getWorkColor(props.slug),
-  );
-
-  const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
-    'text-center': props.isCenter,
-    'text-left': !props.isCenter,
-  });
-
-  const textTitleClass = classNames('font-bold text-white', {
-    'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
-    'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
-  });
 
   // * Animation
   const { controls, startGroup } = useAnimationGroup([
@@ -105,49 +168,26 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     }
   };
 
-  const workCard = (
-    <motion.div
+  // * Create shared content
+  const workCardContent = (
+    <WorkCardContent
+      title={props.title}
+      subTitle={props.subTitle}
+      cover={props.cover}
+      slug={props.slug}
+      isFullScreen={props.isFullScreen}
+      isCenter={props.isCenter}
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
       onClick={handleClick}
-      className={linkClass}
-    >
-      <motion.div // Background Image
-        animate={controls.backgroundImage}
-        initial="initial"
-        variants={variants.backgroundImage}
-        className={backgroundImageClass}
-      >
-        <Image
-          src={props.cover}
-          alt={'Cover for ' + props.title}
-          fill
-          className="object-cover"
-        />
-      </motion.div>
-      <motion.div // Background Image Mask
-        animate={controls.backgroundMask}
-        initial="initial"
-        variants={variants.backgroundMask}
-        className="absolute h-full w-full bg-black bg-opacity-50"
-      />
-      <motion.div // Text
-        animate={controls.text}
-        initial="initial"
-        variants={variants.text}
-        className={textLayoutClass}
-      >
-        <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
-          {props.subTitle}
-        </div>
-        <div className={textTitleClass}>{props.title}</div>
-      </motion.div>
-    </motion.div>
+      controls={controls}
+      variants={variants}
+    />
   );
 
-  // * Render
+  // * Render with appropriate wrapper
   if (props.isWIP) {
-    return workCard;
+    return <div className={linkClass}>{workCardContent}</div>;
   } else if (props.externalLink) {
     return (
       <a
@@ -156,49 +196,13 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
         rel="noopener noreferrer"
         className={linkClass}
       >
-        <motion.div
-          onHoverStart={handleHoverStart}
-          onHoverEnd={handleHoverEnd}
-          onClick={handleClick}
-          className="relative flex w-full h-full items-center justify-center overflow-hidden"
-        >
-          <motion.div // Background Image
-            animate={controls.backgroundImage}
-            initial="initial"
-            variants={variants.backgroundImage}
-            className={backgroundImageClass}
-          >
-            <Image
-              src={props.cover}
-              alt={'Cover for ' + props.title}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-          <motion.div // Background Image Mask
-            animate={controls.backgroundMask}
-            initial="initial"
-            variants={variants.backgroundMask}
-            className="absolute h-full w-full bg-black bg-opacity-50"
-          />
-          <motion.div // Text
-            animate={controls.text}
-            initial="initial"
-            variants={variants.text}
-            className={textLayoutClass}
-          >
-            <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
-              {props.subTitle}
-            </div>
-            <div className={textTitleClass}>{props.title}</div>
-          </motion.div>
-        </motion.div>
+        {workCardContent}
       </a>
     );
   } else {
     return (
       <Link href={`/works/${props.slug}`} passHref legacyBehavior>
-        {workCard}
+        <a className={linkClass}>{workCardContent}</a>
       </Link>
     );
   }
