@@ -1,5 +1,14 @@
 const workLinks = [
   {
+    title: 'vivo Vision',
+    subTitle: 'XR OS Design / Spatial Computing',
+    slug: 'vivo-vision',
+    isFullScreen: true,
+    isCenter: true,
+    cover: '/works/vivo-vision/cover.png',
+    externalLink: 'https://www.vivo.com.cn/vivo/vivovision/',
+  },
+  {
     title: 'Eye Protection Design Handbook',
     subTitle: 'Design Research',
     slug: 'eye-protection-design-handbook',

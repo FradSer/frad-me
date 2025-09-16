@@ -5,14 +5,14 @@ import WorkTitle from '@/components/Landing/Work/WorkTitle';
 
 import workLinks from '@/content/workLinks';
 
-const MAX_DISPLAY_WORKS = 5;
+const MAX_DISPLAY_WORKS = 6;
 
 export default function Work() {
   return (
     <section id="work">
       <Element
         name="work"
-        className="grid w-screen grid-cols-2 gap-4 text-center"
+        className="grid w-screen grid-cols-2 md:grid-cols-2 gap-4 text-center"
       >
         <WorkTitle />
         {workLinks.slice(0, MAX_DISPLAY_WORKS).map((link) => (
@@ -25,6 +25,7 @@ export default function Work() {
             isFullScreen={link.isFullScreen}
             isCenter={link.isCenter}
             isWIP={link.isWIP}
+            externalLink={link.externalLink}
           />
         ))}
       </Element>
