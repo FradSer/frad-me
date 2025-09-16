@@ -15,6 +15,12 @@ import {
   WORK_GRID_POSITIONS,
 } from '@/utils/webxr/animationConstants';
 import {
+  WORK_GRID_CONFIG,
+  WORK_GRID_INITIAL_STATE,
+  WORK_GRID_ACTIVE_STATE,
+  WORK_GRID_LIGHTING,
+} from '@/utils/webxr/workGridConstants';
+import {
   applyOpacityToObject,
   forceInitializeTransparency,
 } from '@/utils/webxr/materialUtils';
@@ -37,38 +43,43 @@ const Text = dynamic(
   { ssr: false },
 );
 
-const MAX_DISPLAY_WORKS = 5; // Display all works with 3 per row layout
 
 interface WorkGrid3DProps {
   visible?: boolean;
 }
 
+// Helper function to initialize animation springs
+const useWorkGridAnimation = () => {
+  const opacitySpring = useSimpleLerp(WORK_GRID_INITIAL_STATE.OPACITY, {
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
+  });
+  const scaleSpring = useSimpleLerp(WORK_GRID_INITIAL_STATE.SCALE, {
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
+  });
+  const positionYSpring = useSimpleLerp(WORK_GRID_INITIAL_STATE.POSITION_Y_OFFSET, {
+    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
+  });
+
+  return { opacitySpring, scaleSpring, positionYSpring };
+};
+
 const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   const { currentView } = useWebXRView();
   const groupRef = useRef<THREE.Group>(null);
+  const { opacitySpring, scaleSpring, positionYSpring } = useWorkGridAnimation();
 
-  // Enhanced spring control with bouncy entrance effect - start with opacity 0
-  const opacitySpring = useSimpleLerp(0, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
-  });
-  const scaleSpring = useSimpleLerp(0.8, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
-  });
-  const positionYSpring = useSimpleLerp(-2, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
-  });
-
+  // Simplified animation state management
   useEffect(() => {
     if (currentView === 'work') {
-      // Enhanced entrance with spring effects
-      opacitySpring.set(1);
-      scaleSpring.set(1);
-      positionYSpring.set(0);
+      // Set active state values
+      opacitySpring.set(WORK_GRID_ACTIVE_STATE.OPACITY);
+      scaleSpring.set(WORK_GRID_ACTIVE_STATE.SCALE);
+      positionYSpring.set(WORK_GRID_ACTIVE_STATE.POSITION_Y_OFFSET);
     } else {
-      // Enhanced exit with spring effects - ensure opacity is 0
-      opacitySpring.set(0);
-      scaleSpring.set(0.8);
-      positionYSpring.set(-2);
+      // Set initial/hidden state values
+      opacitySpring.set(WORK_GRID_INITIAL_STATE.OPACITY);
+      scaleSpring.set(WORK_GRID_INITIAL_STATE.SCALE);
+      positionYSpring.set(WORK_GRID_INITIAL_STATE.POSITION_Y_OFFSET);
     }
   }, [currentView, opacitySpring, scaleSpring, positionYSpring]);
 
@@ -86,11 +97,11 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
     }
   }, [currentView]);
 
+  // Simplified frame update logic
   useFrame(() => {
     if (!groupRef.current) return;
-    // Lerp values are automatically updated via useFrame in useSimpleLerp hooks
 
-    // Apply spring-based position with Y offset for bouncy entrance
+    // Apply spring-based position with Y offset
     const basePosition = ENTRANCE_POSITIONS.workDefault;
     groupRef.current.position.set(
       basePosition[0],
@@ -101,13 +112,15 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
     // Apply spring-based scale
     groupRef.current.scale.setScalar(scaleSpring.value);
 
-    // Handle visibility - completely hide when opacity is near 0
+    // Handle visibility using configuration constant
     const currentOpacity = opacitySpring.value;
-    const shouldBeVisible = currentOpacity > 0.01 && currentView === 'work';
+    const shouldBeVisible =
+      currentOpacity > WORK_GRID_CONFIG.VISIBILITY_THRESHOLD &&
+      currentView === 'work';
     groupRef.current.visible = shouldBeVisible;
 
-    // Apply opacity using optimized utility
-    if (groupRef.current.visible) {
+    // Apply opacity when visible
+    if (shouldBeVisible) {
       applyOpacityToObject(groupRef.current, currentOpacity);
     }
   });
@@ -115,19 +128,19 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
   return (
     <group ref={groupRef}>
       {/* Enhanced lighting for work section */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={WORK_GRID_LIGHTING.AMBIENT_INTENSITY} />
       <directionalLight
         position={WORK_GRID_POSITIONS.directionalLight}
-        intensity={0.8}
+        intensity={WORK_GRID_LIGHTING.DIRECTIONAL_INTENSITY}
       />
       <pointLight
         position={WORK_GRID_POSITIONS.pointLight}
-        intensity={0.6}
-        color="#60a5fa"
+        intensity={WORK_GRID_LIGHTING.POINT_INTENSITY}
+        color={WORK_GRID_LIGHTING.POINT_COLOR}
       />
 
       {/* Work Cards */}
-      {workLinks.slice(0, MAX_DISPLAY_WORKS).map((work, index) => {
+      {workLinks.slice(0, WORK_GRID_CONFIG.MAX_DISPLAY_WORKS).map((work, index) => {
         const position = calculateCardPosition(
           index + 1,
           work.isFullScreen || false,

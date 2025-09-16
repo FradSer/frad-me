@@ -2,8 +2,7 @@
 
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import WebXRErrorBoundary from '@/components/WebXR/WebXRErrorBoundary';
-import WebXR3DErrorBoundary from '@/components/WebXR/WebXR3DErrorBoundary';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
 import { measureChunkLoad } from '@/utils/performance';
 
@@ -98,7 +97,7 @@ const LoadingFallback = () => (
 export default function WebXR() {
   return (
     <div className="fixed inset-0 h-screen w-screen bg-black z-50">
-      <WebXRErrorBoundary>
+      <ErrorBoundary componentName="WebXR">
         <WebXRViewProvider>
           {/* Immersive VR Entry Button */}
           <div className="absolute top-4 right-4 z-20">
@@ -118,28 +117,28 @@ export default function WebXR() {
                 }}
               />
 
-              <WebXR3DErrorBoundary componentName="CameraController3D">
+              <ErrorBoundary componentName="CameraController3D">
                 <CameraController3D />
-              </WebXR3DErrorBoundary>
-              <WebXR3DErrorBoundary componentName="HeroText">
+              </ErrorBoundary>
+              <ErrorBoundary componentName="HeroText">
                 <HeroText />
-              </WebXR3DErrorBoundary>
-              <WebXR3DErrorBoundary componentName="WorkGrid3D">
+              </ErrorBoundary>
+              <ErrorBoundary componentName="WorkGrid3D">
                 <WorkGrid3D />
-              </WebXR3DErrorBoundary>
-              <WebXR3DErrorBoundary componentName="Navigation3D">
+              </ErrorBoundary>
+              <ErrorBoundary componentName="Navigation3D">
                 <Navigation3D />
-              </WebXR3DErrorBoundary>
-              <WebXR3DErrorBoundary componentName="FooterLinks3D">
+              </ErrorBoundary>
+              <ErrorBoundary componentName="FooterLinks3D">
                 <FooterLinks3D />
-              </WebXR3DErrorBoundary>
-              <WebXR3DErrorBoundary componentName="Stars">
+              </ErrorBoundary>
+              <ErrorBoundary componentName="Stars">
                 <Stars {...STARS_CONFIG} />
-              </WebXR3DErrorBoundary>
+              </ErrorBoundary>
             </WebXRCanvas>
           </Suspense>
         </WebXRViewProvider>
-      </WebXRErrorBoundary>
+      </ErrorBoundary>
     </div>
   );
 }

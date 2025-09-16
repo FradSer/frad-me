@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import WebXRErrorBoundary from '@/components/common/WebXRErrorBoundary';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
   if (shouldThrow) {
@@ -9,7 +9,7 @@ const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
   return <div>No error</div>;
 };
 
-describe('WebXRErrorBoundary', () => {
+describe('ErrorBoundary', () => {
   beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -20,29 +20,40 @@ describe('WebXRErrorBoundary', () => {
 
   it('renders children when there is no error', () => {
     render(
-      <WebXRErrorBoundary>
+      <ErrorBoundary>
         <ThrowError shouldThrow={false} />
-      </WebXRErrorBoundary>,
+      </ErrorBoundary>,
     );
 
     expect(screen.getByText('No error')).toBeInTheDocument();
   });
 
-  it('renders error UI when there is an error', () => {
+  it('renders WebXR error UI when componentName includes WebXR', () => {
     render(
-      <WebXRErrorBoundary>
+      <ErrorBoundary componentName="WebXR3D">
         <ThrowError shouldThrow={true} />
-      </WebXRErrorBoundary>,
+      </ErrorBoundary>,
     );
 
+    expect(screen.getByText('WebXR Error')).toBeInTheDocument();
     expect(
-      screen.getByText('Unable to load 3D experience'),
+      screen.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders default error UI for non-WebXR components', () => {
+    render(
+      <ErrorBoundary>
+        <ThrowError shouldThrow={true} />
+      </ErrorBoundary>,
+    );
+
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(
+      screen.getByText('An unexpected error occurred. Please try refreshing the page.'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/The WebXR components failed to load/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Try Again' }),
+      screen.getByRole('button', { name: 'Refresh Page' }),
     ).toBeInTheDocument();
   });
 
@@ -50,44 +61,24 @@ describe('WebXRErrorBoundary', () => {
     const customFallback = <div>Custom error message</div>;
 
     render(
-      <WebXRErrorBoundary fallback={customFallback}>
+      <ErrorBoundary fallback={customFallback}>
         <ThrowError shouldThrow={true} />
-      </WebXRErrorBoundary>,
+      </ErrorBoundary>,
     );
 
     expect(screen.getByText('Custom error message')).toBeInTheDocument();
     expect(
-      screen.queryByText('Unable to load 3D experience'),
+      screen.queryByText('Something went wrong'),
     ).not.toBeInTheDocument();
   });
 
-  it('handles retry button click', () => {
-    let throwError = true;
-    const DynamicThrowError = () => <ThrowError shouldThrow={throwError} />;
-
-    const { rerender } = render(
-      <WebXRErrorBoundary>
-        <DynamicThrowError />
-      </WebXRErrorBoundary>,
+  it('renders component-specific error UI when componentName is provided', () => {
+    render(
+      <ErrorBoundary componentName="TestComponent">
+        <ThrowError shouldThrow={true} />
+      </ErrorBoundary>,
     );
 
-    const retryButton = screen.getByRole('button', { name: 'Try Again' });
-    expect(retryButton).toBeInTheDocument();
-
-    // Change the error condition and click retry
-    throwError = false;
-    fireEvent.click(retryButton);
-
-    // Re-render with the new state
-    rerender(
-      <WebXRErrorBoundary>
-        <DynamicThrowError />
-      </WebXRErrorBoundary>,
-    );
-
-    expect(screen.getByText('No error')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Try Again' }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText('Component error in TestComponent')).toBeInTheDocument();
   });
 });

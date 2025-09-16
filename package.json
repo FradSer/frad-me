@@ -1,6 +1,6 @@
 {
   "name": "frad-me",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "author": "Frad LEE <hey@frad.me> (https://frad.me)",
   "homepage": "https://github.com/FradSer/frad-me",
   "license": "MIT",
@@ -57,6 +57,7 @@
     "@release-it/conventional-changelog": "^8.0.2",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.16.2",
@@ -67,6 +68,7 @@
     "autoprefixer": "^10.4.21",
     "cross-env": "^10.0.0",
     "jest": "^30.0.5",
+    "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8.5.6",
     "release-it": "^17.11.0",

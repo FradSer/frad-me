@@ -82,6 +82,24 @@ export const useAnimationGroup = (animationKeys: string[]) => {
 };
 
 /**
+ * Utility functions for position calculations and blending
+ */
+
+// Lerp function for smooth interpolation
+export const lerp = (start: number, end: number, factor: number): number => 
+  start + (end - start) * factor;
+
+// Position lerp for smooth 2D interpolation
+export const lerpPosition = (
+  start: Position,
+  end: Position,
+  factor: number
+): Position => ({
+  x: lerp(start.x, end.x, factor),
+  y: lerp(start.y, end.y, factor),
+});
+
+/**
  * Calculates a blended position between mouse position and an attractor
  * Used for smooth mouse cursor attraction effects
  *
@@ -93,14 +111,10 @@ export const useAnimationGroup = (animationKeys: string[]) => {
 export const calculateBlendPosition = (
   mousePos: Position,
   attractorPos: Position | null,
-  blendFactor: number = 0.7,
+  blendFactor = 0.7,
 ): Position => {
   if (!attractorPos) return mousePos;
-
-  return {
-    x: mousePos.x + (attractorPos.x - mousePos.x) * blendFactor,
-    y: mousePos.y + (attractorPos.y - mousePos.y) * blendFactor,
-  };
+  return lerpPosition(mousePos, attractorPos, blendFactor);
 };
 
 /**
@@ -111,4 +125,4 @@ export const calculateBlendPosition = (
  * @returns Distance between the two points
  */
 export const calculateDistance = (point1: Position, point2: Position): number =>
-  Math.hypot(point1.x - point2.x, point1.y - point2.y);
+  Math.hypot(point2.x - point1.x, point2.y - point1.y);

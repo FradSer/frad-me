@@ -24,7 +24,7 @@ type ClientLayoutProps = {
 };
 
 const StandardLayout = ({ children }: ClientLayoutProps) => (
-  <ErrorBoundary>
+  <ErrorBoundary componentName="StandardLayout">
     <MouseContextProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <DotRing />
@@ -35,7 +35,7 @@ const StandardLayout = ({ children }: ClientLayoutProps) => (
 );
 
 const VRLayout = () => (
-  <ErrorBoundary>
+  <ErrorBoundary componentName="VRLayout">
     <div className="flex h-screen w-screen flex-col bg-black">
       <WebXR />
     </div>
