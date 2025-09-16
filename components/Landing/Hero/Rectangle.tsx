@@ -17,8 +17,8 @@ export default function Rectangle() {
   const skewY = useTransform(mouseY, [0, 1], [-2, 2], { clamp: true });
 
   // Update motion values
-  mouseX.set(xValue, true);
-  mouseY.set(yValue, true);
+  mouseX.set(xValue);
+  mouseY.set(yValue);
 
   return (
     <div className="ml-2 flex grow lg:ml-8">

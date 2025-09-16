@@ -17,7 +17,7 @@ function MDXComponentProvider(props: Readonly<IMDXComponentProviderProps>) {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: 'linear',
+        ease: 'linear' as const,
       },
     },
   };

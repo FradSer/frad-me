@@ -7,7 +7,7 @@ import WorkPageClient from './work-page-client';
 import { getAllPosts, getSinglePost } from '@/utils/mdx';
 
 type WorkPageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
@@ -21,7 +21,8 @@ export async function generateMetadata({
   params,
 }: WorkPageProps): Promise<Metadata> {
   try {
-    const work = await getSinglePost(params.slug);
+    const { slug } = await params;
+    const work = await getSinglePost(slug);
     return {
       title: work.frontmatter.title,
       description:
@@ -42,7 +43,8 @@ export async function generateMetadata({
 
 export default async function WorkPage({ params }: WorkPageProps) {
   try {
-    const { code, frontmatter } = await getSinglePost(params.slug);
+    const { slug } = await params;
+    const { code, frontmatter } = await getSinglePost(slug);
     return <WorkPageClient code={code} frontmatter={frontmatter} />;
   } catch {
     notFound();

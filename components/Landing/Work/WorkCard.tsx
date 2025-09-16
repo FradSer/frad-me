@@ -11,7 +11,9 @@ import {
   createVariants,
   useAnimationGroup,
 } from '@/utils/motion/animationHelpers';
-import type { AnimationControls } from 'framer-motion';
+import { useAnimationControls } from 'framer-motion';
+
+type AnimationControls = ReturnType<typeof useAnimationControls>;
 import { getWorkColor } from '@/utils/theme/workColors';
 
 interface IWorkCardProps {
