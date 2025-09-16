@@ -1,6 +1,6 @@
-import { type Config } from 'tailwindcss';
+const defaultTheme = require('tailwindcss/defaultTheme');
 
-export default {
+module.exports = {
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -10,11 +10,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: 'var(--font-gt-eesti-text)',
-        mono: 'var(--font-fira-code)',
+        sans: ['var(--font-gt-eesti-text)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-fira-code)', ...defaultTheme.fontFamily.mono],
         display: [
           'var(--font-gt-eesti-display)',
           'var(--font-gt-eesti-text)',
+          ...defaultTheme.fontFamily.sans,
         ],
       },
       fontWeight: {
@@ -34,4 +35,4 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+};
