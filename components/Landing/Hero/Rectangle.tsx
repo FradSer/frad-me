@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'motion/react';
 
 import useMousePosition from '@/hooks/useMousePosition';
 import useWindowSize from '@/hooks/useWindowSize';

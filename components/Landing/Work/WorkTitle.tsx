@@ -1,4 +1,4 @@
-import { motion, useTransform, useScroll } from 'framer-motion';
+import { motion, useTransform, useScroll } from 'motion/react';
 
 export default function WorkTitle() {
   const { scrollYProgress } = useScroll();

@@ -6,7 +6,7 @@ import {
   useAnimationControls,
   useMotionValue,
   useSpring,
-} from 'framer-motion';
+} from 'motion/react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';

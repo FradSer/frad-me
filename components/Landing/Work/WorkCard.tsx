@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { forwardRef } from 'react';
 
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 
@@ -11,7 +11,7 @@ import {
   createVariants,
   useAnimationGroup,
 } from '@/utils/motion/animationHelpers';
-import { useAnimationControls } from 'framer-motion';
+import { useAnimationControls } from 'motion/react';
 
 type AnimationControls = ReturnType<typeof useAnimationControls>;
 import { getWorkColor } from '@/utils/theme/workColors';
