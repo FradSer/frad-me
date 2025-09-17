@@ -16,7 +16,8 @@ const headerLinks = [
   // },
   {
     title: 'resume',
-    href: 'https://read.cv/fradser',
+    href: '/resume',
+    destinationType: DestinationType.link,
   },
   {
     title: 'calendly',
