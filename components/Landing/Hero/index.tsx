@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 import DotCircle from '@/components/Landing/Hero/DotCircle';
 import Rectangle from '@/components/Landing/Hero/Rectangle';
@@ -28,14 +28,14 @@ const mutedTextClass = 'text-gray-400';
 function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis();
 
-  const heroH1 = classNames(
+  const heroH1 = clsx(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
   );
 
   return (
     <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
       <h1
-        className={classNames(
+        className={clsx(
           'relative flex flex-col items-start justify-center',
           heroH1,
         )}

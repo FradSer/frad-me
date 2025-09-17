@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 interface IWorkCoverProps {
   src?: string;
@@ -12,7 +12,7 @@ function WorkCover(props: Readonly<IWorkCoverProps>) {
   if (!props.src) return null;
 
   const imageAlt = 'Cover for ' + props.title;
-  const workCoverClass = classNames(
+  const workCoverClass = clsx(
     'flex h-[75vh] w-screen items-center justify-center relative overflow-hidden',
     props.coverBackground,
   );

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef } from 'react';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 
 import useMouseContext from '@/hooks/useMouseContext';
@@ -43,17 +43,17 @@ interface IWorkCardContentProps {
 
 const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
   (props, ref) => {
-    const backgroundImageClass = classNames(
+    const backgroundImageClass = clsx(
       'absolute w-full h-full',
       getWorkColor(props.slug),
     );
 
-    const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
+    const textLayoutClass = clsx('absolute w-4/6 space-y-4', {
       'text-center': props.isCenter,
       'text-left': !props.isCenter,
     });
 
-    const textTitleClass = classNames('font-bold text-white', {
+    const textTitleClass = clsx('font-bold text-white', {
       'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
       'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
     });
@@ -105,7 +105,7 @@ WorkCardContent.displayName = 'WorkCardContent';
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
-  const linkClass = classNames(
+  const linkClass = clsx(
     'relative flex w-full items-center justify-center overflow-hidden',
     {
       'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,

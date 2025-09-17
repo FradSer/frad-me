@@ -1,5 +1,4 @@
-import { Link } from 'react-scroll';
-import type { ReactNode } from 'react';
+import type { ReactNode, MouseEvent } from 'react';
 
 type IScrollLinkProps = {
   destination: string;
@@ -7,9 +6,25 @@ type IScrollLinkProps = {
 };
 
 export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const element = document.getElementById(props.destination);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   return (
-    <Link to={props.destination} spy={true} smooth={true} duration={500}>
+    <button
+      type="button"
+      onClick={handleClick}
+      className="cursor-pointer appearance-none border-none bg-transparent p-0"
+      style={{ all: 'unset', cursor: 'pointer' }}
+    >
       {props.children}
-    </Link>
+    </button>
   );
 }

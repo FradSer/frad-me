@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
@@ -28,7 +28,7 @@ function CommonLink({
 }: Readonly<ICommonLinkProps>) {
   const pathname = usePathname();
 
-  const titleClass = classNames(
+  const titleClass = clsx(
     'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
   );
 

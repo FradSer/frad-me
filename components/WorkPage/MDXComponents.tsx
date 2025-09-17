@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 import { GRID_CLASSES } from '@/utils/constants';
 
@@ -19,29 +19,29 @@ function H1(props: Readonly<ICommonProps>) {
 }
 
 function H2(props: Readonly<ICommonProps>) {
-  const h2Class = classNames('text-3xl font-bold my-1 md:my-2', wrapperClass);
+  const h2Class = clsx('text-3xl font-bold my-1 md:my-2', wrapperClass);
   return <h2 className={h2Class}>{props.children}</h2>;
 }
 
 function H3(props: Readonly<ICommonProps>) {
-  const h3Class = classNames('text-2xl font-bold', wrapperClass);
+  const h3Class = clsx('text-2xl font-bold', wrapperClass);
   return <h3 className={h3Class}>{props.children}</h3>;
 }
 
 const listWrapperClass = GRID_CLASSES.listWrapper;
 
 function OL(props: Readonly<ICommonProps>) {
-  const olClass = classNames('list-decimal', listWrapperClass);
+  const olClass = clsx('list-decimal', listWrapperClass);
   return <ol className={olClass}>{props.children}</ol>;
 }
 
 function UL(props: Readonly<ICommonProps>) {
-  const ulClass = classNames('list-disc', listWrapperClass);
+  const ulClass = clsx('list-disc', listWrapperClass);
   return <ul className={ulClass}>{props.children}</ul>;
 }
 
 function P(props: Readonly<ICommonProps>) {
-  const pClass = classNames('inline', wrapperClass);
+  const pClass = clsx('inline', wrapperClass);
   return <p className={pClass}>{props.children}</p>;
 }
 

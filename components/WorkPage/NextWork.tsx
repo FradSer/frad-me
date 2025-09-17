@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 function NextWork(props: Readonly<{ href?: string }>) {
-  const linkClass = classNames(
+  const linkClass = clsx(
     'col-span-16 col-start-1 text-center text-black dark:text-white text-4xl my-8 font-bold',
   );
 
