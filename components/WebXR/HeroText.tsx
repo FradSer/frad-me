@@ -5,9 +5,17 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { measureChunkLoad } from '@/utils/performance';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
 import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
+import { useAnimationState } from '@/hooks/useAnimationState';
+import type { TransformValues } from '@/hooks/useGroupTransform';
 import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import {
+  INTERACTION_CONSTANTS,
+  GEOMETRY_CONSTANTS,
+  LIGHT_CONSTANTS,
+  FONT_CONSTANTS,
+  PERFORMANCE_CONSTANTS,
+} from '@/utils/constants/animation';
 
 const Text = dynamic(
   () =>
@@ -32,7 +40,8 @@ interface ShapeProps {
 type RotationAxis = 'x' | 'y' | 'z';
 
 // Enhanced interactive mesh with spring animations
-const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
+const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed?: number) => {
+  const actualRotationSpeed = rotationSpeed ?? INTERACTION_CONSTANTS.DEFAULT_ROTATION_SPEED;
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(false);
@@ -48,7 +57,7 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
   useFrame((_, delta) => {
     if (meshRef.current) {
       // Base rotation
-      meshRef.current.rotation[rotationAxis] += delta / rotationSpeed;
+      meshRef.current.rotation[rotationAxis] += delta / actualRotationSpeed;
 
       // Apply spring scale and additional rotation
       meshRef.current.scale.setScalar(scaleSpring.value);
@@ -57,7 +66,7 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
       if (rotationAxis !== 'y')
         meshRef.current.rotation.y += rotationSpring.value * delta;
       if (rotationAxis !== 'x')
-        meshRef.current.rotation.x += rotationSpring.value * delta * 0.5;
+        meshRef.current.rotation.x += rotationSpring.value * delta * INTERACTION_CONSTANTS.SECONDARY_ROTATION_FACTOR;
     }
   });
 
@@ -65,18 +74,18 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
     onClick: () => {
       setActive(!active);
       // Spring bounce effect on click
-      scaleSpring.set(active ? 1 : 1.3);
-      rotationSpring.set(active ? 0 : 2);
+      scaleSpring.set(active ? INTERACTION_CONSTANTS.DEFAULT_SCALE : INTERACTION_CONSTANTS.ACTIVE_SCALE);
+      rotationSpring.set(active ? 0 : INTERACTION_CONSTANTS.ACTIVE_ROTATION);
     },
     onPointerOver: () => {
       setHovered(true);
-      scaleSpring.set(1.1);
-      rotationSpring.set(1);
+      scaleSpring.set(INTERACTION_CONSTANTS.HOVER_SCALE);
+      rotationSpring.set(INTERACTION_CONSTANTS.HOVER_ROTATION);
     },
     onPointerOut: () => {
       setHovered(false);
       if (!active) {
-        scaleSpring.set(1);
+        scaleSpring.set(INTERACTION_CONSTANTS.DEFAULT_SCALE);
         rotationSpring.set(0);
       }
     },
@@ -90,10 +99,10 @@ const Line = ({ position, color, text }: LineProps) => (
     color={color}
     anchorX="center"
     anchorY="middle"
-    fontSize={1}
+    fontSize={FONT_CONSTANTS.DEFAULT_FONT_SIZE}
     position={position}
     rotation={[0, 0, 0]}
-    font="fonts/GT-Eesti-Display-Bold-Trial.woff"
+    font={FONT_CONSTANTS.HERO_FONT_PATH}
     onClick={() => {
       /* Handle click event */
     }}
@@ -127,19 +136,28 @@ const InteractiveShape = ({
 
 const Box = (props: ShapeProps) => (
   <InteractiveShape {...props} rotationAxis="x">
-    <boxGeometry args={[3, 1, 1]} />
+    <boxGeometry args={GEOMETRY_CONSTANTS.BOX_DIMENSIONS} />
   </InteractiveShape>
 );
 
 const Triangle = (props: ShapeProps) => (
-  <InteractiveShape {...props} scale={1.5} rotationAxis="z">
-    <coneGeometry args={[1, 1.4, 3, 1]} />
+  <InteractiveShape {...props} scale={GEOMETRY_CONSTANTS.TRIANGLE_SCALE} rotationAxis="z">
+    <coneGeometry args={[
+      GEOMETRY_CONSTANTS.CONE_RADIUS,
+      GEOMETRY_CONSTANTS.CONE_HEIGHT,
+      GEOMETRY_CONSTANTS.CONE_SEGMENTS,
+      GEOMETRY_CONSTANTS.CONE_TAPER
+    ]} />
   </InteractiveShape>
 );
 
 const Sphere = (props: ShapeProps) => (
-  <InteractiveShape {...props} scale={1.5} rotationAxis="y" rotationSpeed={5}>
-    <sphereGeometry args={[0.65, 16, 16]} />
+  <InteractiveShape {...props} scale={GEOMETRY_CONSTANTS.SPHERE_SCALE} rotationAxis="y" rotationSpeed={INTERACTION_CONSTANTS.FAST_ROTATION_SPEED}>
+    <sphereGeometry args={[
+      GEOMETRY_CONSTANTS.SPHERE_RADIUS,
+      GEOMETRY_CONSTANTS.SPHERE_WIDTH_SEGMENTS,
+      GEOMETRY_CONSTANTS.SPHERE_HEIGHT_SEGMENTS
+    ]} />
   </InteractiveShape>
 );
 
@@ -149,7 +167,7 @@ const heroContent = [
     type: 'triangle',
     position: [-9, 4, 0] as [number, number, number],
     rotation: [0.1, 0.2, 0.1] as [number, number, number],
-    scale: 0.5,
+    scale: GEOMETRY_CONSTANTS.MINI_TRIANGLE_SCALE,
   },
   {
     type: 'line',
@@ -230,93 +248,78 @@ const renderElement = (element: (typeof heroContent)[0], index: number) => {
 
 function HeroText() {
   const { currentView } = useWebXRView();
+
+  // Use extracted animation hooks for cleaner separation of concerns
+  const { values: animationValues, handleViewChange } = useAnimationState(currentView);
+
+  // Use a single ref for both hooks
   const groupRef = useRef<THREE.Group>(null);
 
-  // Enhanced spring configuration for more dynamic hero transitions
-  const springConfig = WEBXR_ANIMATION_CONFIG.springs.elastic;
-
-  // Initialize all lerp values consistently with home state to avoid race conditions
-  const initialState = heroAnimationStates.home;
-  const lerpConfig = { speed: springConfigToLerpSpeed(springConfig) };
-  const positionX = useSimpleLerp(initialState.position.x, lerpConfig);
-  const positionY = useSimpleLerp(initialState.position.y, lerpConfig);
-  const positionZ = useSimpleLerp(initialState.position.z, lerpConfig);
-  const scaleX = useSimpleLerp(initialState.scale.x, lerpConfig);
-  const scaleY = useSimpleLerp(initialState.scale.y, lerpConfig);
-  const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig);
-  const opacity = useSimpleLerp(initialState.opacity, lerpConfig);
-
-  // Track current view for consistent spring target updates
-  const currentViewRef = useRef(currentView);
-
-  // Use frame for consistent spring target setting and animation updates
-  useFrame((_, delta) => {
+  // Apply transforms and opacity to the same group
+  const applyTransformToGroup = (values: TransformValues) => {
     if (!groupRef.current) return;
 
-    // Update spring targets when view changes (in frame for consistent timing)
-    if (currentViewRef.current !== currentView) {
-      const targetState =
-        currentView === 'work'
-          ? heroAnimationStates.hidden
-          : heroAnimationStates.home;
-
-      positionX.set(targetState.position.x);
-      positionY.set(targetState.position.y);
-      positionZ.set(targetState.position.z);
-      scaleX.set(targetState.scale.x);
-      scaleY.set(targetState.scale.y);
-      scaleZ.set(targetState.scale.z);
-      opacity.set(targetState.opacity);
-
-      currentViewRef.current = currentView;
-    }
-
-    // Lerp values are automatically updated via useFrame in useSimpleLerp hook
-
-    // Apply transforms
     groupRef.current.position.set(
-      positionX.value,
-      positionY.value,
-      positionZ.value,
+      values.position.x,
+      values.position.y,
+      values.position.z
     );
-    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value);
+    groupRef.current.scale.set(
+      values.scale.x,
+      values.scale.y,
+      values.scale.z
+    );
+  };
 
-    const currentOpacity = opacity.value;
+  const applyOpacityToGroup = (opacity: number, shouldBeVisible: boolean) => {
+    if (!groupRef.current) return;
 
-    // Hide completely when opacity is near zero for performance
-    groupRef.current.visible = currentOpacity > 0.01;
+    groupRef.current.visible = shouldBeVisible;
 
-    // Apply opacity to all materials
     groupRef.current.traverse((child) => {
       if (child instanceof THREE.Mesh && child.material) {
         if (Array.isArray(child.material)) {
           child.material.forEach((material) => {
-            if (
-              material instanceof THREE.MeshStandardMaterial ||
-              material instanceof THREE.MeshBasicMaterial
-            ) {
-              material.opacity = currentOpacity;
-              material.transparent = true;
-            }
+            updateMaterialOpacity(material, opacity);
           });
         } else {
-          const material = child.material;
-          if (
-            material instanceof THREE.MeshStandardMaterial ||
-            material instanceof THREE.MeshBasicMaterial
-          ) {
-            material.opacity = currentOpacity;
-            material.transparent = true;
-          }
+          updateMaterialOpacity(child.material, opacity);
         }
       }
     });
+  };
+
+  const updateMaterialOpacity = (material: THREE.Material, opacity: number) => {
+    if (
+      material instanceof THREE.MeshStandardMaterial ||
+      material instanceof THREE.MeshBasicMaterial
+    ) {
+      material.opacity = opacity;
+      material.transparent = true;
+    }
+  };
+
+  // Simplified frame loop focusing only on coordination
+  useFrame(() => {
+    handleViewChange();
+
+    applyTransformToGroup({
+      position: animationValues.position,
+      scale: animationValues.scale,
+    });
+
+    const shouldBeVisible = animationValues.opacity > PERFORMANCE_CONSTANTS.VISIBILITY_THRESHOLD;
+    applyOpacityToGroup(animationValues.opacity, shouldBeVisible);
   });
 
   return (
     <group ref={groupRef}>
-      <ambientLight intensity={Math.PI / 10} />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+      <ambientLight intensity={LIGHT_CONSTANTS.AMBIENT_INTENSITY} />
+      <pointLight
+        position={LIGHT_CONSTANTS.POINT_LIGHT_POSITION}
+        decay={0}
+        intensity={LIGHT_CONSTANTS.POINT_LIGHT_INTENSITY}
+      />
       <group>{heroContent.map(renderElement)}</group>
     </group>
   );
