@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 interface IMDXComponentProviderProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ function MDXComponentProvider(props: Readonly<IMDXComponentProviderProps>) {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: 'linear',
+        ease: 'linear' as const,
       },
     },
   };

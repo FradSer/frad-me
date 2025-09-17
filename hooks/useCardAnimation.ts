@@ -10,7 +10,7 @@ import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 
 interface UseCardAnimationProps {
-  groupRef: RefObject<THREE.Group>;
+  groupRef: RefObject<THREE.Group | null>;
   visible: boolean;
   hovered: boolean;
   position: [number, number, number];

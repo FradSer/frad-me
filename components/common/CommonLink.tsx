@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
@@ -28,26 +28,24 @@ function CommonLink({
 }: Readonly<ICommonLinkProps>) {
   const pathname = usePathname();
 
-  const titleClass = classNames(
+  const titleClass = clsx(
     'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
   );
-
-  const titleAnchor = <a className={titleClass}>{title}</a>;
 
   let link;
   if (destinationType === DestinationType.link) {
     link = (
-      <Link href={href} legacyBehavior>
-        {titleAnchor}
+      <Link href={href} className={titleClass}>
+        {title}
       </Link>
     );
   } else if (destinationType === DestinationType.section) {
     if (pathname === '/') {
-      link = <ScrollLink destination={href}>{titleAnchor}</ScrollLink>;
+      link = <ScrollLink destination={href}><span className={titleClass}>{title}</span></ScrollLink>;
     } else {
       link = (
-        <Link href={'/#' + href} legacyBehavior>
-          {titleAnchor}
+        <Link href={'/#' + href} className={titleClass}>
+          {title}
         </Link>
       );
     }

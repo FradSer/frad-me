@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 /**
  * Utility functions for common className patterns
@@ -7,7 +7,7 @@ import classNames from 'classnames';
 export const createCursorClasses = (
   baseClasses: string,
   conditionalClasses?: Record<string, boolean>,
-) => classNames(baseClasses, conditionalClasses);
+) => clsx(baseClasses, conditionalClasses);
 
 export const CURSOR_BASE_CLASSES = {
   text: 'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',

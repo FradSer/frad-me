@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import {
   motion,
   useAnimationControls,
   useMotionValue,
   useSpring,
-} from 'framer-motion';
+} from 'motion/react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
@@ -26,11 +26,11 @@ export default function DotRing() {
   const springY = useSpring(attractedY, { stiffness: 300, damping: 30 });
 
   // * Styling
-  const textClass = classNames(
+  const textClass = clsx(
     'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',
   );
 
-  const backgroundClass = classNames(
+  const backgroundClass = clsx(
     'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
     {
       'mix-blend-difference': mouseContext.cursorType === 'default',

@@ -2,8 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef } from 'react';
 
-import classNames from 'classnames';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
+import { motion } from 'motion/react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 
@@ -11,7 +11,9 @@ import {
   createVariants,
   useAnimationGroup,
 } from '@/utils/motion/animationHelpers';
-import type { AnimationControls } from 'framer-motion';
+import { useAnimationControls } from 'motion/react';
+
+type AnimationControls = ReturnType<typeof useAnimationControls>;
 import { getWorkColor } from '@/utils/theme/workColors';
 
 interface IWorkCardProps {
@@ -41,17 +43,17 @@ interface IWorkCardContentProps {
 
 const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
   (props, ref) => {
-    const backgroundImageClass = classNames(
+    const backgroundImageClass = clsx(
       'absolute w-full h-full',
       getWorkColor(props.slug),
     );
 
-    const textLayoutClass = classNames('absolute w-4/6 space-y-4', {
+    const textLayoutClass = clsx('absolute w-4/6 space-y-4', {
       'text-center': props.isCenter,
       'text-left': !props.isCenter,
     });
 
-    const textTitleClass = classNames('font-bold text-white', {
+    const textTitleClass = clsx('font-bold text-white', {
       'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
       'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
     });
@@ -81,7 +83,7 @@ const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
           animate={props.controls.backgroundMask}
           initial="initial"
           variants={props.variants.backgroundMask}
-          className="absolute h-full w-full bg-black bg-opacity-50"
+          className="absolute h-full w-full bg-black"
         />
         <motion.div
           animate={props.controls.text}
@@ -103,7 +105,7 @@ WorkCardContent.displayName = 'WorkCardContent';
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
-  const linkClass = classNames(
+  const linkClass = clsx(
     'relative flex w-full items-center justify-center overflow-hidden',
     {
       'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,
@@ -123,7 +125,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   const variants = createVariants({
     backgroundMask: {
       initial: { opacity: 0 },
-      hover: { opacity: 1 },
+      hover: { opacity: 0.5 },
     },
     backgroundImage: {
       initial: { scale: 1.1 },
@@ -201,8 +203,8 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     );
   } else {
     return (
-      <Link href={`/works/${props.slug}`} passHref legacyBehavior>
-        <a className={linkClass}>{workCardContent}</a>
+      <Link href={`/works/${props.slug}`} className={linkClass}>
+        {workCardContent}
       </Link>
     );
   }

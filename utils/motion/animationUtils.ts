@@ -18,7 +18,7 @@ export const createPageVariants = (duration = ANIMATION_DURATIONS.normal) => ({
     y: 0,
     transition: {
       duration,
-      ease: 'easeOut',
+      ease: 'easeOut' as const,
     },
   },
   exit: {
@@ -26,7 +26,7 @@ export const createPageVariants = (duration = ANIMATION_DURATIONS.normal) => ({
     y: -20,
     transition: {
       duration: duration * 0.5,
-      ease: 'easeIn',
+      ease: 'easeIn' as const,
     },
   },
 });
@@ -45,7 +45,7 @@ export const createHeaderVariants = (
     transition: {
       duration,
       delay,
-      ease: 'easeOut',
+      ease: 'easeOut' as const,
     },
   },
 });
@@ -64,7 +64,7 @@ export const createLoadingDots = () => ({
     transition: {
       duration: 0.8,
       repeat: Infinity,
-      ease: 'easeInOut',
+      ease: 'easeInOut' as const,
     },
   },
 });

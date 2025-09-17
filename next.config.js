@@ -12,11 +12,9 @@ const nextConfig = {
   },
   // Define file extensions for pages, including MDX
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
-  experimental: {
-    // Exclude test files from bundling
-    outputFileTracingExcludes: {
-      '*': ['./tests/**/*'],
-    },
+  // Exclude test files from bundling
+  outputFileTracingExcludes: {
+    '*': ['./tests/**/*'],
   },
   transpilePackages: [
     '@react-three/fiber',

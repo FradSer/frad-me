@@ -82,8 +82,8 @@ export function isValidSpring(config: any): config is SpringConfig {
          config.tension > 0 && config.friction > 0;
 }
 
-export function validateAnimationPreset(preset: string): preset is AnimationPreset {
-  return preset in WEBXR_ANIMATION_CONFIG.springs;
+export function validateAnimationPreset(preset: string): AnimationPreset | false {
+  return preset in WEBXR_ANIMATION_CONFIG.springs ? preset as AnimationPreset : false;
 }
 
 // Simple performance state
