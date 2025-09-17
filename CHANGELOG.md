@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.0](https://github.com/FradSer/frad-me/compare/v0.12.0...v0.13.0) (2025-09-18)
+
+### Features
+
+- **resume:** add comprehensive resume page with linkedin integration
+  - Create new resume page route (/resume) with Next.js metadata
+  - Add complete resume component with animated sections and dynamic work duration calculation
+  - Include comprehensive work experience from 2014-2023 with all major roles
+  - Add skills categorization and notable projects showcase
+  - Integrate hyperlinked bio showcasing expertise in Multi-Agent Systems, MCP servers, and spatial computing
+  - Update header navigation to use internal resume route
+  - Implement responsive design with 16-column grid system and Framer Motion animations
+
 ## [0.12.0](https://github.com/FradSer/frad-me/compare/v0.11.4...v0.12.0) (2025-09-17)
 
 ### Features
