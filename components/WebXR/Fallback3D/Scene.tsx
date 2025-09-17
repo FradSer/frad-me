@@ -217,9 +217,9 @@ const AsyncSceneContent = () => {
       }}
       gl={{
         antialias: constants.qualityConfig.antialias,
-        pixelRatio: constants.qualityConfig.pixelRatio,
         powerPreference: constants.qualityConfig.powerPreference
       }}
+      dpr={constants.qualityConfig.pixelRatio}
       shadows={constants.qualityConfig.shadows}
     >
       <SceneContent
