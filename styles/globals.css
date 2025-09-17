@@ -1,6 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* Font families */
+  --font-sans: var(--font-gt-eesti-text), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: var(--font-fira-code), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  --font-display: var(--font-gt-eesti-display), var(--font-gt-eesti-text), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  /* Font weights */
+  --font-weight-black: 700;
+  
+  /* Aspect ratios */
+  --aspect-ratio-100-62: 100 / 62;
+  --aspect-ratio-100-31: 100 / 31;
+  
+  /* Grid configurations */
+  --grid-template-columns-16: repeat(16, minmax(0, 1fr));
+  --grid-column-span-15: span 15 / span 15;
+  --grid-column-span-16: span 16 / span 16;
+}
 
 @layer components {
   .layout-wrapper {
