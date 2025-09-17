@@ -1,10 +1,10 @@
 const primaryTransition = {
-  type: 'spring',
+  type: 'spring' as const,
   stiffness: 100,
 };
 
 const secondaryTransition = {
-  type: 'spring',
+  type: 'spring' as const,
   stiffness: 50,
 };
 

@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'motion/react';
 
 import useMousePosition from '@/hooks/useMousePosition';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -17,8 +17,8 @@ export default function Rectangle() {
   const skewY = useTransform(mouseY, [0, 1], [-2, 2], { clamp: true });
 
   // Update motion values
-  mouseX.set(xValue, true);
-  mouseY.set(yValue, true);
+  mouseX.set(xValue);
+  mouseY.set(yValue);
 
   return (
     <div className="ml-2 flex grow lg:ml-8">

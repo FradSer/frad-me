@@ -125,7 +125,7 @@ const createAnimationHook = (
 ) => {
   return (config: AnimationConfig = {}) => {
     const ref = useRef<THREE.Object3D>(null);
-    const initialPosition = useRef<THREE.Vector3>();
+    const initialPosition = useRef<THREE.Vector3 | null>(null);
     const hasInitialized = useRef(false);
 
     const finalConfig = useMemo(
@@ -150,7 +150,7 @@ const createAnimationHook = (
         ref.current,
         type === 'rotate' || type === 'orbit' ? rawTime : easedTime,
         finalConfig,
-        needsInitialPosition ? initialPosition.current : undefined
+        needsInitialPosition ? (initialPosition.current ?? undefined) : undefined
       );
     });
 
@@ -172,7 +172,7 @@ export const useCombinedAnimation = (
   animationConfigs: Array<{ type: AnimationType; config?: AnimationConfig }>
 ) => {
   const ref = useRef<THREE.Object3D>(null);
-  const initialPosition = useRef<THREE.Vector3>();
+  const initialPosition = useRef<THREE.Vector3 | null>(null);
   const hasInitialized = useRef(false);
   
   const needsInitialPosition = animationConfigs.some(({ type }) => 
@@ -201,7 +201,7 @@ export const useCombinedAnimation = (
         ref.current!,
         type === 'rotate' || type === 'orbit' ? rawTime : easedTime,
         finalConfig,
-        needsInitialPosition ? initialPosition.current : undefined
+        needsInitialPosition ? (initialPosition.current ?? undefined) : undefined
       );
     });
   });

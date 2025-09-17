@@ -34,8 +34,8 @@ jest.mock('next-themes', () => ({
   ThemeProvider: ({ children }) => children,
 }));
 
-// Mock framer-motion
-jest.mock('framer-motion', () => ({
+// Mock motion
+jest.mock('motion/react', () => ({
   motion: {
     div: (props) => props.children,
     section: (props) => props.children,

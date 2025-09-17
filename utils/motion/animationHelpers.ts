@@ -1,5 +1,5 @@
-import { useAnimationControls } from 'framer-motion';
-import type { Variant } from 'framer-motion';
+import { useAnimationControls } from 'motion/react';
+import type { Variant } from 'motion/react';
 
 import type { Position } from '@/types/common';
 import { primaryTransition } from './springTransitions';

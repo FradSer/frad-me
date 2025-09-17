@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import classNames from 'classnames';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
+import { motion } from 'motion/react';
 
 import { ANIMATION_CONSTANTS } from '@/utils/constants';
 
@@ -20,7 +20,7 @@ function TopographyImage({
   translateX,
   translateY,
 }: Readonly<ITopographyImageProps>) {
-  const topographyClass = classNames('absolute h-auto w-full border-gray-200', {
+  const topographyClass = clsx('absolute h-auto w-full border-gray-200', {
     'z-50': isTop,
   });
 

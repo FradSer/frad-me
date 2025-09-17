@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useMotionValue, useSpring } from 'framer-motion';
+import { useMotionValue, useSpring } from 'motion/react';
 
 import type { Position } from '@/types/common';
 import useMouseContext from '@/hooks/useMouseContext';

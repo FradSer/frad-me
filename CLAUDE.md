@@ -48,8 +48,21 @@ pnpm test:e2e navigation.spec.ts
 ```
 
 **Package Management:**
-- Uses `pnpm` as package manager
+- Uses `pnpm` as package manager (version 10.15.0+)
 - Node.js version: 22.x (specified in engines)
+- pnpm lockfile version: 9.0
+
+**Troubleshooting:**
+```bash
+# Clear build cache and restart
+rm -rf .next && pnpm dev
+
+# Fix common WebGL/WebXR development issues
+pnpm dev:https    # Use HTTPS for WebXR features testing
+
+# Bundle analysis for performance debugging
+pnpm analyze      # Generates webpack bundle analysis
+```
 
 ## Architecture
 
@@ -140,3 +153,20 @@ Playwright is configured with enhanced WebXR testing capabilities:
 - Font optimization via next/font with preloading for GT Eesti font family
 - Bundle analysis available via `pnpm analyze` for optimization insights
 - Vercel Analytics and Speed Insights integration for performance monitoring
+- Next.js transpiles React Three Fiber ecosystem packages for server compatibility
+- Webpack fallback configured for WebXR protobuf dependencies
+
+## Code Style and Quality
+
+**Biome Configuration:**
+- Single quotes for JavaScript/TypeScript
+- Space indentation (2 spaces)
+- Import organization enabled
+- Recommended linting rules enforced
+- Specific file includes: `app/`, `components/`, `content/`, `test/`, `types/`, `utils/`
+
+**TypeScript Configuration:**
+- Strict mode enabled with `forceConsistentCasingInFileNames`
+- Path aliases configured for clean imports (`@/*`)
+- Excludes test files from production builds
+- ES5 target with ESNext modules for modern compatibility

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
 import {
@@ -47,7 +47,7 @@ function WorkSingleImage({
   unoptimized = false,
   priority = false,
 }: Readonly<WorkImageProps>) {
-  const workImageClass = classNames(
+  const workImageClass = clsx(
     COMMON_CLASSES.imageContainer,
     IMAGE_POSITION_CLASSES[position],
   );
