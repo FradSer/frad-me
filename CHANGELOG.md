@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.12.0](https://github.com/FradSer/frad-me/compare/v0.11.4...v0.12.0) (2025-09-17)
+
+### Features
+
+- **animation:** migrate from framer-motion to motion.dev for improved performance
+- **styling:** upgrade tailwind css to v4.1.13 with enhanced features
+- **portfolio:** add external link support to work cards for better navigation
+- **portfolio:** add vivo vision xr case to showcase portfolio
+
+### Bug Fixes
+
+- **ui:** correct work card hover transparency effect for better visual feedback
+- **webxr:** fix animation validation and test setup for proper testing
+- **typescript:** correct return type for animation preset validation
+- **links:** remove deprecated legacyBehavior and nested anchor tags
+- **content:** complete missing work case content for portfolio completeness
+- **styling:** revert tailwind css to v3 and fix associated styling issues
+
+### Maintenance
+
+- **deps:** remove release-it and related configuration to reduce bundle size
+- **perf:** optimize bundle size by removing unused dependencies
+
 ## [0.11.4](https://github.com/FradSer/frad-me/compare/v0.11.3...v0.11.4) (2025-09-16)
 
 ### Features
