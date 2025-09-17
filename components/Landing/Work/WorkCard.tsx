@@ -83,7 +83,7 @@ const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
           animate={props.controls.backgroundMask}
           initial="initial"
           variants={props.variants.backgroundMask}
-          className="absolute h-full w-full bg-black bg-opacity-50"
+          className="absolute h-full w-full bg-black"
         />
         <motion.div
           animate={props.controls.text}
@@ -125,7 +125,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   const variants = createVariants({
     backgroundMask: {
       initial: { opacity: 0 },
-      hover: { opacity: 1 },
+      hover: { opacity: 0.5 },
     },
     backgroundImage: {
       initial: { scale: 1.1 },
