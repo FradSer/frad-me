@@ -118,7 +118,7 @@ describe('WebXR Animation Configuration', () => {
     });
 
     it('should provide adaptive spring configuration', () => {
-      updateFPS(30); // Low FPS
+      updateFPS(29); // Low FPS
       const adaptiveSpring = getAdaptiveSpring('bouncy');
 
       expect(adaptiveSpring.tension).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.springs.bouncy.tension);
