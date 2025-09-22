@@ -20,7 +20,6 @@ export const ERROR_QUEUE_CONFIG = {
   MAX_QUEUE_SIZE: 100,
   MAX_REQUESTS_PER_HOUR: 10,
   RATE_LIMIT_THRESHOLD: 5,
-  MILLISECONDS_PER_HOUR: 60 * 60 * 1000,
 } as const;
 
 // API rate limiting
