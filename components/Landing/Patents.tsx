@@ -37,24 +37,24 @@ const patents = [
 
 export default function Patents() {
   return (
-    <section className="layout-wrapper my-12 flex flex-col">
-      <h2 className="text-xl mb-4">
-        patents
-      </h2>
-      <div className="flex flex-wrap gap-1 text-xl text-gray-600 dark:text-gray-400">
-        {patents.map((patent, index) => (
-          <span key={patent.number}>
-            <a
-              href={patent.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline transition-all duration-200 hover:opacity-70"
-            >
-              {patent.number}
-            </a>
-            {index < patents.length - 1 && <span className="mx-1">/</span>}
-          </span>
-        ))}
+    <section className="layout-wrapper my-12 flex h-24 flex-col items-start justify-between text-xl md:flex-row md:items-center">
+      <div className="flex flex-col md:flex-row md:items-center md:space-x-8">
+        <h2 className="mb-2 md:mb-0">patents</h2>
+        <div className="flex flex-wrap gap-1 text-gray-600 dark:text-gray-400">
+          {patents.map((patent, index) => (
+            <span key={patent.number}>
+              <a
+                href={patent.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline transition-all duration-200 hover:opacity-70"
+              >
+                {patent.number}
+              </a>
+              {index < patents.length - 1 && <span className="mx-1">/</span>}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
