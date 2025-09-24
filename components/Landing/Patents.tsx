@@ -39,10 +39,12 @@ const patents = [
 
 export default function Patents() {
   return (
-    <section className="layout-wrapper my-12 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+    <section className="layout-wrapper my-20 md:my-24 lg:my-32">
       <div className="flex flex-col items-start">
-        <h2 className="mb-4 hover:cursor-default">patents</h2>
-        <ul className="flex flex-wrap gap-1 text-white">
+        <h2 className="mb-8 text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
+          patents
+        </h2>
+        <ul className="flex flex-wrap gap-1 text-white text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
           {patents.map((patent, index) => (
             <li key={patent.number} className="flex items-center">
               <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
