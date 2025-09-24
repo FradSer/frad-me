@@ -2,6 +2,7 @@
 
 import Footer from '@/components/Footer';
 import Hero from '@/components/Landing/Hero';
+import Patents from '@/components/Landing/Patents';
 import Work from '@/components/Landing/Work';
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
       <main>
         <Hero />
         <Work />
+        <Patents />
       </main>
 
       <Footer />
