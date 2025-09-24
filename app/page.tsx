@@ -11,9 +11,9 @@ export default function Home() {
       <main>
         <Hero />
         <Work />
-        <Patents />
       </main>
 
+      <Patents />
       <Footer />
     </>
   );
