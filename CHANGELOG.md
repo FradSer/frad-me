@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.14.0](https://github.com/FradSer/frad-me/compare/v0.13.0...v0.14.0) (2025-09-25)
+
+### Features
+
+- **homepage:** add patent display section to homepage with comprehensive patent showcase
+  - Create new Patents component displaying 8 granted patent numbers with clickable links
+  - Add patent section below work section with proper typography matching hero styling
+  - Implement white patent numbers with cursor hiding behavior similar to header links
+  - Move patents section outside main container to match footer positioning structure
+
+### Style Improvements
+
+- **typography:** update patents title to match work title size with responsive scaling
+- **animation:** make work text start scaling animation when entering viewport for better UX
+- **spacing:** balance top and bottom spacing around work text for equal visual spacing
+- **layout:** improve patent number separators with increased spacing and left alignment
+
 ## [0.13.0](https://github.com/FradSer/frad-me/compare/v0.12.0...v0.13.0) (2025-09-18)
 
 ### Features
