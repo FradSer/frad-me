@@ -37,9 +37,11 @@ const patents = [
 
 export default function Patents() {
   return (
-    <section className="w-screen px-4 py-8 text-center">
-      <h2 className="mb-6 text-2xl font-semibold">Patents</h2>
-      <div className="flex flex-wrap justify-center gap-2">
+    <section className="w-screen px-0 pt-16 text-center sm:px-40">
+      <h2 className="col-span-2 px-0 text-center text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem] mb-8">
+        patents
+      </h2>
+      <div className="flex flex-wrap justify-center gap-1 text-sm xl:text-lg 2xl:text-2xl text-gray-600 dark:text-gray-400">
         {patents.map((patent, index) => (
           <span key={patent.number}>
             <a
