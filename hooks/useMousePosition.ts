@@ -7,16 +7,21 @@ import type { Position } from '@/types/common';
 
 export default function useMousePosition(): Position {
   const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 });
-  const throttleRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const latestPositionRef = useRef<Position>({ x: 0, y: 0 });
 
   useEffect(() => {
     const updateMousePosition = (event: MouseEvent) => {
-      if (throttleRef.current) return;
+      // Store latest position immediately for accurate tracking
+      latestPositionRef.current = { x: event.clientX, y: event.clientY };
 
-      throttleRef.current = window.setTimeout(() => {
-        setMousePosition({ x: event.clientX, y: event.clientY });
-        throttleRef.current = null;
-      }, 16); // ~60fps
+      // Use requestAnimationFrame for smooth updates
+      if (rafRef.current !== null) return;
+
+      rafRef.current = requestAnimationFrame(() => {
+        setMousePosition(latestPositionRef.current);
+        rafRef.current = null;
+      });
     };
 
     document.addEventListener('mousemove', updateMousePosition, {
@@ -25,8 +30,8 @@ export default function useMousePosition(): Position {
 
     return () => {
       document.removeEventListener('mousemove', updateMousePosition);
-      if (throttleRef.current) {
-        clearTimeout(throttleRef.current);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
   }, []);
