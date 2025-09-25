@@ -46,17 +46,17 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
 
   const arrowTransitionProps = hovered
     ? {
-        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' },
+        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
         y: {
           duration: ANIMATION_TIMING.bounceDuration,
           repeat: Number.POSITIVE_INFINITY,
           repeatType: 'loop' as const,
-          ease: 'easeInOut',
+          ease: 'easeInOut' as const,
         },
       }
     : {
-        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' },
-        y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' },
+        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
+        y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' as const },
       };
 
   return (
