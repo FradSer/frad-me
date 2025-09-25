@@ -21,7 +21,6 @@ pnpm dev:https    # Start development server with HTTPS certificates
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm analyze      # Build with bundle analyzer
-pnpm release      # Create versioned release with changelog
 pnpm certs:generate # Generate local HTTPS certificates for dev:https
 ```
 
@@ -50,7 +49,7 @@ pnpm test:e2e navigation.spec.ts
 
 **Package Management:**
 - Uses `pnpm` as package manager (version 10.15.0+)
-- Node.js version: 22.x (specified in engines)
+- Node.js version: 22.0.0+ (specified in engines)
 - pnpm lockfile version: 9.0
 
 **Troubleshooting:**
