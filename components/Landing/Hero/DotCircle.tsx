@@ -31,7 +31,33 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
             },
           }}
           viewport={{ once: true }}
-          animate={{ scale: hovered ? 1.1 : 1 }}
+          animate={
+            hovered
+              ? {
+                  scale: 1.1,
+                  y: [0, 4, 0], // Continuous loop: down 4px then back to 0
+                }
+              : {
+                  scale: 1,
+                  y: 0,
+                }
+          }
+          transition={
+            hovered
+              ? {
+                  scale: { duration: 0.2, ease: 'easeOut' },
+                  y: {
+                    duration: 1.2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'loop',
+                    ease: 'easeInOut',
+                  },
+                }
+              : {
+                  scale: { duration: 0.2, ease: 'easeOut' },
+                  y: { duration: 0.3, ease: 'easeOut' },
+                }
+          }
           className="absolute left-9 top-4 z-10 m-auto h-6 w-6 fill-white dark:fill-black"
         >
           <svg viewBox="0 0 18 46">
