@@ -15,7 +15,7 @@ const SVGIcon = forwardRef<
   }
 >(
   (
-    { className = '', size = 'currentSize', viewBox, children, ...props },
+    { className = '', size = '1em', viewBox, children, ...props },
     ref,
   ) => (
     <svg
