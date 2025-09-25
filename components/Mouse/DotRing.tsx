@@ -14,14 +14,33 @@ import useMousePosition from '@/hooks/useMousePosition';
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
 import { primaryTransition } from '@/utils/motion/springTransitions';
 
+// * Configuration constants
+const SPRING_CONFIG = {
+  stiffness: 300,
+  damping: 30,
+} as const;
+
+const BLEND_FACTOR = 0.7;
+
+const CURSOR_SIZES = {
+  small: '1rem',
+  medium: '2rem',
+  large: '4rem',
+} as const;
+
+const CURSOR_SCALE = {
+  small: 0.5,
+  normal: 1,
+} as const;
+
 // * Move static objects outside component to prevent recreation
 const transitionOffset = { x: '-50%', y: '-50%' };
 
 const backgroundVariants = {
   initial: {
     ...transitionOffset,
-    height: '1rem',
-    width: '1rem',
+    height: CURSOR_SIZES.small,
+    width: CURSOR_SIZES.small,
     opacity: 1,
     transition: primaryTransition,
   },
@@ -31,14 +50,14 @@ const backgroundVariants = {
   },
   workCardHover: {
     ...transitionOffset,
-    height: '4rem',
-    width: '4rem',
+    height: CURSOR_SIZES.large,
+    width: CURSOR_SIZES.large,
     transition: primaryTransition,
   },
   attracted: {
     ...transitionOffset,
-    height: '1rem',
-    width: '1rem',
+    height: CURSOR_SIZES.small,
+    width: CURSOR_SIZES.small,
     opacity: 0,
     transition: primaryTransition,
   },
@@ -47,18 +66,18 @@ const backgroundVariants = {
 const textVariants = {
   initial: {
     ...transitionOffset,
-    height: '2rem',
-    width: '2rem',
+    height: CURSOR_SIZES.medium,
+    width: CURSOR_SIZES.medium,
     opacity: 0,
-    scale: 0.5,
+    scale: CURSOR_SCALE.small,
     transition: primaryTransition,
   },
   workCardHover: {
     ...transitionOffset,
-    height: '4rem',
-    width: '4rem',
+    height: CURSOR_SIZES.large,
+    width: CURSOR_SIZES.large,
     opacity: 1,
-    scale: 1,
+    scale: CURSOR_SCALE.normal,
     transition: primaryTransition,
   },
 };
@@ -79,8 +98,8 @@ export default function DotRing() {
   // * Physical attraction - initialize motion values once
   const attractedX = useMotionValue(0);
   const attractedY = useMotionValue(0);
-  const springX = useSpring(attractedX, { stiffness: 300, damping: 30 });
-  const springY = useSpring(attractedY, { stiffness: 300, damping: 30 });
+  const springX = useSpring(attractedX, SPRING_CONFIG);
+  const springY = useSpring(attractedY, SPRING_CONFIG);
 
   // * Memoized styling classes
   const textClass = useMemo(
@@ -116,7 +135,7 @@ export default function DotRing() {
     const blendedPosition = calculateBlendPosition(
       mousePosition,
       mouseContext.attractorPosition,
-      0.7,
+      BLEND_FACTOR,
     );
 
     attractedX.set(blendedPosition.x);
