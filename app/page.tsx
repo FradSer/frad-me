@@ -1,5 +1,3 @@
-'use client';
-
 import Footer from '@/components/Footer';
 import Hero from '@/components/Landing/Hero';
 import Patents from '@/components/Landing/Patents';
