@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.14.3](https://github.com/FradSer/frad-me/compare/v0.14.2...v0.14.3) (2025-09-30)
+
+### Bug Fixes
+
+- **adsense:** complete adsense integration with real publisher configuration
+  - Implement Next.js Script component for optimal AdSense loading and performance
+  - Replace placeholder with real publisher ID (pub-6009006635541295) for production deployment
+  - Update ads.txt file with production configuration for ad serving verification
+  - Add AdSense account verification meta tag for domain ownership confirmation
+  - Fix security and policy compliance issues for successful AdSense approval process
+
 ## [0.14.2](https://github.com/FradSer/frad-me/compare/v0.14.0...v0.14.2) (2025-09-30)
 
 ### Bug Fixes

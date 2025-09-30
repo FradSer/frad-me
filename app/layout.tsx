@@ -3,6 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Fira_Code } from 'next/font/google';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 
 import ClientLayout from './client-layout';
 
@@ -68,6 +69,9 @@ export const metadata: Metadata = {
     icon: ['/favicon-16x16.png', '/favicon-32x32.png'],
     apple: '/apple-touch-icon.png',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-6009006635541295',
+  },
 };
 
 type RootLayoutProps = {
@@ -81,6 +85,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${firaCode.variable} ${gtEestiText.variable} ${gtEestiDisplay.variable}`}
     >
       <body className="antialiased">
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6009006635541295"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
         <ClientLayout>
           {children}
           <SpeedInsights />

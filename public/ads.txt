@@ -10,5 +10,4 @@
 # Example (replace with your actual ID):
 # google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
 
-# Placeholder - MUST be replaced with actual publisher ID before going live
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-6009006635541295, DIRECT, f08c47fec0942fa0
