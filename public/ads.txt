@@ -1,0 +1,14 @@
+# ads.txt file for AdSense compliance
+# Replace the placeholder below with your actual Google AdSense publisher ID
+# Format: google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# To find your publisher ID:
+# 1. Go to your AdSense account
+# 2. Navigate to Account > Account information
+# 3. Look for "Publisher ID" (starts with "pub-")
+#
+# Example (replace with your actual ID):
+# google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
+
+# Placeholder - MUST be replaced with actual publisher ID before going live
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
