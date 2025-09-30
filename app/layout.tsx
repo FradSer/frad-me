@@ -91,6 +91,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         strategy="afterInteractive"
       />
       <body className="antialiased">
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6009006635541295"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
         <ClientLayout>
           {children}
           <SpeedInsights />
