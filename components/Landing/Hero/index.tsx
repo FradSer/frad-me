@@ -1,3 +1,5 @@
+'use client';
+
 import { clsx } from 'clsx';
 
 import DotCircle from '@/components/Landing/Hero/DotCircle';

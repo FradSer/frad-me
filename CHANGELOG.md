@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.2](https://github.com/FradSer/frad-me/compare/v0.14.0...v0.14.2) (2025-09-30)
+
+### Bug Fixes
+
+- **adsense:** resolve policy violations and improve SEO compliance
+  - Refactor page.tsx to use server-side rendering for better crawler access
+  - Add selective client-side rendering for interactive components only
+  - Create robots.ts configuration for proper search engine crawler behavior
+  - Add ads.txt template file for AdSense compliance and ad serving verification
+  - Fix "site down or unavailable" issues that were preventing AdSense approval
+  - Improve crawler accessibility while maintaining interactive functionality
+
 ## [0.14.0](https://github.com/FradSer/frad-me/compare/v0.13.0...v0.14.0) (2025-09-25)
 
 ### Features
