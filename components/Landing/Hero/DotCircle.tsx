@@ -3,17 +3,61 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
+import { DownArrowIcon } from '@/components/common/Icons';
 
 import { primaryTransition } from '@/utils/motion/springTransitions';
+
+// * Animation configuration constants
+const ANIMATION_CONFIG = {
+  circleDelay: 2.5,
+  arrowDelay: 0.6,
+  hoverScale: 1.1,
+  bounceDistance: 4,
+  bounceYPath: [0, 4, 0] as [number, number, number],
+} as const;
+
+const ANIMATION_TIMING = {
+  scaleDuration: 0.2,
+  bounceDuration: 1.2,
+  resetDuration: 0.3,
+} as const;
+
+const CIRCLE_SIZE = {
+  initial: '20%',
+  expanded: '100%',
+} as const;
 
 interface IDotCircleProps {
   isInteractive?: boolean;
 }
 
 function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
-  const animationCircleDelay = 2.5;
-  const animationArrowDelay = 0.6;
   const [hovered, setHovered] = useState<boolean>(false);
+
+  const arrowAnimateProps = hovered
+    ? {
+        scale: ANIMATION_CONFIG.hoverScale,
+        y: ANIMATION_CONFIG.bounceYPath,
+      }
+    : {
+        scale: 1,
+        y: 0,
+      };
+
+  const arrowTransitionProps = hovered
+    ? {
+        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
+        y: {
+          duration: ANIMATION_TIMING.bounceDuration,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'loop' as const,
+          ease: 'easeInOut' as const,
+        },
+      }
+    : {
+        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
+        y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' as const },
+      };
 
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
@@ -22,26 +66,28 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
         onHoverEnd={() => setHovered(false)}
         className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100"
       >
-        <motion.div // Arrow
+        <motion.div
           whileInView={{
             opacity: [0, 1],
             transition: {
               ...primaryTransition,
-              delay: animationArrowDelay + animationCircleDelay,
+              delay: ANIMATION_CONFIG.arrowDelay + ANIMATION_CONFIG.circleDelay,
             },
           }}
           viewport={{ once: true }}
-          animate={{ scale: hovered ? 1.1 : 1 }}
+          animate={arrowAnimateProps}
+          transition={arrowTransitionProps}
           className="absolute left-9 top-4 z-10 m-auto h-6 w-6 fill-white dark:fill-black"
         >
-          <svg viewBox="0 0 18 46">
-            <path d="M0.439999 31.768C1.54933 32.1947 2.57333 32.664 3.512 33.176C4.49333 33.688 5.41067 34.264 6.264 34.904L6.264 0.599999L11.512 0.599999L11.512 34.904C12.3653 34.3067 13.2613 33.752 14.2 33.24C15.1813 32.728 16.2267 32.2587 17.336 31.832L17.336 36.696C14.2213 39.3413 11.8533 42.2427 10.232 45.4L7.48 45.4C5.944 42.2427 3.59733 39.3413 0.439999 36.696L0.439999 31.768Z" />
-          </svg>
+          <DownArrowIcon />
         </motion.div>
-        <motion.div // Circle
-          initial={{ height: '20%', width: '20%' }}
-          animate={{ height: ['20%', '100%'], width: ['20%', '100%'] }}
-          transition={{ ...primaryTransition, delay: animationCircleDelay }}
+        <motion.div
+          initial={{ height: CIRCLE_SIZE.initial, width: CIRCLE_SIZE.initial }}
+          animate={{
+            height: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded],
+            width: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded]
+          }}
+          transition={{ ...primaryTransition, delay: ANIMATION_CONFIG.circleDelay }}
           className="absolute z-0 h-full w-full"
         >
           <svg viewBox="0 0 96 96" className="fill-black dark:fill-white">

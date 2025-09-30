@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.0](https://github.com/FradSer/frad-me/compare/v0.14.3...v0.15.0) (2025-09-30)
+
+### Maintenance
+
+- **release:** version bump to 0.15.0 for release process
+  - Update package.json version to 0.15.0
+  - Prepare release with current state of the application
+  - Maintain compatibility with existing WebXR and 3D features
+
 ## [0.14.3](https://github.com/FradSer/frad-me/compare/v0.14.2...v0.14.3) (2025-09-30)
 
 ### Bug Fixes

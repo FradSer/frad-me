@@ -21,7 +21,7 @@ pnpm dev:https    # Start development server with HTTPS certificates
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm analyze      # Build with bundle analyzer
-pnpm release      # Create versioned release with changelog
+pnpm certs:generate # Generate local HTTPS certificates for dev:https
 ```
 
 **Code Quality (Biome):**
@@ -49,7 +49,7 @@ pnpm test:e2e navigation.spec.ts
 
 **Package Management:**
 - Uses `pnpm` as package manager (version 10.15.0+)
-- Node.js version: 22.x (specified in engines)
+- Node.js version: 22.0.0+ (specified in engines)
 - pnpm lockfile version: 9.0
 
 **Troubleshooting:**
@@ -93,6 +93,15 @@ The application uses smart layout switching based on WebXR capability detection:
   - WebXR/WebGL capability detection and reporting
 - **app/api/errors/route.ts**: Secure error collection API with validation and rate limiting
 
+### Mouse Interaction System
+- **Performance Optimized**: Custom mouse position tracking using requestAnimationFrame for 60fps performance
+- **DotRing Component**: Advanced cursor with spring physics and attraction effects
+  - Configurable constants for spring stiffness (300), damping (30), and blend factors
+  - Multiple cursor states: default, header-link-hovered, work-card-hovered, attracted
+  - Smooth transitions with Motion spring animations
+- **Context-Based**: MouseContext provides centralized cursor state management across components
+- **Accessibility**: Maintains standard cursor functionality while adding visual enhancements
+
 ### Content Management
 - **content/**: MDX files and configuration for work portfolio
   - `works/`: Individual work case studies (.mdx files) with frontmatter
@@ -109,9 +118,9 @@ Playwright is configured with enhanced WebXR testing capabilities:
 ## Key Technologies
 
 **Frontend Stack:**
-- Next.js 14 with App Router and TypeScript strict mode
-- React 18 with Tailwind CSS and custom 16-column grid system
-- Framer Motion for 2D animations and transitions
+- Next.js 15 with App Router and TypeScript strict mode
+- React 19 with Tailwind CSS and custom 16-column grid system
+- Motion (Framer Motion) for 2D animations and transitions
 - next-themes for dark mode with class-based switching
 
 **3D/XR Features:**
@@ -146,6 +155,13 @@ Playwright is configured with enhanced WebXR testing capabilities:
 - 3D positioned external links (resume, calendly) visible only in home view with proper depth sorting
 - Complete isolation from global navigation when in WebXR mode to prevent interference
 - Automatic layout switching based on device WebXR capabilities
+
+**Component Architecture Patterns:**
+- **Configuration Constants**: Magic numbers extracted to named constants (e.g., SPRING_CONFIG, CURSOR_SIZES)
+- **Animation Optimization**: Conditional props extracted into clear variables for better readability
+- **Component Reusability**: Shared components like DownArrowIcon reduce duplication
+- **Type Safety**: Extensive use of TypeScript const assertions and proper type inference
+- **Performance**: requestAnimationFrame-based hooks and memoized calculations for smooth animations
 
 **Build Configuration:**
 - App Router with TypeScript strict mode and path aliases (`@/*`) for clean imports
