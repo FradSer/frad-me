@@ -77,9 +77,9 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
           viewport={{ once: true }}
           animate={arrowAnimateProps}
           transition={arrowTransitionProps}
-          className="absolute left-9 top-4 z-10 m-auto h-6 w-6 fill-white dark:fill-black"
+          className="absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center fill-white dark:fill-black"
         >
-          <DownArrowIcon />
+          <DownArrowIcon className="h-full w-full" />
         </motion.div>
         <motion.div
           initial={{ height: CIRCLE_SIZE.initial, width: CIRCLE_SIZE.initial }}
