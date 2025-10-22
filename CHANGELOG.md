@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.1](https://github.com/FradSer/frad-me/compare/v0.15.0...v0.15.1) (2025-10-23)
+
+### Features
+
+- **theme:** implement theme switching functionality
+  - Add theme toggle support for light/dark mode switching
+  - Integrate next-themes for seamless theme management
+  - Improve user experience with persistent theme preferences
+
 ## [0.15.0](https://github.com/FradSer/frad-me/compare/v0.14.3...v0.15.0) (2025-09-30)
 
 ### Maintenance
