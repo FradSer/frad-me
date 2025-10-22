@@ -71,6 +71,53 @@ test.describe('Theme and Responsive Integration', () => {
 
       await homePage.header.verifyTheme('dark');
     });
+
+    test('should update global background color when toggling theme', async ({
+      page,
+    }) => {
+      await homePage.goto('/');
+
+      const getBodyBackground = () =>
+        page.evaluate(() =>
+          window.getComputedStyle(document.body).backgroundColor,
+        );
+
+      const initialBackground = await getBodyBackground();
+      expect(initialBackground).toBe('rgb(255, 255, 255)');
+
+      await homePage.header.toggleTheme();
+      await homePage.header.verifyTheme('dark');
+
+      const darkBackground = await getBodyBackground();
+      expect(darkBackground).toBe('rgb(0, 0, 0)');
+    });
+
+    test('should update patent text color when toggling theme', async ({
+      page,
+    }) => {
+      await homePage.goto('/');
+
+      const patentSection = page
+        .locator('section')
+        .filter({
+          has: page.locator('h2', { hasText: /patent/i }),
+        });
+      const patentLink = patentSection.locator('a').first();
+
+      const getColor = () =>
+        patentLink.evaluate((element) =>
+          window.getComputedStyle(element).color,
+        );
+
+      const initialColor = await getColor();
+      expect(initialColor).toBe('rgb(0, 0, 0)');
+
+      await homePage.header.toggleTheme();
+      await homePage.header.verifyTheme('dark');
+
+      const darkColor = await getColor();
+      expect(darkColor).toBe('rgb(255, 255, 255)');
+    });
   });
 
   test.describe('Responsive Design with Different Themes', () => {

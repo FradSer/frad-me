@@ -82,9 +82,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${firaCode.variable} ${gtEestiText.variable} ${gtEestiDisplay.variable}`}
     >
-      <body className="antialiased">
+      <body
+        className="antialiased min-h-screen bg-white text-black transition-colors duration-300 ease-out dark:bg-black dark:text-white"
+        // Keep native UI controls in sync with theme
+        style={{ colorScheme: 'light dark' }}
+      >
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6009006635541295"
           strategy="afterInteractive"
