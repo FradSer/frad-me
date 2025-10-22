@@ -186,3 +186,78 @@ Playwright is configured with enhanced WebXR testing capabilities:
 - Path aliases configured for clean imports (`@/*`)
 - Excludes test files from production builds
 - ES5 target with ESNext modules for modern compatibility
+
+## Critical Implementation Patterns
+
+### Theme System Integration
+When adding new components that need theme awareness:
+- Wrap with `ThemeModeProvider` if creating new layout sections
+- Use `useTheme()` hook from next-themes to access current theme
+- Always check `isMounted` before rendering theme-dependent content to prevent hydration mismatches
+- Theme values: `'light'`, `'dark'`, or `'system'` (preference) / `'light'` or `'dark'` (resolved)
+
+### WebXR Component Guidelines
+When creating new WebXR/3D components:
+- **Never enable SSR**: Use `dynamic(() => import(), { ssr: false })` for all 3D components
+- **Wrap with ErrorBoundary**: Use `withErrorBoundary` HOC with componentName for proper fallback selection
+- **Performance monitoring**: Wrap dynamic imports with `measureChunkLoad` for loading metrics
+- **Material opacity**: Use `useFrame` to traverse and update material opacity for fade effects
+- **Auto-hide threshold**: Components with opacity < 0.01 should be automatically hidden
+- **Font consistency**: Use GT Eesti Display Bold for all 3D text elements
+
+### Animation System Usage
+Choose the correct animation system for your use case:
+- **Spring Physics** (`utils/animation/springUtils.ts`): For 3D position/rotation/scale animations with realistic physics
+  - Use `SpringScalar` directly for custom implementations
+  - Use `useSpringValue` for single values, `useTripleSpring` for 3D positions
+  - Choose preset: `gentle` (smooth UI), `bouncy` (playful), `quick` (snappy), `slow` (dramatic)
+- **Motion Library** (`motion` package): For 2D DOM animations and transitions
+  - Use spring transitions with configured presets
+  - Use variants for complex animation sequences
+
+### Error Handling Best Practices
+- **Component-level**: Wrap interactive components with `withErrorBoundary` HOC
+- **API routes**: Always validate input with type guards before processing
+- **Rate limiting**: Implement per-IP rate limiting for public APIs (see `/app/api/errors/route.ts`)
+- **Sanitization**: Remove sensitive data (stack traces, tokens) from client responses
+- **Logging**: Use `webxrErrorLogger.log()` for client-side errors requiring server persistence
+
+### Mouse Interaction Pattern
+When adding hover effects or custom cursor states:
+1. Add new cursor type to `MouseContext` type definition
+2. Call `setCursorType()` on mouseEnter/mouseLeave events
+3. For attraction effects, use `setAttractorPosition()` with element position
+4. DotRing automatically handles visual transitions
+
+### MDX Content Workflow
+Adding new work portfolio items:
+1. Create `.mdx` file in `/content/works/` directory
+2. Add required frontmatter: `title`, `description`, `date`, `tags`, `image`
+3. Optionally add `externalLink` for external project URLs
+4. Images should be placed in `/public/images/works/`
+5. Run `pnpm dev` to verify MDX compilation
+
+### Testing Requirements
+Before merging code:
+- **Unit tests**: Required for all new utilities, hooks, and contexts
+- **Component tests**: Required for new UI components with user interactions
+- **E2E tests**: Required for new routes or critical user flows
+- **Coverage**: Maintain existing coverage levels (check with `pnpm test:coverage`)
+- **WebXR tests**: Add to `WEBXR_TESTS` suite if modifying 3D components
+
+### Performance Optimization Checklist
+When adding new features:
+- [ ] Dynamic imports for code splitting (especially 3D components)
+- [ ] `useMemo` for expensive calculations or object creation
+- [ ] `useCallback` for event handlers passed as props
+- [ ] RAF-based updates for high-frequency events (scroll, mousemove)
+- [ ] Lazy loading for images and media
+- [ ] Verify bundle impact with `pnpm analyze`
+
+### Git Workflow
+- **Branch naming**: `feature/`, `fix/`, `hotfix/`, `release/` prefixes
+- **Commit style**: Conventional commits (feat:, fix:, chore:, docs:, etc.)
+- **Commit titles**: Under 50 characters, all lowercase
+- **Before merging**: Run `pnpm check && pnpm build && pnpm test:all`
+- **Main branch**: Production deployments only
+- **Develop branch**: Integration branch for features
