@@ -3,12 +3,12 @@
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
-import { ThemeProvider } from 'next-themes';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LayoutWrapper from '@/components/common/LayoutWrapper';
 import DotRing from '@/components/Mouse/DotRing';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
 import useXRDetect from '@/hooks/useXRDetect';
+import ThemeModeProvider from '@/contexts/Theme/ThemeModeProvider';
 
 const WebXR = dynamic(() => import('./webxr/page'), {
   ssr: false,
@@ -26,10 +26,10 @@ type ClientLayoutProps = {
 const StandardLayout = ({ children }: ClientLayoutProps) => (
   <ErrorBoundary componentName="StandardLayout">
     <MouseContextProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeModeProvider>
         <DotRing />
         <LayoutWrapper>{children}</LayoutWrapper>
-      </ThemeProvider>
+      </ThemeModeProvider>
     </MouseContextProvider>
   </ErrorBoundary>
 );

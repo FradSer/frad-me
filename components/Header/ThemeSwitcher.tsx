@@ -1,10 +1,12 @@
-import { useEffect, useState, useMemo } from 'react';
+'use client';
+
+import { useMemo } from 'react';
 
 import { motion } from 'motion/react';
-import { useTheme } from 'next-themes';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 import { SunIcon, MoonIcon } from '@/components/common/Icons';
+import useThemeMode from '@/hooks/useThemeMode';
 
 import {
   primaryTransition,
@@ -12,12 +14,7 @@ import {
 } from '@/utils/motion/springTransitions';
 
 export default function ThemeSwitcher() {
-  // * Hooks
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
-
-  // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), []);
+  const { isMounted, resolvedTheme, toggleTheme } = useThemeMode();
 
   const hoverVariants = useMemo(
     () => ({
@@ -33,8 +30,7 @@ export default function ThemeSwitcher() {
     [],
   );
 
-  const isDark = mounted && (theme === 'dark' || resolvedTheme === 'dark');
-  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
+  const isDark = isMounted && resolvedTheme === 'dark';
 
   // * Render
   return (
