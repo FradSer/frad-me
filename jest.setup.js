@@ -24,32 +24,50 @@ jest.mock('next/router', () => ({
   useRouter: () => mockRouter,
 }));
 
-// Mock next-themes
-jest.mock('next-themes', () => ({
-  useTheme: () => ({
-    theme: 'light',
-    setTheme: jest.fn(),
-    resolvedTheme: 'light',
-  }),
-  ThemeProvider: ({ children }) => children,
-}));
-
 // Mock motion
-jest.mock('motion/react', () => ({
-  motion: {
-    div: (props) => props.children,
-    section: (props) => props.children,
-    h1: (props) => props.children,
-    p: (props) => props.children,
-    img: (props) => props.children,
-    button: (props) => props.children,
-  },
-  AnimatePresence: ({ children }) => children,
-  useAnimationControls: () => ({
-    start: jest.fn(),
-    stop: jest.fn(),
-  }),
-}));
+jest.mock('motion/react', () => {
+  const React = require('react');
+  const MOTION_PROPS = new Set([
+    'initial',
+    'whileHover',
+    'animate',
+    'variants',
+    'exit',
+    'transition',
+    'whileTap',
+    'whileFocus',
+    'whileInView',
+    'onHoverStart',
+    'onHoverEnd',
+  ]);
+  const createMotionWrapper = (tag) =>
+    React.forwardRef(({ children, ...rest }, ref) => {
+      const sanitizedProps = { ...rest };
+      for (const key of MOTION_PROPS) {
+        if (key in sanitizedProps) {
+          delete sanitizedProps[key];
+        }
+      }
+
+      return React.createElement(tag, { ref, ...sanitizedProps }, children);
+    });
+
+  return {
+    motion: {
+      div: createMotionWrapper('div'),
+      section: createMotionWrapper('section'),
+      h1: createMotionWrapper('h1'),
+      p: createMotionWrapper('p'),
+      img: createMotionWrapper('img'),
+      button: createMotionWrapper('button'),
+    },
+    AnimatePresence: ({ children }) => children,
+    useAnimationControls: () => ({
+      start: jest.fn(),
+      stop: jest.fn(),
+    }),
+  };
+});
 
 // Mock three.js and React Three Fiber
 jest.mock('@react-three/fiber', () => ({
