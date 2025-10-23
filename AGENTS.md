@@ -22,6 +22,16 @@
 - Hooks, providers, and contexts follow `PascalCase` filenames with default exports; variables and functions use `camelCase`.
 - Keep imports absolute via `@/` alias; group React/third-party/local imports in that order.
 
+## UI Contrast Patterns
+- Header navigation applies `mix-blend-difference` with a white source color so typography and glyphs automatically invert over imagery; keep the header background transparent to preserve that effect.
+- Header icons must use `fill-current` (not hardcoded fills) to inherit the navigation color and participate in the inversion.
+- Verify the contrast contract with `pnpm test -- components/Header/__tests__/Header.test.tsx`, which asserts the presence of the blending class.
+- Avoid adding opaque layers inside the header unless you isolate them in a nested wrapper; solid backgrounds break the inversion strategy.
+- Preserve the fixed header shimming structure (`motion.header` with `pointer-events-none` → inner `layout-wrapper pointer-events-auto mx-auto`) so the nav stays centered while blending stays functional.
+- Ensure the layout root retains `bg-white dark:bg-black` so light mode computes a true background for `mix-blend-difference`; removing it leaves the header text stuck in white.
+- Apply `text-black dark:text-white` to navigational elements so light mode stays pure black while dark mode retains the inverted blend; only the dark theme decorates with `dark:mix-blend-difference`.
+- `LayoutWrapper` pins the header in a `pointer-events-none` overlay outside the surface background; keep page backgrounds on `main` so blend modes can sample the underlying hero imagery.
+
 ## Testing Guidelines
 - Jest (jsdom) for units/integration; Playwright for end-to-end flows.
 - Mirror source tree for test placement (`*.test.tsx` next to the subject or in feature-level `__tests__/`).
