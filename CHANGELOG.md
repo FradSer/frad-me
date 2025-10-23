@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.16.0](https://github.com/FradSer/frad-me/compare/v0.15.1...v0.16.0) (2025-10-23)
+
+### Features
+
+- **header:** enhance header contrast with mix-blend-difference for better accessibility
+  - Implement advanced CSS blend modes for improved text contrast against backgrounds
+  - Add dynamic contrast adjustment based on content visibility
+  - Improve header readability in various viewing conditions
+
+### Refactoring
+
+- **header:** restructure header positioning and layout system
+  - Reorganize header component architecture for better maintainability
+  - Improve layout calculations for responsive behavior
+  - Optimize header positioning logic for WebXR and standard layouts
+
+### Testing
+
+- **test:** add header component test coverage for improved reliability
+  - Implement comprehensive unit tests for header functionality
+  - Add integration tests for header interactions
+  - Ensure proper test coverage for header contrast features
+
+### Documentation
+
+- **docs:** document UI contrast patterns and header guidelines
+  - Create comprehensive documentation for UI contrast implementation
+  - Add header design guidelines and usage patterns
+  - Document accessibility considerations for contrast design
+
+- **docs:** add critical implementation patterns documentation
+  - Document key architectural patterns used throughout the codebase
+  - Provide implementation guidelines for WebXR components
+  - Add performance optimization patterns and best practices
+
+- **docs:** add contributors guide for project onboarding
+  - Create comprehensive guide for new contributors
+  - Document development workflow and coding standards
+  - Add testing and quality assurance guidelines
+
+### Testing Infrastructure
+
+- **test:** add and update tests for header contrast and layout
+  - Extend test coverage for header contrast functionality
+  - Add layout validation tests for responsive behavior
+  - Improve test reliability with better mocking infrastructure
+
+- **test:** extend motion mocks for header and main elements
+  - Enhance motion animation testing with improved mocks
+  - Add comprehensive mocking for Framer Motion components
+  - Improve test coverage for animation sequences
+
+### Maintenance
+
+- **chore:** extend motion mocks for more elements
+  - Expand animation testing infrastructure
+  - Improve test reliability for motion-based components
+  - Add better mock coverage for complex animations
+
+- **chore:** bump version to 0.16.0 for release
+  - Update package.json version for release process
+  - Prepare release with comprehensive documentation updates
+  - Ensure all changes are properly documented and tested
+
 ## [0.15.1](https://github.com/FradSer/frad-me/compare/v0.15.0...v0.15.1) (2025-10-23)
 
 ### Features
