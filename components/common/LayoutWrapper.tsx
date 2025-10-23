@@ -63,14 +63,16 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center bg-white dark:bg-black">
+    <div className="relative flex w-full flex-col items-center justify-center bg-white dark:bg-black">
       <motion.header
         variants={headerVariants}
         initial="initial"
         animate="animate"
-        className="layout-wrapper fixed top-0 z-50"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8"
       >
-        <Header />
+        <div className="layout-wrapper pointer-events-auto mx-auto">
+          <Header />
+        </div>
       </motion.header>
 
       <motion.main
@@ -78,7 +80,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         initial="initial"
         animate="animate"
         exit="exit"
-        className="flex flex-col items-center justify-center"
+        className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
       >
         {children}
       </motion.main>

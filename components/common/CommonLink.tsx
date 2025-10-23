@@ -29,7 +29,7 @@ function CommonLink({
   const pathname = usePathname();
 
   const titleClass = clsx(
-    'hover:ecoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
+    'text-black dark:text-white dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
   );
 
   let link;

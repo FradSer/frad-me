@@ -38,16 +38,16 @@ export default function ThemeSwitcher() {
       <motion.button
         aria-label="Toggle Dark Mode"
         type="button"
-        className="flex h-8 w-8 items-center justify-center"
+        className="flex h-8 w-8 items-center justify-center text-black dark:text-white dark:mix-blend-difference"
         onClick={toggleTheme}
         initial="initial"
         whileHover="hover"
         variants={hoverVariants}
       >
         {isDark ? (
-          <SunIcon className="h-6 w-6 fill-black dark:fill-white" />
+          <SunIcon className="h-6 w-6 fill-current" />
         ) : (
-          <MoonIcon className="h-6 w-6 fill-black dark:fill-white" />
+          <MoonIcon className="h-6 w-6 fill-current" />
         )}
       </motion.button>
     </CursorProvider>
