@@ -57,6 +57,8 @@ jest.mock('motion/react', () => {
       div: createMotionWrapper('div'),
       section: createMotionWrapper('section'),
       h1: createMotionWrapper('h1'),
+      header: createMotionWrapper('header'),
+      main: createMotionWrapper('main'),
       span: createMotionWrapper('span'),
       nav: createMotionWrapper('nav'),
       ul: createMotionWrapper('ul'),
