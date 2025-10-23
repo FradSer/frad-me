@@ -13,7 +13,7 @@ export default function FLogo() {
         viewBox="0 0 1024 1024"
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-        className="h-12 w-12 fill-black hover:cursor-pointer dark:fill-white"
+        className="h-12 w-12 fill-black hover:cursor-pointer dark:fill-white dark:mix-blend-difference"
       >
         <motion.path
           animate={{

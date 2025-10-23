@@ -8,7 +8,7 @@ import headerLinks from '@/content/headerLinks';
 
 function Header() {
   return (
-    <nav className="flex h-24 flex-row items-center justify-between">
+    <nav className="flex h-24 flex-row items-center justify-between text-black dark:text-white dark:mix-blend-difference">
       <div className="flex items-center justify-center">
         <Link href="/" className="hover:cursor-none">
           <FLogo />
