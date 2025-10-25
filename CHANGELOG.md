@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.1](https://github.com/FradSer/frad-me/compare/v0.17.0...v0.17.1) (2025-10-26)
+
+### Maintenance
+
+- **hotfix:** version bump for hotfix release process
+  - Update package.json version to 0.17.1
+  - Prepare hotfix branch for potential bug fixes
+
 ## [0.16.0](https://github.com/FradSer/frad-me/compare/v0.15.1...v0.16.0) (2025-10-23)
 
 ### Features
