@@ -104,14 +104,14 @@ export default function DotRing() {
   // * Memoized styling classes
   const textClass = useMemo(
     () =>
-      'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-50',
+      'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-70',
     [],
   );
 
   const backgroundClass = useMemo(
     () =>
       clsx(
-        'fixed rounded-full bg-white pointer-events-none z-40 duration-100',
+        'fixed rounded-full bg-white pointer-events-none z-60 duration-100',
         {
           'mix-blend-difference': mouseContext.cursorType === 'default',
         },
