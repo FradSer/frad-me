@@ -9,12 +9,23 @@ import headerLinks from '@/content/headerLinks';
 function Header() {
   return (
     <>
-      {/* Frosted glass inverted color background layer - gradient from top to bottom: 100% -> 100% -> 60% -> 0% */}
+      {/* Light mode 毛玻璃背景层 - 使用mask-image实现自然边缘过渡 */}
       <div
-        className="fixed inset-x-0 top-0 h-24 bg-white/10 dark:bg-black/30 backdrop-blur-lg mix-blend-difference pointer-events-none z-50"
+        className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 dark:hidden"
         style={{
-          maskImage: 'linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.6) 70%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.6) 70%, transparent 100%)',
+          background: 'rgba(255,255,255,0.08)',
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+        }}
+      />
+
+      {/* Dark mode 毛玻璃背景层 */}
+      <div
+        className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 hidden dark:block"
+        style={{
+          background: 'rgba(0,0,0,0.08)',
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
         }}
       />
 
