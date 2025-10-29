@@ -1,11 +1,11 @@
-import type React from 'react';
-import { useEffect, useCallback } from 'react';
 import { useXR } from '@react-three/xr';
+import type React from 'react';
+import { useCallback, useEffect } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import type {
   VisionProEventHandlers,
-  XRInputSourcesChangeEvent,
   XRInputSourceEvent,
+  XRInputSourcesChangeEvent,
   XRSessionEvent,
   XRTargetRayMode,
 } from '@/types/webxr';
@@ -32,14 +32,8 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
         (source) => source.targetRayMode === TRANSIENT_POINTER,
       );
 
-      if (
-        transientInputs.length > 0 &&
-        process.env.NODE_ENV === 'development'
-      ) {
-        console.log(
-          'Vision Pro transient pointer detected:',
-          transientInputs.length,
-        );
+      if (transientInputs.length > 0 && process.env.NODE_ENV === 'development') {
+        console.log('Vision Pro transient pointer detected:', transientInputs.length);
       }
     },
     [isVisionPro],
@@ -117,10 +111,7 @@ const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
     session.addEventListener('sessionend', handleSessionEnd);
 
     return () => {
-      session.removeEventListener(
-        'inputsourceschange',
-        handleInputSourcesChange,
-      );
+      session.removeEventListener('inputsourceschange', handleInputSourcesChange);
       session.removeEventListener('selectstart', handleSelectStart);
       session.removeEventListener('selectend', handleSelectEnd);
       session.removeEventListener('sessionstart', handleSessionStart);

@@ -1,10 +1,9 @@
 'use client';
 
+import { clsx } from 'clsx';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-import { clsx } from 'clsx';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
@@ -32,7 +31,7 @@ function CommonLink({
     'text-black dark:text-white dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
   );
 
-  let link;
+  let link: React.ReactNode;
   if (destinationType === DestinationType.link) {
     link = (
       <Link href={href} className={titleClass}>
@@ -41,10 +40,14 @@ function CommonLink({
     );
   } else if (destinationType === DestinationType.section) {
     if (pathname === '/') {
-      link = <ScrollLink destination={href}><span className={titleClass}>{title}</span></ScrollLink>;
+      link = (
+        <ScrollLink destination={href}>
+          <span className={titleClass}>{title}</span>
+        </ScrollLink>
+      );
     } else {
       link = (
-        <Link href={'/#' + href} className={titleClass}>
+        <Link href={`/#${href}`} className={titleClass}>
           {title}
         </Link>
       );
@@ -52,11 +55,7 @@ function CommonLink({
   }
 
   // * Render
-  return (
-    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
-      {link}
-    </CursorProvider>
-  );
+  return <CursorProvider targetCursorType={CursorType.headerLinkHovered}>{link}</CursorProvider>;
 }
 
 export { CommonLink, DestinationType };

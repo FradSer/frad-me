@@ -1,13 +1,13 @@
+import { useFrame } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
 import type React from 'react';
 import { useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { measureChunkLoad } from '@/utils/performance';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
+import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
+import { measureChunkLoad } from '@/utils/performance';
 import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
 
 const Text = dynamic(
   () =>
@@ -54,10 +54,8 @@ const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
       meshRef.current.scale.setScalar(scaleSpring.value);
 
       // Add spring-based secondary rotation on different axes
-      if (rotationAxis !== 'y')
-        meshRef.current.rotation.y += rotationSpring.value * delta;
-      if (rotationAxis !== 'x')
-        meshRef.current.rotation.x += rotationSpring.value * delta * 0.5;
+      if (rotationAxis !== 'y') meshRef.current.rotation.y += rotationSpring.value * delta;
+      if (rotationAxis !== 'x') meshRef.current.rotation.x += rotationSpring.value * delta * 0.5;
     }
   });
 
@@ -94,9 +92,6 @@ const Line = ({ position, color, text }: LineProps) => (
     position={position}
     rotation={[0, 0, 0]}
     font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-    onClick={() => {
-      /* Handle click event */
-    }}
   >
     {text}
   </Text>
@@ -112,10 +107,7 @@ const InteractiveShape = ({
   rotationAxis: RotationAxis;
   rotationSpeed?: number;
 }) => {
-  const { meshRef, hovered, handlers } = useInteractiveMesh(
-    rotationAxis,
-    rotationSpeed,
-  );
+  const { meshRef, hovered, handlers } = useInteractiveMesh(rotationAxis, rotationSpeed);
 
   return (
     <mesh {...props} ref={meshRef} {...handlers}>
@@ -201,28 +193,46 @@ const renderElement = (element: (typeof heroContent)[0], index: number) => {
   const key = `${element.type}-${index}`;
 
   switch (element.type) {
-    case 'line':
+    case 'line': {
+      const lineElement = element as {
+        type: 'line';
+        position: [number, number, number];
+        color: string;
+        text: string;
+      };
       return (
         <Line
           key={key}
-          position={element.position}
-          color={element.color!}
-          text={element.text!}
+          position={lineElement.position}
+          color={lineElement.color}
+          text={lineElement.text}
         />
       );
-    case 'box':
-      return <Box key={key} position={element.position} />;
-    case 'triangle':
+    }
+    case 'box': {
+      const boxElement = element as { type: 'box'; position: [number, number, number] };
+      return <Box key={key} position={boxElement.position} />;
+    }
+    case 'triangle': {
+      const triangleElement = element as {
+        type: 'triangle';
+        position: [number, number, number];
+        rotation?: [number, number, number];
+        scale?: number;
+      };
       return (
         <Triangle
           key={key}
-          position={element.position}
-          rotation={element.rotation}
-          scale={element.scale}
+          position={triangleElement.position}
+          rotation={triangleElement.rotation}
+          scale={triangleElement.scale}
         />
       );
-    case 'sphere':
-      return <Sphere key={key} position={element.position} />;
+    }
+    case 'sphere': {
+      const sphereElement = element as { type: 'sphere'; position: [number, number, number] };
+      return <Sphere key={key} position={sphereElement.position} />;
+    }
     default:
       return null;
   }
@@ -250,15 +260,13 @@ function HeroText() {
   const currentViewRef = useRef(currentView);
 
   // Use frame for consistent spring target setting and animation updates
-  useFrame((_, delta) => {
+  useFrame((_, _delta) => {
     if (!groupRef.current) return;
 
     // Update spring targets when view changes (in frame for consistent timing)
     if (currentViewRef.current !== currentView) {
       const targetState =
-        currentView === 'work'
-          ? heroAnimationStates.hidden
-          : heroAnimationStates.home;
+        currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home;
 
       positionX.set(targetState.position.x);
       positionY.set(targetState.position.y);
@@ -274,11 +282,7 @@ function HeroText() {
     // Lerp values are automatically updated via useFrame in useSimpleLerp hook
 
     // Apply transforms
-    groupRef.current.position.set(
-      positionX.value,
-      positionY.value,
-      positionZ.value,
-    );
+    groupRef.current.position.set(positionX.value, positionY.value, positionZ.value);
     groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value);
 
     const currentOpacity = opacity.value;

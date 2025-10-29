@@ -1,8 +1,7 @@
 import Link from 'next/link';
-
+import { CommonLink } from '@/components/common/CommonLink';
 import FLogo from '@/components/Header/FLogo';
 import ThemeSwitcher from '@/components/Header/ThemeSwitcher';
-import { CommonLink } from '@/components/common/CommonLink';
 
 import headerLinks from '@/content/headerLinks';
 
@@ -14,8 +13,10 @@ function Header() {
         className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 dark:hidden"
         style={{
           background: 'rgba(255,255,255,0.08)',
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          maskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
         }}
       />
 
@@ -24,8 +25,10 @@ function Header() {
         className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 hidden dark:block"
         style={{
           background: 'rgba(0,0,0,0.08)',
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          maskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
         }}
       />
 

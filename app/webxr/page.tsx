@@ -1,26 +1,18 @@
 'use client';
 
-import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
 import { measureChunkLoad } from '@/utils/performance';
 
 // Dynamic imports for bundle optimization
 const WebXRCanvas = dynamic(
-  () =>
-    measureChunkLoad(
-      'WebXRCanvas',
-      () => import('@/components/WebXR/WebXRCanvas'),
-    ),
+  () => measureChunkLoad('WebXRCanvas', () => import('@/components/WebXR/WebXRCanvas')),
   { ssr: false },
 );
 const ImmersiveButton = dynamic(
-  () =>
-    measureChunkLoad(
-      'ImmersiveButton',
-      () => import('@/components/WebXR/ImmersiveButton'),
-    ),
+  () => measureChunkLoad('ImmersiveButton', () => import('@/components/WebXR/ImmersiveButton')),
   { ssr: false },
 );
 const VisionProInputHandler = dynamic(
@@ -32,8 +24,7 @@ const VisionProInputHandler = dynamic(
   { ssr: false },
 );
 const HeroText = dynamic(
-  () =>
-    measureChunkLoad('HeroText', () => import('@/components/WebXR/HeroText')),
+  () => measureChunkLoad('HeroText', () => import('@/components/WebXR/HeroText')),
   { ssr: false },
 );
 const Stars = dynamic(
@@ -44,35 +35,20 @@ const Stars = dynamic(
   { ssr: false },
 );
 const Navigation3D = dynamic(
-  () =>
-    measureChunkLoad(
-      'Navigation3D',
-      () => import('@/components/WebXR/Navigation3D'),
-    ),
+  () => measureChunkLoad('Navigation3D', () => import('@/components/WebXR/Navigation3D')),
   { ssr: false },
 );
 const FooterLinks3D = dynamic(
-  () =>
-    measureChunkLoad(
-      'FooterLinks3D',
-      () => import('@/components/WebXR/FooterLinks3D'),
-    ),
+  () => measureChunkLoad('FooterLinks3D', () => import('@/components/WebXR/FooterLinks3D')),
   { ssr: false },
 );
 const WorkGrid3D = dynamic(
-  () =>
-    measureChunkLoad(
-      'WorkGrid3D',
-      () => import('@/components/WebXR/WorkGrid3D'),
-    ),
+  () => measureChunkLoad('WorkGrid3D', () => import('@/components/WebXR/WorkGrid3D')),
   { ssr: false },
 );
 const CameraController3D = dynamic(
   () =>
-    measureChunkLoad(
-      'CameraController3D',
-      () => import('@/components/WebXR/CameraController3D'),
-    ),
+    measureChunkLoad('CameraController3D', () => import('@/components/WebXR/CameraController3D')),
   { ssr: false },
 );
 

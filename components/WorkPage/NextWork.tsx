@@ -1,6 +1,5 @@
-import Link from 'next/link';
-
 import { clsx } from 'clsx';
+import Link from 'next/link';
 
 function NextWork(props: Readonly<{ href?: string }>) {
   const linkClass = clsx(
@@ -15,11 +14,7 @@ function NextWork(props: Readonly<{ href?: string }>) {
     );
   } else {
     return (
-      <Link
-        href="/work/[slug]"
-        as={`/work/${props.href}`}
-        className={linkClass}
-      >
+      <Link href="/work/[slug]" as={`/work/${props.href}`} className={linkClass}>
         next work
       </Link>
     );

@@ -1,33 +1,25 @@
-import type React from 'react';
-import { useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { useFrame } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
+import type React from 'react';
+import { useEffect, useRef } from 'react';
 import type * as THREE from 'three';
+import workLinks from '@/content/workLinks';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
-import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
+import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
 import { measureChunkLoad } from '@/utils/performance';
+import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { ENTRANCE_POSITIONS, WORK_GRID_POSITIONS } from '@/utils/webxr/animationConstants';
+import { applyOpacityToObject, forceInitializeTransparency } from '@/utils/webxr/materialUtils';
 import {
-  WEBXR_ANIMATION_CONFIG,
-} from '@/utils/webxr/animationConfig';
-import {
-  ENTRANCE_POSITIONS,
-  WORK_GRID_POSITIONS,
-} from '@/utils/webxr/animationConstants';
-import {
+  WORK_GRID_ACTIVE_STATE,
   WORK_GRID_CONFIG,
   WORK_GRID_INITIAL_STATE,
-  WORK_GRID_ACTIVE_STATE,
   WORK_GRID_LIGHTING,
 } from '@/utils/webxr/workGridConstants';
-import {
-  applyOpacityToObject,
-  forceInitializeTransparency,
-} from '@/utils/webxr/materialUtils';
+import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
 import WorkCard3D from '../WorkCard3D';
-import workLinks from '@/content/workLinks';
 
-const Html = dynamic(
+const _Html = dynamic(
   () =>
     measureChunkLoad('Html', () =>
       import('@react-three/drei').then((mod) => ({ default: mod.Html })),
@@ -35,14 +27,13 @@ const Html = dynamic(
   { ssr: false },
 );
 
-const Text = dynamic(
+const _Text = dynamic(
   () =>
     measureChunkLoad('Text', () =>
       import('@react-three/drei').then((mod) => ({ default: mod.Text })),
     ),
   { ssr: false },
 );
-
 
 interface WorkGrid3DProps {
   visible?: boolean;
@@ -63,7 +54,7 @@ const useWorkGridAnimation = () => {
   return { opacitySpring, scaleSpring, positionYSpring };
 };
 
-const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
+const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible: _visible = true }) => {
   const { currentView } = useWebXRView();
   const groupRef = useRef<THREE.Group>(null);
   const { opacitySpring, scaleSpring, positionYSpring } = useWorkGridAnimation();
@@ -115,8 +106,7 @@ const WorkGrid3D: React.FC<WorkGrid3DProps> = ({ visible = true }) => {
     // Handle visibility using configuration constant
     const currentOpacity = opacitySpring.value;
     const shouldBeVisible =
-      currentOpacity > WORK_GRID_CONFIG.VISIBILITY_THRESHOLD &&
-      currentView === 'work';
+      currentOpacity > WORK_GRID_CONFIG.VISIBILITY_THRESHOLD && currentView === 'work';
     groupRef.current.visible = shouldBeVisible;
 
     // Apply opacity when visible

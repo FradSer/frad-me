@@ -1,16 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { useFrame } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
+import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
 import { measureChunkLoad } from '@/utils/performance';
-import {
-  WEBXR_ANIMATION_CONFIG,
-} from '@/utils/webxr/animationConfig';
-import {
-  NAVIGATION_POSITIONS,
-} from '@/utils/webxr/animationConstants';
+import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants';
 
 const Text = dynamic(
   () =>
@@ -41,8 +37,10 @@ const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
     if (!hasBeenInteracted) {
       const breathingAnimation = setInterval(() => {
         scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
-        setTimeout(() => scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default), 
-          WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration);
+        setTimeout(
+          () => scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default),
+          WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration,
+        );
       }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
 
       return () => clearInterval(breathingAnimation);

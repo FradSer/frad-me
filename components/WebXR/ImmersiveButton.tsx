@@ -1,17 +1,13 @@
 import type React from 'react';
-import { useState, useCallback } from 'react';
-import { useXR } from '@react-three/xr';
-import { xrStore } from './WebXRCanvas';
+import { useCallback, useState } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { IMMERSIVE_BUTTON_POSITIONS } from '@/utils/webxr/animationConstants';
+import { xrStore } from './WebXRCanvas';
 
 interface ImmersiveButtonProps {
   className?: string;
 }
 
-const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({
-  className = '',
-}) => {
+const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({ className = '' }) => {
   const { webXRSupported, isVisionPro } = useWebXRView();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,24 +33,12 @@ const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({
     }
   }, [webXRSupported]);
 
-  const exitImmersiveMode = useCallback(async () => {
-    try {
-      await xrStore.exitXR();
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to exit immersive mode:', err);
-      }
-    }
-  }, []);
-
   if (!webXRSupported) {
     return (
       <div
         className={`px-4 py-2 bg-gray-700 text-gray-400 rounded-lg cursor-not-allowed ${className}`}
       >
-        {isVisionPro
-          ? 'Enable WebXR in Safari Settings'
-          : 'WebXR Not Supported'}
+        {isVisionPro ? 'Enable WebXR in Safari Settings' : 'WebXR Not Supported'}
       </div>
     );
   }
@@ -62,6 +46,7 @@ const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={enterImmersiveMode}
         disabled={isLoading}
         className={`
@@ -95,38 +80,6 @@ const ImmersiveButton: React.FC<ImmersiveButtonProps> = ({
         </div>
       )}
     </div>
-  );
-};
-
-// Component for use inside XR context (when already in immersive mode)
-export const ExitImmersiveButton: React.FC = () => {
-  const [isExiting, setIsExiting] = useState(false);
-
-  const handleExit = useCallback(async () => {
-    setIsExiting(true);
-    try {
-      await xrStore.exitXR();
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to exit immersive mode:', err);
-      }
-    } finally {
-      setIsExiting(false);
-    }
-  }, []);
-
-  return (
-    <mesh position={IMMERSIVE_BUTTON_POSITIONS.button} onClick={handleExit}>
-      <planeGeometry args={[2, 0.5]} />
-      <meshBasicMaterial
-        color={isExiting ? '#666' : '#ff4444'}
-        transparent
-        opacity={0.8}
-      />
-      <group position={IMMERSIVE_BUTTON_POSITIONS.textGroup}>
-        <meshBasicMaterial attach="material" color="white" />
-      </group>
-    </mesh>
   );
 };
 

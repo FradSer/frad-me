@@ -1,27 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  AVAILABLE_THEMES,
-  DEFAULT_THEME,
-  THEME_STORAGE_KEY,
-} from './constants';
+import { AVAILABLE_THEMES, DEFAULT_THEME, THEME_STORAGE_KEY } from './constants';
 import { ThemeModeContext } from './ThemeModeContext';
-import type {
-  ThemeModeContextValue,
-  ThemePreference,
-  ResolvedTheme,
-} from './types';
+import type { ResolvedTheme, ThemeModeContextValue, ThemePreference } from './types';
 
 type ThemeModeProviderProps = {
   children: React.ReactNode;
 };
 
-export default function ThemeModeProvider({
-  children,
-}: Readonly<ThemeModeProviderProps>) {
+export default function ThemeModeProvider({ children }: Readonly<ThemeModeProviderProps>) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -71,19 +61,8 @@ const ThemeContextBridge = ({ children }: ThemeModeProviderProps) => {
       toggleTheme,
       isMounted,
     }),
-    [
-      availableThemes,
-      handleSetTheme,
-      isMounted,
-      safeResolvedTheme,
-      safeTheme,
-      toggleTheme,
-    ],
+    [availableThemes, handleSetTheme, isMounted, safeResolvedTheme, safeTheme, toggleTheme],
   );
 
-  return (
-    <ThemeModeContext.Provider value={contextValue}>
-      {children}
-    </ThemeModeContext.Provider>
-  );
+  return <ThemeModeContext.Provider value={contextValue}>{children}</ThemeModeContext.Provider>;
 };

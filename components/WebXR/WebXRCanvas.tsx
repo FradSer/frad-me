@@ -1,7 +1,7 @@
-import type React from 'react';
-import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { XR, createXRStore } from '@react-three/xr';
+import { createXRStore, XR } from '@react-three/xr';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import type { XRStoreState } from '@/types/webxr';
 

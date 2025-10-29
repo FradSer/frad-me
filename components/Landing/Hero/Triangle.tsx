@@ -1,6 +1,5 @@
+import { motion, useMotionValue, useScroll, useTransform } from 'motion/react';
 import { useEffect, useMemo } from 'react';
-
-import { motion, useMotionValue, useTransform, useScroll } from 'motion/react';
 
 export default function Triangle() {
   const { scrollYProgress } = useScroll();
@@ -38,7 +37,9 @@ export default function Triangle() {
       <svg
         className="h-20 w-20 fill-black dark:fill-white sm:h-24 sm:w-24 lg:h-28 lg:w-28 2xl:h-32 2xl:w-32"
         viewBox="0 0 24 24"
+        aria-label="Triangle decoration"
       >
+        <title>Triangle decoration</title>
         <path d="M12 2 22 20 2 20z" />
       </svg>
     </motion.div>

@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
 import { motion } from 'motion/react';
+import { useState } from 'react';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 import { DownArrowIcon } from '@/components/common/Icons';
@@ -31,7 +30,7 @@ interface IDotCircleProps {
   isInteractive?: boolean;
 }
 
-function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
+function DotCircle(_props: Readonly<IDotCircleProps>) {
   const [hovered, setHovered] = useState<boolean>(false);
 
   const arrowAnimateProps = hovered
@@ -85,12 +84,17 @@ function DotCircle({ isInteractive = true }: Readonly<IDotCircleProps>) {
           initial={{ height: CIRCLE_SIZE.initial, width: CIRCLE_SIZE.initial }}
           animate={{
             height: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded],
-            width: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded]
+            width: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded],
           }}
           transition={{ ...primaryTransition, delay: ANIMATION_CONFIG.circleDelay }}
           className="absolute z-0 h-full w-full"
         >
-          <svg viewBox="0 0 96 96" className="fill-black dark:fill-white">
+          <svg
+            viewBox="0 0 96 96"
+            className="fill-black dark:fill-white"
+            aria-label="Loading indicator"
+          >
+            <title>Loading indicator</title>
             <circle cx="48" cy="48" r="48" />
           </svg>
         </motion.div>

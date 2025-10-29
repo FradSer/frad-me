@@ -1,6 +1,6 @@
-import type React from 'react';
-import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import type React from 'react';
+import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { CAMERA_POSITIONS } from '@/utils/webxr/animationConstants';

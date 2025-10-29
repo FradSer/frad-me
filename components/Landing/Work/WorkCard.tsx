@@ -1,21 +1,19 @@
 'use client';
 
+import { clsx } from 'clsx';
+import { motion, type useAnimationControls } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef } from 'react';
-
-import { clsx } from 'clsx';
-import { motion } from 'motion/react';
-
 import useMouseContext from '@/hooks/useMouseContext';
-
 import {
+  type AnimationVariants,
   createVariants,
   useAnimationGroup,
 } from '@/utils/motion/animationHelpers';
-import { useAnimationControls } from 'motion/react';
 
 type AnimationControls = ReturnType<typeof useAnimationControls>;
+
 import { getWorkColor } from '@/utils/theme/workColors';
 
 interface IWorkCardProps {
@@ -40,89 +38,70 @@ interface IWorkCardContentProps {
   onHoverEnd: () => void;
   onClick: () => void;
   controls: Record<string, AnimationControls>;
-  variants: Record<string, any>;
+  variants: AnimationVariants;
 }
 
-const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>(
-  (props, ref) => {
-    const backgroundImageClass = clsx(
-      'absolute w-full h-full',
-      getWorkColor(props.slug),
-    );
+const WorkCardContent = forwardRef<HTMLDivElement, IWorkCardContentProps>((props, ref) => {
+  const backgroundImageClass = clsx('absolute w-full h-full', getWorkColor(props.slug));
 
-    const textLayoutClass = clsx('absolute w-4/6 space-y-4', {
-      'text-center': props.isCenter,
-      'text-left': !props.isCenter,
-    });
+  const textLayoutClass = clsx('absolute w-4/6 space-y-4', {
+    'text-center': props.isCenter,
+    'text-left': !props.isCenter,
+  });
 
-    const textTitleClass = clsx('font-bold text-white', {
-      'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
-      'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
-    });
+  const textTitleClass = clsx('font-bold text-white', {
+    'text-3xl xl:text-5xl 2xl:text-7xl': props.isCenter,
+    'text-2xl xl:text-4xl 2xl:text-6xl': !props.isCenter,
+  });
 
-    return (
+  return (
+    <motion.div
+      ref={ref}
+      onHoverStart={props.onHoverStart}
+      onHoverEnd={props.onHoverEnd}
+      onClick={props.onClick}
+      className="relative flex w-full h-full items-center justify-center overflow-hidden"
+    >
       <motion.div
-        ref={ref}
-        onHoverStart={props.onHoverStart}
-        onHoverEnd={props.onHoverEnd}
-        onClick={props.onClick}
-        className="relative flex w-full h-full items-center justify-center overflow-hidden"
+        animate={props.controls.backgroundImage}
+        initial="initial"
+        variants={props.variants.backgroundImage}
+        className={backgroundImageClass}
       >
-        <motion.div
-          animate={props.controls.backgroundImage}
-          initial="initial"
-          variants={props.variants.backgroundImage}
-          className={backgroundImageClass}
-        >
-          <Image
-            src={props.cover}
-            alt={'Cover for ' + props.title}
-            fill
-            className="object-cover"
-          />
-        </motion.div>
-        <motion.div
-          animate={props.controls.backgroundMask}
-          initial="initial"
-          variants={props.variants.backgroundMask}
-          className="absolute h-full w-full bg-black"
-        />
-        <motion.div
-          animate={props.controls.text}
-          initial="initial"
-          variants={props.variants.text}
-          className={textLayoutClass}
-        >
-          <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">
-            {props.subTitle}
-          </div>
-          <div className={textTitleClass}>{props.title}</div>
-        </motion.div>
+        <Image src={props.cover} alt={`Cover for ${props.title}`} fill className="object-cover" />
       </motion.div>
-    );
-  },
-);
+      <motion.div
+        animate={props.controls.backgroundMask}
+        initial="initial"
+        variants={props.variants.backgroundMask}
+        className="absolute h-full w-full bg-black"
+      />
+      <motion.div
+        animate={props.controls.text}
+        initial="initial"
+        variants={props.variants.text}
+        className={textLayoutClass}
+      >
+        <div className="text-sm text-gray-300 xl:text-lg 2xl:text-2xl">{props.subTitle}</div>
+        <div className={textTitleClass}>{props.title}</div>
+      </motion.div>
+    </motion.div>
+  );
+});
 
 WorkCardContent.displayName = 'WorkCardContent';
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
-  const linkClass = clsx(
-    'relative flex w-full items-center justify-center overflow-hidden',
-    {
-      'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,
-      'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
-      'hover:cursor-not-allowed': props.isWIP,
-      'hover:cursor-pointer': !props.isWIP,
-    },
-  );
+  const linkClass = clsx('relative flex w-full items-center justify-center overflow-hidden', {
+    'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,
+    'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
+    'hover:cursor-not-allowed': props.isWIP,
+    'hover:cursor-pointer': !props.isWIP,
+  });
 
   // * Animation
-  const { controls, startGroup } = useAnimationGroup([
-    'backgroundImage',
-    'backgroundMask',
-    'text',
-  ]);
+  const { controls, startGroup } = useAnimationGroup(['backgroundImage', 'backgroundMask', 'text']);
 
   const variants = createVariants({
     backgroundMask: {
@@ -144,9 +123,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   // * Animation handlers
   const handleHoverStart = () => {
-    const cursorType = props.isWIP
-      ? 'work-card-hovered-wip'
-      : 'work-card-hovered';
+    const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered';
     mouseContext.cursorChangeHandler(cursorType);
 
     startGroup({
@@ -194,12 +171,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     return <div className={linkClass}>{workCardContent}</div>;
   } else if (props.externalLink) {
     return (
-      <a
-        href={props.externalLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={linkClass}
-      >
+      <a href={props.externalLink} target="_blank" rel="noopener noreferrer" className={linkClass}>
         {workCardContent}
       </a>
     );

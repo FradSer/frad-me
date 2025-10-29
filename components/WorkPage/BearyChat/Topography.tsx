@@ -1,7 +1,6 @@
-import Image from 'next/image';
-
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 
 import { ANIMATION_CONSTANTS } from '@/utils/constants';
 
@@ -40,8 +39,7 @@ function TopographyImage({
       }}
       transition={{
         duration: duration,
-        delay:
-          ANIMATION_CONSTANTS.inViewDuration + ANIMATION_CONSTANTS.inViewDelay,
+        delay: ANIMATION_CONSTANTS.inViewDuration + ANIMATION_CONSTANTS.inViewDelay,
       }}
       viewport={{ once: true }}
       className={topographyClass}
@@ -68,11 +66,7 @@ function Topography() {
         className="aspect-[1135/680] w-full"
         viewport={{ once: true }}
       >
-        <TopographyImage
-          isTop={true}
-          src="/works/bearychat/figure-5.png"
-          alt="bearychat-logo"
-        />
+        <TopographyImage isTop={true} src="/works/bearychat/figure-5.png" alt="bearychat-logo" />
         <TopographyImage
           src="/works/bearychat/figure-5-1.png"
           alt="bearychat-logo"
@@ -92,9 +86,7 @@ function Topography() {
           translateY="4%"
         />
       </motion.div>
-      <span className="work-caption">
-        BearChat is based with three-column layout topography.
-      </span>
+      <span className="work-caption">BearChat is based with three-column layout topography.</span>
     </div>
   );
 }

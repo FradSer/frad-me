@@ -1,13 +1,13 @@
 'use client';
 
-import { motion, useTransform, useScroll } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
 
 export default function WorkTitle() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"]
+    offset: ['start end', 'end start'],
   });
 
   const offsetY = useTransform(scrollYProgress, [0, 0.5], [-100, 0]);

@@ -92,13 +92,7 @@ export default defineConfig({
             use: {
               ...devices['Desktop Chrome'],
               // WebXR-optimized settings
-              permissions: [
-                'camera',
-                'microphone',
-                'accelerometer',
-                'gyroscope',
-                'magnetometer',
-              ],
+              permissions: ['camera', 'microphone', 'accelerometer', 'gyroscope', 'magnetometer'],
               ignoreHTTPSErrors: true,
               launchOptions: {
                 args: [

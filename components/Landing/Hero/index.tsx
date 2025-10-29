@@ -1,14 +1,12 @@
 'use client';
 
 import { clsx } from 'clsx';
-
+import { PlayIcon, StopIcon } from '@/components/common/Icons';
+import ScrollLink from '@/components/common/ScrollLink';
 import DotCircle from '@/components/Landing/Hero/DotCircle';
 import Rectangle from '@/components/Landing/Hero/Rectangle';
 import Triangle from '@/components/Landing/Hero/Triangle';
-import ScrollLink from '@/components/common/ScrollLink';
-
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
-import { PlayIcon, StopIcon } from '@/components/common/Icons';
 
 interface IHeroProps {
   isWebXR?: boolean;
@@ -36,23 +34,15 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
 
   return (
     <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
-      <h1
-        className={clsx(
-          'relative flex flex-col items-start justify-center',
-          heroH1,
-        )}
-      >
+      <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
         {isSupported && (
           <button
+            type="button"
             onClick={isSpeaking ? stop : () => speak(heroText, 'Fred')}
             className="absolute -left-10 top-1 z-10 rounded bg-gray-200 p-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             aria-label={isSpeaking ? 'Stop speaking' : 'Speak text'}
           >
-            {isSpeaking ? (
-              <StopIcon className="h-4 w-4" />
-            ) : (
-              <PlayIcon className="h-4 w-4" />
-            )}
+            {isSpeaking ? <StopIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
           </button>
         )}
         <div className="relative">

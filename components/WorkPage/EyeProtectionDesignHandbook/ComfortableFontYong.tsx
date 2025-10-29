@@ -3,7 +3,13 @@ import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
 function ComfortableFontYong() {
   return (
     <MDXComponentProvider className="work-component-layout col-span-16 md:col-span-5">
-      <svg width="100%" height="auto" viewBox="0 0 1500 822">
+      <svg
+        width="100%"
+        height="auto"
+        viewBox="0 0 1500 822"
+        aria-label="Comfortable Font Yong Formula"
+      >
+        <title>Comfortable Font Yong Formula</title>
         <path
           opacity="0.5"
           d="M781.8 84.2L758.6 130.6C833.8 152.2 905.8 182.6 975.4 221.8L996.2 169.8C928.2 132.2 857 103.4 781.8 84.2ZM1154.6 249C1100.2 324.2 1035.4 383.4 961.8 425C941 388.2 922.6 349 907.4 308.2V245H609.8V300.2H849V735.4C849 757 837 768.2 813 768.2L709.8 765.8L725 821.8H829.8C881 821.8 907.4 798.6 907.4 753.8V419.4C971.4 552.2 1065 664.2 1188.2 755.4L1229 708.2C1129.8 643.4 1049 563.4 988.2 468.2C1068.2 426.6 1137.8 365.8 1198.6 285.8L1154.6 249ZM513.8 401V455.4H731.4C687.4 565.8 608.2 651.4 494.6 711.4L529 757C658.6 686.6 745.8 582.6 789.8 445.8V401H513.8Z"

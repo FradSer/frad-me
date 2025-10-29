@@ -59,9 +59,7 @@ function ResumeSection({ title, children, className }: ResumeSectionProps) {
     >
       <div className={gridClass}>
         <div className="col-span-16 md:col-span-4 mb-8 md:mb-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white">
-            {title}
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white">{title}</h2>
         </div>
         <div className="col-span-16 md:col-span-12">{children}</div>
       </div>
@@ -92,28 +90,24 @@ function ExperienceItem({
   // Format period display
   const startMonth = new Date(startDate).toLocaleDateString('en-US', {
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
   });
-  const endMonth = isOngoing ? 'Present' : new Date(endDate).toLocaleDateString('en-US', {
-    month: 'short',
-    year: 'numeric'
-  });
+  const endMonth = isOngoing
+    ? 'Present'
+    : new Date(endDate).toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric',
+      });
   const period = `${startMonth} - ${endMonth} · ${duration}`;
 
   return (
     <div className="mb-8">
       <div className="mb-2">
-        <h3 className="text-xl font-semibold text-black dark:text-white">
-          {title}
-        </h3>
+        <h3 className="text-xl font-semibold text-black dark:text-white">{title}</h3>
         <p className="text-lg text-gray-600 dark:text-gray-300">{company}</p>
         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">{period}</p>
-          {location && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {location}
-            </p>
-          )}
+          {location && <p className="text-sm text-gray-500 dark:text-gray-400">{location}</p>}
         </div>
       </div>
       <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
@@ -133,9 +127,7 @@ interface SkillCategoryProps {
 function SkillCategory({ category, skills }: SkillCategoryProps) {
   return (
     <div className="mb-6">
-      <h4 className="text-lg font-semibold text-black dark:text-white mb-2">
-        {category}
-      </h4>
+      <h4 className="text-lg font-semibold text-black dark:text-white mb-2">{category}</h4>
       <div className="flex flex-wrap gap-2">
         {skills.map((skill) => (
           <span
@@ -178,23 +170,119 @@ export default function ResumePageClient() {
             {/* Bio with better typography */}
             <div className="max-w-4xl">
               <p className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light mb-4">
-                A "T-shaped" product expert with 10+ years bridging AI system architecture and interaction design. I transform complex technical challenges into intuitive user experiences, combining strategic vision with hands-on execution across the entire product lifecycle.
+                A "T-shaped" product expert with 10+ years bridging AI system architecture and
+                interaction design. I transform complex technical challenges into intuitive user
+                experiences, combining strategic vision with hands-on execution across the entire
+                product lifecycle.
               </p>
 
               <p className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light mb-4">
-                Currently pioneering <a href="https://github.com/FradSer/mcp-server-mas-sequential-thinking" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Multi-Agent Systems</a> and <a href="https://github.com/FradSer?tab=repositories&q=mcp-server&type=&language=&sort=" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">MCP server development</a>, driving AI implementation in production environments. My research in spatial computing and XR interfaces focuses on creating <a href="https://github.com/FradSer/FluidInterfacesSwiftUI" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">natural interactive</a> experiences that feel effortless and intuitive.
+                Currently pioneering{' '}
+                <a
+                  href="https://github.com/FradSer/mcp-server-mas-sequential-thinking"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Multi-Agent Systems
+                </a>{' '}
+                and{' '}
+                <a
+                  href="https://github.com/FradSer?tab=repositories&q=mcp-server&type=&language=&sort="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  MCP server development
+                </a>
+                , driving AI implementation in production environments. My research in spatial
+                computing and XR interfaces focuses on creating{' '}
+                <a
+                  href="https://github.com/FradSer/FluidInterfacesSwiftUI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  natural interactive
+                </a>{' '}
+                experiences that feel effortless and intuitive.
               </p>
 
               <p className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light mb-4">
-                Full-stack creator building across platforms: from <a href="https://apps.apple.com/us/app/pachino/id1578918163" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">iOS/macOS apps</a> and React web applications to <a href="https://www.figma.com/@fradser" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Figma plugins</a> and immersive <a href="https://snnb-hackathon.vercel.app" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">3D Web</a> experiences. My AI applications range from cultural tools like <a href="https://yi.isstudio.cc" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">I Ching divination</a> to practical solutions like <a href="https://id.isstudio.cc" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">furniture preview</a> systems.
+                Full-stack creator building across platforms: from{' '}
+                <a
+                  href="https://apps.apple.com/us/app/pachino/id1578918163"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  iOS/macOS apps
+                </a>{' '}
+                and React web applications to{' '}
+                <a
+                  href="https://www.figma.com/@fradser"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Figma plugins
+                </a>{' '}
+                and immersive{' '}
+                <a
+                  href="https://snnb-hackathon.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  3D Web
+                </a>{' '}
+                experiences. My AI applications range from cultural tools like{' '}
+                <a
+                  href="https://yi.isstudio.cc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  I Ching divination
+                </a>{' '}
+                to practical solutions like{' '}
+                <a
+                  href="https://id.isstudio.cc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  furniture preview
+                </a>{' '}
+                systems.
               </p>
 
               <p className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light mb-4">
-                Deep expertise in AI <a href="https://huggingface.co/FradSer" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">model training and dataset construction</a>, advancing both research and practical applications while maintaining active contributions to the open source community on <a href="https://github.com/FradSer" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">GitHub</a>.
+                Deep expertise in AI{' '}
+                <a
+                  href="https://huggingface.co/FradSer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  model training and dataset construction
+                </a>
+                , advancing both research and practical applications while maintaining active
+                contributions to the open source community on{' '}
+                <a
+                  href="https://github.com/FradSer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  GitHub
+                </a>
+                .
               </p>
 
               <p className="text-lg md:text-xl leading-relaxed text-gray-700 dark:text-gray-300 font-light">
-                Recognized innovator with 8 published interaction design patents, consistently pushing the boundaries of what's possible in digital product experiences.
+                Recognized innovator with 8 published interaction design patents, consistently
+                pushing the boundaries of what's possible in digital product experiences.
               </p>
             </div>
           </div>
@@ -202,28 +290,63 @@ export default function ResumePageClient() {
       </section>
 
       {/* Contact Information */}
-      <ResumeSection
-        title="Contact"
-        className="border-t border-gray-200 dark:border-gray-700 pt-8"
-      >
+      <ResumeSection title="Contact" className="border-t border-gray-200 dark:border-gray-700 pt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>Email:</strong> <a href="mailto:fradser@gmail.com" className="text-blue-600 dark:text-blue-400 hover:underline">fradser@gmail.com</a>
+              <strong>Email:</strong>{' '}
+              <a
+                href="mailto:fradser@gmail.com"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                fradser@gmail.com
+              </a>
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>Website:</strong> <a href="https://frad.me" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">frad.me</a>
+              <strong>Website:</strong>{' '}
+              <a
+                href="https://frad.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                frad.me
+              </a>
             </p>
           </div>
           <div className="space-y-2">
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>GitHub:</strong> <a href="https://github.com/FradSer" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">@FradSer</a>
+              <strong>GitHub:</strong>{' '}
+              <a
+                href="https://github.com/FradSer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                @FradSer
+              </a>
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>X (Twitter):</strong> <a href="https://x.com/FradSer" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">@FradSer</a>
+              <strong>X (Twitter):</strong>{' '}
+              <a
+                href="https://x.com/FradSer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                @FradSer
+              </a>
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              <strong>Hugging Face:</strong> <a href="https://huggingface.co/FradSer" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">@FradSer</a>
+              <strong>Hugging Face:</strong>{' '}
+              <a
+                href="https://huggingface.co/FradSer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                @FradSer
+              </a>
             </p>
           </div>
         </div>
@@ -393,11 +516,12 @@ export default function ResumePageClient() {
               vivo Vision Operating System
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-2">
-              Interactive design for XR operating system at vivo XR Lab, focusing on
-              spatial computing and next-generation interaction paradigms for immersive experiences.
+              Interactive design for XR operating system at vivo XR Lab, focusing on spatial
+              computing and next-generation interaction paradigms for immersive experiences.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Technologies: XR/VR Design, Spatial Computing, Interactive Systems, Operating System UI
+              Technologies: XR/VR Design, Spatial Computing, Interactive Systems, Operating System
+              UI
             </p>
           </div>
           <div>
@@ -410,7 +534,8 @@ export default function ResumePageClient() {
               interaction design patterns for professional team collaboration.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Technologies: XR/VR Design, Virtual Space Interaction, Unity, Collaboration Systems, Patent Development
+              Technologies: XR/VR Design, Virtual Space Interaction, Unity, Collaboration Systems,
+              Patent Development
             </p>
           </div>
           <div>
@@ -423,7 +548,8 @@ export default function ResumePageClient() {
               establishing scientific principles for eye protection in digital interfaces.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Impact: Multi-product implementation, Patent applications, Eye protection standards, WCAG compliance
+              Impact: Multi-product implementation, Patent applications, Eye protection standards,
+              WCAG compliance
             </p>
           </div>
           <div>
@@ -432,8 +558,8 @@ export default function ResumePageClient() {
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-2">
               Cross-platform Pomodoro Technique timer app built with SwiftUI for iOS and macOS.
-              Features generative art for relaxation, ambient sounds from 11 countries,
-              and innovative cross-platform design patterns.
+              Features generative art for relaxation, ambient sounds from 11 countries, and
+              innovative cross-platform design patterns.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Technologies: SwiftUI, Metal, GLSL, p5.js, Cross-platform Design, App Store
@@ -445,11 +571,12 @@ export default function ResumePageClient() {
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-2">
               One-stop message distribution workspace designed for Chinese teams with focus on
-              organizing and adding value to team information. Successfully transitioned from
-              free to commercial product serving major clients.
+              organizing and adding value to team information. Successfully transitioned from free
+              to commercial product serving major clients.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Technologies: Web Design, Electron, Product Strategy, Enterprise Clients (Huawei, Keep, Same)
+              Technologies: Web Design, Electron, Product Strategy, Enterprise Clients (Huawei,
+              Keep, Same)
             </p>
           </div>
           <div>
@@ -458,7 +585,8 @@ export default function ResumePageClient() {
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-2">
               Interactive website showcasing expertise in React development and 3D web technologies
-              with WebXR capabilities, progressive enhancement architecture, and spatial computing experiences.
+              with WebXR capabilities, progressive enhancement architecture, and spatial computing
+              experiences.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Technologies: React, Next.js, Three.js, WebXR, TypeScript, Spatial Computing
@@ -484,8 +612,8 @@ export default function ResumePageClient() {
               Open Source Contributor
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-2">
-              Active contributor to the open-source community on GitHub, sharing expertise
-              in AI systems, interaction design, and development tools.
+              Active contributor to the open-source community on GitHub, sharing expertise in AI
+              systems, interaction design, and development tools.
             </p>
           </div>
           <div>

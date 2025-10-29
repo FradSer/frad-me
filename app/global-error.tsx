@@ -17,12 +17,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body>
         <div className="flex min-h-screen items-center justify-center bg-red-50">
           <div className="max-w-md text-center">
-            <h2 className="mb-4 text-2xl font-bold text-red-800">
-              Critical Error
-            </h2>
+            <h2 className="mb-4 text-2xl font-bold text-red-800">Critical Error</h2>
             <p className="mb-6 text-red-600">
-              A critical error occurred that prevented the application from
-              loading properly.
+              A critical error occurred that prevented the application from loading properly.
             </p>
             <div className="space-y-4">
               <button

@@ -1,4 +1,3 @@
-import React from 'react';
 import dynamic from 'next/dynamic';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { measureChunkLoad } from '@/utils/performance';
@@ -22,13 +21,7 @@ const ExternalLinks = ({
   if (!show) return null;
 
   return (
-    <Html
-      position={position}
-      transform
-      occlude={false}
-      distanceFactor={8}
-      style={{ zIndex: 1000 }}
-    >
+    <Html position={position} transform occlude={false} distanceFactor={8} style={{ zIndex: 1000 }}>
       <div className="flex space-x-6 text-base">
         <a
           href="https://read.cv/fradser"
@@ -57,10 +50,7 @@ function FooterLinks3D() {
   return (
     <group position={FOOTER_POSITIONS.footerGroup}>
       {/* External Links - More accessible position for visionOS */}
-      <ExternalLinks
-        position={FOOTER_POSITIONS.externalLinks}
-        show={currentView === 'home'}
-      />
+      <ExternalLinks position={FOOTER_POSITIONS.externalLinks} show={currentView === 'home'} />
     </group>
   );
 }

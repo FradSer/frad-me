@@ -46,17 +46,15 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
   const { isVR, isLoading } = useXRDetect();
 
-  // If user is explicitly on /webxr or /xr route, render VR layout directly
-  if (pathname === '/webxr' || pathname === '/xr') {
+  // If user is explicitly on /webxr route, render VR layout directly
+  if (pathname === '/webxr') {
     return <VRLayout />;
   }
 
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-black">
-        <div className="text-2xl font-bold text-white">
-          Detecting XR capabilities...
-        </div>
+        <div className="text-2xl font-bold text-white">Detecting XR capabilities...</div>
       </div>
     );
   }

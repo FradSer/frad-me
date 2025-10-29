@@ -1,11 +1,11 @@
-import type React from 'react';
-import { useState, useRef, Suspense, useMemo, useEffect } from 'react';
 import { Html, Text } from '@react-three/drei';
+import type React from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants';
-import { useCardAnimation } from '@/hooks/useCardAnimation';
-import { forceInitializeTransparency } from '@/utils/webxr/materialUtils';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
+import { useCardAnimation } from '@/hooks/useCardAnimation';
+import { WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants';
+import { forceInitializeTransparency } from '@/utils/webxr/materialUtils';
 
 interface WorkLink {
   title: string;
@@ -91,20 +91,15 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
       renderOrder={hovered ? 9999 : 0} // Entire card on top when hovered
     >
       {/* Invisible hover detection area covering entire card including text */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: mesh element is interactive in 3D context */}
       <mesh
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
         position={[0, -1, -0.2]} // Positioned to cover card + text area, behind all other elements
       >
-        <planeGeometry args={[5.5, 5]} />{' '}
-        {/* Larger area covering card + text */}
-        <meshBasicMaterial
-          transparent
-          opacity={0}
-          depthWrite={false}
-          colorWrite={false}
-        />
+        <planeGeometry args={[5.5, 5]} /> {/* Larger area covering card + text */}
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
       </mesh>
 
       {/* Card background/cover */}
