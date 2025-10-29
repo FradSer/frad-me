@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 jest.mock('@vercel/analytics/react', () => ({
@@ -13,17 +13,17 @@ jest.mock('@vercel/speed-insights/next', () => ({
   },
 }));
 
-jest.mock('next/script', () => function ScriptMock() {
-  return null;
-});
+jest.mock(
+  'next/script',
+  () =>
+    function ScriptMock() {
+      return null;
+    },
+);
 
 jest.mock('@/app/client-layout', () => ({
   __esModule: true,
-  default: function ClientLayoutMock({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
+  default: function ClientLayoutMock({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   },
 }));
@@ -38,9 +38,7 @@ describe('RootLayout theme integration', () => {
       </RootLayout>,
     );
 
-    expect(markup).toMatch(
-      /<body class="[^"]*bg-white[^"]*dark:bg-black[^"]*"[^>]*>/,
-    );
+    expect(markup).toMatch(/<body class="[^"]*bg-white[^"]*dark:bg-black[^"]*"[^>]*>/);
     expect(markup).toContain('style="color-scheme:light dark"');
   });
 });

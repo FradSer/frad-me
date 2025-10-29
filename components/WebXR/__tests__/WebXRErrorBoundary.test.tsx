@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import ErrorBoundary from '@/components/common/ErrorBoundary';
@@ -92,12 +91,9 @@ describe('ErrorBoundary (WebXR)', () => {
       );
 
       // Wait a bit for the error handling to complete
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
-      expect(onError).toHaveBeenCalledWith(
-        expect.any(Error),
-        expect.any(Object),
-      );
+      expect(onError).toHaveBeenCalledWith(expect.any(Error), expect.any(Object));
     });
 
     it('should log error details for monitoring', () => {
@@ -109,18 +105,13 @@ describe('ErrorBoundary (WebXR)', () => {
         </ErrorBoundary>,
       );
 
-      expect(webxrErrorLogger.logError).toHaveBeenCalledWith(
-        expect.any(Error),
-        expect.any(Object),
-      );
+      expect(webxrErrorLogger.logError).toHaveBeenCalledWith(expect.any(Error), expect.any(Object));
     });
   });
 
   describe('Custom Fallback', () => {
     it('should render custom fallback when provided', () => {
-      const customFallback = (
-        <div data-testid="custom-fallback">Custom Error UI</div>
-      );
+      const customFallback = <div data-testid="custom-fallback">Custom Error UI</div>;
 
       render(
         <ErrorBoundary componentName="WebXR" fallback={customFallback}>
@@ -135,9 +126,7 @@ describe('ErrorBoundary (WebXR)', () => {
 
   describe('Component Isolation', () => {
     it('should isolate errors to WebXR boundary only', () => {
-      const OuterComponent = () => (
-        <div data-testid="outer">Outer Component</div>
-      );
+      const OuterComponent = () => <div data-testid="outer">Outer Component</div>;
 
       render(
         <div>

@@ -1,6 +1,6 @@
-import { render, screen, act } from '@testing-library/react';
-import { WebXRViewProvider, useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
+import { act, render, screen } from '@testing-library/react';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { useWebXRView, WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
 import { webxrErrorLogger } from '@/utils/errorLogger';
 
 // Mock navigator for WebXR
@@ -83,12 +83,14 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Should show WebXR error UI (outer boundary catches WebXR-related errors)
       expect(screen.getByText('WebXR Error')).toBeInTheDocument();
-      expect(screen.getByText('Unable to load WebXR experience. Falling back to 2D view.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
+      ).toBeInTheDocument();
 
       consoleSpy.mockRestore();
     });
@@ -100,7 +102,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       const { rerender } = render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByText('WebXR Error')).toBeInTheDocument();
@@ -109,7 +111,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       rerender(<TestApp triggerError={true} errorType="webxr" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByText('WebXR Error')).toBeInTheDocument();
@@ -125,7 +127,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Verify error was logged
@@ -135,7 +137,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
         expect.any(Object),
         expect.objectContaining({
           component: 'WebXR-Content',
-        })
+        }),
       );
 
       consoleSpy.mockRestore();
@@ -147,7 +149,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webxr" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       const logCall = (webxrErrorLogger.logError as jest.Mock).mock.calls[0];
@@ -168,7 +170,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={false} errorType="normal" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Should show normal content
@@ -188,7 +190,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       rerender(<TestApp triggerError={true} errorType="work-view-error" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Should show error boundary but maintain navigation
@@ -203,7 +205,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={false} errorType="normal" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Navigate to work view
@@ -238,7 +240,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Should show refresh button
@@ -262,7 +264,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       const { rerender } = render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByText('WebXR Error')).toBeInTheDocument();
@@ -271,7 +273,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       rerender(<TestApp triggerError={true} errorType="webxr" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Should still show error boundary
@@ -290,7 +292,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       const endTime = performance.now();
@@ -308,19 +310,19 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       const { rerender } = render(<TestApp triggerError={false} errorType="normal" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Rapidly change between error and normal states
       for (let i = 0; i < 5; i++) {
         rerender(<TestApp triggerError={true} errorType="webgl" />);
         await act(async () => {
-          await new Promise(resolve => setTimeout(resolve, 0));
+          await new Promise((resolve) => setTimeout(resolve, 0));
         });
 
         rerender(<TestApp triggerError={false} errorType="normal" />);
         await act(async () => {
-          await new Promise(resolve => setTimeout(resolve, 0));
+          await new Promise((resolve) => setTimeout(resolve, 0));
         });
       }
 
@@ -338,7 +340,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Check for semantic error structure
@@ -346,7 +348,9 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       expect(errorHeading).toHaveTextContent('Something went wrong');
 
       // Check for descriptive error text
-      expect(screen.getByText('An unexpected error occurred. Please try refreshing the page.')).toBeInTheDocument();
+      expect(
+        screen.getByText('An unexpected error occurred. Please try refreshing the page.'),
+      ).toBeInTheDocument();
 
       consoleSpy.mockRestore();
     });
@@ -357,7 +361,7 @@ describe('WebXR Error Recovery Fallback Chain', () => {
       render(<TestApp triggerError={true} errorType="webgl" />);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Refresh button should be keyboard accessible

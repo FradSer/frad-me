@@ -1,51 +1,78 @@
+import { act, render, renderHook, screen } from '@testing-library/react';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { act } from '@testing-library/react-hooks';
-import { renderHook } from '@testing-library/react-hooks';
-import Navigation3D from '../Navigation3D';
-import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
 import { useSimpleLerp } from '@/hooks/useSimpleLerp';
-import { NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants';
 import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { NAVIGATION_POSITIONS } from '@/utils/webxr/animationConstants';
+import Navigation3D from '../Navigation3D';
 
 // Mock the dynamic Text import
 jest.mock('@react-three/drei', () => ({
-  Text: ({ children, color, position, font, anchorX, anchorY, fontSize, onClick, onPointerOver, onPointerOut, ...props }: any) => (
-    React.createElement('mesh', {
-      'data-testid': 'nav-text',
-      position,
-      font,
-      anchorX,
-      anchorY,
-      fontSize,
-      color,
-      onClick,
-      onPointerOver,
-      onPointerOut,
-      ...props
-    }, React.createElement('text', { 'data-testid': 'nav-text-content' }, children))
-  ),
+  Text: ({
+    children,
+    color,
+    position,
+    font,
+    anchorX,
+    anchorY,
+    fontSize,
+    onClick,
+    onPointerOver,
+    onPointerOut,
+    ...props
+  }: React.ComponentProps<'mesh'> & {
+    color?: string;
+    font?: unknown;
+    anchorX?: number | 'center' | 'left' | 'right';
+    anchorY?: number | 'center' | 'top' | 'bottom';
+    fontSize?: number;
+    onClick?: () => void;
+    onPointerOver?: () => void;
+    onPointerOut?: () => void;
+  }) =>
+    React.createElement(
+      'mesh',
+      {
+        'data-testid': 'nav-text',
+        position,
+        font,
+        anchorX,
+        anchorY,
+        fontSize,
+        color,
+        onClick,
+        onPointerOver,
+        onPointerOut,
+        ...props,
+      },
+      React.createElement('text', { 'data-testid': 'nav-text-content' }, children),
+    ),
 }));
 
 // Mock Canvas from @react-three/fiber
 jest.mock('@react-three/fiber', () => ({
-  Canvas: ({ children, ...props }: any) => (
-    React.createElement('div', {
-      'data-testid': 'react-three-fiber-canvas',
-      ...props
-    }, children)
-  ),
+  Canvas: ({ children, ...props }: React.ComponentProps<'div'>) =>
+    React.createElement(
+      'div',
+      {
+        'data-testid': 'react-three-fiber-canvas',
+        ...props,
+      },
+      children,
+    ),
 }));
+
+// Import Canvas after mock
+const { Canvas } = require('@react-three/fiber');
 
 // Mock performance measurement
 jest.mock('@/utils/performance', () => ({
-  measureChunkLoad: jest.fn((name, fn) => fn()),
+  measureChunkLoad: jest.fn((_name, fn) => fn()),
 }));
 
 // Mock Next.js dynamic import
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: (dynamicImport: any) => {
+  default: (_dynamicImport: () => Promise<React.ComponentType>) => {
     const Component = () => {
       const { Text } = require('@react-three/drei');
       return Text;
@@ -65,13 +92,45 @@ afterAll(() => {
   Object.assign(console, originalConsole);
 });
 
-const TestWrapper = ({ children, initialView = 'home' }: { children: React.ReactNode; initialView?: 'home' | 'work' }) => (
-  <WebXRViewProvider initialView={initialView}>
-    <Canvas>
-      {children}
-    </Canvas>
-  </WebXRViewProvider>
-);
+interface TestWrapperProps {
+  children: React.ReactNode;
+}
+
+const TestWrapper = ({ children }: TestWrapperProps) => {
+  const TestWebXRViewProvider = ({ children: providerChildren }: { children: React.ReactNode }) => {
+    const [currentView, setCurrentView] = React.useState<'home' | 'work'>('home');
+    const [isTransitioning] = React.useState(false);
+    const [navigationVisible] = React.useState(true);
+    const [isVisionPro] = React.useState(false);
+    const [webXRSupported] = React.useState(false);
+    const footerLinksVisible = currentView === 'home';
+
+    const navigateToView = (view: 'home' | 'work') => setCurrentView(view);
+    const setTransitioning = () => {};
+
+    const contextValue = {
+      currentView,
+      isTransitioning,
+      navigationVisible,
+      footerLinksVisible,
+      isVisionPro,
+      webXRSupported,
+      navigateToView,
+      setTransitioning,
+    };
+
+    // Create a test context using the same structure as WebXRViewContext
+    const TestContext = React.createContext(contextValue);
+
+    return <TestContext.Provider value={contextValue}>{providerChildren}</TestContext.Provider>;
+  };
+
+  return (
+    <TestWebXRViewProvider>
+      <Canvas>{children}</Canvas>
+    </TestWebXRViewProvider>
+  );
+};
 
 describe('Navigation3D Component', () => {
   beforeEach(() => {
@@ -88,7 +147,7 @@ describe('Navigation3D Component', () => {
       render(
         <TestWrapper>
           <Navigation3D />
-        </TestWrapper>
+        </TestWrapper>,
       );
       expect(document.body).toBeTruthy();
     });
@@ -97,7 +156,7 @@ describe('Navigation3D Component', () => {
       render(
         <TestWrapper>
           <Navigation3D />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Check that the component renders the navigation structure
@@ -107,9 +166,9 @@ describe('Navigation3D Component', () => {
 
     it('renders NavItem with correct initial text', () => {
       render(
-        <TestWrapper initialView="home">
+        <TestWrapper>
           <Navigation3D />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Should render "work" text when current view is home
@@ -121,9 +180,9 @@ describe('Navigation3D Component', () => {
   describe('Navigation State Changes', () => {
     it('shows "work" text when current view is home', () => {
       render(
-        <TestWrapper initialView="home">
+        <TestWrapper>
           <Navigation3D />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // The component should be rendered
@@ -132,9 +191,9 @@ describe('Navigation3D Component', () => {
 
     it('shows "home" text when current view is work', () => {
       render(
-        <TestWrapper initialView="work">
+        <TestWrapper>
           <Navigation3D />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // The component should be rendered
@@ -142,14 +201,12 @@ describe('Navigation3D Component', () => {
     });
 
     it('handles view navigation', () => {
-      const { result } = renderHook(
-        () => {
-          const [currentView, setCurrentView] = React.useState<'home' | 'work'>('home');
-          const navigateToView = (view: 'home' | 'work') => setCurrentView(view);
+      const { result } = renderHook(() => {
+        const [currentView, setCurrentView] = React.useState<'home' | 'work'>('home');
+        const navigateToView = (view: 'home' | 'work') => setCurrentView(view);
 
-          return { currentView, navigateToView };
-        }
-      );
+        return { currentView, navigateToView };
+      }, {});
 
       // Initial state
       expect(result.current.currentView).toBe('home');
@@ -176,7 +233,7 @@ describe('Navigation3D Component', () => {
         () => {
           const [hovered, setHovered] = React.useState(false);
           const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
-          const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default);
+          const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default, { speed: 0.1 });
 
           React.useEffect(() => {
             if (hovered) {
@@ -195,7 +252,8 @@ describe('Navigation3D Component', () => {
           };
 
           return { hovered, hasBeenInteracted, scaleSpring, handlers };
-        }
+        },
+        { wrapper: TestWrapper },
       );
 
       // Initial state
@@ -219,21 +277,19 @@ describe('Navigation3D Component', () => {
     });
 
     it('handles click interactions', () => {
-      const { result } = renderHook(
-        () => {
-          const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
-          const [clickCount, setClickCount] = React.useState(0);
+      const { result } = renderHook(() => {
+        const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
+        const [clickCount, setClickCount] = React.useState(0);
 
-          const handlers = {
-            onClick: () => {
-              setHasBeenInteracted(true);
-              setClickCount(prev => prev + 1);
-            },
-          };
+        const handlers = {
+          onClick: () => {
+            setHasBeenInteracted(true);
+            setClickCount((prev) => prev + 1);
+          },
+        };
 
-          return { hasBeenInteracted, clickCount, handlers };
-        }
-      );
+        return { hasBeenInteracted, clickCount, handlers };
+      }, {});
 
       // Initial state
       expect(result.current.hasBeenInteracted).toBe(false);
@@ -256,27 +312,25 @@ describe('Navigation3D Component', () => {
     });
 
     it('manages breathing animation for non-interacted items', () => {
-      const { result } = renderHook(
-        () => {
-          const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
-          const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default);
+      const { result } = renderHook(() => {
+        const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
+        const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default, { speed: 0.1 });
 
-          React.useEffect(() => {
-            if (!hasBeenInteracted) {
-              const breathingAnimation = setInterval(() => {
-                scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
-                setTimeout(() => {
-                  scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default);
-                }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration);
-              }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
+        React.useEffect(() => {
+          if (!hasBeenInteracted) {
+            const breathingAnimation = setInterval(() => {
+              scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
+              setTimeout(() => {
+                scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default);
+              }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration);
+            }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
 
-              return () => clearInterval(breathingAnimation);
-            }
-          }, [hasBeenInteracted, scaleSpring]);
+            return () => clearInterval(breathingAnimation);
+          }
+        }, [hasBeenInteracted, scaleSpring]);
 
-          return { hasBeenInteracted, scaleSpring, setHasBeenInteracted };
-        }
-      );
+        return { hasBeenInteracted, scaleSpring, setHasBeenInteracted };
+      }, {});
 
       // Initial state - should start breathing animation
       expect(result.current.hasBeenInteracted).toBe(false);
@@ -297,22 +351,20 @@ describe('Navigation3D Component', () => {
     });
 
     it('applies correct color based on state', () => {
-      const { result } = renderHook(
-        () => {
-          const [hovered, setHovered] = React.useState(false);
-          const [isActive, setIsActive] = React.useState(false);
+      const { result } = renderHook(() => {
+        const [hovered, setHovered] = React.useState(false);
+        const [isActive, setIsActive] = React.useState(false);
 
-          const color = isActive ? '#ffffff' : hovered ? '#d1d5db' : '#9ca3af';
+        const color = isActive ? '#ffffff' : hovered ? '#d1d5db' : '#9ca3af';
 
-          return {
-            hovered,
-            isActive,
-            color,
-            setHovered,
-            setIsActive
-          };
-        }
-      );
+        return {
+          hovered,
+          isActive,
+          color,
+          setHovered,
+          setIsActive,
+        };
+      }, {});
 
       // Default state (not hovered, not active)
       expect(result.current.color).toBe('#9ca3af');
@@ -384,28 +436,26 @@ describe('Navigation3D Component', () => {
     });
 
     it('handles breathing animation lifecycle', () => {
-      const { result } = renderHook(
-        () => {
-          const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
-          let breathingInterval: NodeJS.Timeout | null = null;
+      const { result } = renderHook(() => {
+        const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
+        const breathingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
-          React.useEffect(() => {
-            if (!hasBeenInteracted) {
-              breathingInterval = setInterval(() => {
-                // Breathing animation logic would go here
-              }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
+        React.useEffect(() => {
+          if (!hasBeenInteracted) {
+            breathingIntervalRef.current = setInterval(() => {
+              // Breathing animation logic would go here
+            }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
 
-              return () => {
-                if (breathingInterval) {
-                  clearInterval(breathingInterval);
-                }
-              };
-            }
-          }, [hasBeenInteracted]);
+            return () => {
+              if (breathingIntervalRef.current) {
+                clearInterval(breathingIntervalRef.current);
+              }
+            };
+          }
+        }, [hasBeenInteracted]);
 
-          return { hasBeenInteracted, setHasBeenInteracted };
-        }
-      );
+        return { hasBeenInteracted, setHasBeenInteracted };
+      }, {});
 
       // Initially should not have been interacted
       expect(result.current.hasBeenInteracted).toBe(false);
@@ -421,20 +471,18 @@ describe('Navigation3D Component', () => {
     it('clears breathing interval on interaction', () => {
       const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
 
-      const { result } = renderHook(
-        () => {
-          const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
+      const { result } = renderHook(() => {
+        const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
 
-          React.useEffect(() => {
-            if (!hasBeenInteracted) {
-              const interval = setInterval(() => {}, 100);
-              return () => clearInterval(interval);
-            }
-          }, [hasBeenInteracted]);
+        React.useEffect(() => {
+          if (!hasBeenInteracted) {
+            const interval = setInterval(() => {}, 100);
+            return () => clearInterval(interval);
+          }
+        }, [hasBeenInteracted]);
 
-          return { hasBeenInteracted, setHasBeenInteracted };
-        }
-      );
+        return { hasBeenInteracted, setHasBeenInteracted };
+      }, {});
 
       // Trigger interaction
       act(() => {
@@ -448,19 +496,17 @@ describe('Navigation3D Component', () => {
 
   describe('Spring Animation Integration', () => {
     it('integrates with useSimpleLerp for scale animations', () => {
-      const { result } = renderHook(
-        () => {
-          const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default, {
-            speed: 0.1, // Fast speed for testing
-          });
+      const { result } = renderHook(() => {
+        const scaleSpring = useSimpleLerp(WEBXR_ANIMATION_CONFIG.scales.default, {
+          speed: 0.1, // Fast speed for testing
+        });
 
-          React.useEffect(() => {
-            scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.hover);
-          }, [scaleSpring]);
+        React.useEffect(() => {
+          scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.hover);
+        }, [scaleSpring]);
 
-          return { scaleSpring };
-        }
-      );
+        return { scaleSpring };
+      }, {});
 
       // Spring should be initialized
       expect(result.current.scaleSpring).toBeDefined();
@@ -480,17 +526,15 @@ describe('Navigation3D Component', () => {
       const originalUseSimpleLerp = require('@/hooks/useSimpleLerp').useSimpleLerp;
       require('@/hooks/useSimpleLerp').useSimpleLerp = mockUseSimpleLerp;
 
-      const { result } = renderHook(
-        () => {
-          const scaleSpring = useSimpleLerp(1.0);
+      const { result } = renderHook(() => {
+        const scaleSpring = useSimpleLerp(1.0, { speed: 0.1 });
 
-          const setScale = (scale: number) => {
-            scaleSpring.set(scale);
-          };
+        const setScale = (scale: number) => {
+          scaleSpring.set(scale);
+        };
 
-          return { scaleSpring, setScale };
-        }
-      );
+        return { scaleSpring, setScale };
+      }, {});
 
       // Initial value
       expect(result.current.scaleSpring.value).toBe(1.0);
@@ -510,7 +554,7 @@ describe('Navigation3D Component', () => {
 
   describe('Error Handling', () => {
     it('handles undefined text ref gracefully', () => {
-      const textRef = { current: null };
+      const textRef = { current: null as { scale: { setScalar: (value: number) => void } } | null };
 
       // Should not throw when accessing textRef.current
       expect(() => {
@@ -529,7 +573,7 @@ describe('Navigation3D Component', () => {
         render(
           <div>
             <Navigation3D />
-          </div>
+          </div>,
         );
       }).toThrow(); // Should throw without proper context
     });
@@ -537,26 +581,24 @@ describe('Navigation3D Component', () => {
 
   describe('Performance Considerations', () => {
     it('stops breathing animation after first interaction', () => {
-      const { result } = renderHook(
-        () => {
-          const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
-          const [breathingActive, setBreathingActive] = React.useState(false);
+      const { result } = renderHook(() => {
+        const [hasBeenInteracted, setHasBeenInteracted] = React.useState(false);
+        const [breathingActive, setBreathingActive] = React.useState(false);
 
-          React.useEffect(() => {
-            if (!hasBeenInteracted) {
-              setBreathingActive(true);
-            } else {
-              setBreathingActive(false);
-            }
-          }, [hasBeenInteracted]);
+        React.useEffect(() => {
+          if (!hasBeenInteracted) {
+            setBreathingActive(true);
+          } else {
+            setBreathingActive(false);
+          }
+        }, [hasBeenInteracted]);
 
-          return {
-            hasBeenInteracted,
-            breathingActive,
-            setHasBeenInteracted
-          };
-        }
-      );
+        return {
+          hasBeenInteracted,
+          breathingActive,
+          setHasBeenInteracted,
+        };
+      }, {});
 
       // Initially breathing should be active
       expect(result.current.breathingActive).toBe(true);
@@ -573,20 +615,18 @@ describe('Navigation3D Component', () => {
       // Test that useEffect dependencies are properly configured
       const useEffectSpy = jest.spyOn(React, 'useEffect');
 
-      renderHook(
-        () => {
-          const [hovered, setHovered] = React.useState(false);
-          const scaleSpring = useSimpleLerp(1);
+      renderHook(() => {
+        const [hovered, setHovered] = React.useState(false);
+        const scaleSpring = useSimpleLerp(1, { speed: 0.1 });
 
-          React.useEffect(() => {
-            if (hovered) {
-              scaleSpring.set(1.1);
-            }
-          }, [hovered, scaleSpring]);
+        React.useEffect(() => {
+          if (hovered) {
+            scaleSpring.set(1.1);
+          }
+        }, [hovered, scaleSpring]);
 
-          return { hovered, setHovered };
-        }
-      );
+        return { hovered, setHovered };
+      }, {});
 
       // useEffect should be called
       expect(useEffectSpy).toHaveBeenCalled();

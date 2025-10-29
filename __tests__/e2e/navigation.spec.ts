@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { HomePage, HeaderPage, TestUtils } from './__utils__/page-objects';
+import { expect, test } from '@playwright/test';
+import { HomePage, TestUtils } from './__utils__/page-objects';
 
 test.describe('Navigation', () => {
   let homePage: HomePage;
@@ -8,12 +8,12 @@ test.describe('Navigation', () => {
     homePage = new HomePage(page);
   });
 
-  test('should load homepage with all essential elements', async ({ page }) => {
+  test('should load homepage with all essential elements', async ({ page: _page }) => {
     await homePage.goto('/');
     await homePage.verifyPageLoad();
   });
 
-  test('should have working theme switcher', async ({ page }) => {
+  test('should have working theme switcher', async ({ page: _page }) => {
     await homePage.goto('/');
 
     // Test theme switching functionality
@@ -29,9 +29,7 @@ test.describe('Navigation', () => {
     });
   });
 
-  test('should persist theme preference across page reloads', async ({
-    page,
-  }) => {
+  test('should persist theme preference across page reloads', async ({ page }) => {
     await homePage.goto('/');
 
     // Switch to dark theme
@@ -60,7 +58,7 @@ test.describe('Navigation', () => {
       await TestUtils.waitForStableContent(page);
       await expect(page.locator('main')).toBeVisible();
     } else {
-      test.skip('No work links found on homepage');
+      test.skip(() => true, 'No work links found on homepage');
     }
   });
 
@@ -74,16 +72,12 @@ test.describe('Navigation', () => {
     expect([404, 302, 200]).toContain(status);
   });
 
-  test('should have responsive header across all viewport sizes', async ({
-    page,
-  }) => {
+  test('should have responsive header across all viewport sizes', async ({ page: _page }) => {
     await homePage.goto('/');
     await homePage.header.verifyResponsiveHeader();
   });
 
-  test('should maintain functionality under slow network conditions', async ({
-    page,
-  }) => {
+  test('should maintain functionality under slow network conditions', async ({ page }) => {
     // Simulate slow network
     await TestUtils.mockNetworkConditions(page, 'slow');
 
@@ -113,11 +107,11 @@ test.describe('Navigation', () => {
 
     // Wait a moment for theme change and verify it occurred
     await page.waitForTimeout(200);
-    
+
     // Check if theme actually changed after keyboard activation
-    const currentTheme = await page.locator('html').evaluate((el) =>
-      el.classList.contains('dark') ? 'dark' : 'light'
-    );
+    const currentTheme = await page
+      .locator('html')
+      .evaluate((el) => (el.classList.contains('dark') ? 'dark' : 'light'));
     // Verify theme switched (either to dark or light, depending on starting state)
     expect(['dark', 'light']).toContain(currentTheme);
   });

@@ -1,26 +1,22 @@
 import { measureChunkLoad } from '@/utils/performance';
 
 const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = jest
-  .spyOn(console, 'error')
-  .mockImplementation(() => {});
+const _mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 const TEST_CHUNK_NAME = 'test-chunk';
 const TEST_COMPONENT = { default: 'test-component' };
 
 describe('Performance Utils', () => {
   let mockTime = 0;
-  let performanceNowSpy: jest.SpyInstance;
+  let _performanceNowSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockTime = 0;
-    performanceNowSpy = jest
-      .spyOn(performance, 'now')
-      .mockImplementation(() => {
-        mockTime += 100;
-        return mockTime;
-      });
+    _performanceNowSpy = jest.spyOn(performance, 'now').mockImplementation(() => {
+      mockTime += 100;
+      return mockTime;
+    });
   });
 
   afterEach(() => {
@@ -56,9 +52,7 @@ describe('Performance Utils', () => {
       const testError = new Error(ERROR_MESSAGE);
       const mockImport = jest.fn().mockRejectedValue(testError);
 
-      await expect(
-        measureChunkLoad(TEST_CHUNK_NAME, mockImport),
-      ).rejects.toThrow(ERROR_MESSAGE);
+      await expect(measureChunkLoad(TEST_CHUNK_NAME, mockImport)).rejects.toThrow(ERROR_MESSAGE);
     });
 
     it.skip('logs errors in development mode', async () => {

@@ -1,14 +1,14 @@
 import {
-  WEBXR_ANIMATION_CONFIG,
-  isValidSpring,
-  validateAnimationPreset,
-  getLerpSpeed,
-  updateFPS,
-  getQualityLevel,
   getAdaptiveSpring,
-  shouldHideComponent,
-  getStaggerDelay,
   getCompatibleSpringConfig,
+  getLerpSpeed,
+  getQualityLevel,
+  getStaggerDelay,
+  isValidSpring,
+  shouldHideComponent,
+  updateFPS,
+  validateAnimationPreset,
+  WEBXR_ANIMATION_CONFIG,
 } from '../animationConfig';
 
 describe('WebXR Animation Configuration', () => {
@@ -35,8 +35,12 @@ describe('WebXR Animation Configuration', () => {
 
     it('should have scale configurations', () => {
       expect(WEBXR_ANIMATION_CONFIG.scales.default).toBe(1.0);
-      expect(WEBXR_ANIMATION_CONFIG.scales.hover).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.scales.default);
-      expect(WEBXR_ANIMATION_CONFIG.scales.entrance).toBeLessThan(WEBXR_ANIMATION_CONFIG.scales.default);
+      expect(WEBXR_ANIMATION_CONFIG.scales.hover).toBeGreaterThan(
+        WEBXR_ANIMATION_CONFIG.scales.default,
+      );
+      expect(WEBXR_ANIMATION_CONFIG.scales.entrance).toBeLessThan(
+        WEBXR_ANIMATION_CONFIG.scales.default,
+      );
     });
 
     it('should have opacity configurations', () => {
@@ -122,7 +126,9 @@ describe('WebXR Animation Configuration', () => {
       const adaptiveSpring = getAdaptiveSpring('bouncy');
 
       expect(adaptiveSpring.tension).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.springs.bouncy.tension);
-      expect(adaptiveSpring.friction).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.springs.bouncy.friction);
+      expect(adaptiveSpring.friction).toBeGreaterThan(
+        WEBXR_ANIMATION_CONFIG.springs.bouncy.friction,
+      );
     });
 
     it('should not adapt spring when FPS is good', () => {
@@ -168,10 +174,15 @@ describe('WebXR Animation Configuration', () => {
 
   describe('Configuration Integrity', () => {
     it('should have all required spring presets', () => {
-      const requiredPresets: Array<keyof typeof WEBXR_ANIMATION_CONFIG.springs> =
-        ['slow', 'normal', 'fast', 'bouncy', 'elastic'];
+      const requiredPresets: Array<keyof typeof WEBXR_ANIMATION_CONFIG.springs> = [
+        'slow',
+        'normal',
+        'fast',
+        'bouncy',
+        'elastic',
+      ];
 
-      requiredPresets.forEach(preset => {
+      requiredPresets.forEach((preset) => {
         expect(WEBXR_ANIMATION_CONFIG.springs).toHaveProperty(preset);
         expect(isValidSpring(WEBXR_ANIMATION_CONFIG.springs[preset])).toBe(true);
       });
@@ -181,14 +192,20 @@ describe('WebXR Animation Configuration', () => {
       expect(WEBXR_ANIMATION_CONFIG.timing.delays.cardStagger).toBeGreaterThan(0);
       expect(WEBXR_ANIMATION_CONFIG.timing.delays.cardEntranceDelay).toBeGreaterThan(0);
       expect(WEBXR_ANIMATION_CONFIG.timing.durations.cardAnimation).toBeGreaterThan(
-        WEBXR_ANIMATION_CONFIG.timing.delays.cardEntranceDelay
+        WEBXR_ANIMATION_CONFIG.timing.delays.cardEntranceDelay,
       );
     });
 
     it('should have valid scale progressions', () => {
-      expect(WEBXR_ANIMATION_CONFIG.scales.entrance).toBeLessThan(WEBXR_ANIMATION_CONFIG.scales.default);
-      expect(WEBXR_ANIMATION_CONFIG.scales.hover).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.scales.default);
-      expect(WEBXR_ANIMATION_CONFIG.scales.breathing).toBeGreaterThan(WEBXR_ANIMATION_CONFIG.scales.entrance);
+      expect(WEBXR_ANIMATION_CONFIG.scales.entrance).toBeLessThan(
+        WEBXR_ANIMATION_CONFIG.scales.default,
+      );
+      expect(WEBXR_ANIMATION_CONFIG.scales.hover).toBeGreaterThan(
+        WEBXR_ANIMATION_CONFIG.scales.default,
+      );
+      expect(WEBXR_ANIMATION_CONFIG.scales.breathing).toBeGreaterThan(
+        WEBXR_ANIMATION_CONFIG.scales.entrance,
+      );
     });
   });
 
@@ -202,8 +219,12 @@ describe('WebXR Animation Configuration', () => {
     });
 
     it('should export AnimationPreset union type', () => {
-      const presets: Array<keyof typeof WEBXR_ANIMATION_CONFIG.springs> = ['slow', 'normal', 'fast'];
-      presets.forEach(preset => {
+      const presets: Array<keyof typeof WEBXR_ANIMATION_CONFIG.springs> = [
+        'slow',
+        'normal',
+        'fast',
+      ];
+      presets.forEach((preset) => {
         expect(typeof preset).toBe('string');
       });
     });
@@ -213,7 +234,7 @@ describe('WebXR Animation Configuration', () => {
     it('should have reasonable performance thresholds', () => {
       expect(WEBXR_ANIMATION_CONFIG.performance.fpsThreshold).toBeGreaterThan(0);
       expect(WEBXR_ANIMATION_CONFIG.performance.highQualityThreshold).toBeGreaterThan(
-        WEBXR_ANIMATION_CONFIG.performance.fpsThreshold
+        WEBXR_ANIMATION_CONFIG.performance.fpsThreshold,
       );
       expect(WEBXR_ANIMATION_CONFIG.performance.hideThreshold).toBeGreaterThan(0);
       expect(WEBXR_ANIMATION_CONFIG.performance.hideThreshold).toBeLessThan(1);

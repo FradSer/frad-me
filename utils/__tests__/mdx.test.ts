@@ -1,7 +1,5 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import fs from 'fs';
-import path from 'path';
-import { getAllPosts, getSinglePost } from '../utils/mdx';
+import fs from 'node:fs';
+import { getAllPosts, getSinglePost } from '../mdx';
 
 // Mock fs module
 jest.mock('fs');
@@ -13,7 +11,7 @@ const MOCK_FRONTMATTER = {
   title: 'Test Post',
   description: 'Test Description',
 };
-const MOCK_CONTENT = '# Test Content';
+const _MOCK_CONTENT = '# Test Content';
 const MOCK_MDX_CONTENT = `---
 title: Test Post
 description: Test Description
@@ -39,7 +37,7 @@ describe('MDX Utils', () => {
     it('should return all MDX posts with frontmatter', () => {
       const mockFiles = ['post1.mdx', 'post2.md', 'not-post.txt'];
 
-      mockFs.readdirSync.mockReturnValue(mockFiles as any);
+      mockFs.readdirSync.mockReturnValue(mockFiles as unknown as ReturnType<typeof fs.readdirSync>);
       mockFs.readFileSync.mockReturnValue(MOCK_MDX_CONTENT);
 
       const result = getAllPosts();

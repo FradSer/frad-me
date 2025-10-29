@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import { WebXRMockUtils } from '../utils/webxr-mocks';
 
 // Type definitions for error API testing
@@ -23,6 +23,7 @@ interface APIResponse {
   body: string;
 }
 
+// Type definitions for analytics
 interface AnalyticsEvent {
   command: string;
   eventName: string;
@@ -32,10 +33,24 @@ interface AnalyticsEvent {
 interface SentryEvent {
   error: string;
   context: {
-    tags?: Record<string, unknown>;
+    tags?: Record<string, string>;
     extra?: Record<string, unknown>;
   };
 }
+
+// Extended window interface for testing
+interface TestWindow extends Window {
+  gtag?: (command: string, eventName: string, parameters: Record<string, unknown>) => void;
+  analyticsEvents?: AnalyticsEvent[];
+  Sentry?: {
+    captureException: (error: Error, context: Record<string, unknown>) => void;
+  };
+  sentryEvents?: SentryEvent[];
+  captureAnalyticsEvent?: (event: AnalyticsEvent) => void;
+  captureSentryEvent?: (event: SentryEvent) => void;
+}
+
+// Type definitions for error logging API
 
 /**
  * Comprehensive integration tests for the WebXR error logging API
@@ -43,11 +58,11 @@ interface SentryEvent {
  */
 
 // Error API testing utilities
-class ErrorAPITestUtils {
+const ErrorAPITestUtils = {
   /**
    * Intercepts error API requests and returns collected data
    */
-  static async interceptErrorAPI(page: Page) {
+  async interceptErrorAPI(page: Page) {
     const errorRequests: ErrorLogData[] = [];
     const responses: APIResponse[] = [];
 
@@ -57,7 +72,7 @@ class ErrorAPITestUtils {
       errorRequests.push({
         ...postData,
         timestamp: Date.now(),
-        headers: Object.fromEntries(request.headers()),
+        headers: request.headers(),
       });
 
       const response = {
@@ -71,15 +86,12 @@ class ErrorAPITestUtils {
     });
 
     return { errorRequests, responses };
-  }
+  },
 
   /**
    * Simulates rate limiting behavior with configurable limits
    */
-  static async interceptErrorAPIWithRateLimit(
-    page: Page,
-    maxRequests: number = 10,
-  ) {
+  async interceptErrorAPIWithRateLimit(page: Page, maxRequests: number = 10) {
     let requestCount = 0;
     const errorRequests: ErrorLogData[] = [];
     const responses: APIResponse[] = [];
@@ -95,7 +107,7 @@ class ErrorAPITestUtils {
         timestamp: Date.now(),
       });
 
-      let response;
+      let response: { status: number; contentType: string; body: string };
       if (requestCount > maxRequests) {
         response = {
           status: 429,
@@ -115,15 +127,12 @@ class ErrorAPITestUtils {
     });
 
     return { errorRequests, responses, getRequestCount: () => requestCount };
-  }
+  },
 
   /**
    * Simulates server errors for testing error handling
    */
-  static async interceptErrorAPIWithServerError(
-    page: Page,
-    errorCode: number = 500,
-  ) {
+  async interceptErrorAPIWithServerError(page: Page, errorCode: number = 500) {
     const errorRequests: ErrorLogData[] = [];
 
     await page.route('/api/errors', async (route) => {
@@ -139,15 +148,12 @@ class ErrorAPITestUtils {
     });
 
     return errorRequests;
-  }
+  },
 
   /**
    * Triggers WebXR errors to test API integration
    */
-  static async triggerWebXRError(
-    page: Page,
-    errorType: 'webgl' | 'webxr' | 'context-loss' = 'webgl',
-  ) {
+  async triggerWebXRError(page: Page, errorType: 'webgl' | 'webxr' | 'context-loss' = 'webgl') {
     switch (errorType) {
       case 'webgl':
         await WebXRMockUtils.disableWebGL(page);
@@ -162,12 +168,12 @@ class ErrorAPITestUtils {
 
     await page.goto('/webxr');
     await page.waitForTimeout(2000); // Wait for error to be logged
-  }
+  },
 
   /**
    * Injects malicious content for security testing
    */
-  static async injectMaliciousContent(page: Page) {
+  async injectMaliciousContent(page: Page) {
     await page.addInitScript(() => {
       // Override Error constructor to inject malicious content
       const originalError = window.Error;
@@ -179,20 +185,20 @@ class ErrorAPITestUtils {
           '../../etc/passwd' +
           'DROP TABLE users;';
         return new originalError(maliciousMessage);
-      }) as any;
+      }) as typeof Error;
 
       // Also test user agent injection
       Object.defineProperty(navigator, 'userAgent', {
-        value: navigator.userAgent + '<script>malicious();</script>',
+        value: `${navigator.userAgent}<script>malicious();</script>`,
         writable: false,
       });
     });
-  }
+  },
 
   /**
    * Simulates concurrent requests for stress testing
    */
-  static async simulateConcurrentRequests(page: Page, count: number = 20) {
+  async simulateConcurrentRequests(page: Page, count: number = 20) {
     const promises = [];
 
     for (let i = 0; i < count; i++) {
@@ -218,14 +224,12 @@ class ErrorAPITestUtils {
     }
 
     return Promise.all(promises);
-  }
-}
+  },
+};
 
 test.describe('WebXR Error Logging API Integration', () => {
   test.describe('Basic API Functionality', () => {
-    test('should successfully log WebXR errors with correct structure', async ({
-      page,
-    }) => {
+    test('should successfully log WebXR errors with correct structure', async ({ page }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       await ErrorAPITestUtils.triggerWebXRError(page, 'webgl');
@@ -277,9 +281,7 @@ test.describe('WebXR Error Logging API Integration', () => {
   });
 
   test.describe('Security and Data Sanitization', () => {
-    test('should sanitize malicious script content from error messages', async ({
-      page,
-    }) => {
+    test('should sanitize malicious script content from error messages', async ({ page }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       await ErrorAPITestUtils.injectMaliciousContent(page);
@@ -296,9 +298,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       }
     });
 
-    test('should sanitize file paths and sensitive information', async ({
-      page,
-    }) => {
+    test('should sanitize file paths and sensitive information', async ({ page }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       await ErrorAPITestUtils.injectMaliciousContent(page);
@@ -317,9 +317,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       }
     });
 
-    test('should not expose stack traces in production mode', async ({
-      page,
-    }) => {
+    test('should not expose stack traces in production mode', async ({ page }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       // Mock production environment
@@ -347,10 +345,10 @@ test.describe('WebXR Error Logging API Integration', () => {
       // Inject very long error message
       await page.addInitScript(() => {
         const originalError = window.Error;
-        window.Error = ((message?: string) => {
+        window.Error = ((_message?: string) => {
           const longMessage = 'A'.repeat(1000); // 1000 character message
           return new originalError(longMessage);
-        }) as any;
+        }) as typeof Error;
       });
 
       await ErrorAPITestUtils.triggerWebXRError(page, 'webgl');
@@ -364,9 +362,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       }
     });
 
-    test('should handle malformed JSON requests gracefully', async ({
-      page,
-    }) => {
+    test('should handle malformed JSON requests gracefully', async ({ page }) => {
       const response = await page.evaluate(async () => {
         const res = await fetch('/api/errors', {
           method: 'POST',
@@ -382,11 +378,11 @@ test.describe('WebXR Error Logging API Integration', () => {
   });
 
   test.describe('Rate Limiting', () => {
-    test('should enforce rate limits after maximum requests', async ({
-      page,
-    }) => {
-      const { errorRequests, responses, getRequestCount } =
-        await ErrorAPITestUtils.interceptErrorAPIWithRateLimit(page, 5);
+    test('should enforce rate limits after maximum requests', async ({ page }) => {
+      const { responses, getRequestCount } = await ErrorAPITestUtils.interceptErrorAPIWithRateLimit(
+        page,
+        5,
+      );
 
       // Trigger multiple errors rapidly
       for (let i = 0; i < 8; i++) {
@@ -412,15 +408,8 @@ test.describe('WebXR Error Logging API Integration', () => {
       expect(rateLimitedResponses.length).toBeGreaterThan(0);
     });
 
-    test('should handle concurrent requests within rate limits', async ({
-      page,
-    }) => {
-      const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
-
-      const responses = await ErrorAPITestUtils.simulateConcurrentRequests(
-        page,
-        5,
-      );
+    test('should handle concurrent requests within rate limits', async ({ page }) => {
+      const responses = await ErrorAPITestUtils.simulateConcurrentRequests(page, 5);
 
       // All requests within limit should succeed
       const successfulRequests = responses.filter((r) => r.status === 200);
@@ -431,8 +420,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       // Note: This test would require mocking time or waiting for the actual window
       // For now, we'll test the structure is in place
 
-      const { errorRequests, getRequestCount } =
-        await ErrorAPITestUtils.interceptErrorAPIWithRateLimit(page, 3);
+      const { getRequestCount } = await ErrorAPITestUtils.interceptErrorAPIWithRateLimit(page, 3);
 
       // Make requests up to limit
       for (let i = 0; i < 3; i++) {
@@ -454,8 +442,7 @@ test.describe('WebXR Error Logging API Integration', () => {
 
   test.describe('Error Handling and Resilience', () => {
     test('should handle server errors gracefully', async ({ page }) => {
-      const errorRequests =
-        await ErrorAPITestUtils.interceptErrorAPIWithServerError(page, 500);
+      const errorRequests = await ErrorAPITestUtils.interceptErrorAPIWithServerError(page, 500);
 
       await ErrorAPITestUtils.triggerWebXRError(page, 'webgl');
 
@@ -463,9 +450,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       expect(errorRequests.length).toBeGreaterThan(0);
     });
 
-    test('should queue errors when offline and send when online', async ({
-      page,
-    }) => {
+    test('should queue errors when offline and send when online', async ({ page }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       // Simulate offline mode
@@ -510,18 +495,18 @@ test.describe('WebXR Error Logging API Integration', () => {
 
   test.describe('Analytics Integration', () => {
     test('should trigger analytics events for errors', async ({ page }) => {
-      const analyticsEvents: any[] = [];
+      const analyticsEvents: AnalyticsEvent[] = [];
 
       // Mock Google Analytics
       await page.addInitScript(() => {
-        (window as any).gtag = (
+        const testWindow = window as unknown as TestWindow;
+        testWindow.gtag = (
           command: string,
           eventName: string,
-          parameters: any,
+          parameters: Record<string, unknown>,
         ) => {
-          (window as any).analyticsEvents =
-            (window as any).analyticsEvents || [];
-          (window as any).analyticsEvents.push({
+          testWindow.analyticsEvents = testWindow.analyticsEvents || [];
+          testWindow.analyticsEvents.push({
             command,
             eventName,
             parameters,
@@ -529,19 +514,24 @@ test.describe('WebXR Error Logging API Integration', () => {
         };
       });
 
-      await page.exposeFunction('captureAnalyticsEvent', (event: any) => {
+      await page.exposeFunction('captureAnalyticsEvent', (event: AnalyticsEvent) => {
         analyticsEvents.push(event);
       });
 
       await page.addInitScript(() => {
-        const originalGtag = (window as any).gtag;
-        (window as any).gtag = function (...args: any[]) {
-          (window as any).captureAnalyticsEvent({
-            command: args[0],
-            eventName: args[1],
-            parameters: args[2],
+        const testWindow = window as unknown as TestWindow;
+        const originalGtag = testWindow.gtag;
+        testWindow.gtag = function (
+          command: string,
+          eventName: string,
+          parameters: Record<string, unknown>,
+        ) {
+          testWindow.captureAnalyticsEvent?.({
+            command,
+            eventName,
+            parameters,
           });
-          return originalGtag?.apply(this, args);
+          return originalGtag?.call(this, command, eventName, parameters);
         };
       });
 
@@ -549,9 +539,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       await page.waitForTimeout(2000);
 
       // Should have triggered analytics events
-      const errorEvents = analyticsEvents.filter(
-        (e) => e.eventName === 'exception',
-      );
+      const errorEvents = analyticsEvents.filter((e) => e.eventName === 'exception');
       expect(errorEvents.length).toBeGreaterThan(0);
 
       if (errorEvents.length > 0) {
@@ -562,36 +550,37 @@ test.describe('WebXR Error Logging API Integration', () => {
     });
 
     test('should send appropriate metadata to Sentry', async ({ page }) => {
-      const sentryEvents: any[] = [];
+      const sentryEvents: SentryEvent[] = [];
 
       // Mock Sentry
       await page.addInitScript(() => {
-        (window as any).Sentry = {
-          captureException: (error: Error, context: any) => {
-            (window as any).sentryEvents = (window as any).sentryEvents || [];
-            (window as any).sentryEvents.push({
+        const testWindow = window as unknown as TestWindow;
+        testWindow.Sentry = {
+          captureException: (error: Error, context: Record<string, unknown>) => {
+            testWindow.sentryEvents = testWindow.sentryEvents || [];
+            testWindow.sentryEvents.push({
               error: error.message,
-              context,
+              context: context as SentryEvent['context'],
             });
           },
         };
       });
 
-      await page.exposeFunction('captureSentryEvent', (event: any) => {
+      await page.exposeFunction('captureSentryEvent', (event: SentryEvent) => {
         sentryEvents.push(event);
       });
 
       await page.addInitScript(() => {
-        const originalCaptureException = (window as any).Sentry
-          ?.captureException;
-        if (originalCaptureException) {
-          (window as any).Sentry.captureException = function (
+        const testWindow = window as unknown as TestWindow;
+        const originalCaptureException = testWindow.Sentry?.captureException;
+        if (originalCaptureException && testWindow.Sentry) {
+          testWindow.Sentry.captureException = function (
             error: Error,
-            context: any,
+            context: Record<string, unknown>,
           ) {
-            (window as any).captureSentryEvent({
+            testWindow.captureSentryEvent?.({
               error: error.message,
-              context,
+              context: context as SentryEvent['context'],
             });
             return originalCaptureException.call(this, error, context);
           };
@@ -612,10 +601,7 @@ test.describe('WebXR Error Logging API Integration', () => {
   });
 
   test.describe('Cross-Browser Compatibility', () => {
-    test('should handle different browser user agents correctly', async ({
-      page,
-      browserName,
-    }) => {
+    test('should handle different browser user agents correctly', async ({ page, browserName }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       await ErrorAPITestUtils.triggerWebXRError(page, 'webgl');
@@ -638,10 +624,7 @@ test.describe('WebXR Error Logging API Integration', () => {
       }
     });
 
-    test('should detect browser capabilities correctly', async ({
-      page,
-      browserName,
-    }) => {
+    test('should detect browser capabilities correctly', async ({ page, browserName }) => {
       const { errorRequests } = await ErrorAPITestUtils.interceptErrorAPI(page);
 
       await ErrorAPITestUtils.triggerWebXRError(page, 'webgl');

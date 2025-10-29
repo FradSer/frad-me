@@ -5,7 +5,7 @@ global.fetch = jest.fn();
 
 // Mock Google Analytics
 const mockGtag = jest.fn();
-global.gtag = mockGtag;
+(global as Record<string, unknown>).gtag = mockGtag;
 
 // Mock localStorage
 const localStorageMock = {
@@ -63,7 +63,7 @@ describe('Error Logger Queue Management', () => {
       // Should store in localStorage
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'webxr_error_queue',
-        expect.any(String)
+        expect.any(String),
       );
 
       // Restore online status
@@ -100,7 +100,7 @@ describe('Error Logger Queue Management', () => {
       window.dispatchEvent(new Event('online'));
 
       // Wait for queue processing
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Should send queued errors
       expect(fetch).toHaveBeenCalledTimes(4); // 2 original + 2 from queue
@@ -171,7 +171,7 @@ describe('Error Logger Queue Management', () => {
       expect(newLogger.getQueueSize()).toBe(0);
       expect(console.warn).toHaveBeenCalledWith(
         'Failed to load error queue from localStorage:',
-        expect.any(SyntaxError)
+        expect.any(SyntaxError),
       );
     });
   });
@@ -179,7 +179,7 @@ describe('Error Logger Queue Management', () => {
   describe('Rate Limiting', () => {
     beforeEach(() => {
       // Reset rate limiting by mocking Date.now
-      jest.spyOn(Date, 'prototype', 'getTime').mockRestore();
+      jest.spyOn(Date.prototype, 'getTime').mockRestore();
     });
 
     it('should allow requests under rate limit', async () => {
@@ -263,7 +263,7 @@ describe('Error Logger Queue Management', () => {
       // Should store in localStorage
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'webxr_error_queue',
-        expect.stringContaining('Offline persistence test')
+        expect.stringContaining('Offline persistence test'),
       );
 
       // Restore online status
@@ -288,12 +288,14 @@ describe('Error Logger Queue Management', () => {
       const testError = new Error('Storage quota test');
 
       // Should not throw error despite localStorage failure
-      await expect(webxrErrorLogger.logError(testError, { component: 'Test' })).resolves.toBeUndefined();
+      await expect(
+        webxrErrorLogger.logError(testError, { component: 'Test' }),
+      ).resolves.toBeUndefined();
 
       // Should log warning
       expect(console.warn).toHaveBeenCalledWith(
         'Failed to save error queue to localStorage:',
-        expect.any(DOMException)
+        expect.any(DOMException),
       );
 
       // Restore online status
@@ -351,7 +353,7 @@ describe('Error Logger Queue Management', () => {
 
       // Mock fetch to track call order
       const fetchCalls: string[] = [];
-      (fetch as jest.Mock).mockImplementation(async (url, options) => {
+      (fetch as jest.Mock).mockImplementation(async (_url, options) => {
         const body = JSON.parse(options.body);
         fetchCalls.push(body.error.message);
         return {
@@ -371,7 +373,7 @@ describe('Error Logger Queue Management', () => {
       window.dispatchEvent(new Event('online'));
 
       // Wait for queue processing
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Should process errors in order
       expect(fetchCalls).toEqual(['First', 'Second', 'Third']);
@@ -401,7 +403,7 @@ describe('Error Logger Queue Management', () => {
       window.dispatchEvent(new Event('online'));
 
       // Wait for queue processing
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Should have attempted to send but failed
       expect(fetch).toHaveBeenCalledTimes(2);
@@ -429,11 +431,13 @@ describe('Error Logger Queue Management', () => {
       const promises = [];
       for (let i = 0; i < 200; i++) {
         const error = new Error(`Memory test error ${i}`);
-        promises.push(webxrErrorLogger.logError(error, {
-          component: 'MemoryTest',
-          index: i,
-          largeData: 'x'.repeat(1000), // Add some data to increase memory usage
-        }));
+        promises.push(
+          webxrErrorLogger.logError(error, {
+            component: 'MemoryTest',
+            index: i,
+            largeData: 'x'.repeat(1000), // Add some data to increase memory usage
+          }),
+        );
       }
 
       await Promise.all(promises);

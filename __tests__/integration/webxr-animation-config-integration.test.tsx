@@ -2,22 +2,21 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, it } from '@jest/globals';
-import { 
-  WEBXR_ANIMATION_CONFIG, 
-  getLerpSpeed, 
+import {
   getAdaptiveSpring,
-  updateFPS,
+  getLerpSpeed,
   getQualityLevel,
+  isValidSpring,
   shouldHideComponent,
+  updateFPS,
   validateAnimationPreset,
-  isValidSpring
+  WEBXR_ANIMATION_CONFIG,
 } from '@/utils/webxr/animationConfig';
 
 describe('WebXR Animation Config Integration', () => {
   describe('Configuration Structure', () => {
     it('should have valid spring configurations', () => {
-      Object.entries(WEBXR_ANIMATION_CONFIG.springs).forEach(([preset, spring]) => {
+      Object.entries(WEBXR_ANIMATION_CONFIG.springs).forEach(([_preset, spring]) => {
         expect(isValidSpring(spring)).toBe(true);
         expect(spring.tension).toBeGreaterThan(0);
         expect(spring.friction).toBeGreaterThan(0);

@@ -1,14 +1,11 @@
-import type React from 'react';
+/// <reference types="jest" />
 import { render } from '@testing-library/react';
+import type React from 'react';
 import '@testing-library/jest-dom';
 import { Canvas } from '@react-three/fiber';
-import * as THREE from 'three';
 
 import WorkCard3D from '@/components/WebXR/WorkCard3D';
-import {
-  NAVIGATION_POSITIONS,
-  WORK_CARD_POSITIONS,
-} from '@/utils/webxr/animationConstants';
+import { NAVIGATION_POSITIONS, WORK_CARD_POSITIONS } from '@/utils/webxr/animationConstants';
 
 // Mock the workCardPositions utility
 jest.mock('@/utils/webxr/animationHelpers', () => ({
@@ -34,7 +31,7 @@ jest.mock('@react-three/drei', () => ({
   Html: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="html-content">{children}</div>
   ),
-  Text: ({ children, ...props }: any) => (
+  Text: ({ children, ...props }: { children: React.ReactNode } & Record<string, unknown>) => (
     <mesh {...props} data-testid="text-mesh">
       {children}
     </mesh>
@@ -56,15 +53,7 @@ describe('WorkCard3D Animation', () => {
   const renderWorkCard3D = (props = {}) => {
     return render(
       <Canvas>
-        <WorkCard3D
-          work={mockWorkData}
-          index={0}
-          position={[0, 0, -5]}
-          showCards={true}
-          hasAnimated={false}
-          onAnimationComplete={() => {}}
-          {...props}
-        />
+        <WorkCard3D work={mockWorkData} index={0} position={[0, 0, -5]} {...props} />
       </Canvas>,
     );
   };
@@ -81,7 +70,7 @@ describe('WorkCard3D Animation', () => {
 
   describe('Initial Positioning', () => {
     it('should position card at navigation button initially', () => {
-      const { container } = renderWorkCard3D({ hasAnimated: false });
+      const { container } = renderWorkCard3D();
 
       // Should render the card component
       expect(container.querySelector('group')).toBeTruthy();
@@ -90,7 +79,7 @@ describe('WorkCard3D Animation', () => {
     it('should use correct navigation position from constants', () => {
       const expectedPosition = NAVIGATION_POSITIONS.navigationButtonAbsolute;
 
-      renderWorkCard3D({ hasAnimated: false });
+      renderWorkCard3D();
 
       // The card should start from navigation position
       expect(expectedPosition).toEqual([2.5, 2, -3]);
@@ -107,41 +96,27 @@ describe('WorkCard3D Animation', () => {
   });
 
   describe('Animation Timing and States', () => {
-    it('should handle showCards prop correctly', () => {
-      const { rerender } = renderWorkCard3D({ showCards: false });
+    it('should handle visible prop correctly', () => {
+      const { rerender } = renderWorkCard3D({ visible: false });
 
       // Card should be hidden initially
       expect(true).toBe(true); // Basic render test
 
       rerender(
         <Canvas>
-          <WorkCard3D
-            work={mockWorkData}
-            index={0}
-            position={[0, 0, -5]}
-            showCards={true}
-            hasAnimated={false}
-            onAnimationComplete={() => {}}
-          />
+          <WorkCard3D work={mockWorkData} index={0} position={[0, 0, -5]} visible={true} />
         </Canvas>,
       );
 
-      // Should show card when showCards is true
+      // Should show card when visible is true
       expect(true).toBe(true); // Basic render test
     });
 
-    it('should call onAnimationComplete when animation finishes', () => {
-      const onAnimationComplete = jest.fn();
+    it('should render card successfully', () => {
+      renderWorkCard3D({ visible: true });
 
-      renderWorkCard3D({
-        showCards: true,
-        hasAnimated: false,
-        onAnimationComplete,
-      });
-
-      // Animation completion would be tested with integration tests
-      // that can actually run the animation loop
-      expect(onAnimationComplete).toBeDefined();
+      // Card should render successfully
+      expect(true).toBe(true);
     });
 
     it('should handle staggered animation timing', () => {
@@ -169,9 +144,7 @@ describe('WorkCard3D Animation', () => {
       const { container } = renderWorkCard3D();
 
       // Should render HTML content for description
-      expect(
-        container.querySelector('[data-testid="html-content"]'),
-      ).toBeTruthy();
+      expect(container.querySelector('[data-testid="html-content"]')).toBeTruthy();
     });
 
     it('should show WIP badge when work is in progress', () => {
@@ -228,7 +201,9 @@ describe('WorkCard3D Animation', () => {
 
       // All cards should render successfully
       expect(cards).toHaveLength(6);
-      cards.forEach((card) => expect(card.container).toBeTruthy());
+      cards.forEach((card) => {
+        expect(card.container).toBeTruthy();
+      });
     });
 
     it('should not cause memory leaks with re-renders', () => {
@@ -242,9 +217,6 @@ describe('WorkCard3D Animation', () => {
               work={{ ...mockWorkData, title: `Updated Title ${i}` }}
               index={0}
               position={[0, 0, -5]}
-              showCards={true}
-              hasAnimated={true}
-              onAnimationComplete={() => {}}
             />
           </Canvas>,
         );
@@ -267,12 +239,10 @@ describe('WorkCard3D Animation', () => {
       }).not.toThrow();
     });
 
-    it('should handle invalid animation props', () => {
+    it('should handle invalid props gracefully', () => {
       expect(() => {
         renderWorkCard3D({
-          showCards: undefined,
-          hasAnimated: null,
-          onAnimationComplete: null,
+          visible: undefined,
         });
       }).not.toThrow();
     });
@@ -293,37 +263,22 @@ describe('WorkCard3D Animation', () => {
       expect(true).toBe(true);
     });
 
-    it('should handle animation state transitions', () => {
+    it('should handle visibility state transitions', () => {
       const { rerender } = renderWorkCard3D({
-        showCards: false,
-        hasAnimated: false,
+        visible: false,
       });
 
-      // Transition to showing cards
+      // Transition to showing card
       rerender(
         <Canvas>
-          <WorkCard3D
-            work={mockWorkData}
-            index={0}
-            position={[0, 0, -5]}
-            showCards={true}
-            hasAnimated={false}
-            onAnimationComplete={() => {}}
-          />
+          <WorkCard3D work={mockWorkData} index={0} position={[0, 0, -5]} visible={true} />
         </Canvas>,
       );
 
-      // Then to animated state
+      // Then back to hidden
       rerender(
         <Canvas>
-          <WorkCard3D
-            work={mockWorkData}
-            index={0}
-            position={[0, 0, -5]}
-            showCards={true}
-            hasAnimated={true}
-            onAnimationComplete={() => {}}
-          />
+          <WorkCard3D work={mockWorkData} index={0} position={[0, 0, -5]} visible={false} />
         </Canvas>,
       );
 

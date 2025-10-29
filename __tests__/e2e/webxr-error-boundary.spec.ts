@@ -1,6 +1,20 @@
-import { test, expect, type Page } from '@playwright/test';
-import { BasePage, TestUtils } from './__utils__/page-objects';
+import { expect, type Page, test } from '@playwright/test';
 import { WebXRMockUtils } from '../utils/webxr-mocks';
+import { BasePage, TestUtils } from './__utils__/page-objects';
+
+// Type definitions for error API testing
+interface ErrorLogData {
+  error: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  timestamp: string;
+  userAgent: string;
+  url?: string;
+  webxrSupported?: boolean;
+  webglSupported?: boolean;
+}
 
 // WebXR simplified error boundary test utilities
 class WebXRErrorBoundaryPage extends BasePage {
@@ -10,18 +24,12 @@ class WebXRErrorBoundaryPage extends BasePage {
   }
 
   async verifyWebXRMode() {
-    await expect(
-      this.page.locator('[data-testid="webxr-canvas"]'),
-    ).toBeVisible();
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).not.toBeVisible();
+    await expect(this.page.locator('[data-testid="webxr-canvas"]')).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).not.toBeVisible();
   }
 
   async verifyErrorBoundaryMessage() {
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).toBeVisible();
     await expect(
       this.page.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
     ).toBeVisible();
@@ -29,9 +37,7 @@ class WebXRErrorBoundaryPage extends BasePage {
 
   async verifyErrorDisplay() {
     // New ErrorBoundary shows simple error message for WebXR components
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).toBeVisible();
   }
 
   async verifyHeroStyleErrorUI() {
@@ -40,24 +46,37 @@ class WebXRErrorBoundaryPage extends BasePage {
     await expect(errorContainer).toBeVisible();
 
     // Verify centered layout
-    await expect(
-      this.page.locator('.items-center.justify-center'),
-    ).toBeVisible();
+    await expect(this.page.locator('.items-center.justify-center')).toBeVisible();
 
     // Verify white text
     await expect(this.page.locator('.text-white')).toBeVisible();
   }
+
+  async verifyErrorButtons() {
+    const tryAgainButton = this.page.locator('button:has-text("Try Again")');
+    const returnMainButton = this.page.locator('button:has-text("Return to Main")');
+    await expect(tryAgainButton).toBeVisible();
+    await expect(returnMainButton).toBeVisible();
+  }
+
+  async clickTryAgainButton() {
+    await this.page.locator('button:has-text("Try Again")').click();
+  }
+
+  async clickReturnMainButton() {
+    await this.page.locator('button:has-text("Return to Main")').click();
+  }
 }
 
 // Error logging test utilities
-class ErrorLoggingUtils {
-  static async interceptErrorAPI(page: Page) {
-    const errorRequests: any[] = [];
+const ErrorLoggingUtils = {
+  async interceptErrorAPI(page: Page) {
+    const errorRequests: ErrorLogData[] = [];
 
     await page.route('/api/errors', async (route) => {
       const request = route.request();
       const postData = request.postDataJSON();
-      errorRequests.push(postData);
+      errorRequests.push(postData as ErrorLogData);
 
       await route.fulfill({
         status: 200,
@@ -67,11 +86,11 @@ class ErrorLoggingUtils {
     });
 
     return errorRequests;
-  }
+  },
 
-  static async interceptErrorAPIWithRateLimit(page: Page) {
+  async interceptErrorAPIWithRateLimit(page: Page) {
     let requestCount = 0;
-    const errorRequests: any[] = [];
+    const errorRequests: Array<Record<string, unknown>> = [];
 
     await page.route('/api/errors', async (route) => {
       requestCount++;
@@ -95,8 +114,8 @@ class ErrorLoggingUtils {
     });
 
     return { errorRequests, getRequestCount: () => requestCount };
-  }
-}
+  },
+};
 
 test.describe('WebXR Error Boundary Integration', () => {
   let webxrPage: WebXRErrorBoundaryPage;
@@ -106,15 +125,9 @@ test.describe('WebXR Error Boundary Integration', () => {
   });
 
   test.describe('Normal Operation Tests', () => {
-    test('should load WebXR experience when fully supported', async ({
-      page,
-      browserName,
-    }) => {
+    test('should load WebXR experience when fully supported', async ({ page, browserName }) => {
       // Only test full WebXR in Chrome-based browsers
-      test.skip(
-        browserName !== 'chromium',
-        'WebXR only supported in Chromium browsers',
-      );
+      test.skip(browserName !== 'chromium', 'WebXR only supported in Chromium browsers');
 
       await WebXRMockUtils.enableFullWebXRSupport(page);
       await webxrPage.navigateToWebXR();
@@ -125,9 +138,7 @@ test.describe('WebXR Error Boundary Integration', () => {
   });
 
   test.describe('Error Boundary Tests', () => {
-    test('should show hero-style error boundary when WebXR fails', async ({
-      page,
-    }) => {
+    test('should show hero-style error boundary when WebXR fails', async ({ page }) => {
       // Simulate error that triggers error boundary
       await WebXRMockUtils.disableWebGL(page);
       await webxrPage.navigateToWebXR();
@@ -210,8 +221,7 @@ test.describe('WebXR Error Boundary Integration', () => {
     });
 
     test('should enforce rate limiting on error API', async ({ page }) => {
-      const { errorRequests, getRequestCount } =
-        await ErrorLoggingUtils.interceptErrorAPIWithRateLimit(page);
+      const { getRequestCount } = await ErrorLoggingUtils.interceptErrorAPIWithRateLimit(page);
 
       // Trigger multiple errors rapidly
       await WebXRMockUtils.disableWebGL(page);
@@ -233,9 +243,9 @@ test.describe('WebXR Error Boundary Integration', () => {
       // Inject malicious script in error message
       await page.addInitScript(() => {
         const originalError = Error;
-        window.Error = (message?: string) => {
-          const maliciousMessage =
-            message + '<script>alert("xss")</script>/sensitive/path';
+        // Replace Error constructor in browser context for testing sanitization
+        (window as unknown as Record<string, unknown>).Error = (message?: string) => {
+          const maliciousMessage = `${message}<script>alert("xss")</script>/sensitive/path`;
           return new originalError(maliciousMessage);
         };
       });
@@ -280,10 +290,7 @@ test.describe('WebXR Error Boundary Integration', () => {
   });
 
   test.describe('Cross-Browser Compatibility Tests', () => {
-    test('should handle Safari without WebXR support', async ({
-      page,
-      browserName,
-    }) => {
+    test('should handle Safari without WebXR support', async ({ page, browserName }) => {
       test.skip(browserName === 'chromium', 'Testing Safari-specific behavior');
 
       await webxrPage.navigateToWebXR();
@@ -291,18 +298,13 @@ test.describe('WebXR Error Boundary Integration', () => {
       // Safari should show error boundary due to limited WebXR support
       // This test might need adjustment based on your actual Safari handling
       await page.waitForTimeout(2000);
-      const hasError = await page
-        .getByText('WebXR Experience Unavailable')
-        .isVisible();
+      const hasError = await page.getByText('WebXR Experience Unavailable').isVisible();
       if (hasError) {
         await webxrPage.verifyErrorBoundaryMessage();
       }
     });
 
-    test('should handle Firefox WebXR limitations', async ({
-      page,
-      browserName,
-    }) => {
+    test('should handle Firefox WebXR limitations', async ({ page, browserName }) => {
       test.skip(browserName !== 'firefox', 'Testing Firefox-specific behavior');
 
       await webxrPage.navigateToWebXR();
@@ -310,17 +312,13 @@ test.describe('WebXR Error Boundary Integration', () => {
       // Firefox should show error boundary due to limited WebXR support
       // This test might need adjustment based on your actual Firefox handling
       await page.waitForTimeout(2000);
-      const hasError = await page
-        .getByText('WebXR Experience Unavailable')
-        .isVisible();
+      const hasError = await page.getByText('WebXR Experience Unavailable').isVisible();
       if (hasError) {
         await webxrPage.verifyErrorBoundaryMessage();
       }
     });
 
-    test('should maintain functionality on mobile browsers', async ({
-      page,
-    }) => {
+    test('should maintain functionality on mobile browsers', async ({ page }) => {
       // Simulate mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
@@ -336,9 +334,7 @@ test.describe('WebXR Error Boundary Integration', () => {
   });
 
   test.describe('Security and Privacy Tests', () => {
-    test('should not expose sensitive information in error responses', async ({
-      page,
-    }) => {
+    test('should not expose sensitive information in error responses', async ({ page }) => {
       const errorRequests = await ErrorLoggingUtils.interceptErrorAPI(page);
 
       await WebXRMockUtils.disableWebGL(page);
@@ -361,9 +357,7 @@ test.describe('WebXR Error Boundary Integration', () => {
       }
     });
 
-    test('should handle malformed API requests gracefully', async ({
-      page,
-    }) => {
+    test('should handle malformed API requests gracefully', async ({ page }) => {
       await page.route('/api/errors', async (route) => {
         // Send malformed request
         await route.fulfill({

@@ -1,5 +1,5 @@
-import { render, screen, act } from '@testing-library/react';
-import { WebXRViewProvider, useWebXRView, type WebXRView } from '../WebXRViewContext';
+import { act, render, screen } from '@testing-library/react';
+import { useWebXRView, WebXRViewProvider } from '../WebXRViewContext';
 
 // Mock navigator for WebXR detection
 const mockNavigator = {
@@ -37,25 +37,21 @@ const TestComponent = () => {
       <div data-testid="footer-visible">{footerLinksVisible.toString()}</div>
       <div data-testid="is-vision-pro">{isVisionPro.toString()}</div>
       <div data-testid="webxr-supported">{webXRSupported.toString()}</div>
-      <button
-        data-testid="navigate-work"
-        onClick={() => navigateToView('work')}
-      >
+      <button type="button" data-testid="navigate-work" onClick={() => navigateToView('work')}>
         Go to Work
       </button>
-      <button
-        data-testid="navigate-home"
-        onClick={() => navigateToView('home')}
-      >
+      <button type="button" data-testid="navigate-home" onClick={() => navigateToView('home')}>
         Go to Home
       </button>
       <button
+        type="button"
         data-testid="set-transitioning-true"
         onClick={() => setTransitioning(true)}
       >
         Start Transition
       </button>
       <button
+        type="button"
         data-testid="set-transitioning-false"
         onClick={() => setTransitioning(false)}
       >
@@ -69,7 +65,7 @@ describe('WebXRViewContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Ensure navigator.xr is properly mocked
-    if (mockNavigator.xr && mockNavigator.xr.isSessionSupported) {
+    if (mockNavigator.xr?.isSessionSupported) {
       mockNavigator.xr.isSessionSupported.mockResolvedValue(false);
     }
   });
@@ -79,7 +75,7 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <div data-testid="child">Test Child</div>
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       expect(screen.getByTestId('child')).toBeInTheDocument();
@@ -89,7 +85,7 @@ describe('WebXRViewContext', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
       expect(() => render(<TestComponent />)).toThrow(
-        'useWebXRView must be used within a WebXRViewProvider'
+        'useWebXRView must be used within a WebXRViewProvider',
       );
 
       consoleSpy.mockRestore();
@@ -101,11 +97,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('current-view')).toHaveTextContent('home');
@@ -115,11 +111,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       const navigateButton = screen.getByTestId('navigate-work');
@@ -135,11 +131,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Go to work first
@@ -161,11 +157,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('is-transitioning')).toHaveTextContent('false');
@@ -175,11 +171,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Start transition
@@ -203,11 +199,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('navigation-visible')).toHaveTextContent('true');
@@ -219,11 +215,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // On home view, footer should be visible
@@ -254,11 +250,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('webxr-supported')).toHaveTextContent('true');
@@ -270,33 +266,33 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('webxr-supported')).toHaveTextContent('false');
     });
 
     it('should handle missing WebXR API', async () => {
-      delete (window.navigator as any).xr;
+      delete (window.navigator as unknown as Record<string, unknown>).xr;
 
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('webxr-supported')).toHaveTextContent('false');
 
       // Restore navigator
-      (window.navigator as any).xr = mockNavigator.xr;
+      (window.navigator as unknown as Record<string, unknown>).xr = mockNavigator.xr;
     });
   });
 
@@ -316,11 +312,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('is-vision-pro')).toHaveTextContent('true');
@@ -346,11 +342,11 @@ describe('WebXRViewContext', () => {
       render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByTestId('is-vision-pro')).toHaveTextContent('false');
@@ -368,11 +364,11 @@ describe('WebXRViewContext', () => {
       const { rerender } = render(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Navigate to work view
@@ -386,7 +382,7 @@ describe('WebXRViewContext', () => {
       rerender(
         <WebXRViewProvider>
           <TestComponent />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       // State should persist
@@ -404,6 +400,7 @@ describe('WebXRViewContext', () => {
       const { navigateToView } = useWebXRView();
       return (
         <button
+          type="button"
           data-testid="consumer-b-button"
           onClick={() => navigateToView('work')}
         >
@@ -423,11 +420,11 @@ describe('WebXRViewContext', () => {
         <WebXRViewProvider>
           <ConsumerA />
           <ConsumerB />
-        </WebXRViewProvider>
+        </WebXRViewProvider>,
       );
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Initially on home

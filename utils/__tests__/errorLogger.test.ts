@@ -5,7 +5,7 @@ global.fetch = jest.fn();
 
 // Mock Google Analytics
 const mockGtag = jest.fn();
-global.gtag = mockGtag;
+(global as Record<string, unknown>).gtag = mockGtag;
 
 // Mock localStorage
 const localStorageMock = {
@@ -97,9 +97,7 @@ describe('Error Logger Utility', () => {
       // Make multiple rapid calls
       const promises = [];
       for (let i = 0; i < 10; i++) {
-        promises.push(
-          webxrErrorLogger.logError(testError, { component: 'Test' }),
-        );
+        promises.push(webxrErrorLogger.logError(testError, { component: 'Test' }));
       }
 
       await Promise.all(promises);
@@ -239,7 +237,7 @@ describe('Error Logger Utility', () => {
 
     it('should handle circular references in context', async () => {
       const testError = new Error('Circular test');
-      const circularContext: any = { component: 'CircularTest' };
+      const circularContext: Record<string, unknown> = { component: 'CircularTest' };
       circularContext.self = circularContext;
 
       await webxrErrorLogger.logError(testError, circularContext);
@@ -269,9 +267,7 @@ describe('Error Logger Utility', () => {
       const mockCanvas = {
         getContext: jest.fn().mockReturnValue({
           getParameter: jest.fn(),
-          getSupportedExtensions: jest
-            .fn()
-            .mockReturnValue(['WEBGL_debug_renderer_info']),
+          getSupportedExtensions: jest.fn().mockReturnValue(['WEBGL_debug_renderer_info']),
         }),
       };
 

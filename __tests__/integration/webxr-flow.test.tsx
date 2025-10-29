@@ -1,11 +1,5 @@
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Test constants
@@ -47,7 +41,7 @@ jest.mock('@react-three/drei', () => ({
   Html: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="html-content">{children}</div>
   ),
-  Text: ({ children, ...props }: any) => (
+  Text: ({ children, ...props }: React.ComponentProps<'div'>) => (
     <div data-testid="text-element" {...props}>
       {children}
     </div>
@@ -86,9 +80,8 @@ jest.mock('@/components/WebXR/Navigation3D', () => {
     return (
       <div data-testid="navigation-3d">
         <button
-          onClick={() =>
-            navigateToView(currentView === 'home' ? 'work' : 'home')
-          }
+          type="button"
+          onClick={() => navigateToView(currentView === 'home' ? 'work' : 'home')}
         >
           {currentView === 'home' ? 'work' : 'home'}
         </button>
@@ -99,8 +92,7 @@ jest.mock('@/components/WebXR/Navigation3D', () => {
 
 jest.mock('@/components/WebXR/WorkGrid3D', () => {
   return function WorkGrid3D() {
-    const { currentView } =
-      require('@/contexts/WebXR/WebXRViewContext').useWebXRView();
+    const { currentView } = require('@/contexts/WebXR/WebXRViewContext').useWebXRView();
     return currentView === 'work' ? (
       <div data-testid="work-grid-3d">Work Grid Component</div>
     ) : null;
@@ -109,9 +101,7 @@ jest.mock('@/components/WebXR/WorkGrid3D', () => {
 
 jest.mock('@/components/WebXR/FooterLinks3D', () => {
   return function FooterLinks3D() {
-    return (
-      <div data-testid={TEST_IDS.footerLinks3d}>Footer Links Component</div>
-    );
+    return <div data-testid={TEST_IDS.footerLinks3d}>Footer Links Component</div>;
   };
 });
 
@@ -146,16 +136,12 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />);
 
       // Check that all major components are present
-      expect(
-        screen.getByTestId(TEST_IDS.webxrViewProvider),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument();
       expect(screen.getByTestId(TEST_IDS.webxrCanvas)).toBeInTheDocument();
       expect(screen.getByTestId(TEST_IDS.heroText)).toBeInTheDocument();
       expect(screen.getByTestId(TEST_IDS.navigation3d)).toBeInTheDocument();
       expect(screen.getByTestId(TEST_IDS.footerLinks3d)).toBeInTheDocument();
-      expect(
-        screen.getByTestId(TEST_IDS.cameraController3d),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.cameraController3d)).toBeInTheDocument();
     });
 
     it('should handle view transitions from home to work', async () => {
@@ -213,18 +199,14 @@ describe('WebXR Experience Integration', () => {
       render(<WebXRPage />);
 
       // Should still render but potentially with fallbacks
-      expect(
-        screen.getByTestId(TEST_IDS.webxrViewProvider),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument();
     });
 
     it('should handle WebXR detection loading state', () => {
       mockWebXRContext.loading = true;
       render(<WebXRPage />);
 
-      expect(
-        screen.getByTestId(TEST_IDS.webxrViewProvider),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.webxrViewProvider)).toBeInTheDocument();
     });
   });
 

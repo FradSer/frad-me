@@ -3,10 +3,7 @@ import type { Page } from '@playwright/test';
 // Type definitions for testing utilities
 interface MockXRSystem {
   isSessionSupported: (mode: string) => Promise<boolean>;
-  requestSession: (
-    mode: string,
-    options?: XRSessionInit,
-  ) => Promise<MockXRSession>;
+  requestSession: (mode: string, options?: XRSessionInit) => Promise<MockXRSession>;
 }
 
 interface MockXRSession {
@@ -34,46 +31,19 @@ interface PerformanceEvent {
   timestamp?: number;
 }
 
-interface ErrorLogData {
-  error: {
-    name: string;
-    message: string;
-    stack?: string;
-  };
-  timestamp: string;
-  userAgent: string;
-  url?: string;
-  webxrSupported?: boolean;
-  webglSupported?: boolean;
-}
-
-interface AnalyticsEvent {
-  command: string;
-  eventName: string;
-  parameters: Record<string, unknown>;
-}
-
-interface SentryEvent {
-  error: string;
-  context: {
-    tags?: Record<string, unknown>;
-    extra?: Record<string, unknown>;
-  };
-}
-
 /**
  * WebXR and WebGL capability mocking utilities for comprehensive testing
  * of progressive fallback scenarios across different browser capabilities
  */
-export class WebXRMockUtils {
+export const WebXRMockUtils = {
   /**
    * Completely disables WebXR API by removing navigator.xr
    * Simulates browsers without WebXR support (Safari, older browsers)
    */
-  static async disableWebXR(page: Page): Promise<void> {
+  async disableWebXR(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Remove WebXR API completely
-      delete (window.navigator as any).xr;
+      delete (window.navigator as unknown as Record<string, unknown>).xr;
 
       // Also mock XR detection functions
       Object.defineProperty(window.navigator, 'xr', {
@@ -82,13 +52,13 @@ export class WebXRMockUtils {
         configurable: false,
       });
     });
-  }
+  },
 
   /**
    * Disables WebGL by making context creation fail
    * Simulates devices with broken graphics drivers or very old hardware
    */
-  static async disableWebGL(page: Page): Promise<void> {
+  async disableWebGL(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Mock all WebGL context creation to fail
       const originalGetContext = HTMLCanvasElement.prototype.getContext.bind(
@@ -97,9 +67,7 @@ export class WebXRMockUtils {
       Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
         value: function (
           contextType: string,
-          contextAttributes?:
-            | WebGLContextAttributes
-            | CanvasRenderingContext2DSettings,
+          contextAttributes?: WebGLContextAttributes | CanvasRenderingContext2DSettings,
         ) {
           if (contextType.toLowerCase().includes('webgl')) {
             return null;
@@ -110,28 +78,23 @@ export class WebXRMockUtils {
         configurable: true,
       });
     });
-  }
+  },
 
   /**
    * Simulates WebGL context loss after successful initialization
    * Tests runtime error handling and recovery
    */
-  static async simulateWebGLContextLoss(
-    page: Page,
-    delayMs: number = 1000,
-  ): Promise<void> {
+  async simulateWebGLContextLoss(page: Page, delayMs: number = 1000): Promise<void> {
     await page.addInitScript((delay: number) => {
       setTimeout(() => {
         // Find all canvas elements and trigger context loss
         const canvases = document.querySelectorAll('canvas');
         canvases.forEach((canvas) => {
-          const gl =
-            canvas.getContext('webgl') ||
-            canvas.getContext('experimental-webgl');
+          const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
           if (gl && 'getExtension' in gl) {
-            const loseContextExtension = (
-              gl as WebGLRenderingContext
-            ).getExtension('WEBGL_lose_context');
+            const loseContextExtension = (gl as WebGLRenderingContext).getExtension(
+              'WEBGL_lose_context',
+            );
             if (loseContextExtension) {
               loseContextExtension.loseContext();
             }
@@ -140,9 +103,9 @@ export class WebXRMockUtils {
           // Also try WebGL2
           const gl2 = canvas.getContext('webgl2');
           if (gl2 && 'getExtension' in gl2) {
-            const loseContextExtension = (
-              gl2 as WebGL2RenderingContext
-            ).getExtension('WEBGL_lose_context');
+            const loseContextExtension = (gl2 as WebGL2RenderingContext).getExtension(
+              'WEBGL_lose_context',
+            );
             if (loseContextExtension) {
               loseContextExtension.loseContext();
             }
@@ -157,13 +120,13 @@ export class WebXRMockUtils {
         );
       }, delay);
     }, delayMs);
-  }
+  },
 
   /**
    * Simulates low-end device performance
    * Forces performance monitoring to detect poor framerates
    */
-  static async simulateLowPerformance(page: Page): Promise<void> {
+  async simulateLowPerformance(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Override performance.now to simulate slow frame rates
       const originalNow = performance.now.bind(performance);
@@ -187,13 +150,13 @@ export class WebXRMockUtils {
           setTimeout(() => callback(performance.now()), 50);
         });
     });
-  }
+  },
 
   /**
    * Simulates memory-constrained device
    * Triggers performance degradation due to memory pressure
    */
-  static async simulateMemoryPressure(page: Page): Promise<void> {
+  async simulateMemoryPressure(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Mock memory API to report low available memory
       if ('memory' in performance) {
@@ -216,13 +179,13 @@ export class WebXRMockUtils {
         );
       }, 1500);
     });
-  }
+  },
 
   /**
    * Enables full WebXR support for testing WebXR-capable browsers
    * Mocks Vision Pro, Meta Quest, or other XR device support
    */
-  static async enableFullWebXRSupport(page: Page): Promise<void> {
+  async enableFullWebXRSupport(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Mock complete WebXR API
       const mockXRSystem = {
@@ -231,19 +194,16 @@ export class WebXRMockUtils {
           return Promise.resolve(supportedModes.includes(mode));
         },
 
-        requestSession: (
-          mode: string,
-          options?: XRSessionInit,
-        ): Promise<MockXRSession> => {
+        requestSession: (mode: string, _options?: XRSessionInit): Promise<MockXRSession> => {
           return Promise.resolve({
             mode,
             inputSources: [],
             visibilityState: 'visible',
 
-            addEventListener: (type: string, listener: EventListener) => {},
-            removeEventListener: (type: string, listener: EventListener) => {},
+            addEventListener: (_type: string, _listener: EventListener) => {},
+            removeEventListener: (_type: string, _listener: EventListener) => {},
 
-            requestReferenceSpace: (type: string) =>
+            requestReferenceSpace: (_type: string) =>
               Promise.resolve({
                 getOffsetReferenceSpace: () => {},
                 addEventListener: () => {},
@@ -258,7 +218,7 @@ export class WebXRMockUtils {
                   getPose: () => null,
                   getInputSources: () => [],
                 };
-                callback(0, mockFrame as any);
+                callback(0, mockFrame as unknown as XRFrame);
               });
             },
 
@@ -273,13 +233,13 @@ export class WebXRMockUtils {
         configurable: true,
       });
     });
-  }
+  },
 
   /**
    * Simulates partial WebXR support (some features missing)
    * Tests graceful degradation when certain XR features are unavailable
    */
-  static async enablePartialWebXRSupport(page: Page): Promise<void> {
+  async enablePartialWebXRSupport(page: Page): Promise<void> {
     await page.addInitScript(() => {
       const mockXRSystem = {
         isSessionSupported: (mode: string): Promise<boolean> => {
@@ -287,17 +247,19 @@ export class WebXRMockUtils {
           return Promise.resolve(mode === 'inline');
         },
 
-        requestSession: (mode: string): Promise<any> => {
+        requestSession: (mode: string): Promise<MockXRSession> => {
           if (mode !== 'inline') {
             return Promise.reject(new Error('Session mode not supported'));
           }
 
           return Promise.resolve({
             mode: 'inline',
+            inputSources: [],
+            visibilityState: 'visible',
             addEventListener: () => {},
             removeEventListener: () => {},
-            requestReferenceSpace: () =>
-              Promise.reject(new Error('Reference space not available')),
+            requestReferenceSpace: () => Promise.reject(new Error('Reference space not available')),
+            requestAnimationFrame: () => 0,
             end: () => Promise.resolve(),
           });
         },
@@ -309,26 +271,28 @@ export class WebXRMockUtils {
         configurable: true,
       });
     });
-  }
+  },
 
   /**
    * Simulates WebXR session failure after initial success
    * Tests error handling during active XR sessions
    */
-  static async simulateWebXRSessionFailure(
-    page: Page,
-    delayMs: number = 2000,
-  ): Promise<void> {
+  async simulateWebXRSessionFailure(page: Page, delayMs: number = 2000): Promise<void> {
     await page.addInitScript((delay: number) => {
       const originalRequestSession = navigator.xr?.requestSession;
       if (originalRequestSession) {
-        (navigator.xr as MockXRSystem).requestSession = function (
+        (navigator.xr as unknown as MockXRSystem).requestSession = function (
           mode: string,
           options?: XRSessionInit,
         ) {
           return originalRequestSession
-            .call(this, mode, options)
+            .call(
+              this,
+              mode as XRSessionMode,
+              options as unknown as import('@/types/webxr').XRSessionInit,
+            )
             .then((session) => {
+              const mockSession = session as unknown as MockXRSession;
               // Simulate session failure after delay
               setTimeout(() => {
                 const errorEvent = new Event('error');
@@ -342,20 +306,18 @@ export class WebXRMockUtils {
                 );
               }, delay);
 
-              return session;
-            });
+              return Promise.resolve(mockSession);
+            }) as Promise<MockXRSession>;
         };
       }
     }, delayMs);
-  }
+  },
 
   /**
    * Simulates progressive performance degradation
    * Tests automatic quality adjustment over time
    */
-  static async simulateProgressivePerformanceDegradation(
-    page: Page,
-  ): Promise<void> {
+  async simulateProgressivePerformanceDegradation(page: Page): Promise<void> {
     await page.addInitScript(() => {
       let performanceFactor = 1.0;
       const degradationRate = 0.1;
@@ -369,8 +331,7 @@ export class WebXRMockUtils {
             detail: {
               factor: performanceFactor,
               fps: Math.round(60 * performanceFactor),
-              frameTime:
-                Math.round((1000 / (60 * performanceFactor)) * 100) / 100,
+              frameTime: Math.round((1000 / (60 * performanceFactor)) * 100) / 100,
             },
           }),
         );
@@ -380,13 +341,13 @@ export class WebXRMockUtils {
         }
       }, 1000);
     });
-  }
+  },
 
   /**
    * Mocks mobile browser characteristics
    * Tests mobile-specific WebXR behaviors and limitations
    */
-  static async mockMobileBrowser(page: Page): Promise<void> {
+  async mockMobileBrowser(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Override user agent
       Object.defineProperty(navigator, 'userAgent', {
@@ -421,30 +382,28 @@ export class WebXRMockUtils {
         });
       }
     });
-  }
+  },
 
   /**
    * Simulates various browser security restrictions
    * Tests handling of security-related WebXR/WebGL failures
    */
-  static async simulateSecurityRestrictions(page: Page): Promise<void> {
+  async simulateSecurityRestrictions(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Mock HTTPS requirement failure
       if (location.protocol !== 'https:') {
         const originalRequestSession = navigator.xr?.requestSession;
         if (originalRequestSession) {
-          (navigator.xr as any).requestSession = () =>
+          (navigator.xr as unknown as MockXRSystem).requestSession = () =>
             Promise.reject(
-              new DOMException(
-                'WebXR requires a secure context (HTTPS)',
-                'SecurityError',
-              ),
+              new DOMException('WebXR requires a secure context (HTTPS)', 'SecurityError'),
             );
         }
       }
 
       // Mock permissions denial
       const originalGetContext = HTMLCanvasElement.prototype.getContext;
+      // @ts-expect-error - Mocking prototype method for testing
       HTMLCanvasElement.prototype.getContext = function (
         type: string,
         attributes?: WebGLContextAttributes,
@@ -458,28 +417,25 @@ export class WebXRMockUtils {
         return originalGetContext.call(this, type, attributes);
       };
     });
-  }
+  },
 
   /**
    * Resets all mocked APIs to their original state
    * Useful for cleanup between tests
    */
-  static async resetAllMocks(page: Page): Promise<void> {
+  async resetAllMocks(page: Page): Promise<void> {
     await page.reload();
-  }
-}
+  },
+};
 
 /**
  * Performance testing utilities for WebXR fallback scenarios
  */
-export class PerformanceTestUtils {
+export const PerformanceTestUtils = {
   /**
    * Measures frame rate over a specified duration
    */
-  static async measureFrameRate(
-    page: Page,
-    durationMs: number = 5000,
-  ): Promise<number> {
+  async measureFrameRate(page: Page, durationMs: number = 5000): Promise<number> {
     return await page.evaluate((duration: number) => {
       return new Promise<number>((resolve) => {
         let frameCount = 0;
@@ -499,42 +455,41 @@ export class PerformanceTestUtils {
         requestAnimationFrame(countFrame);
       });
     }, durationMs);
-  }
+  },
 
   /**
    * Monitors performance events from React Three Fiber
    */
-  static async capturePerformanceEvents(
+  async capturePerformanceEvents(
     page: Page,
     durationMs: number = 3000,
-  ): Promise<any[]> {
+  ): Promise<PerformanceEvent[]> {
     const events: PerformanceEvent[] = [];
 
-    await page.exposeFunction(
-      'capturePerformanceEvent',
-      (event: PerformanceEvent) => {
-        events.push({ ...event, timestamp: Date.now() });
-      },
-    );
+    await page.exposeFunction('capturePerformanceEvent', (event: PerformanceEvent) => {
+      events.push({ ...event, timestamp: Date.now() });
+    });
 
     await page.addInitScript(() => {
-      window.addEventListener(
-        'performance-change',
-        (event: CustomEvent<PerformanceEvent>) => {
-          (window as any).capturePerformanceEvent(event.detail);
-        },
-      );
+      window.addEventListener('performance-change', ((event: Event) => {
+        const customEvent = event as CustomEvent<PerformanceEvent>;
+        (
+          window as unknown as Record<string, unknown> & {
+            capturePerformanceEvent?: (event: PerformanceEvent) => void;
+          }
+        ).capturePerformanceEvent?.(customEvent.detail);
+      }) as EventListener);
     });
 
     await page.waitForTimeout(durationMs);
 
     return events;
-  }
+  },
 
   /**
    * Stress tests WebGL context with high polygon counts
    */
-  static async stressTestWebGL(page: Page): Promise<void> {
+  async stressTestWebGL(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Create multiple canvases with complex scenes to stress GPU
       for (let i = 0; i < 10; i++) {
@@ -552,17 +507,17 @@ export class PerformanceTestUtils {
         }
       }
     });
-  }
-}
+  },
+};
 
 /**
  * Browser capability detection utilities
  */
-export class BrowserCapabilityUtils {
+export const BrowserCapabilityUtils = {
   /**
    * Detects actual browser WebXR capabilities
    */
-  static async detectWebXRSupport(page: Page): Promise<boolean> {
+  async detectWebXRSupport(page: Page): Promise<boolean> {
     return await page.evaluate(async () => {
       if (!navigator.xr) return false;
 
@@ -572,31 +527,27 @@ export class BrowserCapabilityUtils {
         return false;
       }
     });
-  }
+  },
 
   /**
    * Detects WebGL capabilities and version
    */
-  static async detectWebGLSupport(
-    page: Page,
-  ): Promise<{ webgl1: boolean; webgl2: boolean }> {
+  async detectWebGLSupport(page: Page): Promise<{ webgl1: boolean; webgl2: boolean }> {
     return await page.evaluate(() => {
       const canvas = document.createElement('canvas');
 
-      const webgl1 = !!(
-        canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-      );
+      const webgl1 = !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
 
       const webgl2 = !!canvas.getContext('webgl2');
 
       return { webgl1, webgl2 };
     });
-  }
+  },
 
   /**
    * Gets browser-specific information for test context
    */
-  static async getBrowserInfo(page: Page): Promise<{
+  async getBrowserInfo(page: Page): Promise<{
     userAgent: string;
     vendor: string;
     platform: string;
@@ -610,5 +561,5 @@ export class BrowserCapabilityUtils {
       language: navigator.language,
       cookieEnabled: navigator.cookieEnabled,
     }));
-  }
-}
+  },
+};
