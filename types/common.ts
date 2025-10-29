@@ -19,6 +19,3 @@ export type AnimationState = 'initial' | 'animate' | 'exit';
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 // Utility types for better type safety
-export type NonEmptyArray<T> = readonly [T, ...T[]];
-
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

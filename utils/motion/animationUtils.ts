@@ -4,7 +4,6 @@ import type { Position, Size } from '@/types/common';
 export const ANIMATION_DURATIONS = {
   fast: 0.3,
   normal: 0.6,
-  slow: 1.2,
 } as const;
 
 // Common animation variants

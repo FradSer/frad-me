@@ -11,6 +11,5 @@ export const createCursorClasses = (
 
 export const LAYOUT_CLASSES = {
   fullScreen: 'fixed inset-0 z-50 flex items-center justify-center',
-  centerFlex: 'flex items-center justify-center',
   loadingText: 'text-4xl font-bold md:text-7xl',
 } as const;
