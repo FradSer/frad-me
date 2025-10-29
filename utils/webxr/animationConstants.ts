@@ -24,10 +24,7 @@ export const NAVIGATION_POSITIONS = {
   navigationGroup: NAVIGATION_BASE.group,
   navigationButton: NAVIGATION_BASE.buttonOffset,
   // Computed absolute position
-  navigationButtonAbsolute: addPositions(
-    NAVIGATION_BASE.group,
-    NAVIGATION_BASE.buttonOffset,
-  ),
+  navigationButtonAbsolute: addPositions(NAVIGATION_BASE.group, NAVIGATION_BASE.buttonOffset),
 } as const;
 
 // Camera positions for different views
@@ -73,26 +70,18 @@ const CARD_BASE = {
 // WorkCard3D positions (computed)
 export const WORK_CARD_POSITIONS = {
   cardGeometry: CARD_BASE.geometry,
-  titleGroup: [0, CARD_BASE.titleOffset, CARD_BASE.layerSpacing] as [
+  titleGroup: [0, CARD_BASE.titleOffset, CARD_BASE.layerSpacing] as [number, number, number],
+  descriptionGroup: [0, CARD_BASE.titleOffset - 0.8, CARD_BASE.layerSpacing] as [
     number,
     number,
     number,
   ],
-  descriptionGroup: [
-    0,
-    CARD_BASE.titleOffset - 0.8,
-    CARD_BASE.layerSpacing,
-  ] as [number, number, number],
-  wipBadgeGroup: [
-    CARD_BASE.badgeOffset[0],
-    CARD_BASE.badgeOffset[1],
-    CARD_BASE.layerSpacing,
-  ] as [number, number, number],
-  wipBadgeBackground: [0, 0, -CARD_BASE.layerSpacing] as [
+  wipBadgeGroup: [CARD_BASE.badgeOffset[0], CARD_BASE.badgeOffset[1], CARD_BASE.layerSpacing] as [
     number,
     number,
     number,
   ],
+  wipBadgeBackground: [0, 0, -CARD_BASE.layerSpacing] as [number, number, number],
 } as const;
 
 // Immersive button positioning

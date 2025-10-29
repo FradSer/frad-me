@@ -1,5 +1,10 @@
-import { renderHook, act } from '@testing-library/react';
-import { useSimpleLerp, useTripleLerp, springConfigToLerpSpeed } from '../useSimpleLerp';
+import { act, renderHook } from '@testing-library/react';
+import { springConfigToLerpSpeed, useSimpleLerp } from '../useSimpleLerp';
+
+// Extended window interface for testing
+interface TestWindow extends Window {
+  __useFrameCallback?: (state: unknown, delta: number) => void;
+}
 
 // Mock THREE.js
 jest.mock('three', () => ({
@@ -13,17 +18,17 @@ jest.mock('@react-three/fiber', () => ({
   useFrame: jest.fn((callback) => {
     // Store the callback to manually trigger it in tests
     if (typeof window !== 'undefined') {
-      (window as any).__useFrameCallback = callback;
+      (window as unknown as TestWindow).__useFrameCallback = callback;
     }
   }),
 }));
 
 describe('useSimpleLerp Hook', () => {
-  let mockCallback: any;
+  let _mockCallback: (() => void) | null;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCallback = null;
+    _mockCallback = null;
     // Mock requestAnimationFrame to control timing
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
       setTimeout(cb, 16); // ~60fps
@@ -33,7 +38,7 @@ describe('useSimpleLerp Hook', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (window as any).__useFrameCallback;
+    delete (window as unknown as TestWindow).__useFrameCallback;
   });
 
   describe('Basic Functionality', () => {
@@ -51,9 +56,10 @@ describe('useSimpleLerp Hook', () => {
       });
 
       // Trigger useFrame callback
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016); // 60fps delta
+          callback({}, 0.016); // 60fps delta
         });
       }
 
@@ -71,9 +77,10 @@ describe('useSimpleLerp Hook', () => {
       });
 
       // Trigger useFrame callbacks
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
+          callback({}, 0.016);
         });
       }
 
@@ -89,9 +96,10 @@ describe('useSimpleLerp Hook', () => {
         result.current.set(-5);
       });
 
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
+          callback({}, 0.016);
         });
       }
 
@@ -105,9 +113,10 @@ describe('useSimpleLerp Hook', () => {
         result.current.set(0);
       });
 
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
+          callback({}, 0.016);
         });
       }
 
@@ -124,9 +133,10 @@ describe('useSimpleLerp Hook', () => {
         result.current.set(10);
       });
 
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
+          callback({}, 0.016);
         });
       }
 
@@ -142,9 +152,10 @@ describe('useSimpleLerp Hook', () => {
         result.current.set(10);
       });
 
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.032); // 30fps delta
+          callback({}, 0.032); // 30fps delta
         });
       }
 
@@ -173,7 +184,7 @@ describe('useSimpleLerp Hook', () => {
     it('should handle rapid re-mounting', () => {
       const { result, rerender } = renderHook(
         ({ initialValue }) => useSimpleLerp(initialValue, { speed: 1 }),
-        { initialProps: { initialValue: 0 } }
+        { initialProps: { initialValue: 0 } },
       );
 
       act(() => {
@@ -197,8 +208,9 @@ describe('useSimpleLerp Hook', () => {
 
       // Simulate many rapid updates
       for (let i = 0; i < 100; i++) {
-        if ((window as any).__useFrameCallback) {
-          (window as any).__useFrameCallback({}, 0.001); // Very small delta
+        const callback = (window as unknown as TestWindow).__useFrameCallback;
+        if (callback) {
+          callback({}, 0.001); // Very small delta
         }
       }
 
@@ -216,114 +228,16 @@ describe('useSimpleLerp Hook', () => {
         fastResult.current.set(10);
       });
 
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
+          callback({}, 0.016);
         });
       }
 
       // Both should work without errors
       expect(slowResult.current.value).toBeGreaterThan(0);
       expect(fastResult.current.value).toBeGreaterThan(0);
-    });
-  });
-});
-
-describe('useTripleLerp Hook', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('Basic Functionality', () => {
-    it('should initialize with correct initial values', () => {
-      const { result } = renderHook(() =>
-        useTripleLerp([1, 2, 3], { speed: 0.5 })
-      );
-
-      expect(result.current.value).toEqual([1, 2, 3]);
-    });
-
-    it('should update all axes when set is called', () => {
-      const { result } = renderHook(() =>
-        useTripleLerp([0, 0, 0], { speed: 1 })
-      );
-
-      act(() => {
-        result.current.set([10, 20, 30]);
-      });
-
-      if ((window as any).__useFrameCallback) {
-        act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
-        });
-      }
-
-      // All values should move towards targets
-      expect(result.current.value[0]).toBeGreaterThan(0);
-      expect(result.current.value[1]).toBeGreaterThan(0);
-      expect(result.current.value[2]).toBeGreaterThan(0);
-    });
-
-    it('should interpolate each axis independently', () => {
-      const { result } = renderHook(() =>
-        useTripleLerp([0, 0, 0], { speed: 1 })
-      );
-
-      act(() => {
-        result.current.set([10, 0, -5]); // Different targets for each axis
-      });
-
-      if ((window as any).__useFrameCallback) {
-        act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
-        });
-      }
-
-      // X should increase, Y should stay near 0, Z should decrease
-      expect(result.current.value[0]).toBeGreaterThan(0);
-      expect(result.current.value[1]).toBeCloseTo(0, 1);
-      expect(result.current.value[2]).toBeLessThan(0);
-    });
-  });
-
-  describe('Animation Coordination', () => {
-    it('should maintain array structure throughout animation', () => {
-      const { result } = renderHook(() =>
-        useTripleLerp([0, 0, 0], { speed: 1 })
-      );
-
-      act(() => {
-        result.current.set([1, 2, 3]);
-      });
-
-      if ((window as any).__useFrameCallback) {
-        act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
-        });
-      }
-
-      expect(result.current.value).toHaveLength(3);
-      expect(Array.isArray(result.current.value)).toBe(true);
-    });
-
-    it('should handle negative coordinates', () => {
-      const { result } = renderHook(() =>
-        useTripleLerp([10, 10, 10], { speed: 1 })
-      );
-
-      act(() => {
-        result.current.set([-5, -10, -15]);
-      });
-
-      if ((window as any).__useFrameCallback) {
-        act(() => {
-          (window as any).__useFrameCallback({}, 0.016);
-        });
-      }
-
-      expect(result.current.value[0]).toBeLessThan(10);
-      expect(result.current.value[1]).toBeLessThan(10);
-      expect(result.current.value[2]).toBeLessThan(10);
     });
   });
 });

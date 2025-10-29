@@ -71,8 +71,7 @@ class WebXRErrorLogger {
     queueSize: 0,
   };
   private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
-  private readonly maxRequestsPerHour: number =
-    ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
+  private readonly maxRequestsPerHour: number = ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
   private requestTimestamps: number[] = [];
 
   constructor() {
@@ -105,9 +104,7 @@ class WebXRErrorLogger {
 
     try {
       const canvas = document.createElement('canvas');
-      return !!(
-        canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-      );
+      return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
     } catch {
       return false;
     }
@@ -124,10 +121,7 @@ class WebXRErrorLogger {
 
     if (errorInfoOrContext && typeof errorInfoOrContext === 'object') {
       // Check if it has React error info properties
-      if (
-        'componentStack' in errorInfoOrContext ||
-        'errorBoundary' in errorInfoOrContext
-      ) {
+      if ('componentStack' in errorInfoOrContext || 'errorBoundary' in errorInfoOrContext) {
         actualErrorInfo = errorInfoOrContext as React.ErrorInfo;
         actualContext = context;
       } else {
@@ -142,8 +136,7 @@ class WebXRErrorLogger {
         name: sanitizeErrorName(error.name),
         message: sanitizeErrorMessage(error.message),
         stack:
-          typeof process !== 'undefined' &&
-          process.env?.NODE_ENV === 'development'
+          typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
             ? error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
             : undefined,
       } as Error,
@@ -163,10 +156,7 @@ class WebXRErrorLogger {
     // Update error statistics
     this.updateErrorStats(errorWithContext);
 
-    if (
-      typeof process !== 'undefined' &&
-      process.env?.NODE_ENV === 'development'
-    ) {
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
       console.error('WebXR Error logged:', errorWithContext);
     }
 
@@ -269,9 +259,7 @@ class WebXRErrorLogger {
     const oneHourAgo = now - ERROR_QUEUE_CONFIG.MILLISECONDS_PER_HOUR;
 
     // Remove old timestamps
-    this.requestTimestamps = this.requestTimestamps.filter(
-      (timestamp) => timestamp > oneHourAgo,
-    );
+    this.requestTimestamps = this.requestTimestamps.filter((timestamp) => timestamp > oneHourAgo);
 
     return this.requestTimestamps.length >= this.maxRequestsPerHour;
   }
@@ -282,10 +270,7 @@ class WebXRErrorLogger {
 
   private shouldRateLimit(): boolean {
     // Always allow first few requests, then apply rate limiting
-    return (
-      this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD &&
-      this.isRateLimited()
-    );
+    return this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD && this.isRateLimited();
   }
 
   // Queue management methods
@@ -303,10 +288,7 @@ class WebXRErrorLogger {
   private saveQueueToStorage(): void {
     if (typeof localStorage !== 'undefined') {
       try {
-        localStorage.setItem(
-          STORAGE_KEYS.ERROR_QUEUE,
-          JSON.stringify(this.errorQueue),
-        );
+        localStorage.setItem(STORAGE_KEYS.ERROR_QUEUE, JSON.stringify(this.errorQueue));
       } catch (error) {
         // localStorage might be full or unavailable
         console.warn('Failed to save error queue to localStorage:', error);
@@ -326,8 +308,7 @@ class WebXRErrorLogger {
 
     // Calculate average errors per hour (simple moving average)
     const now = Date.now();
-    const startTime = (window as Window & { __webxrStartTime?: number })
-      .__webxrStartTime;
+    const startTime = (window as Window & { __webxrStartTime?: number }).__webxrStartTime;
     const hoursSinceStart = (now - (startTime || now)) / (60 * 60 * 1000);
     this.errorStats.averageErrorsPerHour =
       this.errorStats.totalErrors / Math.max(hoursSinceStart, 1);

@@ -17,7 +17,7 @@ export const WEBXR_ANIMATION_CONFIG = {
     bouncy: { tension: 320, friction: 22 },
     elastic: { tension: 400, friction: 25 },
   } as const,
-  
+
   timing: {
     delays: {
       cardStagger: 150,
@@ -31,7 +31,7 @@ export const WEBXR_ANIMATION_CONFIG = {
       hoverResponse: 200,
     },
   } as const,
-  
+
   positions: {
     workCards: {
       entrance: [2.5, 2.5, -8] as Vec3,
@@ -55,19 +55,19 @@ export const WEBXR_ANIMATION_CONFIG = {
       hidden: [0, -5, -40] as Vec3,
     },
   } as const,
-  
+
   scales: {
     default: 1.0,
     hover: 1.1,
     breathing: 1.05,
     entrance: 0.8,
   } as const,
-  
+
   opacity: {
     visible: 1.0,
     hidden: 0.0,
   } as const,
-  
+
   performance: {
     hideThreshold: 0.01,
     fpsThreshold: 30,
@@ -76,14 +76,18 @@ export const WEBXR_ANIMATION_CONFIG = {
 } as const;
 
 // Simple validation functions
-export function isValidSpring(config: any): config is SpringConfig {
-  return typeof config?.tension === 'number' && 
-         typeof config?.friction === 'number' &&
-         config.tension > 0 && config.friction > 0;
+export function isValidSpring(config: unknown): config is SpringConfig {
+  const springConfig = config as Record<string, unknown> | null | undefined;
+  return (
+    typeof springConfig?.tension === 'number' &&
+    typeof springConfig?.friction === 'number' &&
+    springConfig.tension > 0 &&
+    springConfig.friction > 0
+  );
 }
 
 export function validateAnimationPreset(preset: string): AnimationPreset | false {
-  return preset in WEBXR_ANIMATION_CONFIG.springs ? preset as AnimationPreset : false;
+  return preset in WEBXR_ANIMATION_CONFIG.springs ? (preset as AnimationPreset) : false;
 }
 
 // Simple performance state
@@ -107,14 +111,14 @@ export function getQualityLevel(): QualityLevel {
 
 export function getAdaptiveSpring(preset: AnimationPreset): SpringConfig {
   const base = WEBXR_ANIMATION_CONFIG.springs[preset];
-  
+
   if (currentFPS < WEBXR_ANIMATION_CONFIG.performance.fpsThreshold) {
     return {
       tension: base.tension * 1.5,
       friction: base.friction * 1.2,
     };
   }
-  
+
   return base;
 }
 
@@ -123,8 +127,9 @@ export function shouldHideComponent(opacity: number): boolean {
 }
 
 // Utility functions
-export function getStaggerDelay(index: number, baseDelay = WEBXR_ANIMATION_CONFIG.timing.delays.cardStagger): number {
-  return index * baseDelay;
+export function getStaggerDelay(index: number, baseDelay?: number): number {
+  const delay = baseDelay ?? WEBXR_ANIMATION_CONFIG.timing.delays.cardStagger;
+  return index * delay;
 }
 
 // Backward compatibility

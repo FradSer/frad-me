@@ -1,5 +1,5 @@
+import type { Transition, Variant, Variants } from 'motion/react';
 import { useAnimationControls } from 'motion/react';
-import type { Variant } from 'motion/react';
 
 import type { Position } from '@/types/common';
 import { primaryTransition } from './springTransitions';
@@ -8,14 +8,14 @@ import { primaryTransition } from './springTransitions';
  * Animation variant configuration for Framer Motion
  */
 export type AnimationVariant = Variant & {
-  transition?: any;
-  [key: string]: any;
+  transition?: Transition;
 };
 
 /**
- * Collection of animation variants mapped by state names
+ * Collection of animation variants mapped by animation group names
+ * Each group contains multiple states (e.g., initial, hover, etc.)
  */
-export type AnimationVariants = Record<string, AnimationVariant>;
+export type AnimationVariants = Record<string, Variants>;
 
 /**
  * Animation state mapping for group control
@@ -25,19 +25,26 @@ export type AnimationStateMap = Record<string, string>;
 /**
  * Creates animation variants with consistent transitions applied
  *
- * @param variants - Object mapping state names to animation configurations
- * @returns Variants object with transitions applied to each state
+ * @param variants - Object mapping animation group names to Variants objects
+ * @returns Variants object with transitions applied to each state within each group
  */
-export const createVariants = (
-  variants: AnimationVariants,
-): AnimationVariants => {
-  const withTransition = (variant: AnimationVariant): AnimationVariant => ({
-    ...variant,
-    transition: variant.transition || primaryTransition,
-  });
+export const createVariants = (variants: AnimationVariants): AnimationVariants => {
+  const withTransition = (variant: Variant | undefined): Variant | undefined => {
+    if (!variant || typeof variant !== 'object') return variant;
+    return {
+      ...variant,
+      transition: variant.transition || primaryTransition,
+    };
+  };
 
   return Object.keys(variants).reduce((acc, key) => {
-    acc[key] = withTransition(variants[key]);
+    const groupVariants = variants[key];
+    const processedVariants: Variants = {};
+    Object.entries(groupVariants).forEach(([stateKey, variant]) => {
+      (processedVariants as Record<string, Variant | undefined>)[stateKey] =
+        withTransition(variant);
+    });
+    acc[key] = processedVariants;
     return acc;
   }, {} as AnimationVariants);
 };
@@ -50,22 +57,15 @@ export const createVariants = (
  * @returns Object containing individual controls and group manipulation functions
  */
 export const useAnimationGroup = (animationKeys: string[]) => {
+  // biome-ignore lint/correctness/useHookAtTopLevel: hooks are called at top level in map
+  const controlsArray = animationKeys.map(() => useAnimationControls());
   const controls = animationKeys.reduce(
-    (acc, key) => {
-      acc[key] = useAnimationControls();
+    (acc, key, index) => {
+      acc[key] = controlsArray[index];
       return acc;
     },
     {} as Record<string, ReturnType<typeof useAnimationControls>>,
   );
-
-  /**
-   * Starts all animations with the same state
-   *
-   * @param state - The animation state to apply to all controls
-   */
-  const startAll = (state: string) => {
-    Object.values(controls).forEach((control) => control.start(state));
-  };
 
   /**
    * Starts specific animations with individual states
@@ -78,23 +78,19 @@ export const useAnimationGroup = (animationKeys: string[]) => {
     });
   };
 
-  return { controls, startAll, startGroup };
+  return { controls, startGroup };
 };
 
 /**
  * Utility functions for position calculations and blending
  */
 
-// Lerp function for smooth interpolation
-export const lerp = (start: number, end: number, factor: number): number => 
+// Lerp function for smooth interpolation (internal use only)
+const lerp = (start: number, end: number, factor: number): number =>
   start + (end - start) * factor;
 
-// Position lerp for smooth 2D interpolation
-export const lerpPosition = (
-  start: Position,
-  end: Position,
-  factor: number
-): Position => ({
+// Position lerp for smooth 2D interpolation (internal use only)
+const lerpPosition = (start: Position, end: Position, factor: number): Position => ({
   x: lerp(start.x, end.x, factor),
   y: lerp(start.y, end.y, factor),
 });
@@ -116,13 +112,3 @@ export const calculateBlendPosition = (
   if (!attractorPos) return mousePos;
   return lerpPosition(mousePos, attractorPos, blendFactor);
 };
-
-/**
- * Calculates the Euclidean distance between two points
- *
- * @param point1 - First point coordinates
- * @param point2 - Second point coordinates
- * @returns Distance between the two points
- */
-export const calculateDistance = (point1: Position, point2: Position): number =>
-  Math.hypot(point2.x - point1.x, point2.y - point1.y);

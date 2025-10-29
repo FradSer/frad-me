@@ -31,10 +31,7 @@ export const createPageVariants = (duration = ANIMATION_DURATIONS.normal) => ({
   },
 });
 
-export const createHeaderVariants = (
-  duration = ANIMATION_DURATIONS.normal,
-  delay = 0.2,
-) => ({
+export const createHeaderVariants = (duration = ANIMATION_DURATIONS.normal, delay = 0.2) => ({
   initial: {
     opacity: 0,
     y: -20,
@@ -70,11 +67,7 @@ export const createLoadingDots = () => ({
 });
 
 // Utility functions
-export const calculateSkew = (
-  mousePos: Position,
-  windowSize: Size,
-  angle: number = 2,
-) => {
+export const calculateSkew = (mousePos: Position, windowSize: Size, angle: number = 2) => {
   const xValue = mousePos.x / windowSize.width;
   const yValue = mousePos.y / windowSize.height;
 

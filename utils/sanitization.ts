@@ -15,10 +15,7 @@ export function sanitizeString(input: string, maxLength?: number): string {
   return (
     limitedInput
       // Windows paths: C:\path\to\file (atomic groups to prevent backtracking)
-      .replace(
-        /\b[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*\b/g,
-        '[PATH]',
-      )
+      .replace(/\b[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*\b/g, '[PATH]')
       // Unix paths: /path/to/file (atomic groups to prevent backtracking)
       .replace(/\/(?:[^/\s<>"']+\/)*[^/\s<>"']*/g, '[PATH]')
       // Script tags (non-greedy with bounded repetition)

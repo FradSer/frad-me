@@ -1,5 +1,11 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import type * as THREE from 'three';
 import { useCardAnimation } from '../useCardAnimation';
+
+// Extended window interface for testing
+interface TestWindow extends Window {
+  __useFrameCallback?: (state: { clock: { elapsedTime: number } }, delta: number) => void;
+}
 
 // Mock THREE.js Group
 const mockGroup = {
@@ -59,11 +65,13 @@ jest.mock('@/utils/webxr/animationConfig', () => ({
 
 // Mock simple lerp
 jest.mock('../useSimpleLerp', () => ({
-  useSimpleLerp: jest.fn((initial, config) => {
+  useSimpleLerp: jest.fn((initial, _config) => {
     const ref = { current: initial };
     return {
       value: ref.current,
-      set: jest.fn((target) => { ref.current = target; }),
+      set: jest.fn((target) => {
+        ref.current = target;
+      }),
     };
   }),
   springConfigToLerpSpeed: jest.fn(() => 0.5),
@@ -80,17 +88,17 @@ jest.mock('@/contexts/WebXR/WebXRViewContext', () => ({
 jest.mock('@react-three/fiber', () => ({
   useFrame: jest.fn((callback) => {
     if (typeof window !== 'undefined') {
-      (window as any).__useFrameCallback = callback;
+      (window as unknown as TestWindow).__useFrameCallback = callback;
     }
   }),
 }));
 
 describe('useCardAnimation Hook', () => {
-  let mockGroupRef: React.RefObject<any>;
+  let mockGroupRef: React.RefObject<THREE.Group>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGroupRef = { current: { ...mockGroup } };
+    mockGroupRef = { current: { ...mockGroup } as unknown as THREE.Group };
   });
 
   describe('Initialization', () => {
@@ -102,7 +110,7 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       expect(result.current.isAnimated).toBeDefined();
@@ -117,7 +125,7 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       expect(result.current.isAnimated).toBeDefined();
@@ -133,23 +141,21 @@ describe('useCardAnimation Hook', () => {
         }),
       }));
 
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
           visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger useFrame to simulate animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -158,23 +164,21 @@ describe('useCardAnimation Hook', () => {
     });
 
     it('should hide cards when currentView is not work', () => {
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
           visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger useFrame
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -192,17 +196,17 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       const { result: card1 } = renderHook(() =>
         useCardAnimation({
-          groupRef: { current: { ...mockGroup } },
+          groupRef: { current: { ...mockGroup } as unknown as THREE.Group },
           visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 1,
-        })
+        }),
       );
 
       // Both should have different timing due to index-based staggering
@@ -218,7 +222,7 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Before entrance delay, card should be hidden
@@ -235,16 +239,14 @@ describe('useCardAnimation Hook', () => {
           hovered: true,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -259,16 +261,14 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -287,16 +287,14 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: targetPosition,
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -311,16 +309,14 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 1,
-        })
+        }),
       );
 
       // Trigger animation with time elapsed
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: Math.PI } }, // Non-zero time for floating effect
-            0.016
-          );
+          callback({ clock: { elapsedTime: Math.PI } }, 0.016); // Non-zero time for floating effect
         });
       }
 
@@ -332,7 +328,7 @@ describe('useCardAnimation Hook', () => {
     it('should call onOpacityChange callback when opacity changes', () => {
       const onOpacityChange = jest.fn();
 
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
           visible: true,
@@ -340,16 +336,14 @@ describe('useCardAnimation Hook', () => {
           position: [0, 0, 0],
           index: 0,
           onOpacityChange,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -365,16 +359,14 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 
@@ -391,16 +383,14 @@ describe('useCardAnimation Hook', () => {
           hovered: true,
           position: [1, 2, 3],
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 1 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 1 } }, 0.016);
         });
       }
 
@@ -415,17 +405,15 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Simulate view transition by triggering animation multiple times
       for (let i = 0; i < 5; i++) {
-        if ((window as any).__useFrameCallback) {
+        const callback = (window as unknown as TestWindow).__useFrameCallback;
+        if (callback) {
           act(() => {
-            (window as any).__useFrameCallback(
-              { clock: { elapsedTime: i * 0.1 } },
-              0.016
-            );
+            callback({ clock: { elapsedTime: i * 0.1 } }, 0.016);
           });
         }
       }
@@ -443,17 +431,15 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Simulate many rapid animation frames
       const startTime = performance.now();
       for (let i = 0; i < 100; i++) {
-        if ((window as any).__useFrameCallback) {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: i * 0.001 } },
-            0.001
-          );
+        const callback = (window as unknown as TestWindow).__useFrameCallback;
+        if (callback) {
+          callback({ clock: { elapsedTime: i * 0.001 } }, 0.001);
         }
       }
       const endTime = performance.now();
@@ -473,16 +459,14 @@ describe('useCardAnimation Hook', () => {
           hovered: false,
           position: [0, 0, 0],
           index: 0,
-        })
+        }),
       );
 
       // Trigger animation with null ref
-      if ((window as any).__useFrameCallback) {
+      const callback = (window as unknown as TestWindow).__useFrameCallback;
+      if (callback) {
         act(() => {
-          (window as any).__useFrameCallback(
-            { clock: { elapsedTime: 0 } },
-            0.016
-          );
+          callback({ clock: { elapsedTime: 0 } }, 0.016);
         });
       }
 

@@ -1,13 +1,11 @@
-import { useRef, useEffect, type RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { type RefObject, useEffect, useRef } from 'react';
 import type * as THREE from 'three';
-import { workCardPositions } from '@/utils/webxr/animationHelpers';
-import {
-  WEBXR_ANIMATION_CONFIG,
-} from '@/utils/webxr/animationConfig';
-import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
+import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
+import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { workCardPositions } from '@/utils/webxr/animationHelpers';
+import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
 
 interface UseCardAnimationProps {
   groupRef: RefObject<THREE.Group | null>;
@@ -25,7 +23,7 @@ interface AnimationState {
 
 export const useCardAnimation = ({
   groupRef,
-  visible,
+  visible: _visible,
   hovered,
   position,
   index,
@@ -45,7 +43,7 @@ export const useCardAnimation = ({
     speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.elastic),
   };
   const fastConfig = { speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast) };
-  const bouncyConfig = {
+  const _bouncyConfig = {
     speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
   };
 
@@ -102,9 +100,19 @@ export const useCardAnimation = ({
         groupRef.current.visible = false;
       }
     }
-  }, [shouldShowCards, index]);
+  }, [
+    shouldShowCards,
+    index,
+    groupRef.current,
+    springOpacity.set, // Reset position to entrance point
+    springPosX.set,
+    springPosY.set,
+    springPosZ.set,
+    springRotation.set, // Reset to hidden state when not in work view
+    springScale.set,
+  ]);
 
-  useFrame((state, delta) => {
+  useFrame((state, _delta) => {
     if (!groupRef.current) return;
 
     if (shouldShowCards) {
@@ -115,15 +123,19 @@ export const useCardAnimation = ({
       if (!shouldAnimate) {
         // Keep cards completely hidden while waiting for their turn
         groupRef.current.visible = false;
-        
+
         // Keep cards at entrance position while waiting
         groupRef.current.position.x = springPosX.value;
         groupRef.current.position.y = springPosY.value;
         groupRef.current.position.z = springPosZ.value;
 
         // Calculate target values even during wait state to prepare for smooth entrance
-        const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
-        const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
+        const _targetScale = hovered
+          ? WEBXR_ANIMATION_CONFIG.scales.hover
+          : WEBXR_ANIMATION_CONFIG.scales.default;
+        const targetRotation = hovered
+          ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover
+          : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
         // Set targets but don't animate scale/rotation until entrance time
         springRotation.set(targetRotation);
@@ -142,15 +154,18 @@ export const useCardAnimation = ({
       groupRef.current.visible = true;
 
       // Calculate target values - position is handled by direct prop, focus on scale/opacity/rotation
-      const targetScale = hovered ? WEBXR_ANIMATION_CONFIG.scales.hover : WEBXR_ANIMATION_CONFIG.scales.default;
+      const targetScale = hovered
+        ? WEBXR_ANIMATION_CONFIG.scales.hover
+        : WEBXR_ANIMATION_CONFIG.scales.default;
       const targetOpacity = WEBXR_ANIMATION_CONFIG.opacity.visible;
-      const targetRotation = hovered ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
+      const targetRotation = hovered
+        ? WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.hover
+        : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
 
       // Calculate target positions for spray effect animation
       const floatingOffset = Math.sin(state.clock.elapsedTime + index) * 0.1;
       const finalX = position[0]; // Use prop position as final target
-      const finalY =
-        position[1] + (hovered ? workCardPositions.hover.y : floatingOffset);
+      const finalY = position[1] + (hovered ? workCardPositions.hover.y : floatingOffset);
       const finalZ = position[2] + (hovered ? workCardPositions.hover.z : 0);
 
       // Update position spring targets for spray effect
@@ -205,7 +220,7 @@ export const useCardAnimation = ({
         // Apply spring-driven opacity during exit
         applyOpacityToObject(groupRef.current, currentOpacity);
       }
-      
+
       onOpacityChange?.(currentOpacity);
     }
   });

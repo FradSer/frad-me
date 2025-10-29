@@ -75,5 +75,4 @@ export class RateLimiter {
 /**
  * Creates a rate limiter with the specified configuration
  */
-export const createRateLimiter = (config: RateLimitConfig) =>
-  new RateLimiter(config);
+export const createRateLimiter = (config: RateLimitConfig) => new RateLimiter(config);
