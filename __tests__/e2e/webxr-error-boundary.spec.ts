@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { WebXRMockUtils } from '../utils/webxr-mocks';
+import { WebXRMockUtils } from '@/__tests__/webxr-mocks';
 import { BasePage, TestUtils } from './__utils__/page-objects';
 
 // Type definitions for error API testing

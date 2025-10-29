@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { WebXRMockUtils } from '../utils/webxr-mocks';
+import { WebXRMockUtils } from '@/__tests__/webxr-mocks';
 
 // Type definitions for error API testing
 interface ErrorLogData {
