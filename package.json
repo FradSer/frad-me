@@ -9,7 +9,6 @@
   },
   "scripts": {
     "dev": "next dev",
-    "dev:https": "node scripts/dev-https.js",
     "build": "next build",
     "start": "next start",
     "format": "biome format --write",
@@ -23,8 +22,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:all": "npm run test:ci && npm run test:e2e",
-    "analyze": "cross-env ANALYZE=true next build --webpack",
-    "certs:generate": "./scripts/generate-certs.sh"
+    "analyze": "cross-env ANALYZE=true next build --webpack"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",
