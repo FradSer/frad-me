@@ -1,6 +1,5 @@
 import { Html, Text } from '@react-three/drei';
-import type React from 'react';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { useCardAnimation } from '@/hooks/useCardAnimation';
@@ -26,36 +25,73 @@ interface WorkCard3DProps {
   onClick?: () => void;
 }
 
-const WorkCard3D: React.FC<WorkCard3DProps> = ({
+const FONTS = {
+  bold: '/fonts/GT-Eesti-Display-Bold-Trial.woff',
+  regular: '/fonts/GT-Eesti-Display-Regular-Trial.woff',
+} as const;
+
+const TEXT_CONFIG = {
+  title: {
+    fontSize: 0.4,
+    maxWidth: 4,
+    lineHeight: 1.2,
+  },
+  subtitle: {
+    fontSize: 0.25,
+    maxWidth: 4,
+    lineHeight: 1.2,
+  },
+} as const;
+
+const COLORS = {
+  title: 'white',
+  subtitle: 'gray',
+  glow: '#4f46e5',
+} as const;
+
+const GLOW_GEOMETRY: [number, number] = [4.8, 3.3];
+const GLOW_OPACITY = 0.2;
+
+const HOVER_AREA_CONFIG = {
+  geometry: [5.5, 5] as [number, number],
+  position: [0, -1, -0.2] as [number, number, number],
+} as const;
+
+const RENDER_ORDER = {
+  normal: 0,
+  hovered: 9999,
+} as const;
+
+const createTexture = (url: string): THREE.Texture => {
+  const loader = new THREE.TextureLoader();
+  const texture = loader.load(url);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  return texture;
+};
+
+const WorkCard3D = memo<WorkCard3DProps>(function WorkCard3D({
   work,
   position,
   index,
   visible = true,
   onHover,
   onClick,
-}) => {
+}) {
   const { currentView } = useWebXRView();
   const meshRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
-  // Simple texture loading
-  const coverTexture = useMemo(() => {
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load(work.cover);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    return texture;
-  }, [work.cover]);
+  const coverTexture = useMemo(() => createTexture(work.cover), [work.cover]);
 
-  // Force initialize transparency immediately on mount for WebXR best practices
   useEffect(() => {
-    if (groupRef.current) {
-      forceInitializeTransparency(groupRef.current);
+    const group = groupRef.current;
+    if (group) {
+      forceInitializeTransparency(group);
     }
   }, []);
 
-  // Use simplified animation hook
   useCardAnimation({
     groupRef,
     visible,
@@ -64,93 +100,83 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
     index,
   });
 
-  const handlePointerOver = () => {
+  const handlePointerOver = useCallback(() => {
     setHovered(true);
     onHover?.(true);
-  };
+  }, [onHover]);
 
-  const handlePointerOut = () => {
+  const handlePointerOut = useCallback(() => {
     setHovered(false);
     onHover?.(false);
-  };
+  }, [onHover]);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     onClick?.();
     if (typeof window !== 'undefined') {
       window.location.href = `/works/${work.slug}`;
     }
-  };
+  }, [onClick, work.slug]);
 
-  // Remove early return - cards should always render but with opacity 0 when not visible
-  // This allows for proper WebXR transparency animation from navigation position
+  const renderOrder = hovered ? RENDER_ORDER.hovered : RENDER_ORDER.normal;
 
   return (
-    <group
-      ref={groupRef}
-      position={position}
-      renderOrder={hovered ? 9999 : 0} // Entire card on top when hovered
-    >
-      {/* Invisible hover detection area covering entire card including text */}
+    <group ref={groupRef} position={position} renderOrder={renderOrder}>
       {/* biome-ignore lint/a11y/noStaticElementInteractions: mesh element is interactive in 3D context */}
       <mesh
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
-        position={[0, -1, -0.2]} // Positioned to cover card + text area, behind all other elements
+        position={HOVER_AREA_CONFIG.position}
       >
-        <planeGeometry args={[5.5, 5]} /> {/* Larger area covering card + text */}
+        <planeGeometry args={HOVER_AREA_CONFIG.geometry} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
       </mesh>
 
-      {/* Card background/cover */}
       <mesh ref={meshRef}>
         <planeGeometry args={WORK_CARD_POSITIONS.cardGeometry} />
         <meshStandardMaterial
           map={coverTexture}
           transparent
-          opacity={0} // Start with complete transparency for WebXR best practices
-          depthWrite={false} // WebXR best practice: disable depth write for transparent materials
-          side={THREE.DoubleSide} // Ensure both sides are visible
-          depthTest={!hovered} // Disable depth test when hovered to ensure it renders on top
+          opacity={0}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+          depthTest={!hovered}
         />
       </mesh>
 
-      {/* Work title */}
       <group position={WORK_CARD_POSITIONS.titleGroup}>
         <Suspense fallback={null}>
           <Text
-            color="white"
+            color={COLORS.title}
             anchorX="center"
             anchorY="top"
-            fontSize={0.4}
+            fontSize={TEXT_CONFIG.title.fontSize}
             fontWeight="bold"
-            maxWidth={4}
-            lineHeight={1.2}
-            font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
+            maxWidth={TEXT_CONFIG.title.maxWidth}
+            lineHeight={TEXT_CONFIG.title.lineHeight}
+            font={FONTS.bold}
           >
             {work.title}
           </Text>
         </Suspense>
       </group>
 
-      {/* Work subtitle */}
       <group position={WORK_CARD_POSITIONS.descriptionGroup}>
         <Suspense fallback={null}>
           <Text
-            color="gray"
+            color={COLORS.subtitle}
             anchorX="center"
             anchorY="top"
-            fontSize={0.25}
-            maxWidth={4}
-            lineHeight={1.2}
-            font="/fonts/GT-Eesti-Display-Regular-Trial.woff"
+            fontSize={TEXT_CONFIG.subtitle.fontSize}
+            maxWidth={TEXT_CONFIG.subtitle.maxWidth}
+            lineHeight={TEXT_CONFIG.subtitle.lineHeight}
+            font={FONTS.regular}
           >
             {work.subTitle}
           </Text>
         </Suspense>
       </group>
 
-      {/* WIP Badge - show only on hover in work view */}
       {work.isWIP && currentView === 'work' && hovered && (
         <group
           position={[
@@ -167,20 +193,19 @@ const WorkCard3D: React.FC<WorkCard3DProps> = ({
         </group>
       )}
 
-      {/* Interactive glow effect when hovered - adjusted for larger cards */}
       {hovered && (
         <mesh position={WORK_CARD_POSITIONS.wipBadgeBackground}>
-          <planeGeometry args={[4.8, 3.3]} />
+          <planeGeometry args={GLOW_GEOMETRY} />
           <meshBasicMaterial
-            color="#4f46e5"
+            color={COLORS.glow}
             transparent
-            opacity={0.2}
-            depthTest={false} // Disable depth test to ensure it renders on top
+            opacity={GLOW_OPACITY}
+            depthTest={false}
           />
         </mesh>
       )}
     </group>
   );
-};
+});
 
 export default WorkCard3D;

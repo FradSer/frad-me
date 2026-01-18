@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
@@ -16,6 +16,19 @@ const Text = dynamic(
   { ssr: false },
 );
 
+const TEXT_CONFIG = {
+  fontSize: 0.6,
+  font: '/fonts/GT-Eesti-Display-Bold-Trial.woff',
+  anchorX: 'center' as const,
+  anchorY: 'middle' as const,
+} as const;
+
+const TEXT_COLORS = {
+  active: '#ffffff',
+  hovered: '#d1d5db',
+  default: '#9ca3af',
+} as const;
+
 interface NavItemProps {
   position: [number, number, number];
   text: string;
@@ -23,91 +36,105 @@ interface NavItemProps {
   onClick: () => void;
 }
 
-const NavItem = ({ position, text, isActive, onClick }: NavItemProps) => {
+const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, onClick }) {
   const [hovered, setHovered] = useState(false);
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false);
   const textRef = useRef<THREE.Mesh>(null);
 
-  const scaleSpring = useSimpleLerp(1, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast),
-  });
+  const lerpSpeed = springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast);
+  const scaleSpring = useSimpleLerp(1, { speed: lerpSpeed });
 
-  // Breathing effect when never interacted
-  useEffect(() => {
-    if (!hasBeenInteracted) {
-      const breathingAnimation = setInterval(() => {
-        scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.breathing);
-        setTimeout(
-          () => scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default),
-          WEBXR_ANIMATION_CONFIG.timing.delays.breathingDuration,
-        );
-      }, WEBXR_ANIMATION_CONFIG.timing.delays.breathingInterval);
-
-      return () => clearInterval(breathingAnimation);
-    }
-  }, [hasBeenInteracted, scaleSpring]);
+  const { scales, timing } = WEBXR_ANIMATION_CONFIG;
 
   useEffect(() => {
-    if (hovered || isActive) {
-      scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.hover);
-    } else if (hasBeenInteracted) {
-      scaleSpring.set(WEBXR_ANIMATION_CONFIG.scales.default);
+    if (hasBeenInteracted) return;
+
+    const breathingAnimation = setInterval(() => {
+      scaleSpring.set(scales.breathing);
+      setTimeout(() => scaleSpring.set(scales.default), timing.delays.breathingDuration);
+    }, timing.delays.breathingInterval);
+
+    return () => clearInterval(breathingAnimation);
+  }, [hasBeenInteracted, scaleSpring, scales.breathing, scales.default, timing.delays]);
+
+  useEffect(() => {
+    const targetScale =
+      hovered || isActive ? scales.hover : hasBeenInteracted ? scales.default : scaleSpring.value;
+
+    if (hovered || isActive || hasBeenInteracted) {
+      scaleSpring.set(targetScale);
     }
-  }, [hovered, isActive, hasBeenInteracted, scaleSpring]);
+  }, [hovered, isActive, hasBeenInteracted, scaleSpring, scales]);
 
   useFrame(() => {
-    if (!textRef.current) return;
-    textRef.current.scale.setScalar(scaleSpring.value);
+    const mesh = textRef.current;
+    if (mesh) {
+      mesh.scale.setScalar(scaleSpring.value);
+    }
   });
+
+  const handleClick = useCallback(() => {
+    setHasBeenInteracted(true);
+    onClick();
+  }, [onClick]);
+
+  const handlePointerOver = useCallback(() => {
+    setHasBeenInteracted(true);
+    setHovered(true);
+  }, []);
+
+  const handlePointerOut = useCallback(() => {
+    setHovered(false);
+  }, []);
+
+  const textColor = isActive
+    ? TEXT_COLORS.active
+    : hovered
+      ? TEXT_COLORS.hovered
+      : TEXT_COLORS.default;
 
   return (
     <Text
       ref={textRef}
       position={position}
-      color={isActive ? '#ffffff' : hovered ? '#d1d5db' : '#9ca3af'}
-      anchorX="center"
-      anchorY="middle"
-      fontSize={0.6}
-      font="/fonts/GT-Eesti-Display-Bold-Trial.woff"
-      onClick={() => {
-        setHasBeenInteracted(true);
-        onClick();
-      }}
-      onPointerOver={() => {
-        setHasBeenInteracted(true);
-        setHovered(true);
-      }}
-      onPointerOut={() => setHovered(false)}
+      color={textColor}
+      anchorX={TEXT_CONFIG.anchorX}
+      anchorY={TEXT_CONFIG.anchorY}
+      fontSize={TEXT_CONFIG.fontSize}
+      font={TEXT_CONFIG.font}
+      onClick={handleClick}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
     >
       {text}
     </Text>
   );
-};
+});
 
-function Navigation3D() {
+const ZERO_POSITION: [number, number, number] = [0, 0, 0];
+
+const Navigation3D = memo(function Navigation3D() {
   const { currentView, navigateToView } = useWebXRView();
+
+  const navText = currentView === 'home' ? 'work' : 'home';
+  const targetView = currentView === 'home' ? 'work' : 'home';
+
+  const handleNavigate = useCallback(() => {
+    navigateToView(targetView);
+  }, [navigateToView, targetView]);
 
   return (
     <group position={NAVIGATION_POSITIONS.navigationGroup}>
       <group position={NAVIGATION_POSITIONS.navigationButton}>
-        {currentView === 'home' ? (
-          <NavItem
-            position={[0, 0, 0]}
-            text="work"
-            isActive={false}
-            onClick={() => navigateToView('work')}
-          />
-        ) : (
-          <NavItem
-            position={[0, 0, 0]}
-            text="home"
-            isActive={false}
-            onClick={() => navigateToView('home')}
-          />
-        )}
+        <NavItem
+          position={ZERO_POSITION}
+          text={navText}
+          isActive={false}
+          onClick={handleNavigate}
+        />
       </group>
     </group>
   );
-}
+});
 
 export default Navigation3D;

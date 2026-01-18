@@ -1,6 +1,5 @@
 import { useXR } from '@react-three/xr';
-import type React from 'react';
-import { useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import type {
   VisionProEventHandlers,
@@ -10,137 +9,140 @@ import type {
   XRTargetRayMode,
 } from '@/types/webxr';
 
+const TRANSIENT_POINTER: XRTargetRayMode = 'transient-pointer';
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 interface VisionProInputHandlerProps extends VisionProEventHandlers {}
 
-// Internal component that uses XR hooks - only rendered when XR is supported
-const VisionProInputHandlerInternal: React.FC<VisionProInputHandlerProps> = ({
-  onTransientPointerSelect,
-  onHandTrackingStart,
-  onHandTrackingEnd,
-}) => {
-  const { session } = useXR();
-  const { isVisionPro } = useWebXRView();
+const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
+  function VisionProInputHandlerInternal({
+    onTransientPointerSelect,
+    onHandTrackingStart,
+    onHandTrackingEnd,
+  }) {
+    const { session } = useXR();
+    const { isVisionPro } = useWebXRView();
 
-  const TRANSIENT_POINTER: XRTargetRayMode = 'transient-pointer';
+    const handleInputSourcesChange = useCallback(
+      (event: XRInputSourcesChangeEvent) => {
+        if (!isVisionPro) return;
 
-  const handleInputSourcesChange = useCallback(
-    (event: XRInputSourcesChangeEvent) => {
-      if (!isVisionPro) return;
+        const transientInputs = event.session.inputSources.filter(
+          (source) => source.targetRayMode === TRANSIENT_POINTER,
+        );
 
-      // Vision Pro uses transient-pointer for gaze + pinch interactions
-      const transientInputs = event.session.inputSources.filter(
-        (source) => source.targetRayMode === TRANSIENT_POINTER,
-      );
-
-      if (transientInputs.length > 0 && process.env.NODE_ENV === 'development') {
-        console.log('Vision Pro transient pointer detected:', transientInputs.length);
-      }
-    },
-    [isVisionPro],
-  );
-
-  const handleSelectStart = useCallback(
-    (event: XRInputSourceEvent) => {
-      if (!isVisionPro) return;
-
-      const inputSource = event.inputSource;
-
-      if (inputSource.targetRayMode === TRANSIENT_POINTER) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Vision Pro gaze + pinch interaction started');
+        if (transientInputs.length > 0 && isDevelopment) {
+          console.log('Vision Pro transient pointer detected:', transientInputs.length);
         }
-        onTransientPointerSelect?.(event);
-      }
-    },
-    [isVisionPro, onTransientPointerSelect],
-  );
+      },
+      [isVisionPro],
+    );
 
-  const handleSelectEnd = useCallback(
-    (event: XRInputSourceEvent) => {
-      if (!isVisionPro) return;
+    const handleSelectStart = useCallback(
+      (event: XRInputSourceEvent) => {
+        if (!isVisionPro) return;
 
-      const inputSource = event.inputSource;
+        const { inputSource } = event;
 
-      if (
-        inputSource.targetRayMode === TRANSIENT_POINTER &&
-        process.env.NODE_ENV === 'development'
-      ) {
-        console.log('Vision Pro gaze + pinch interaction ended');
-      }
-    },
-    [isVisionPro],
-  );
-
-  const handleSessionStart = useCallback(
-    (event: XRSessionEvent) => {
-      if (!isVisionPro) return;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('WebXR session started on Vision Pro');
-      }
-
-      // Request hand tracking if available
-      if (event.session.enabledFeatures?.includes('hand-tracking')) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Hand tracking enabled on Vision Pro');
+        if (inputSource.targetRayMode === TRANSIENT_POINTER) {
+          if (isDevelopment) {
+            console.log('Vision Pro gaze + pinch interaction started');
+          }
+          onTransientPointerSelect?.(event);
         }
-        onHandTrackingStart?.(event);
-      }
-    },
-    [isVisionPro, onHandTrackingStart],
-  );
+      },
+      [isVisionPro, onTransientPointerSelect],
+    );
 
-  const handleSessionEnd = useCallback(
-    (event: XRSessionEvent) => {
-      if (!isVisionPro) return;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('WebXR session ended on Vision Pro');
-      }
-      onHandTrackingEnd?.(event);
-    },
-    [isVisionPro, onHandTrackingEnd],
-  );
+    const handleSelectEnd = useCallback(
+      (event: XRInputSourceEvent) => {
+        if (!isVisionPro) return;
 
-  useEffect(() => {
-    if (!session || !isVisionPro) return;
+        const { inputSource } = event;
 
-    // Add Vision Pro specific event listeners
-    session.addEventListener('inputsourceschange', handleInputSourcesChange);
-    session.addEventListener('selectstart', handleSelectStart);
-    session.addEventListener('selectend', handleSelectEnd);
-    session.addEventListener('sessionstart', handleSessionStart);
-    session.addEventListener('sessionend', handleSessionEnd);
+        if (inputSource.targetRayMode === TRANSIENT_POINTER && isDevelopment) {
+          console.log('Vision Pro gaze + pinch interaction ended');
+        }
+      },
+      [isVisionPro],
+    );
 
-    return () => {
-      session.removeEventListener('inputsourceschange', handleInputSourcesChange);
-      session.removeEventListener('selectstart', handleSelectStart);
-      session.removeEventListener('selectend', handleSelectEnd);
-      session.removeEventListener('sessionstart', handleSessionStart);
-      session.removeEventListener('sessionend', handleSessionEnd);
-    };
-  }, [
-    session,
-    isVisionPro,
-    handleInputSourcesChange,
-    handleSelectStart,
-    handleSelectEnd,
-    handleSessionStart,
-    handleSessionEnd,
-  ]);
+    const handleSessionStart = useCallback(
+      (event: XRSessionEvent) => {
+        if (!isVisionPro) return;
 
-  // This component doesn't render anything, it just handles events
-  return null;
-};
+        if (isDevelopment) {
+          console.log('WebXR session started on Vision Pro');
+        }
 
-// Wrapper component that conditionally renders the XR component
-const VisionProInputHandler: React.FC<VisionProInputHandlerProps> = (props) => {
-  const { webXRSupported, isVisionPro } = useWebXRView();
+        if (event.session.enabledFeatures?.includes('hand-tracking')) {
+          if (isDevelopment) {
+            console.log('Hand tracking enabled on Vision Pro');
+          }
+          onHandTrackingStart?.(event);
+        }
+      },
+      [isVisionPro, onHandTrackingStart],
+    );
 
-  // Only render the XR component when WebXR is supported and it's Vision Pro
-  if (!webXRSupported || !isVisionPro) {
+    const handleSessionEnd = useCallback(
+      (event: XRSessionEvent) => {
+        if (!isVisionPro) return;
+
+        if (isDevelopment) {
+          console.log('WebXR session ended on Vision Pro');
+        }
+        onHandTrackingEnd?.(event);
+      },
+      [isVisionPro, onHandTrackingEnd],
+    );
+
+    const eventHandlers = useMemo(
+      () => ({
+        inputsourceschange: handleInputSourcesChange,
+        selectstart: handleSelectStart,
+        selectend: handleSelectEnd,
+        sessionstart: handleSessionStart,
+        sessionend: handleSessionEnd,
+      }),
+      [
+        handleInputSourcesChange,
+        handleSelectStart,
+        handleSelectEnd,
+        handleSessionStart,
+        handleSessionEnd,
+      ],
+    );
+
+    useEffect(() => {
+      if (!session || !isVisionPro) return;
+
+      Object.entries(eventHandlers).forEach(([eventName, handler]) => {
+        session.addEventListener(eventName, handler as EventListener);
+      });
+
+      return () => {
+        Object.entries(eventHandlers).forEach(([eventName, handler]) => {
+          session.removeEventListener(eventName, handler as EventListener);
+        });
+      };
+    }, [session, isVisionPro, eventHandlers]);
+
     return null;
-  }
+  },
+);
 
-  return <VisionProInputHandlerInternal {...props} />;
-};
+const VisionProInputHandler = memo<VisionProInputHandlerProps>(
+  function VisionProInputHandler(props) {
+    const { webXRSupported, isVisionPro } = useWebXRView();
+
+    if (!webXRSupported || !isVisionPro) {
+      return null;
+    }
+
+    return <VisionProInputHandlerInternal {...props} />;
+  },
+);
 
 export default VisionProInputHandler;
