@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.18.0](https://github.com/FradSer/frad-me/compare/v0.17.1...v0.18.0) (2026-01-19)
+
+### Features
+
+- **webxr:** add /xr route for immersive WebXR experience
+  - Implement dedicated WebXR experience route with full 3D navigation
+  - Add VR layout system with proper isolation from standard navigation
+
+### Refactoring
+
+- **webxr:** optimize animation system and improve performance
+  - Enhance WebXR animation utilities and spring physics system
+  - Improve rendering performance for 3D components
+
+### Maintenance
+
+- **deps:** update dependencies to latest compatible versions
+
 ## [0.17.1](https://github.com/FradSer/frad-me/compare/v0.17.0...v0.17.1) (2025-10-26)
 
 ### Maintenance
