@@ -48,6 +48,7 @@ export function useAnimationGroup(animationKeys: string[]) {
         {} as Record<string, ReturnType<typeof useAnimationControls>>,
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // biome-ignore lint/correctness/useExhaustiveDependencies: stability required
     [animationKeys.join(',')],
   );
 
