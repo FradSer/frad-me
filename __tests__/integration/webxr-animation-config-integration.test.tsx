@@ -45,7 +45,7 @@ describe('WebXR Animation Config Integration', () => {
     });
 
     it('should validate animation presets', () => {
-      expect(validateAnimationPreset('elastic')).toBe(true);
+      expect(validateAnimationPreset('elastic')).toBe('elastic');
       expect(validateAnimationPreset('invalid')).toBe(false);
     });
 

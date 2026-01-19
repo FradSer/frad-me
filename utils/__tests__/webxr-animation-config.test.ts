@@ -59,8 +59,8 @@ describe('WebXR Animation Configuration', () => {
     });
 
     it('should validate animation presets', () => {
-      expect(validateAnimationPreset('normal')).toBe(true);
-      expect(validateAnimationPreset('elastic')).toBe(true);
+      expect(validateAnimationPreset('normal')).toBe('normal');
+      expect(validateAnimationPreset('elastic')).toBe('elastic');
       expect(validateAnimationPreset('invalid')).toBe(false);
     });
   });
@@ -122,7 +122,7 @@ describe('WebXR Animation Configuration', () => {
       const presets: AnimationPreset[] = ['slow', 'normal', 'fast', 'bouncy', 'elastic'];
 
       presets.forEach((preset) => {
-        expect(validateAnimationPreset(preset)).toBe(true);
+        expect(validateAnimationPreset(preset)).toBe(preset);
         expect(getLerpSpeed(preset)).toBeGreaterThan(0);
       });
     });
