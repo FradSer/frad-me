@@ -142,35 +142,35 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   );
 
   // * Hooks
-  const mouseContext = useMouseContext();
+  const { cursorChangeHandler } = useMouseContext();
 
   // * Animation handlers
   const handleHoverStart = useCallback(() => {
     const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered';
-    mouseContext.cursorChangeHandler(cursorType);
+    cursorChangeHandler(cursorType);
 
     startGroup({
       backgroundImage: 'hover',
       backgroundMask: 'hover',
       text: 'hover',
     });
-  }, [props.isWIP, mouseContext, startGroup]);
+  }, [props.isWIP, cursorChangeHandler, startGroup]);
 
   const handleHoverEnd = useCallback(() => {
-    mouseContext.cursorChangeHandler('default');
+    cursorChangeHandler('default');
 
     startGroup({
       backgroundImage: 'initial',
       backgroundMask: 'initial',
       text: 'initial',
     });
-  }, [mouseContext, startGroup]);
+  }, [cursorChangeHandler, startGroup]);
 
   const handleClick = useCallback(() => {
     if (!props.isWIP) {
-      mouseContext.cursorChangeHandler('default');
+      cursorChangeHandler('default');
     }
-  }, [props.isWIP, mouseContext]);
+  }, [props.isWIP, cursorChangeHandler]);
 
   // * Create shared content
   const workCardContent = (
