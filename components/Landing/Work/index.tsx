@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import WorkCard from '@/components/Landing/Work/WorkCard';
 import WorkTitle from '@/components/Landing/Work/WorkTitle';
 
@@ -5,7 +6,7 @@ import workLinks from '@/content/workLinks';
 
 const MAX_DISPLAY_WORKS = 6;
 
-export default function Work() {
+const Work = memo(function Work() {
   return (
     <section id="work" className="grid w-screen grid-cols-2 md:grid-cols-2 gap-4 text-center">
       <WorkTitle />
@@ -24,4 +25,6 @@ export default function Work() {
       ))}
     </section>
   );
-}
+});
+
+export default Work;

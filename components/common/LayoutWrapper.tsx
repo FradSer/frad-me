@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import Header from '@/components/Header';
 
@@ -13,8 +13,8 @@ import {
 } from '@/utils/motion/animationUtils';
 
 const LoadingDots = () => {
-  const containerVariants = createStaggerChildren(0.4);
-  const dotVariants = createLoadingDots();
+  const containerVariants = useMemo(() => createStaggerChildren(0.4), []);
+  const dotVariants = useMemo(() => createLoadingDots(), []);
 
   return (
     <motion.span variants={containerVariants} animate="animate">
