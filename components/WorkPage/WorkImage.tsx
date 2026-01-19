@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
 import { ImagePosition, type WorkBeforeAfterImagesProps, type WorkImageProps } from '@/types/work';
-import { COMMON_CLASSES, IMAGE_POSITION_CLASSES } from '@/utils/constants';
+import { COMMON_CLASSES, GRID_CLASSES, IMAGE_POSITION_CLASSES } from '@/utils/constants';
 
 // Shared optimized image component
 function OptimizedImage({
@@ -47,7 +47,7 @@ function WorkSingleImage({
 
   return (
     <MDXComponentProvider className={workImageClass}>
-      <div className="work-component-layout">
+      <div className={COMMON_CLASSES.workComponentLayout}>
         <OptimizedImage
           src={src}
           width={width}
@@ -78,7 +78,7 @@ function WorkBeforeAfterImages({
   };
 
   return (
-    <MDXComponentProvider className="work-component-layout col-span-16">
+    <MDXComponentProvider className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.fullWidth)}>
       <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
         <span>Before:</span>
         <OptimizedImage src={beforeSrc} {...sharedImageProps} />

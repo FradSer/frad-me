@@ -1,8 +1,17 @@
+import { clsx } from 'clsx';
+
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
+import { COMMON_CLASSES, GRID_CLASSES } from '@/utils/constants';
 
 function ComfortableFontYong() {
   return (
-    <MDXComponentProvider className="work-component-layout col-span-16 md:col-span-5">
+    <MDXComponentProvider
+      className={clsx(
+        COMMON_CLASSES.workComponentLayout,
+        GRID_CLASSES.fullWidth,
+        'md:col-span-5',
+      )}
+    >
       <svg
         width="100%"
         height="auto"

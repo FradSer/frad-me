@@ -1,9 +1,12 @@
 import { clsx } from 'clsx';
 import Link from 'next/link';
 
+import { GRID_CLASSES } from '@/utils/constants';
+
 function NextWork(props: Readonly<{ href?: string }>) {
   const linkClass = clsx(
-    'col-span-16 col-start-1 text-center text-black dark:text-white text-4xl my-8 font-bold',
+    GRID_CLASSES.fullWidthCentered,
+    'text-black dark:text-white text-4xl my-8 font-bold',
   );
 
   if (!props.href) {
