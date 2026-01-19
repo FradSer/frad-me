@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  type ReactNode,
-} from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 export type WebXRView = 'home' | 'work';
 
@@ -39,14 +33,9 @@ export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
   useEffect(() => {
     const detectCapabilities = async () => {
       // Check WebXR support
-      if (
-        typeof navigator !== 'undefined' &&
-        'xr' in navigator &&
-        navigator.xr
-      ) {
+      if (typeof navigator !== 'undefined' && 'xr' in navigator && navigator.xr) {
         try {
-          const vrSupported =
-            await navigator.xr.isSessionSupported('immersive-vr');
+          const vrSupported = await navigator.xr.isSessionSupported('immersive-vr');
           setWebXRSupported(vrSupported);
         } catch (error) {
           if (process.env.NODE_ENV === 'development') {
@@ -84,11 +73,7 @@ export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
     setTransitioning: setIsTransitioning,
   };
 
-  return (
-    <WebXRViewContext.Provider value={contextValue}>
-      {children}
-    </WebXRViewContext.Provider>
-  );
+  return <WebXRViewContext.Provider value={contextValue}>{children}</WebXRViewContext.Provider>;
 }
 
 export function useWebXRView() {

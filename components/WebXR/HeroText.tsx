@@ -1,13 +1,13 @@
-import type React from 'react';
-import { useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { useFrame } from '@react-three/fiber';
+import dynamic from 'next/dynamic';
+import type React from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { measureChunkLoad } from '@/utils/performance';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
-import { useSimpleLerp, springConfigToLerpSpeed } from '@/hooks/useSimpleLerp';
+import { springConfigToLerpSpeed, useSimpleLerp } from '@/hooks/useSimpleLerp';
+import { measureChunkLoad } from '@/utils/performance';
 import { WEBXR_ANIMATION_CONFIG } from '@/utils/webxr/animationConfig';
+import { heroAnimationStates } from '@/utils/webxr/animationHelpers';
 
 const Text = dynamic(
   () =>
@@ -16,6 +16,38 @@ const Text = dynamic(
     ),
   { ssr: false },
 );
+
+const FONTS = {
+  display: 'fonts/GT-Eesti-Display-Bold-Trial.woff',
+} as const;
+
+const TEXT_CONFIG = {
+  fontSize: 1,
+  anchorX: 'center' as const,
+  anchorY: 'middle' as const,
+} as const;
+
+const GEOMETRY_ARGS = {
+  box: [3, 1, 1] as [number, number, number],
+  cone: [1, 1.4, 3, 1] as [number, number, number, number],
+  sphere: [0.65, 16, 16] as [number, number, number],
+} as const;
+
+const ROTATION_SPEEDS = {
+  default: 10,
+  sphere: 5,
+} as const;
+
+const SCALE_FACTORS = {
+  triangle: 1.5,
+  sphere: 1.5,
+} as const;
+
+const LIGHTING = {
+  ambientIntensity: Math.PI / 10,
+  pointIntensity: Math.PI,
+  pointPosition: [-10, -10, -10] as [number, number, number],
+} as const;
 
 interface LineProps {
   position: [number, number, number];
@@ -31,91 +63,104 @@ interface ShapeProps {
 
 type RotationAxis = 'x' | 'y' | 'z';
 
-// Enhanced interactive mesh with spring animations
-const useInteractiveMesh = (rotationAxis: RotationAxis, rotationSpeed = 10) => {
+interface InteractiveMeshResult {
+  meshRef: React.RefObject<THREE.Mesh | null>;
+  hovered: boolean;
+  active: boolean;
+  handlers: {
+    onClick: () => void;
+    onPointerOver: () => void;
+    onPointerOut: () => void;
+  };
+}
+
+const useInteractiveMesh = (
+  rotationAxis: RotationAxis,
+  rotationSpeed?: number,
+): InteractiveMeshResult => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(false);
 
-  // Enhanced springs for interactive elements
-  const scaleSpring = useSimpleLerp(1, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy),
-  });
-  const rotationSpring = useSimpleLerp(0, {
-    speed: springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast),
-  });
+  const speed = rotationSpeed ?? ROTATION_SPEEDS.default;
+
+  const lerpSpeed = springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.bouncy);
+  const fastLerpSpeed = springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast);
+
+  const scaleSpring = useSimpleLerp(1, { speed: lerpSpeed });
+  const rotationSpring = useSimpleLerp(0, { speed: fastLerpSpeed });
 
   useFrame((_, delta) => {
-    if (meshRef.current) {
-      // Base rotation
-      meshRef.current.rotation[rotationAxis] += delta / rotationSpeed;
+    const mesh = meshRef.current;
+    if (!mesh) return;
 
-      // Apply spring scale and additional rotation
-      meshRef.current.scale.setScalar(scaleSpring.value);
+    mesh.rotation[rotationAxis] += delta / speed;
+    mesh.scale.setScalar(scaleSpring.value);
 
-      // Add spring-based secondary rotation on different axes
-      if (rotationAxis !== 'y')
-        meshRef.current.rotation.y += rotationSpring.value * delta;
-      if (rotationAxis !== 'x')
-        meshRef.current.rotation.x += rotationSpring.value * delta * 0.5;
-    }
+    if (rotationAxis !== 'y') mesh.rotation.y += rotationSpring.value * delta;
+    if (rotationAxis !== 'x') mesh.rotation.x += rotationSpring.value * delta * 0.5;
   });
 
   const handlers = {
-    onClick: () => {
-      setActive(!active);
-      // Spring bounce effect on click
-      scaleSpring.set(active ? 1 : 1.3);
-      rotationSpring.set(active ? 0 : 2);
-    },
-    onPointerOver: () => {
+    onClick: useCallback(() => {
+      setActive((prev) => {
+        const newActive = !prev;
+        scaleSpring.set(newActive ? 1.3 : 1);
+        rotationSpring.set(newActive ? 2 : 0);
+        return newActive;
+      });
+    }, [scaleSpring, rotationSpring]),
+
+    onPointerOver: useCallback(() => {
       setHovered(true);
       scaleSpring.set(1.1);
       rotationSpring.set(1);
-    },
-    onPointerOut: () => {
+    }, [scaleSpring, rotationSpring]),
+
+    onPointerOut: useCallback(() => {
       setHovered(false);
-      if (!active) {
-        scaleSpring.set(1);
-        rotationSpring.set(0);
-      }
-    },
+      setActive((currentActive) => {
+        if (!currentActive) {
+          scaleSpring.set(1);
+          rotationSpring.set(0);
+        }
+        return currentActive;
+      });
+    }, [scaleSpring, rotationSpring]),
   };
 
   return { meshRef, hovered, active, handlers };
 };
 
-const Line = ({ position, color, text }: LineProps) => (
-  <Text
-    color={color}
-    anchorX="center"
-    anchorY="middle"
-    fontSize={1}
-    position={position}
-    rotation={[0, 0, 0]}
-    font="fonts/GT-Eesti-Display-Bold-Trial.woff"
-    onClick={() => {
-      /* Handle click event */
-    }}
-  >
-    {text}
-  </Text>
-);
+const Line = memo<LineProps>(function Line({ position, color, text }) {
+  return (
+    <Text
+      color={color}
+      anchorX={TEXT_CONFIG.anchorX}
+      anchorY={TEXT_CONFIG.anchorY}
+      fontSize={TEXT_CONFIG.fontSize}
+      position={position}
+      rotation={[0, 0, 0]}
+      font={FONTS.display}
+    >
+      {text}
+    </Text>
+  );
+});
 
-const InteractiveShape = ({
+interface InteractiveShapeProps extends ShapeProps {
+  children: React.ReactNode;
+  rotationAxis: RotationAxis;
+  rotationSpeed?: number;
+}
+
+const InteractiveShape = memo<InteractiveShapeProps>(function InteractiveShape({
   children,
   rotationAxis,
   rotationSpeed,
   ...props
-}: ShapeProps & {
-  children: React.ReactNode;
-  rotationAxis: RotationAxis;
-  rotationSpeed?: number;
-}) => {
-  const { meshRef, hovered, handlers } = useInteractiveMesh(
-    rotationAxis,
-    rotationSpeed,
-  );
+}) {
+  const { meshRef, hovered, handlers } = useInteractiveMesh(rotationAxis, rotationSpeed);
 
   return (
     <mesh {...props} ref={meshRef} {...handlers}>
@@ -123,25 +168,36 @@ const InteractiveShape = ({
       <meshStandardMaterial color={hovered ? 'gray' : 'white'} />
     </mesh>
   );
-};
+});
 
-const Box = (props: ShapeProps) => (
-  <InteractiveShape {...props} rotationAxis="x">
-    <boxGeometry args={[3, 1, 1]} />
-  </InteractiveShape>
-);
+const Box = memo<ShapeProps>(function Box(props) {
+  return (
+    <InteractiveShape {...props} rotationAxis="x">
+      <boxGeometry args={GEOMETRY_ARGS.box} />
+    </InteractiveShape>
+  );
+});
 
-const Triangle = (props: ShapeProps) => (
-  <InteractiveShape {...props} scale={1.5} rotationAxis="z">
-    <coneGeometry args={[1, 1.4, 3, 1]} />
-  </InteractiveShape>
-);
+const Triangle = memo<ShapeProps>(function Triangle(props) {
+  return (
+    <InteractiveShape {...props} scale={SCALE_FACTORS.triangle} rotationAxis="z">
+      <coneGeometry args={GEOMETRY_ARGS.cone} />
+    </InteractiveShape>
+  );
+});
 
-const Sphere = (props: ShapeProps) => (
-  <InteractiveShape {...props} scale={1.5} rotationAxis="y" rotationSpeed={5}>
-    <sphereGeometry args={[0.65, 16, 16]} />
-  </InteractiveShape>
-);
+const Sphere = memo<ShapeProps>(function Sphere(props) {
+  return (
+    <InteractiveShape
+      {...props}
+      scale={SCALE_FACTORS.sphere}
+      rotationAxis="y"
+      rotationSpeed={ROTATION_SPEEDS.sphere}
+    >
+      <sphereGeometry args={GEOMETRY_ARGS.sphere} />
+    </InteractiveShape>
+  );
+});
 
 // Content configuration for cleaner management
 const heroContent = [
@@ -201,43 +257,82 @@ const renderElement = (element: (typeof heroContent)[0], index: number) => {
   const key = `${element.type}-${index}`;
 
   switch (element.type) {
-    case 'line':
+    case 'line': {
+      const lineElement = element as {
+        type: 'line';
+        position: [number, number, number];
+        color: string;
+        text: string;
+      };
       return (
         <Line
           key={key}
-          position={element.position}
-          color={element.color!}
-          text={element.text!}
+          position={lineElement.position}
+          color={lineElement.color}
+          text={lineElement.text}
         />
       );
-    case 'box':
-      return <Box key={key} position={element.position} />;
-    case 'triangle':
+    }
+    case 'box': {
+      const boxElement = element as { type: 'box'; position: [number, number, number] };
+      return <Box key={key} position={boxElement.position} />;
+    }
+    case 'triangle': {
+      const triangleElement = element as {
+        type: 'triangle';
+        position: [number, number, number];
+        rotation?: [number, number, number];
+        scale?: number;
+      };
       return (
         <Triangle
           key={key}
-          position={element.position}
-          rotation={element.rotation}
-          scale={element.scale}
+          position={triangleElement.position}
+          rotation={triangleElement.rotation}
+          scale={triangleElement.scale}
         />
       );
-    case 'sphere':
-      return <Sphere key={key} position={element.position} />;
+    }
+    case 'sphere': {
+      const sphereElement = element as { type: 'sphere'; position: [number, number, number] };
+      return <Sphere key={key} position={sphereElement.position} />;
+    }
     default:
       return null;
   }
 };
 
-function HeroText() {
+const applyMaterialOpacity = (material: THREE.Material, opacity: number): void => {
+  if (
+    material instanceof THREE.MeshStandardMaterial ||
+    material instanceof THREE.MeshBasicMaterial
+  ) {
+    material.opacity = opacity;
+    material.transparent = true;
+  }
+};
+
+const updateChildOpacity = (child: THREE.Object3D, opacity: number): void => {
+  if (!(child instanceof THREE.Mesh) || !child.material) return;
+
+  if (Array.isArray(child.material)) {
+    for (const mat of child.material) {
+      applyMaterialOpacity(mat, opacity);
+    }
+  } else {
+    applyMaterialOpacity(child.material, opacity);
+  }
+};
+
+const HeroText = memo(function HeroText() {
   const { currentView } = useWebXRView();
   const groupRef = useRef<THREE.Group>(null);
+  const currentViewRef = useRef(currentView);
 
-  // Enhanced spring configuration for more dynamic hero transitions
   const springConfig = WEBXR_ANIMATION_CONFIG.springs.elastic;
-
-  // Initialize all lerp values consistently with home state to avoid race conditions
   const initialState = heroAnimationStates.home;
   const lerpConfig = { speed: springConfigToLerpSpeed(springConfig) };
+
   const positionX = useSimpleLerp(initialState.position.x, lerpConfig);
   const positionY = useSimpleLerp(initialState.position.y, lerpConfig);
   const positionZ = useSimpleLerp(initialState.position.z, lerpConfig);
@@ -246,19 +341,13 @@ function HeroText() {
   const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig);
   const opacity = useSimpleLerp(initialState.opacity, lerpConfig);
 
-  // Track current view for consistent spring target updates
-  const currentViewRef = useRef(currentView);
+  useFrame(() => {
+    const group = groupRef.current;
+    if (!group) return;
 
-  // Use frame for consistent spring target setting and animation updates
-  useFrame((_, delta) => {
-    if (!groupRef.current) return;
-
-    // Update spring targets when view changes (in frame for consistent timing)
     if (currentViewRef.current !== currentView) {
       const targetState =
-        currentView === 'work'
-          ? heroAnimationStates.hidden
-          : heroAnimationStates.home;
+        currentView === 'work' ? heroAnimationStates.hidden : heroAnimationStates.home;
 
       positionX.set(targetState.position.x);
       positionY.set(targetState.position.y);
@@ -271,55 +360,22 @@ function HeroText() {
       currentViewRef.current = currentView;
     }
 
-    // Lerp values are automatically updated via useFrame in useSimpleLerp hook
-
-    // Apply transforms
-    groupRef.current.position.set(
-      positionX.value,
-      positionY.value,
-      positionZ.value,
-    );
-    groupRef.current.scale.set(scaleX.value, scaleY.value, scaleZ.value);
+    group.position.set(positionX.value, positionY.value, positionZ.value);
+    group.scale.set(scaleX.value, scaleY.value, scaleZ.value);
 
     const currentOpacity = opacity.value;
+    group.visible = currentOpacity > WEBXR_ANIMATION_CONFIG.performance.hideThreshold;
 
-    // Hide completely when opacity is near zero for performance
-    groupRef.current.visible = currentOpacity > 0.01;
-
-    // Apply opacity to all materials
-    groupRef.current.traverse((child) => {
-      if (child instanceof THREE.Mesh && child.material) {
-        if (Array.isArray(child.material)) {
-          child.material.forEach((material) => {
-            if (
-              material instanceof THREE.MeshStandardMaterial ||
-              material instanceof THREE.MeshBasicMaterial
-            ) {
-              material.opacity = currentOpacity;
-              material.transparent = true;
-            }
-          });
-        } else {
-          const material = child.material;
-          if (
-            material instanceof THREE.MeshStandardMaterial ||
-            material instanceof THREE.MeshBasicMaterial
-          ) {
-            material.opacity = currentOpacity;
-            material.transparent = true;
-          }
-        }
-      }
-    });
+    group.traverse((child) => updateChildOpacity(child, currentOpacity));
   });
 
   return (
     <group ref={groupRef}>
-      <ambientLight intensity={Math.PI / 10} />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+      <ambientLight intensity={LIGHTING.ambientIntensity} />
+      <pointLight position={LIGHTING.pointPosition} decay={0} intensity={LIGHTING.pointIntensity} />
       <group>{heroContent.map(renderElement)}</group>
     </group>
   );
-}
+});
 
 export default HeroText;

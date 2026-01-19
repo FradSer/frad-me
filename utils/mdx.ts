@@ -55,8 +55,7 @@ const getFileContent = (filename: string): string => {
  * Configures the esbuild binary path for MDX compilation
  */
 const configureEsbuildPath = (): void => {
-  const binaryName =
-    process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild';
+  const binaryName = process.platform === 'win32' ? 'esbuild.exe' : 'bin/esbuild';
   const esbuildPath = path.join(ROOT, 'node_modules', 'esbuild', binaryName);
   process.env.ESBUILD_BINARY_PATH = esbuildPath;
 };

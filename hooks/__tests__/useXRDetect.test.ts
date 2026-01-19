@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import useXRDetect from '../useXRDetect';
 
 // Mock navigator.xr
@@ -35,7 +35,7 @@ describe('useXRDetect Hook', () => {
 
       // Wait for detection to complete
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isLoading).toBe(false);
@@ -48,7 +48,7 @@ describe('useXRDetect Hook', () => {
       const { result } = renderHook(() => useXRDetect());
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isLoading).toBe(false);
@@ -57,12 +57,12 @@ describe('useXRDetect Hook', () => {
 
     it('should handle WebXR API not available', async () => {
       // Remove xr from navigator
-      delete (window.navigator as any).xr;
+      delete (window.navigator as unknown as Record<string, unknown>).xr;
 
       const { result } = renderHook(() => useXRDetect());
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isLoading).toBe(false);
@@ -75,7 +75,7 @@ describe('useXRDetect Hook', () => {
       const { result } = renderHook(() => useXRDetect());
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isLoading).toBe(false);
@@ -92,7 +92,7 @@ describe('useXRDetect Hook', () => {
       expect(result.current.isLoading).toBe(true);
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isLoading).toBe(false);
@@ -166,7 +166,7 @@ describe('useXRDetect Hook', () => {
       const { result } = renderHook(() => useXRDetect());
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isVR).toBe(true);
@@ -175,19 +175,19 @@ describe('useXRDetect Hook', () => {
     it('should handle navigator undefined', async () => {
       // Temporarily remove navigator
       const originalNavigator = window.navigator;
-      delete (window as any).navigator;
+      delete (window as unknown as Record<string, unknown>).navigator;
 
       const { result } = renderHook(() => useXRDetect());
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.isVR).toBe(false);
       expect(result.current.isLoading).toBe(false);
 
       // Restore navigator
-      (window as any).navigator = originalNavigator;
+      (window as unknown as Record<string, unknown>).navigator = originalNavigator;
     });
   });
 
@@ -200,7 +200,7 @@ describe('useXRDetect Hook', () => {
       expect(result.current.isAR).toBeUndefined(); // Not implemented in current version
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(typeof result.current.isVR).toBe('boolean');

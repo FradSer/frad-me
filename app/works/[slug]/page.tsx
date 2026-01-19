@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 
 import { notFound } from 'next/navigation';
-
-import WorkPageClient from './work-page-client';
-
 import { getAllPosts, getSinglePost } from '@/utils/mdx';
+import WorkPageClient from './work-page-client';
 
 type WorkPageProps = {
   params: Promise<{ slug: string }>;
@@ -17,17 +15,13 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({
-  params,
-}: WorkPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
     const work = await getSinglePost(slug);
     return {
       title: work.frontmatter.title,
-      description:
-        work.frontmatter.description ||
-        `Work showcase: ${work.frontmatter.title}`,
+      description: work.frontmatter.description || `Work showcase: ${work.frontmatter.title}`,
       openGraph: {
         title: work.frontmatter.title,
         description: work.frontmatter.description,

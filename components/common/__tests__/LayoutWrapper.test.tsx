@@ -13,7 +13,7 @@ jest.mock('@/hooks/useLoading', () => ({
 
 describe('LayoutWrapper', () => {
   it('centers the fixed header container', () => {
-    const { container } = render(
+    render(
       <ThemeModeProvider>
         <LayoutWrapper>
           <div>content</div>

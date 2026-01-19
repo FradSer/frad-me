@@ -1,17 +1,13 @@
 'use client';
 
+import { motion } from 'motion/react';
 import { useMemo } from 'react';
 
-import { motion } from 'motion/react';
-
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
-import { SunIcon, MoonIcon } from '@/components/common/Icons';
+import { MoonIcon, SunIcon } from '@/components/common/Icons';
 import useThemeMode from '@/hooks/useThemeMode';
 
-import {
-  primaryTransition,
-  secondaryTransition,
-} from '@/utils/motion/springTransitions';
+import { primaryTransition, secondaryTransition } from '@/utils/motion/springTransitions';
 
 export default function ThemeSwitcher() {
   const { isMounted, resolvedTheme, toggleTheme } = useThemeMode();

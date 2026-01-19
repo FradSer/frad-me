@@ -1,13 +1,9 @@
-import Image from 'next/image';
 import { clsx } from 'clsx';
+import Image from 'next/image';
 
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
-import {
-  type WorkImageProps,
-  type WorkBeforeAfterImagesProps,
-  ImagePosition,
-} from '@/types/work';
-import { IMAGE_POSITION_CLASSES, COMMON_CLASSES } from '@/utils/constants';
+import { ImagePosition, type WorkBeforeAfterImagesProps, type WorkImageProps } from '@/types/work';
+import { COMMON_CLASSES, IMAGE_POSITION_CLASSES } from '@/utils/constants';
 
 // Shared optimized image component
 function OptimizedImage({
@@ -47,10 +43,7 @@ function WorkSingleImage({
   unoptimized = false,
   priority = false,
 }: Readonly<WorkImageProps>) {
-  const workImageClass = clsx(
-    COMMON_CLASSES.imageContainer,
-    IMAGE_POSITION_CLASSES[position],
-  );
+  const workImageClass = clsx(COMMON_CLASSES.imageContainer, IMAGE_POSITION_CLASSES[position]);
 
   return (
     <MDXComponentProvider className={workImageClass}>

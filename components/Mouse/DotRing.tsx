@@ -1,12 +1,6 @@
-import { useEffect, useMemo } from 'react';
-
 import { clsx } from 'clsx';
-import {
-  motion,
-  useAnimationControls,
-  useMotionValue,
-  useSpring,
-} from 'motion/react';
+import { motion, useAnimationControls, useMotionValue, useSpring } from 'motion/react';
+import { useEffect, useMemo } from 'react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
@@ -110,12 +104,9 @@ export default function DotRing() {
 
   const backgroundClass = useMemo(
     () =>
-      clsx(
-        'fixed rounded-full bg-white pointer-events-none z-60 duration-100',
-        {
-          'mix-blend-difference': mouseContext.cursorType === 'default',
-        },
-      ),
+      clsx('fixed rounded-full bg-white pointer-events-none z-60 duration-100', {
+        'mix-blend-difference': mouseContext.cursorType === 'default',
+      }),
     [mouseContext.cursorType],
   );
 

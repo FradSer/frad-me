@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useRef } from 'react';
 import * as THREE from 'three';
 
 interface LerpConfig {
@@ -16,11 +16,7 @@ export const useSimpleLerp = (initialValue: number, config: LerpConfig) => {
 
   useFrame((_, delta) => {
     const speed = config.speed * delta * 10; // Simplified speed calculation
-    currentRef.current = THREE.MathUtils.lerp(
-      currentRef.current,
-      targetRef.current,
-      speed,
-    );
+    currentRef.current = THREE.MathUtils.lerp(currentRef.current, targetRef.current, speed);
   });
 
   return {
@@ -33,42 +29,8 @@ export const useSimpleLerp = (initialValue: number, config: LerpConfig) => {
   };
 };
 
-/**
- * Multi-axis lerp for position/scale animations
- */
-export const useTripleLerp = (
-  initialValue: [number, number, number],
-  config: LerpConfig,
-) => {
-  const currentRef = useRef([...initialValue]);
-  const targetRef = useRef([...initialValue]);
-
-  useFrame((_, delta) => {
-    const speed = config.speed * delta * 10;
-    for (let i = 0; i < 3; i++) {
-      currentRef.current[i] = THREE.MathUtils.lerp(
-        currentRef.current[i],
-        targetRef.current[i],
-        speed,
-      );
-    }
-  });
-
-  return {
-    get value(): [number, number, number] {
-      return currentRef.current as [number, number, number];
-    },
-    set(target: [number, number, number]) {
-      targetRef.current = [...target];
-    },
-  };
-};
-
 // Convert spring config to lerp speed approximation
-export const springConfigToLerpSpeed = (springConfig: {
-  tension: number;
-  friction: number;
-}) => {
+export const springConfigToLerpSpeed = (springConfig: { tension: number; friction: number }) => {
   // Approximate conversion: higher tension = faster, higher friction = slower
   return Math.min(springConfig.tension / springConfig.friction / 10, 1);
 };

@@ -1,17 +1,16 @@
-import type { ReactNode } from 'react';
-
 import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
 
 import Header from '@/components/Header';
 
 import useLoading from '@/hooks/useLoading';
-import {
-  createPageVariants,
-  createHeaderVariants,
-  createStaggerChildren,
-  createLoadingDots,
-} from '@/utils/motion/animationUtils';
 import { createCursorClasses, LAYOUT_CLASSES } from '@/utils/classNames';
+import {
+  createHeaderVariants,
+  createLoadingDots,
+  createPageVariants,
+  createStaggerChildren,
+} from '@/utils/motion/animationUtils';
 
 const LoadingDots = () => {
   const containerVariants = createStaggerChildren(0.4);
@@ -19,8 +18,8 @@ const LoadingDots = () => {
 
   return (
     <motion.span variants={containerVariants} animate="animate">
-      {Array.from({ length: 3 }, (_, i) => (
-        <motion.span key={i} variants={dotVariants}>
+      {['loading-dot-1', 'loading-dot-2', 'loading-dot-3'].map((dotKey) => (
+        <motion.span key={dotKey} variants={dotVariants}>
           .
         </motion.span>
       ))}
@@ -40,14 +39,10 @@ const LoadingScreen = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
-    className={createCursorClasses(
-      `${LAYOUT_CLASSES.fullScreen} bg-white dark:bg-black`,
-    )}
+    className={createCursorClasses(`${LAYOUT_CLASSES.fullScreen} bg-white dark:bg-black`)}
   >
     <div
-      className={createCursorClasses(
-        `${LAYOUT_CLASSES.loadingText} text-black dark:text-white`,
-      )}
+      className={createCursorClasses(`${LAYOUT_CLASSES.loadingText} text-black dark:text-white`)}
     >
       loading
       <LoadingDots />

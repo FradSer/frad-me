@@ -80,13 +80,16 @@ jest.mock('motion/react', () => {
 // Mock three.js and React Three Fiber
 jest.mock('@react-three/fiber', () => ({
   Canvas: ({ children, ...props }) => {
-    const { forwardRef } = jest.requireActual('react');
-    return React.createElement('div', {
-      'data-testid': 'react-three-fiber-canvas',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'react-three-fiber-canvas',
+        ...props,
+      },
+      children,
+    );
   },
-  useFrame: jest.fn((callback) => {
+  useFrame: jest.fn((_callback) => {
     // Mock useFrame to not execute callback in tests
     return () => {};
   }),
@@ -118,34 +121,54 @@ jest.mock('@react-three/fiber', () => ({
 
 jest.mock('@react-three/drei', () => ({
   OrbitControls: ({ children, ...props }) => {
-    return React.createElement('div', {
-      'data-testid': 'orbit-controls',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'orbit-controls',
+        ...props,
+      },
+      children,
+    );
   },
   Text: ({ children, ...props }) => {
-    return React.createElement('div', {
-      'data-testid': 'three-text',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'three-text',
+        ...props,
+      },
+      children,
+    );
   },
   Box: ({ children, ...props }) => {
-    return React.createElement('div', {
-      'data-testid': 'three-box',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'three-box',
+        ...props,
+      },
+      children,
+    );
   },
   Sphere: ({ children, ...props }) => {
-    return React.createElement('div', {
-      'data-testid': 'three-sphere',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'three-sphere',
+        ...props,
+      },
+      children,
+    );
   },
   Html: ({ children, ...props }) => {
-    return React.createElement('div', {
-      'data-testid': 'html-content',
-      ...props
-    }, children);
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'html-content',
+        ...props,
+      },
+      children,
+    );
   },
 }));
 
@@ -186,7 +209,7 @@ global.fetch = jest.fn(() =>
     statusText: 'OK',
     json: () => Promise.resolve({ status: 'logged' }),
     text: () => Promise.resolve('success'),
-  })
+  }),
 );
 
 // Mock localStorage

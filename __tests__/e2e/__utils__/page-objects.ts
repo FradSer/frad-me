@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 // Common selectors
 const selectors = {
@@ -40,9 +40,7 @@ export class BasePage {
 
   async waitForPageLoad() {
     await this.page.waitForLoadState('networkidle');
-    await expect(
-      this.page.locator(selectors.layout.main).first(),
-    ).toBeVisible();
+    await expect(this.page.locator(selectors.layout.main).first()).toBeVisible();
   }
 
   async setViewport(viewport: keyof typeof viewports) {
@@ -155,9 +153,7 @@ export class WorksPage extends BasePage {
       await expect(this.wipElements.first()).toBeVisible();
       // WIP elements should not be clickable links
       const wipElement = this.wipElements.first();
-      const tagName = await wipElement.evaluate((el) =>
-        el.tagName.toLowerCase(),
-      );
+      const tagName = await wipElement.evaluate((el) => el.tagName.toLowerCase());
       expect(tagName).not.toBe('a');
     }
   }
@@ -240,18 +236,12 @@ export class WebXRErrorBoundaryPage extends BasePage {
   }
 
   async verifyWebXRMode() {
-    await expect(
-      this.page.locator('[data-testid="webxr-canvas"]'),
-    ).toBeVisible();
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).not.toBeVisible();
+    await expect(this.page.locator('[data-testid="webxr-canvas"]')).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).not.toBeVisible();
   }
 
   async verifyErrorBoundaryMessage() {
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).toBeVisible();
     await expect(
       this.page.getByText('Unable to load WebXR experience. Falling back to 2D view.'),
     ).toBeVisible();
@@ -259,9 +249,7 @@ export class WebXRErrorBoundaryPage extends BasePage {
 
   async verifyErrorDisplay() {
     // New ErrorBoundary shows simple error message for WebXR components
-    await expect(
-      this.page.getByText('WebXR Error'),
-    ).toBeVisible();
+    await expect(this.page.getByText('WebXR Error')).toBeVisible();
   }
 
   async verifyHeroStyleErrorUI() {
@@ -270,9 +258,7 @@ export class WebXRErrorBoundaryPage extends BasePage {
     await expect(errorContainer).toBeVisible();
 
     // Verify centered layout
-    await expect(
-      this.page.locator('.items-center.justify-center'),
-    ).toBeVisible();
+    await expect(this.page.locator('.items-center.justify-center')).toBeVisible();
 
     // Verify white text
     await expect(this.page.locator('.text-white')).toBeVisible();
@@ -309,9 +295,7 @@ export class HomePage extends BasePage {
 
     // Verify main sections
     await this.header.verifyHeaderVisible();
-    await expect(
-      this.page.locator(selectors.layout.main).first(),
-    ).toBeVisible();
+    await expect(this.page.locator(selectors.layout.main).first()).toBeVisible();
   }
 
   async performCompleteUITest() {
@@ -343,8 +327,8 @@ export class HomePage extends BasePage {
 }
 
 // Test utilities
-export class TestUtils {
-  static async waitForStableContent(page: Page, timeout: number = 5000) {
+export const TestUtils = {
+  async waitForStableContent(page: Page, timeout: number = 5000) {
     let lastContent = '';
     let stableCount = 0;
     const startTime = Date.now();
@@ -360,14 +344,14 @@ export class TestUtils {
       }
       await page.waitForTimeout(100);
     }
-  }
+  },
 
-  static async retryAssertion(
+  async retryAssertion(
     assertion: () => Promise<void>,
     maxRetries: number = 3,
     delay: number = 1000,
   ) {
-    let lastError: Error;
+    let lastError: Error | undefined;
 
     for (let i = 0; i < maxRetries; i++) {
       try {
@@ -381,13 +365,13 @@ export class TestUtils {
       }
     }
 
-    throw lastError!;
-  }
+    if (!lastError) {
+      throw new Error('Assertion failed after retries');
+    }
+    throw lastError;
+  },
 
-  static async mockNetworkConditions(
-    page: Page,
-    condition: 'slow' | 'fast' | 'offline',
-  ) {
+  async mockNetworkConditions(page: Page, condition: 'slow' | 'fast' | 'offline') {
     const conditions = {
       slow: {
         downloadThroughput: 50000,
@@ -416,5 +400,5 @@ export class TestUtils {
         ...conditions[condition],
       });
     }
-  }
-}
+  },
+};

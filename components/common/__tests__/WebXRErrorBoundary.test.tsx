@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
@@ -52,9 +51,7 @@ describe('ErrorBoundary', () => {
     expect(
       screen.getByText('An unexpected error occurred. Please try refreshing the page.'),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Refresh Page' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh Page' })).toBeInTheDocument();
   });
 
   it('renders custom fallback when provided', () => {
@@ -67,9 +64,7 @@ describe('ErrorBoundary', () => {
     );
 
     expect(screen.getByText('Custom error message')).toBeInTheDocument();
-    expect(
-      screen.queryByText('Something went wrong'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Something went wrong')).not.toBeInTheDocument();
   });
 
   it('renders component-specific error UI when componentName is provided', () => {

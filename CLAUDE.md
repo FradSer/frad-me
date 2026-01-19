@@ -17,11 +17,9 @@ This is a Next.js personal website for Frad LEE built with TypeScript, featuring
 **Development:**
 ```bash
 pnpm dev          # Start development server on localhost:3000
-pnpm dev:https    # Start development server with HTTPS certificates
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm analyze      # Build with bundle analyzer
-pnpm certs:generate # Generate local HTTPS certificates for dev:https
 ```
 
 **Code Quality (Biome):**
@@ -56,10 +54,6 @@ pnpm test:e2e navigation.spec.ts
 ```bash
 # Clear build cache and restart
 rm -rf .next && pnpm dev
-
-# Fix common WebGL/WebXR development issues
-pnpm dev:https    # Use HTTPS for WebXR features testing
-
 # Bundle analysis for performance debugging
 pnpm analyze      # Generates webpack bundle analysis
 ```

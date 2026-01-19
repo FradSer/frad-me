@@ -1,4 +1,3 @@
-import { Vector3 } from 'three';
 import type { Position } from '@/types/common';
 
 // Use consistent Position type from common types
@@ -12,18 +11,7 @@ export interface AnimationState {
 }
 
 // Utility to create consistent animation position
-export const createAnimationPosition = (
-  x = 0,
-  y = 0,
-  z = 0
-): AnimationPosition => ({ x, y, z });
-
-export const defaultAnimationState: AnimationState = {
-  position: createAnimationPosition(),
-  rotation: createAnimationPosition(),
-  scale: createAnimationPosition(1, 1, 1),
-  opacity: 1,
-};
+export const createAnimationPosition = (x = 0, y = 0, z = 0): AnimationPosition => ({ x, y, z });
 
 export const heroAnimationStates = {
   home: {
@@ -45,13 +33,6 @@ export const workCardPositions = {
   display: createAnimationPosition(),
   hover: createAnimationPosition(0, 1, -2), // Increased forward movement for more noticeable hover effect
 } as const;
-
-export function createStaggeredDelay(
-  index: number,
-  baseDelay: number = 100,
-): number {
-  return index * baseDelay;
-}
 
 // Note: Interpolation functions removed as they're duplicated in
 // @/components/WebXR/shared/AnimationHelpers.tsx

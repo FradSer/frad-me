@@ -6,11 +6,7 @@
 /**
  * WebXR input source target ray modes
  */
-export type XRTargetRayMode =
-  | 'gaze'
-  | 'tracked-pointer'
-  | 'screen'
-  | 'transient-pointer';
+export type XRTargetRayMode = 'gaze' | 'tracked-pointer' | 'screen' | 'transient-pointer';
 
 /**
  * WebXR input source handedness
@@ -76,9 +72,7 @@ export interface XRSession extends EventTarget {
 
   // Event handlers
   onend: ((this: XRSession, ev: XRSessionEvent) => void) | null;
-  oninputsourceschange:
-    | ((this: XRSession, ev: XRInputSourcesChangeEvent) => void)
-    | null;
+  oninputsourceschange: ((this: XRSession, ev: XRInputSourcesChangeEvent) => void) | null;
   onselect: ((this: XRSession, ev: XRInputSourceEvent) => void) | null;
   onselectend: ((this: XRSession, ev: XRInputSourceEvent) => void) | null;
   onselectstart: ((this: XRSession, ev: XRInputSourceEvent) => void) | null;
@@ -164,10 +158,7 @@ declare global {
 
   interface XRSystem {
     isSessionSupported(mode: XRSessionMode): Promise<boolean>;
-    requestSession(
-      mode: XRSessionMode,
-      options?: XRSessionInit,
-    ): Promise<XRSession>;
+    requestSession(mode: XRSessionMode, options?: XRSessionInit): Promise<XRSession>;
   }
 
   interface Window {

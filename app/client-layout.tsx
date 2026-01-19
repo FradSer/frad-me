@@ -7,8 +7,8 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LayoutWrapper from '@/components/common/LayoutWrapper';
 import DotRing from '@/components/Mouse/DotRing';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
-import useXRDetect from '@/hooks/useXRDetect';
 import ThemeModeProvider from '@/contexts/Theme/ThemeModeProvider';
+import useXRDetect from '@/hooks/useXRDetect';
 
 const WebXR = dynamic(() => import('./webxr/page'), {
   ssr: false,
@@ -54,9 +54,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-black">
-        <div className="text-2xl font-bold text-white">
-          Detecting XR capabilities...
-        </div>
+        <div className="text-2xl font-bold text-white">Detecting XR capabilities...</div>
       </div>
     );
   }

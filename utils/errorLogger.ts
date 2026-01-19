@@ -71,8 +71,7 @@ class WebXRErrorLogger {
     queueSize: 0,
   };
   private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
-  private readonly maxRequestsPerHour: number =
-    ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
+  private readonly maxRequestsPerHour: number = ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
   private requestTimestamps: number[] = [];
 
   constructor() {
@@ -91,9 +90,8 @@ class WebXRErrorLogger {
   }
 
   private async checkWebXRSupport(): Promise<boolean> {
-    if (typeof navigator === 'undefined' || !navigator.xr) return false;
-
     try {
+      if (typeof navigator === 'undefined' || !navigator.xr) return false;
       return await navigator.xr.isSessionSupported('immersive-vr');
     } catch {
       return false;
@@ -105,9 +103,7 @@ class WebXRErrorLogger {
 
     try {
       const canvas = document.createElement('canvas');
-      return !!(
-        canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-      );
+      return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
     } catch {
       return false;
     }
@@ -124,10 +120,7 @@ class WebXRErrorLogger {
 
     if (errorInfoOrContext && typeof errorInfoOrContext === 'object') {
       // Check if it has React error info properties
-      if (
-        'componentStack' in errorInfoOrContext ||
-        'errorBoundary' in errorInfoOrContext
-      ) {
+      if ('componentStack' in errorInfoOrContext || 'errorBoundary' in errorInfoOrContext) {
         actualErrorInfo = errorInfoOrContext as React.ErrorInfo;
         actualContext = context;
       } else {
@@ -142,8 +135,7 @@ class WebXRErrorLogger {
         name: sanitizeErrorName(error.name),
         message: sanitizeErrorMessage(error.message),
         stack:
-          typeof process !== 'undefined' &&
-          process.env?.NODE_ENV === 'development'
+          typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
             ? error.stack?.substring(0, SANITIZATION_LIMITS.STACK_TRACE)
             : undefined,
       } as Error,
@@ -163,10 +155,7 @@ class WebXRErrorLogger {
     // Update error statistics
     this.updateErrorStats(errorWithContext);
 
-    if (
-      typeof process !== 'undefined' &&
-      process.env?.NODE_ENV === 'development'
-    ) {
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
       console.error('WebXR Error logged:', errorWithContext);
     }
 
@@ -269,9 +258,7 @@ class WebXRErrorLogger {
     const oneHourAgo = now - ERROR_QUEUE_CONFIG.MILLISECONDS_PER_HOUR;
 
     // Remove old timestamps
-    this.requestTimestamps = this.requestTimestamps.filter(
-      (timestamp) => timestamp > oneHourAgo,
-    );
+    this.requestTimestamps = this.requestTimestamps.filter((timestamp) => timestamp > oneHourAgo);
 
     return this.requestTimestamps.length >= this.maxRequestsPerHour;
   }
@@ -282,10 +269,7 @@ class WebXRErrorLogger {
 
   private shouldRateLimit(): boolean {
     // Always allow first few requests, then apply rate limiting
-    return (
-      this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD &&
-      this.isRateLimited()
-    );
+    return this.requestCount >= ERROR_QUEUE_CONFIG.RATE_LIMIT_THRESHOLD && this.isRateLimited();
   }
 
   // Queue management methods
@@ -303,10 +287,7 @@ class WebXRErrorLogger {
   private saveQueueToStorage(): void {
     if (typeof localStorage !== 'undefined') {
       try {
-        localStorage.setItem(
-          STORAGE_KEYS.ERROR_QUEUE,
-          JSON.stringify(this.errorQueue),
-        );
+        localStorage.setItem(STORAGE_KEYS.ERROR_QUEUE, JSON.stringify(this.errorQueue));
       } catch (error) {
         // localStorage might be full or unavailable
         console.warn('Failed to save error queue to localStorage:', error);
@@ -326,8 +307,7 @@ class WebXRErrorLogger {
 
     // Calculate average errors per hour (simple moving average)
     const now = Date.now();
-    const startTime = (window as Window & { __webxrStartTime?: number })
-      .__webxrStartTime;
+    const startTime = (window as Window & { __webxrStartTime?: number }).__webxrStartTime;
     const hoursSinceStart = (now - (startTime || now)) / (60 * 60 * 1000);
     this.errorStats.averageErrorsPerHour =
       this.errorStats.totalErrors / Math.max(hoursSinceStart, 1);
@@ -335,8 +315,15 @@ class WebXRErrorLogger {
 
   // Public API methods
   public getCapabilities(): BrowserCapabilities {
+    let webxrSupported = false;
+    try {
+      webxrSupported = typeof navigator !== 'undefined' && navigator.xr !== undefined;
+    } catch {
+      webxrSupported = false;
+    }
+
     return {
-      webxr: navigator?.xr !== undefined,
+      webxr: webxrSupported,
       webgl: this.checkWebGLSupport(),
       webgl2: (() => {
         if (typeof window === 'undefined') return false;
@@ -371,6 +358,20 @@ class WebXRErrorLogger {
 
   public isQueueEmpty(): boolean {
     return this.errorQueue.length === 0;
+  }
+
+  /** @internal - For testing purposes only */
+  public resetForTesting(): void {
+    this.errorQueue = [];
+    this.requestCount = 0;
+    this.requestTimestamps = [];
+    this.errorStats = {
+      totalErrors: 0,
+      errorsByComponent: {},
+      averageErrorsPerHour: 0,
+      queueSize: 0,
+    };
+    this.isOnline = true;
   }
 }
 

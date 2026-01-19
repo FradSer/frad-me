@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
 import { motion } from 'motion/react';
+import { useState } from 'react';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
@@ -14,7 +13,9 @@ export default function FLogo() {
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
         className="h-12 w-12 fill-black hover:cursor-pointer dark:fill-white dark:mix-blend-difference"
+        aria-label="Frad Logo"
       >
+        <title>Frad Logo</title>
         <motion.path
           animate={{
             opacity: hovered ? [1, 0, 1] : 1,

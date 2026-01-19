@@ -1,9 +1,6 @@
 import * as THREE from 'three';
 
-export const applyOpacityToObject = (
-  object: THREE.Object3D,
-  opacity: number,
-) => {
+export const applyOpacityToObject = (object: THREE.Object3D, opacity: number) => {
   object.traverse((child) => {
     if (child instanceof THREE.Mesh && child.material) {
       // Set render order for proper transparency sorting in WebXR
@@ -48,10 +45,7 @@ export const applyOpacityToObject = (
  * This ensures materials are ready for opacity animations from the start
  * Follows WebXR best practices to avoid flickering
  */
-export const initializeMaterialForOpacity = (
-  material: THREE.Material,
-  initialOpacity = 0,
-) => {
+export const initializeMaterialForOpacity = (material: THREE.Material, initialOpacity = 0) => {
   if (
     material instanceof THREE.MeshBasicMaterial ||
     material instanceof THREE.MeshStandardMaterial ||

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { HomePage, TestUtils } from './__utils__/page-objects';
 
 test.describe('Theme and Responsive Integration', () => {
@@ -10,7 +10,7 @@ test.describe('Theme and Responsive Integration', () => {
 
   test.describe('Theme Switching Across Viewports', () => {
     test('should maintain theme state when switching between viewports', async ({
-      page,
+      page: _page,
     }) => {
       await homePage.goto('/');
 
@@ -36,16 +36,12 @@ test.describe('Theme and Responsive Integration', () => {
       await homePage.header.verifyTheme('light');
     });
 
-    test('should handle theme switching on mobile devices', async ({
-      page,
-    }) => {
+    test('should handle theme switching on mobile devices', async ({ page }) => {
       await homePage.goto('/');
       await homePage.setViewport('mobile');
 
       // Ensure theme switcher is accessible on mobile
-      await expect(
-        page.locator('button[aria-label*="Toggle Dark Mode"]'),
-      ).toBeVisible();
+      await expect(page.locator('button[aria-label*="Toggle Dark Mode"]')).toBeVisible();
 
       // Test theme switching functionality
       await homePage.header.toggleTheme();
@@ -55,15 +51,11 @@ test.describe('Theme and Responsive Integration', () => {
       await homePage.header.verifyTheme('light');
     });
 
-    test('should handle theme switching with touch interactions', async ({
-      page,
-    }) => {
+    test('should handle theme switching with touch interactions', async ({ page }) => {
       await homePage.goto('/');
       await homePage.setViewport('mobile');
 
-      const themeSwitcher = page.locator(
-        'button[aria-label*="Toggle Dark Mode"]',
-      );
+      const themeSwitcher = page.locator('button[aria-label*="Toggle Dark Mode"]');
 
       // Use touch tap instead of click
       await themeSwitcher.tap();
@@ -72,15 +64,11 @@ test.describe('Theme and Responsive Integration', () => {
       await homePage.header.verifyTheme('dark');
     });
 
-    test('should update global background color when toggling theme', async ({
-      page,
-    }) => {
+    test('should update global background color when toggling theme', async ({ page }) => {
       await homePage.goto('/');
 
       const getBodyBackground = () =>
-        page.evaluate(() =>
-          window.getComputedStyle(document.body).backgroundColor,
-        );
+        page.evaluate(() => window.getComputedStyle(document.body).backgroundColor);
 
       const initialBackground = await getBodyBackground();
       expect(initialBackground).toBe('rgb(255, 255, 255)');
@@ -92,22 +80,16 @@ test.describe('Theme and Responsive Integration', () => {
       expect(darkBackground).toBe('rgb(0, 0, 0)');
     });
 
-    test('should update patent text color when toggling theme', async ({
-      page,
-    }) => {
+    test('should update patent text color when toggling theme', async ({ page }) => {
       await homePage.goto('/');
 
-      const patentSection = page
-        .locator('section')
-        .filter({
-          has: page.locator('h2', { hasText: /patent/i }),
-        });
+      const patentSection = page.locator('section').filter({
+        has: page.locator('h2', { hasText: /patent/i }),
+      });
       const patentLink = patentSection.locator('a').first();
 
       const getColor = () =>
-        patentLink.evaluate((element) =>
-          window.getComputedStyle(element).color,
-        );
+        patentLink.evaluate((element) => window.getComputedStyle(element).color);
 
       const initialColor = await getColor();
       expect(initialColor).toBe('rgb(0, 0, 0)');
@@ -124,9 +106,7 @@ test.describe('Theme and Responsive Integration', () => {
     const testViewports = ['mobile', 'tablet', 'desktop'] as const;
 
     testViewports.forEach((viewport) => {
-      test(`should render correctly in ${viewport} with light theme`, async ({
-        page,
-      }) => {
+      test(`should render correctly in ${viewport} with light theme`, async ({ page: _page }) => {
         await homePage.goto('/');
         await homePage.setViewport(viewport);
 
@@ -141,9 +121,7 @@ test.describe('Theme and Responsive Integration', () => {
         await homePage.takeScreenshot(`${viewport}-light-theme`);
       });
 
-      test(`should render correctly in ${viewport} with dark theme`, async ({
-        page,
-      }) => {
+      test(`should render correctly in ${viewport} with dark theme`, async ({ page: _page }) => {
         await homePage.goto('/');
         await homePage.setViewport(viewport);
 
@@ -162,32 +140,24 @@ test.describe('Theme and Responsive Integration', () => {
   });
 
   test.describe('Theme Persistence and System Preferences', () => {
-    test('should respect system theme preference on first visit', async ({
-      page,
-      context,
-    }) => {
+    test('should respect system theme preference on first visit', async ({ page }) => {
       // Set system to dark mode
-      await context.emulateMedia({ colorScheme: 'dark' });
+      await page.emulateMedia({ colorScheme: 'dark' });
 
       await homePage.goto('/');
 
       // Should respect system preference (depending on implementation)
       // This test may need adjustment based on your theme implementation
       const htmlElement = page.locator('html');
-      const isDark = await htmlElement.evaluate((el) =>
-        el.classList.contains('dark'),
-      );
+      const isDark = await htmlElement.evaluate((el) => el.classList.contains('dark'));
 
       // Verify system dark mode is respected on first visit
       expect(isDark).toBeTruthy();
     });
 
-    test('should override system preference when user makes explicit choice', async ({
-      page,
-      context,
-    }) => {
+    test('should override system preference when user makes explicit choice', async ({ page }) => {
       // Set system to dark mode
-      await context.emulateMedia({ colorScheme: 'dark' });
+      await page.emulateMedia({ colorScheme: 'dark' });
 
       await homePage.goto('/');
 
@@ -208,9 +178,7 @@ test.describe('Theme and Responsive Integration', () => {
   });
 
   test.describe('Performance with Theme and Responsive Changes', () => {
-    test('should handle rapid theme and viewport changes efficiently', async ({
-      page,
-    }) => {
+    test('should handle rapid theme and viewport changes efficiently', async ({ page }) => {
       await homePage.goto('/');
 
       const startTime = Date.now();
@@ -284,9 +252,7 @@ test.describe('Theme and Responsive Integration', () => {
         await homePage.header.verifyTheme(theme);
 
         // Check theme switcher accessibility
-        const themeSwitcher = page.locator(
-          'button[aria-label*="Toggle Dark Mode"]',
-        );
+        const themeSwitcher = page.locator('button[aria-label*="Toggle Dark Mode"]');
         await expect(themeSwitcher).toBeVisible();
         await expect(themeSwitcher).toHaveAttribute('aria-label');
 
@@ -297,9 +263,7 @@ test.describe('Theme and Responsive Integration', () => {
       }
     });
 
-    test('should announce theme changes to screen readers', async ({
-      page,
-    }) => {
+    test('should announce theme changes to screen readers', async ({ page }) => {
       await homePage.goto('/');
 
       // Check if there are any aria-live regions or announcements for theme changes
@@ -318,9 +282,7 @@ test.describe('Theme and Responsive Integration', () => {
   });
 
   test.describe('Edge Cases and Error Handling', () => {
-    test('should handle corrupted theme preferences gracefully', async ({
-      page,
-    }) => {
+    test('should handle corrupted theme preferences gracefully', async ({ page }) => {
       // Simulate corrupted localStorage
       await page.addInitScript(() => {
         localStorage.setItem('theme', 'invalid-theme-value');
@@ -337,8 +299,9 @@ test.describe('Theme and Responsive Integration', () => {
     });
 
     test('should work with JavaScript disabled', async ({ page, context }) => {
-      // Disable JavaScript
-      await context.setJavaScriptEnabled(false);
+      // Disable JavaScript - use CDP session
+      const cdpSession = await context.newCDPSession(page);
+      await cdpSession.send('Emulation.setScriptExecutionDisabled', { value: true });
 
       await homePage.goto('/');
 
@@ -349,9 +312,9 @@ test.describe('Theme and Responsive Integration', () => {
       // Theme switcher may not work without JS, but page should be usable
     });
 
-    test('should handle high contrast mode', async ({ page, context }) => {
+    test('should handle high contrast mode', async ({ page }) => {
       // Simulate high contrast mode
-      await context.emulateMedia({
+      await page.emulateMedia({
         forcedColors: 'active',
       });
 

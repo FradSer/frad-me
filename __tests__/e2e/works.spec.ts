@@ -1,10 +1,5 @@
-import { test, expect } from '@playwright/test';
-import {
-  HomePage,
-  WorksPage,
-  WorkDetailPage,
-  TestUtils,
-} from './__utils__/page-objects';
+import { expect, test } from '@playwright/test';
+import { HomePage, TestUtils, WorkDetailPage, WorksPage } from './__utils__/page-objects';
 
 test.describe('Works Page', () => {
   let homePage: HomePage;
@@ -15,7 +10,7 @@ test.describe('Works Page', () => {
     worksPage = new WorksPage(page);
   });
 
-  test('should display work cards on homepage', async ({ page }) => {
+  test('should display work cards on homepage', async ({ page: _page }) => {
     await homePage.goto('/');
 
     await TestUtils.retryAssertion(async () => {
@@ -24,14 +19,12 @@ test.describe('Works Page', () => {
     });
   });
 
-  test('should handle work in progress items correctly', async ({ page }) => {
+  test('should handle work in progress items correctly', async ({ page: _page }) => {
     await homePage.goto('/');
     await worksPage.verifyWIPElements();
   });
 
-  test('should display proper hover states for interactive elements', async ({
-    page,
-  }) => {
+  test('should display proper hover states for interactive elements', async ({ page }) => {
     await homePage.goto('/');
 
     const firstWorkLink = await worksPage.getFirstWorkLink();
@@ -63,7 +56,7 @@ test.describe('Works Page', () => {
       // Test back navigation
       await workDetailPage.verifyBackNavigation();
     } else {
-      test.skip('No work links found on homepage');
+      test.skip(() => true, 'No work links found on homepage');
     }
   });
 
@@ -87,16 +80,12 @@ test.describe('Works Page', () => {
     }
   });
 
-  test('should have proper image loading and optimization', async ({
-    page,
-  }) => {
+  test('should have proper image loading and optimization', async ({ page: _page }) => {
     await homePage.goto('/');
     await worksPage.verifyImageLoading();
   });
 
-  test('should be responsive across different screen sizes', async ({
-    page,
-  }) => {
+  test('should be responsive across different screen sizes', async ({ page: _page }) => {
     await homePage.goto('/');
     await worksPage.verifyResponsiveLayout();
   });
@@ -113,9 +102,7 @@ test.describe('Works Page', () => {
     await expect(page.locator('main')).toBeVisible();
   });
 
-  test('should support work filtering and search if available', async ({
-    page,
-  }) => {
+  test('should support work filtering and search if available', async ({ page }) => {
     await homePage.goto('/');
 
     // Look for filter or search elements
@@ -135,11 +122,11 @@ test.describe('Works Page', () => {
       // Verify that works are still visible or properly filtered
       await worksPage.verifyWorkSection();
     } else {
-      test.skip('No filtering functionality found');
+      test.skip(() => true, 'No filtering functionality found');
     }
   });
 
-  test('should load works performantly', async ({ page }) => {
+  test('should load works performantly', async ({ page: _page }) => {
     const startTime = Date.now();
 
     await homePage.goto('/');

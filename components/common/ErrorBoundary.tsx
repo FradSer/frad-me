@@ -21,7 +21,7 @@ export interface ErrorBoundaryProps {
 
 // Default fallback UI configurations
 const fallbackConfigs = {
-  default: (error?: Error) => (
+  default: (_error?: Error) => (
     <div className="flex min-h-screen items-center justify-center bg-white dark:bg-black">
       <div className="max-w-md text-center">
         <h2 className="mb-4 text-2xl font-bold text-red-600 dark:text-red-400">
@@ -31,6 +31,7 @@ const fallbackConfigs = {
           An unexpected error occurred. Please try refreshing the page.
         </p>
         <button
+          type="button"
           onClick={() => window.location.reload()}
           className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
@@ -46,9 +47,7 @@ const fallbackConfigs = {
         <p className="mb-4 text-sm text-gray-300">
           Unable to load WebXR experience. Falling back to 2D view.
         </p>
-        <p className="text-xs text-gray-400">
-          {error?.message || 'Unknown WebXR error'}
-        </p>
+        <p className="text-xs text-gray-400">{error?.message || 'Unknown WebXR error'}</p>
       </div>
     </div>
   ),
@@ -59,12 +58,8 @@ const fallbackConfigs = {
       </p>
       {error && (
         <details className="mt-2">
-          <summary className="cursor-pointer text-xs text-red-500">
-            Error details
-          </summary>
-          <pre className="mt-1 whitespace-pre-wrap text-xs text-red-400">
-            {error.message}
-          </pre>
+          <summary className="cursor-pointer text-xs text-red-500">Error details</summary>
+          <pre className="mt-1 whitespace-pre-wrap text-xs text-red-400">{error.message}</pre>
         </details>
       )}
     </div>
@@ -74,10 +69,7 @@ const fallbackConfigs = {
 /**
  * Reusable error boundary with multiple fallback modes
  */
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -89,9 +81,9 @@ export class ErrorBoundary extends Component<
 
   async componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const { componentName, onError, enableLogging = true } = this.props;
-    
+
     // Update state with error info
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       ...prevState,
       errorInfo,
     }));
@@ -123,36 +115,20 @@ export class ErrorBoundary extends Component<
       // Use appropriate default fallback based on component name
       const { componentName } = this.props;
       const { error } = this.state;
-      
+
       if (componentName?.includes('WebXR') || componentName?.includes('3D')) {
         return fallbackConfigs.webxr(error);
       }
-      
+
       if (componentName) {
         return fallbackConfigs.component(error, componentName);
       }
-      
+
       return fallbackConfigs.default(error);
     }
 
     return this.props.children;
   }
-}
-
-// Higher-order component for easy error boundary wrapping
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  errorBoundaryProps?: Partial<ErrorBoundaryProps>
-) {
-  const WrappedComponent = (props: P) => (
-    <ErrorBoundary {...errorBoundaryProps}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
-  
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
-  
-  return WrappedComponent;
 }
 
 export default ErrorBoundary;

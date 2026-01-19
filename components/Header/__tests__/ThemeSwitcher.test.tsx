@@ -24,20 +24,14 @@ describe('ThemeSwitcher', () => {
       name: /toggle dark mode/i,
     });
 
-    await waitFor(() =>
-      expect(document.documentElement.classList.contains('dark')).toBe(false),
-    );
+    await waitFor(() => expect(document.documentElement.classList.contains('dark')).toBe(false));
 
     await user.click(toggleButton);
 
-    await waitFor(() =>
-      expect(document.documentElement.classList.contains('dark')).toBe(true),
-    );
+    await waitFor(() => expect(document.documentElement.classList.contains('dark')).toBe(true));
 
     await user.click(toggleButton);
 
-    await waitFor(() =>
-      expect(document.documentElement.classList.contains('dark')).toBe(false),
-    );
+    await waitFor(() => expect(document.documentElement.classList.contains('dark')).toBe(false));
   });
 });

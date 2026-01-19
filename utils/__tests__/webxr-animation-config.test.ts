@@ -2,19 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, it, beforeEach } from '@jest/globals';
-import { 
-  WEBXR_ANIMATION_CONFIG, 
-  getLerpSpeed, 
+import {
+  type AnimationPreset,
   getAdaptiveSpring,
-  updateFPS,
-  getQualityLevel,
-  shouldHideComponent,
-  validateAnimationPreset,
-  isValidSpring,
-  getStaggerDelay,
   getCompatibleSpringConfig,
-  type AnimationPreset
+  getLerpSpeed,
+  getQualityLevel,
+  getStaggerDelay,
+  isValidSpring,
+  shouldHideComponent,
+  updateFPS,
+  validateAnimationPreset,
+  WEBXR_ANIMATION_CONFIG,
 } from '@/utils/webxr/animationConfig';
 
 describe('WebXR Animation Configuration', () => {
@@ -60,8 +59,8 @@ describe('WebXR Animation Configuration', () => {
     });
 
     it('should validate animation presets', () => {
-      expect(validateAnimationPreset('normal')).toBe(true);
-      expect(validateAnimationPreset('elastic')).toBe(true);
+      expect(validateAnimationPreset('normal')).toBe('normal');
+      expect(validateAnimationPreset('elastic')).toBe('elastic');
       expect(validateAnimationPreset('invalid')).toBe(false);
     });
   });
@@ -121,9 +120,9 @@ describe('WebXR Animation Configuration', () => {
   describe('Type Safety', () => {
     it('should provide type-safe animation presets', () => {
       const presets: AnimationPreset[] = ['slow', 'normal', 'fast', 'bouncy', 'elastic'];
-      
-      presets.forEach(preset => {
-        expect(validateAnimationPreset(preset)).toBe(true);
+
+      presets.forEach((preset) => {
+        expect(validateAnimationPreset(preset)).toBe(preset);
         expect(getLerpSpeed(preset)).toBeGreaterThan(0);
       });
     });

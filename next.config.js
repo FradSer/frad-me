@@ -23,20 +23,12 @@ const nextConfig = {
     'three',
     'three-stdlib',
   ],
-  webpack: (config, { isServer }) => {
-    if (process.env.ANALYZE === 'true') {
-      console.log(
-        `Bundle analysis enabled for ${isServer ? 'server' : 'client'} build`,
-      );
-    }
-
-    // Fix for @bufbuild/protobuf missing dependency in WebXR packages
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      '@bufbuild/protobuf/wire': false,
-    };
-
-    return config;
+  // Turbopack configuration for Next.js 16
+  // Note: Bundle analyzer (ANALYZE=true) requires webpack mode
+  // Run with: pnpm run build -- --webpack for bundle analysis
+  turbopack: {
+    // Turbopack handles @bufbuild/protobuf dependencies automatically
+    // No special configuration needed
   },
 };
 
