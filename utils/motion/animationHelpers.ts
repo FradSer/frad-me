@@ -1,5 +1,6 @@
 import type { Transition, Variant, Variants } from 'motion/react';
 import { useAnimationControls } from 'motion/react';
+import { useCallback, useMemo } from 'react';
 
 import type { Position } from '@/types/common';
 import { primaryTransition } from './springTransitions';
@@ -36,19 +37,28 @@ export function createVariants(variants: AnimationVariants): AnimationVariants {
 export function useAnimationGroup(animationKeys: string[]) {
   // biome-ignore lint/correctness/useHookAtTopLevel: hooks are called at top level in map
   const controlsArray = animationKeys.map(() => useAnimationControls());
-  const controls = animationKeys.reduce(
-    (acc, key, index) => {
-      acc[key] = controlsArray[index];
-      return acc;
-    },
-    {} as Record<string, ReturnType<typeof useAnimationControls>>,
+
+  const controls = useMemo(
+    () =>
+      animationKeys.reduce(
+        (acc, key, index) => {
+          acc[key] = controlsArray[index];
+          return acc;
+        },
+        {} as Record<string, ReturnType<typeof useAnimationControls>>,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [animationKeys.join(',')],
   );
 
-  const startGroup = (stateMap: AnimationStateMap) => {
-    Object.entries(stateMap).forEach(([key, state]) => {
-      controls[key]?.start(state);
-    });
-  };
+  const startGroup = useCallback(
+    (stateMap: AnimationStateMap) => {
+      Object.entries(stateMap).forEach(([key, state]) => {
+        controls[key]?.start(state);
+      });
+    },
+    [controls],
+  );
 
   return { controls, startGroup };
 }
