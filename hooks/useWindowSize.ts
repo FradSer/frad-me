@@ -11,17 +11,31 @@ export default function useWindowSize(): Size {
   });
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+      clearTimeout(timeoutId);
+      // Debounce resize events to avoid excessive re-renders
+      timeoutId = setTimeout(() => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }, 100);
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Set initial size
 
-    return () => window.removeEventListener('resize', handleResize);
+    // Set initial size immediately
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return windowSize;

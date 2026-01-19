@@ -73,6 +73,8 @@ class WebXRErrorLogger {
   private readonly maxQueueSize: number = ERROR_QUEUE_CONFIG.MAX_QUEUE_SIZE;
   private readonly maxRequestsPerHour: number = ERROR_QUEUE_CONFIG.MAX_REQUESTS_PER_HOUR;
   private requestTimestamps: number[] = [];
+  private webglSupportCache: boolean | null = null;
+  private webxrSupportCache: boolean | null = null;
 
   constructor() {
     if (typeof window === 'undefined') return;
@@ -90,23 +92,33 @@ class WebXRErrorLogger {
   }
 
   private async checkWebXRSupport(): Promise<boolean> {
+    if (this.webxrSupportCache !== null) return this.webxrSupportCache;
+
     try {
-      if (typeof navigator === 'undefined' || !navigator.xr) return false;
-      return await navigator.xr.isSessionSupported('immersive-vr');
+      if (typeof navigator === 'undefined' || !navigator.xr) {
+        this.webxrSupportCache = false;
+      } else {
+        this.webxrSupportCache = await navigator.xr.isSessionSupported('immersive-vr');
+      }
     } catch {
-      return false;
+      this.webxrSupportCache = false;
     }
+    return this.webxrSupportCache;
   }
 
   private checkWebGLSupport(): boolean {
+    if (this.webglSupportCache !== null) return this.webglSupportCache;
     if (typeof window === 'undefined') return false;
 
     try {
       const canvas = document.createElement('canvas');
-      return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+      this.webglSupportCache = !!(
+        canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+      );
     } catch {
-      return false;
+      this.webglSupportCache = false;
     }
+    return this.webglSupportCache;
   }
 
   public async logError(

@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 
 type UseLoadingReturn = {
   isLoading: boolean;
@@ -18,8 +18,11 @@ export default function useLoading(): UseLoadingReturn {
     setIsInitialLoading(false);
   }, []);
 
-  return {
-    isLoading: isInitialLoading || isPending,
-    startTransition,
-  };
+  return useMemo(
+    () => ({
+      isLoading: isInitialLoading || isPending,
+      startTransition,
+    }),
+    [isInitialLoading, isPending],
+  );
 }

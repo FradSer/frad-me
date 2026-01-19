@@ -42,6 +42,7 @@ export function useCardAnimation({
   });
 
   const shouldShowCards = currentView === 'work';
+  const lastOpacityRef = useRef(-1);
 
   const springScale = useSimpleLerp(
     WEBXR_ANIMATION_CONFIG.scales.entrance,
@@ -124,8 +125,12 @@ export function useCardAnimation({
           : WEBXR_ANIMATION_CONFIG.positions.workCards.rotation.idle;
         springRotation.set(targetRotation);
 
-        applyOpacityToObject(group, WEBXR_ANIMATION_CONFIG.opacity.hidden);
-        onOpacityChange?.(WEBXR_ANIMATION_CONFIG.opacity.hidden);
+        const hiddenOpacity = WEBXR_ANIMATION_CONFIG.opacity.hidden;
+        if (Math.abs(hiddenOpacity - lastOpacityRef.current) > 0.001) {
+          applyOpacityToObject(group, hiddenOpacity);
+          onOpacityChange?.(hiddenOpacity);
+          lastOpacityRef.current = hiddenOpacity;
+        }
         return;
       }
 
@@ -157,8 +162,12 @@ export function useCardAnimation({
       group.scale.setScalar(springScale.value);
       group.rotation.y = springRotation.value;
 
-      applyOpacityToObject(group, springOpacity.value);
-      onOpacityChange?.(springOpacity.value);
+      const currentOpacity = springOpacity.value;
+      if (Math.abs(currentOpacity - lastOpacityRef.current) > 0.001) {
+        applyOpacityToObject(group, currentOpacity);
+        onOpacityChange?.(currentOpacity);
+        lastOpacityRef.current = currentOpacity;
+      }
     } else {
       springScale.set(WEBXR_ANIMATION_CONFIG.scales.entrance);
       springOpacity.set(WEBXR_ANIMATION_CONFIG.opacity.hidden);
@@ -175,10 +184,17 @@ export function useCardAnimation({
         group.position.set(springPosX.value, springPosY.value, springPosZ.value);
         group.scale.setScalar(springScale.value);
         group.rotation.y = springRotation.value;
-        applyOpacityToObject(group, currentOpacity);
+
+        if (Math.abs(currentOpacity - lastOpacityRef.current) > 0.001) {
+          applyOpacityToObject(group, currentOpacity);
+          lastOpacityRef.current = currentOpacity;
+        }
       }
 
-      onOpacityChange?.(currentOpacity);
+      // Always report opacity change even if we didn't update the object (it might be invisible)
+      if (Math.abs(currentOpacity - lastOpacityRef.current) > 0.001) {
+        onOpacityChange?.(currentOpacity);
+      }
     }
   });
 

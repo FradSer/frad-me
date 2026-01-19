@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface UseSpeechSynthesisReturn {
   isSupported: boolean;
@@ -72,5 +72,8 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
     setIsSpeaking(false);
   }, [isSupported]);
 
-  return { isSupported, isSpeaking, speak, stop };
+  return useMemo(
+    () => ({ isSupported, isSpeaking, speak, stop }),
+    [isSupported, isSpeaking, speak, stop],
+  );
 }
