@@ -43,6 +43,7 @@ const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, 
 
   const lerpSpeed = springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast);
   const scaleSpring = useSimpleLerp(1, { speed: lerpSpeed });
+  const lastScaleRef = useRef(-1);
 
   const { scales, timing } = WEBXR_ANIMATION_CONFIG;
 
@@ -69,7 +70,11 @@ const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, 
   useFrame(() => {
     const mesh = textRef.current;
     if (mesh) {
-      mesh.scale.setScalar(scaleSpring.value);
+      const currentScale = scaleSpring.value;
+      if (Math.abs(currentScale - lastScaleRef.current) > 0.001) {
+        mesh.scale.setScalar(currentScale);
+        lastScaleRef.current = currentScale;
+      }
     }
   });
 

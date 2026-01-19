@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 
-import { ANIMATION_CONSTANTS } from '@/utils/constants';
+import { ANIMATION_CONSTANTS, COMMON_CLASSES, GRID_CLASSES } from '@/utils/constants';
 
 interface ITopographyImageProps {
   isTop?: boolean;
@@ -51,7 +51,7 @@ function TopographyImage({
 
 function Topography() {
   return (
-    <div className="work-component-layout col-span-16 col-start-1">
+    <div className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.contentWrapper)}>
       <motion.div
         initial={{ scale: 0.98, opacity: 0, y: 200 }}
         whileInView={{ scale: 0.8, opacity: 1, y: 0 }}
@@ -86,7 +86,9 @@ function Topography() {
           translateY="4%"
         />
       </motion.div>
-      <span className="work-caption">BearChat is based with three-column layout topography.</span>
+      <span className={COMMON_CLASSES.workCaption}>
+        BearChat is based with three-column layout topography.
+      </span>
     </div>
   );
 }

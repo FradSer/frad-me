@@ -3,7 +3,9 @@
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
 
-const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6';
+import { GRID_CLASSES } from '@/utils/constants';
+
+const gridClass = GRID_CLASSES.container;
 
 // Function to calculate work duration
 function calculateWorkDuration(startDate: string, endDate?: string): string {
@@ -58,10 +60,10 @@ function ResumeSection({ title, children, className }: ResumeSectionProps) {
       className={clsx('layout-wrapper py-16 md:py-20', className)}
     >
       <div className={gridClass}>
-        <div className="col-span-16 md:col-span-4 mb-8 md:mb-0">
+        <div className={clsx(GRID_CLASSES.fullWidth, 'md:col-span-4 mb-8 md:mb-0')}>
           <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white">{title}</h2>
         </div>
-        <div className="col-span-16 md:col-span-12">{children}</div>
+        <div className={clsx(GRID_CLASSES.fullWidth, 'md:col-span-12')}>{children}</div>
       </div>
     </motion.section>
   );
@@ -144,11 +146,11 @@ function SkillCategory({ category, skills }: SkillCategoryProps) {
 
 export default function ResumePageClient() {
   return (
-    <main className="flex flex-col">
+    <div className="flex flex-col">
       {/* Hero Section */}
       <section className="layout-wrapper pt-32 pb-20 md:pt-48 md:pb-32">
         <div className={gridClass}>
-          <div className="col-span-16">
+          <div className={GRID_CLASSES.fullWidth}>
             {/* Name with enhanced typography */}
             <div className="mb-8">
               <h1 className="text-6xl md:text-8xl font-bold text-black dark:text-white mb-2 tracking-tight">
@@ -629,6 +631,6 @@ export default function ResumePageClient() {
       </ResumeSection>
 
       <div className="h-16" />
-    </main>
+    </div>
   );
 }

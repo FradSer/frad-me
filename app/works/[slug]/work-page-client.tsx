@@ -15,6 +15,8 @@ import WorkInformation from '@/components/WorkPage/WorkInformation';
 import WorkSite from '@/components/WorkPage/WorkSite';
 import type { WorkFrontmatter } from '@/types/work';
 
+import { GRID_CLASSES } from '@/utils/constants';
+
 interface WorkPageClientProps {
   code: string;
   frontmatter: WorkFrontmatter;
@@ -37,13 +39,11 @@ const mdxComponents = {
   EyeComfortDFormula,
 };
 
-const gridClass = 'grid grid-cols-16 gap-y-3 md:gap-y-6';
-
 export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageClientProps>) {
   const Component = useMemo(() => getMDXComponent(code), [code]);
 
   return (
-    <main className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <WorkCover
         src={frontmatter.cover}
         title={frontmatter.title}
@@ -51,7 +51,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
       />
 
       <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
-        <header className={gridClass}>
+        <header className={GRID_CLASSES.container}>
           <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
             <strong className="font-black text-black dark:text-white">{frontmatter.title}</strong>{' '}
             {frontmatter.description}
@@ -59,7 +59,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
           <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
         </header>
 
-        <div className={gridClass}>
+        <div className={GRID_CLASSES.container}>
           <WorkInformation title="platforms" data={frontmatter.platforms} />
           <WorkInformation title="contributors" data={frontmatter.contributors} />
           {frontmatter.site && <WorkSite href={frontmatter.site} />}
@@ -67,7 +67,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         <Line />
 
-        <article className={`${gridClass} text-lg`}>
+        <article className={`${GRID_CLASSES.container} text-lg`}>
           <Component components={mdxComponents} />
         </article>
 
@@ -77,6 +77,6 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         <span className="col-span-16 h-16" />
       </section>
-    </main>
+    </div>
   );
 }

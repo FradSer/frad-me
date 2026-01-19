@@ -55,6 +55,7 @@ const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible
   const { currentView } = useWebXRView();
   const groupRef = useRef<THREE.Group>(null);
   const { opacitySpring, scaleSpring, positionYSpring } = useWorkGridAnimation();
+  const lastOpacityRef = useRef(-1);
 
   const isWorkView = currentView === 'work';
 
@@ -95,7 +96,11 @@ const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible
     group.visible = shouldBeVisible;
 
     if (shouldBeVisible) {
-      applyOpacityToObject(group, currentOpacity);
+      // Performance optimization: only update materials if opacity changed significantly
+      if (Math.abs(currentOpacity - lastOpacityRef.current) > 0.001) {
+        applyOpacityToObject(group, currentOpacity);
+        lastOpacityRef.current = currentOpacity;
+      }
     }
   });
 

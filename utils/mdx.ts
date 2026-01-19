@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { bundleMDX } from 'mdx-bundler';
+import { cache } from 'react';
 import type { WorkFrontmatter } from '@/types/work';
 
 const ROOT = process.cwd();
@@ -95,11 +96,12 @@ const getCompiledMDX = async (content: string) => {
 
 /**
  * Retrieves and compiles a single MDX post by slug
+ * Wrapped in React cache for request deduplication
  *
  * @param slug - The slug identifier for the post (filename without extension)
  * @returns Promise that resolves to compiled post with code and frontmatter
  */
-export const getSinglePost = async (slug: string): Promise<CompiledPost> => {
+export const getSinglePost = cache(async (slug: string): Promise<CompiledPost> => {
   try {
     const source = getFileContent(`${slug}.mdx`);
     const { code, frontmatter } = await getCompiledMDX(source);
@@ -111,7 +113,7 @@ export const getSinglePost = async (slug: string): Promise<CompiledPost> => {
   } catch (error) {
     throw createError(`Failed to get post '${slug}'`, error);
   }
-};
+});
 
 /**
  * Processes a single post file to extract frontmatter and slug
@@ -129,10 +131,11 @@ const processPostFile = (fileName: string): Post => {
 
 /**
  * Retrieves all available posts from the content directory
+ * Wrapped in React cache for request deduplication
  *
  * @returns Array of posts sorted alphabetically by title
  */
-export const getAllPosts = (): Post[] => {
+export const getAllPosts = cache((): Post[] => {
   try {
     return fs
       .readdirSync(POSTS_PATH)
@@ -142,4 +145,4 @@ export const getAllPosts = (): Post[] => {
   } catch (error) {
     throw createError('Failed to get all posts', error);
   }
-};
+});

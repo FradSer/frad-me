@@ -22,27 +22,19 @@ const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
     onHandTrackingEnd,
   }) {
     const { session } = useXR();
-    const { isVisionPro } = useWebXRView();
 
-    const handleInputSourcesChange = useCallback(
-      (event: XRInputSourcesChangeEvent) => {
-        if (!isVisionPro) return;
+    const handleInputSourcesChange = useCallback((event: XRInputSourcesChangeEvent) => {
+      const transientInputs = event.session.inputSources.filter(
+        (source) => source.targetRayMode === TRANSIENT_POINTER,
+      );
 
-        const transientInputs = event.session.inputSources.filter(
-          (source) => source.targetRayMode === TRANSIENT_POINTER,
-        );
-
-        if (transientInputs.length > 0 && isDevelopment) {
-          console.log('Vision Pro transient pointer detected:', transientInputs.length);
-        }
-      },
-      [isVisionPro],
-    );
+      if (transientInputs.length > 0 && isDevelopment) {
+        console.log('Vision Pro transient pointer detected:', transientInputs.length);
+      }
+    }, []);
 
     const handleSelectStart = useCallback(
       (event: XRInputSourceEvent) => {
-        if (!isVisionPro) return;
-
         const { inputSource } = event;
 
         if (inputSource.targetRayMode === TRANSIENT_POINTER) {
@@ -52,26 +44,19 @@ const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
           onTransientPointerSelect?.(event);
         }
       },
-      [isVisionPro, onTransientPointerSelect],
+      [onTransientPointerSelect],
     );
 
-    const handleSelectEnd = useCallback(
-      (event: XRInputSourceEvent) => {
-        if (!isVisionPro) return;
+    const handleSelectEnd = useCallback((event: XRInputSourceEvent) => {
+      const { inputSource } = event;
 
-        const { inputSource } = event;
-
-        if (inputSource.targetRayMode === TRANSIENT_POINTER && isDevelopment) {
-          console.log('Vision Pro gaze + pinch interaction ended');
-        }
-      },
-      [isVisionPro],
-    );
+      if (inputSource.targetRayMode === TRANSIENT_POINTER && isDevelopment) {
+        console.log('Vision Pro gaze + pinch interaction ended');
+      }
+    }, []);
 
     const handleSessionStart = useCallback(
       (event: XRSessionEvent) => {
-        if (!isVisionPro) return;
-
         if (isDevelopment) {
           console.log('WebXR session started on Vision Pro');
         }
@@ -83,19 +68,17 @@ const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
           onHandTrackingStart?.(event);
         }
       },
-      [isVisionPro, onHandTrackingStart],
+      [onHandTrackingStart],
     );
 
     const handleSessionEnd = useCallback(
       (event: XRSessionEvent) => {
-        if (!isVisionPro) return;
-
         if (isDevelopment) {
           console.log('WebXR session ended on Vision Pro');
         }
         onHandTrackingEnd?.(event);
       },
-      [isVisionPro, onHandTrackingEnd],
+      [onHandTrackingEnd],
     );
 
     const eventHandlers = useMemo(
@@ -116,7 +99,7 @@ const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
     );
 
     useEffect(() => {
-      if (!session || !isVisionPro) return;
+      if (!session) return;
 
       Object.entries(eventHandlers).forEach(([eventName, handler]) => {
         session.addEventListener(eventName, handler as EventListener);
@@ -127,7 +110,7 @@ const VisionProInputHandlerInternal = memo<VisionProInputHandlerProps>(
           session.removeEventListener(eventName, handler as EventListener);
         });
       };
-    }, [session, isVisionPro, eventHandlers]);
+    }, [session, eventHandlers]);
 
     return null;
   },

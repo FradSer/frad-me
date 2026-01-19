@@ -1,8 +1,17 @@
+import { clsx } from 'clsx';
+
 import MDXComponentProvider from '@/components/WorkPage/MDXComponentProvider';
+import { COMMON_CLASSES, GRID_CLASSES } from '@/utils/constants';
 
 function ComfortableFontSFormula() {
   return (
-    <MDXComponentProvider className="work-component-layout col-span-16 col-start-1 w-full fill-black dark:fill-white">
+    <MDXComponentProvider
+      className={clsx(
+        COMMON_CLASSES.workComponentLayout,
+        GRID_CLASSES.fullWidth,
+        'col-start-1 w-full fill-black dark:fill-white',
+      )}
+    >
       <svg
         width="100%"
         height="auto"

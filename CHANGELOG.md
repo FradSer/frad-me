@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.19.0](https://github.com/FradSer/frad-me/compare/v0.18.0...v0.19.0) (2026-01-19)
+
+### Refactoring
+
+- **html:** fix semantic HTML structure by removing redundant <main> tags
+- **ui:** refine work pages and common UI components for better stability
+- **components:** optimize rendering performance using React.memo and useMemo
+- **webxr:** optimize 3D scene components and view transitions
+- **utils:** enhance type safety and optimize core utilities (RateLimiter, MDX)
+
+### Maintenance
+
+- **chore:** add project-specific configuration for Claude Code (.claude/ refactor/git)
+- **test:** clean up flaky and obsolete E2E tests to stabilize CI pipeline
+
 ## [0.18.0](https://github.com/FradSer/frad-me/compare/v0.17.1...v0.18.0) (2026-01-19)
 
 ### Features

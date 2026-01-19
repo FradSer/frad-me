@@ -11,7 +11,12 @@ const wrapperClass = GRID_CLASSES.contentWrapper;
 
 function H1(props: Readonly<ICommonProps>) {
   return (
-    <h1 className="col-span-16 col-start-1 mb-2 mt-4 text-4xl font-bold md:col-span-10 md:mb-4 md:mt-8">
+    <h1
+      className={clsx(
+        GRID_CLASSES.fullWidth,
+        'col-start-1 mb-2 mt-4 text-4xl font-bold md:col-span-10 md:mb-4 md:mt-8',
+      )}
+    >
       {props.children}
     </h1>
   );
@@ -46,14 +51,19 @@ function P(props: Readonly<ICommonProps>) {
 
 function Blockquote(props: Readonly<ICommonProps>) {
   return (
-    <blockquote className="col-span-16 items-center justify-center text-center text-3xl font-bold">
+    <blockquote
+      className={clsx(
+        GRID_CLASSES.fullWidth,
+        'items-center justify-center text-center text-3xl font-bold',
+      )}
+    >
       “{props.children}”
     </blockquote>
   );
 }
 
 function Line() {
-  return <hr className="col-span-16 my-4 h-1 bg-black dark:bg-white"></hr>;
+  return <hr className={clsx(GRID_CLASSES.fullWidth, 'my-4 h-1 bg-black dark:bg-white')}></hr>;
 }
 
 export { Blockquote, H1, H2, H3, Line, P, OL, UL, wrapperClass };

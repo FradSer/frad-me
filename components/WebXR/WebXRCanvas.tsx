@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { createXRStore, XR } from '@react-three/xr';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import type { XRStoreState } from '@/types/webxr';
 
@@ -43,18 +43,20 @@ const WebXRCanvas = memo<WebXRCanvasProps>(function WebXRCanvas({ children }) {
     });
   }, []);
 
-  const cameraConfig = isVisionPro ? CAMERA_CONFIG.visionPro : CAMERA_CONFIG.default;
+  const canvasSettings = useMemo(() => {
+    const cameraConfig = isVisionPro ? CAMERA_CONFIG.visionPro : CAMERA_CONFIG.default;
 
-  const canvasSettings = {
-    gl: GL_CONFIG,
-    shadows: true,
-    camera: cameraConfig,
-    style: {
-      background: isXRActive ? 'transparent' : 'black',
-      width: '100%',
-      height: '100%',
-    },
-  };
+    return {
+      gl: GL_CONFIG,
+      shadows: true,
+      camera: cameraConfig,
+      style: {
+        background: isXRActive ? 'transparent' : 'black',
+        width: '100%',
+        height: '100%',
+      },
+    };
+  }, [isVisionPro, isXRActive]);
 
   return (
     <Canvas {...canvasSettings} data-testid="webxr-canvas">

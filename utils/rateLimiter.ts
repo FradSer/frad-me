@@ -6,18 +6,18 @@ interface RateLimitEntry {
 interface RateLimitConfig {
   window: number; // Time window in milliseconds
   max: number; // Maximum requests per window
-}
-
-interface RateLimitStore {
-  [ip: string]: RateLimitEntry;
+  cleanupInterval?: number; // Interval to clean up expired entries (ms)
 }
 
 export class RateLimiter {
-  private store: RateLimitStore = {};
+  private store = new Map<string, RateLimitEntry>();
   private config: RateLimitConfig;
+  private lastCleanup: number = Date.now();
+  private readonly CLEANUP_INTERVAL: number;
 
   constructor(config: RateLimitConfig) {
     this.config = config;
+    this.CLEANUP_INTERVAL = config.cleanupInterval ?? 60000; // Default 1 minute
   }
 
   /**
@@ -27,14 +27,15 @@ export class RateLimiter {
    * @returns True if request is allowed, false if rate limited
    */
   check(ip: string): boolean {
+    this.performCleanupIfNeeded();
     const now = Date.now();
-    const clientData = this.store[ip];
+    const clientData = this.store.get(ip);
 
     if (!clientData || now > clientData.resetTime) {
-      this.store[ip] = {
+      this.store.set(ip, {
         count: 1,
         resetTime: now + this.config.window,
-      };
+      });
       return true;
     }
 
@@ -53,7 +54,7 @@ export class RateLimiter {
    * @returns Rate limit information
    */
   getStatus(ip: string) {
-    const clientData = this.store[ip];
+    const clientData = this.store.get(ip);
     const now = Date.now();
 
     if (!clientData || now > clientData.resetTime) {
@@ -69,6 +70,22 @@ export class RateLimiter {
       remaining: Math.max(0, this.config.max - clientData.count),
       resetTime: clientData.resetTime,
     };
+  }
+
+  /**
+   * Cleans up expired entries to prevent memory leaks
+   */
+  private performCleanupIfNeeded(): void {
+    const now = Date.now();
+    if (now - this.lastCleanup > this.CLEANUP_INTERVAL) {
+      // Use forEach to avoid downlevelIteration issues with Map iterator
+      this.store.forEach((entry, ip) => {
+        if (now > entry.resetTime) {
+          this.store.delete(ip);
+        }
+      });
+      this.lastCleanup = now;
+    }
   }
 }
 

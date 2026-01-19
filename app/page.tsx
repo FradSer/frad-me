@@ -6,11 +6,8 @@ import Work from '@/components/Landing/Work';
 export default function Home() {
   return (
     <>
-      <main>
-        <Hero />
-        <Work />
-      </main>
-
+      <Hero />
+      <Work />
       <Patents />
       <Footer />
     </>

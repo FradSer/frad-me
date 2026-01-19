@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 
@@ -27,32 +28,38 @@ function CommonLink({
 }: Readonly<ICommonLinkProps>) {
   const pathname = usePathname();
 
-  const titleClass = clsx(
-    'text-black dark:text-white dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
+  const titleClass = useMemo(
+    () =>
+      clsx(
+        'text-black dark:text-white dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
+      ),
+    [],
   );
 
-  let link: React.ReactNode;
-  if (destinationType === DestinationType.link) {
-    link = (
-      <Link href={href} className={titleClass}>
-        {title}
-      </Link>
-    );
-  } else if (destinationType === DestinationType.section) {
-    if (pathname === '/') {
-      link = (
-        <ScrollLink destination={href}>
-          <span className={titleClass}>{title}</span>
-        </ScrollLink>
+  const link = useMemo(() => {
+    if (destinationType === DestinationType.link) {
+      return (
+        <Link href={href} className={titleClass}>
+          {title}
+        </Link>
       );
-    } else {
-      link = (
+    }
+    if (destinationType === DestinationType.section) {
+      if (pathname === '/') {
+        return (
+          <ScrollLink destination={href}>
+            <span className={titleClass}>{title}</span>
+          </ScrollLink>
+        );
+      }
+      return (
         <Link href={`/#${href}`} className={titleClass}>
           {title}
         </Link>
       );
     }
-  }
+    return null;
+  }, [destinationType, href, pathname, title, titleClass]);
 
   // * Render
   return <CursorProvider targetCursorType={CursorType.headerLinkHovered}>{link}</CursorProvider>;

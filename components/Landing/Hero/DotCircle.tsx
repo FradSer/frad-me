@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 import { DownArrowIcon } from '@/components/common/Icons';
@@ -33,30 +33,38 @@ interface IDotCircleProps {
 function DotCircle(_props: Readonly<IDotCircleProps>) {
   const [hovered, setHovered] = useState<boolean>(false);
 
-  const arrowAnimateProps = hovered
-    ? {
-        scale: ANIMATION_CONFIG.hoverScale,
-        y: ANIMATION_CONFIG.bounceYPath,
-      }
-    : {
-        scale: 1,
-        y: 0,
-      };
+  const arrowAnimateProps = useMemo(
+    () =>
+      hovered
+        ? {
+            scale: ANIMATION_CONFIG.hoverScale,
+            y: ANIMATION_CONFIG.bounceYPath,
+          }
+        : {
+            scale: 1,
+            y: 0,
+          },
+    [hovered],
+  );
 
-  const arrowTransitionProps = hovered
-    ? {
-        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
-        y: {
-          duration: ANIMATION_TIMING.bounceDuration,
-          repeat: Number.POSITIVE_INFINITY,
-          repeatType: 'loop' as const,
-          ease: 'easeInOut' as const,
-        },
-      }
-    : {
-        scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
-        y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' as const },
-      };
+  const arrowTransitionProps = useMemo(
+    () =>
+      hovered
+        ? {
+            scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
+            y: {
+              duration: ANIMATION_TIMING.bounceDuration,
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: 'loop' as const,
+              ease: 'easeInOut' as const,
+            },
+          }
+        : {
+            scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
+            y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' as const },
+          },
+    [hovered],
+  );
 
   return (
     <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
