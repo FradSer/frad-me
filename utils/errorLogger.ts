@@ -90,9 +90,8 @@ class WebXRErrorLogger {
   }
 
   private async checkWebXRSupport(): Promise<boolean> {
-    if (typeof navigator === 'undefined' || !navigator.xr) return false;
-
     try {
+      if (typeof navigator === 'undefined' || !navigator.xr) return false;
       return await navigator.xr.isSessionSupported('immersive-vr');
     } catch {
       return false;
@@ -316,8 +315,15 @@ class WebXRErrorLogger {
 
   // Public API methods
   public getCapabilities(): BrowserCapabilities {
+    let webxrSupported = false;
+    try {
+      webxrSupported = typeof navigator !== 'undefined' && navigator.xr !== undefined;
+    } catch {
+      webxrSupported = false;
+    }
+
     return {
-      webxr: navigator?.xr !== undefined,
+      webxr: webxrSupported,
       webgl: this.checkWebGLSupport(),
       webgl2: (() => {
         if (typeof window === 'undefined') return false;
@@ -352,6 +358,20 @@ class WebXRErrorLogger {
 
   public isQueueEmpty(): boolean {
     return this.errorQueue.length === 0;
+  }
+
+  /** @internal - For testing purposes only */
+  public resetForTesting(): void {
+    this.errorQueue = [];
+    this.requestCount = 0;
+    this.requestTimestamps = [];
+    this.errorStats = {
+      totalErrors: 0,
+      errorsByComponent: {},
+      averageErrorsPerHour: 0,
+      queueSize: 0,
+    };
+    this.isOnline = true;
   }
 }
 

@@ -79,9 +79,9 @@ jest.mock('../useSimpleLerp', () => ({
 
 // Mock WebXR context
 jest.mock('@/contexts/WebXR/WebXRViewContext', () => ({
-  useWebXRView: () => ({
+  useWebXRView: jest.fn(() => ({
     currentView: 'home',
-  }),
+  })),
 }));
 
 // Mock @react-three/fiber
@@ -134,12 +134,16 @@ describe('useCardAnimation Hook', () => {
 
   describe('View-based Animation Control', () => {
     it('should show cards when currentView is work', () => {
-      // Mock context to return 'work' view
-      jest.doMock('@/contexts/WebXR/WebXRViewContext', () => ({
-        useWebXRView: () => ({
-          currentView: 'work',
-        }),
-      }));
+      // Mock Date.now to control animation start time
+      const realDateNow = Date.now;
+      const mockNow = 1000000;
+      global.Date.now = jest.fn(() => mockNow);
+
+      // Re-mock context for this test
+      const { useWebXRView } = require('@/contexts/WebXR/WebXRViewContext');
+      (useWebXRView as jest.Mock).mockReturnValue({
+        currentView: 'work',
+      });
 
       renderHook(() =>
         useCardAnimation({
@@ -151,6 +155,9 @@ describe('useCardAnimation Hook', () => {
         }),
       );
 
+      // Move time forward past the entrance delay
+      (global.Date.now as jest.Mock).mockReturnValue(mockNow + 1000);
+
       // Trigger useFrame to simulate animation
       const callback = (window as unknown as TestWindow).__useFrameCallback;
       if (callback) {
@@ -159,8 +166,11 @@ describe('useCardAnimation Hook', () => {
         });
       }
 
-      // Should make group visible when in work view
+      // Should make group visible when in work view and after delay
       expect(mockGroupRef.current?.visible).toBe(true);
+
+      // Restore Date.now
+      global.Date.now = realDateNow;
     });
 
     it('should hide cards when currentView is not work', () => {
