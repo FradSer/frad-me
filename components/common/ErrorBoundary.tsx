@@ -1,7 +1,6 @@
 'use client';
 
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { webxrErrorLogger } from '@/utils/errorLogger';
 
 // Simplified error boundary state
 interface ErrorBoundaryState {
@@ -91,15 +90,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Log to console
     const logPrefix = componentName ? `[${componentName}]` : '[ErrorBoundary]';
     console.error(logPrefix, error, errorInfo);
-
-    // Log to external service if enabled
-    if (enableLogging) {
-      try {
-        await webxrErrorLogger.logError(error, errorInfo);
-      } catch (loggingError) {
-        console.warn('Failed to log error:', loggingError);
-      }
-    }
 
     // Call custom error handler
     onError?.(error, errorInfo);

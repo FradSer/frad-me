@@ -15,14 +15,6 @@ const TEST_MESSAGES = {
   returnToMain: 'Return to Main',
 } as const;
 
-// Mock the error logger
-jest.mock('@/utils/errorLogger', () => ({
-  webxrErrorLogger: {
-    logError: jest.fn(),
-    logCapabilities: jest.fn(),
-  },
-}));
-
 // Test component that throws errors
 const ErrorThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
   if (shouldThrow) {
@@ -94,18 +86,6 @@ describe('ErrorBoundary (WebXR)', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
 
       expect(onError).toHaveBeenCalledWith(expect.any(Error), expect.any(Object));
-    });
-
-    it('should log error details for monitoring', () => {
-      const { webxrErrorLogger } = require('@/utils/errorLogger');
-
-      render(
-        <ErrorBoundary componentName="WebXR">
-          <ErrorThrowingComponent shouldThrow={true} />
-        </ErrorBoundary>,
-      );
-
-      expect(webxrErrorLogger.logError).toHaveBeenCalledWith(expect.any(Error), expect.any(Object));
     });
   });
 
