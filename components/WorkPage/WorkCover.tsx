@@ -18,7 +18,14 @@ function WorkCover(props: Readonly<IWorkCoverProps>) {
 
   return (
     <div className={workCoverClass}>
-      <Image src={props.src} alt={imageAlt} loading="eager" fill className="object-cover" />
+      <Image
+        src={props.src}
+        alt={imageAlt}
+        loading="eager"
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
     </div>
   );
 }
