@@ -146,7 +146,7 @@ function SkillCategory({ category, skills }: SkillCategoryProps) {
 
 export default function ResumePageClient() {
   return (
-    <main className="flex flex-col">
+    <div className="flex flex-col">
       {/* Hero Section */}
       <section className="layout-wrapper pt-32 pb-20 md:pt-48 md:pb-32">
         <div className={gridClass}>
@@ -631,6 +631,6 @@ export default function ResumePageClient() {
       </ResumeSection>
 
       <div className="h-16" />
-    </main>
+    </div>
   );
 }

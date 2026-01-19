@@ -43,7 +43,7 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
   const Component = useMemo(() => getMDXComponent(code), [code]);
 
   return (
-    <main className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <WorkCover
         src={frontmatter.cover}
         title={frontmatter.title}
@@ -77,6 +77,6 @@ export default function WorkPageClient({ code, frontmatter }: Readonly<WorkPageC
 
         <span className="col-span-16 h-16" />
       </section>
-    </main>
+    </div>
   );
 }
