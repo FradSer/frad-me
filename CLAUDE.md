@@ -42,7 +42,7 @@ pnpm test:all     # Run all tests (unit + E2E)
 
 # Run specific test files:
 pnpm test utils/__tests__/mdx.test.ts
-pnpm test:e2e navigation.spec.ts
+# Note: E2E tests have been cleaned up to remove flaky suites.
 ```
 
 **Package Management:**
@@ -73,19 +73,16 @@ The application uses smart layout switching based on WebXR capability detection:
   - `Navigation3D.tsx`: Single toggle button (home/work) with breathing animation and spring physics
   - `FooterLinks3D.tsx`: External links (resume, calendly) positioned in 3D space, visible only in home view
 - **WebXRViewContext**: Centralized state management for view transitions (`home` ↔ `work`)
-- **Spring Animation System**: Located in utils/animation/springUtils.ts
-  - `SpringScalar` class for custom spring physics with configurable tension/friction
-  - `useSpringValue`, `useTripleSpring`, `usePositionSpring` hooks for smooth 3D transitions
-  - Spring presets (gentle, bouncy, quick, slow) for consistent animation feel
+- **Spring Animation System**: Simplified animation logic using R3F `useFrame` and `THREE.MathUtils.lerp`
+  - `useSimpleLerp` hook for smooth 3D transitions with referential stability
+  - Spring presets (gentle, bouncy, quick, slow) mapped to lerp speeds for consistent feel
 
 ### Error Handling System
 - **Progressive Fallback Architecture**: WebXR → 3D → 2D fallback levels with comprehensive error boundaries
-- **utils/errorLogger.ts**: Comprehensive error logging system with:
-  - Rate limiting and input sanitization for security
-  - Offline queue support with localStorage
-  - Analytics integration (Google Analytics, Sentry) with proper TypeScript interfaces
-  - WebXR/WebGL capability detection and reporting
-- **app/api/errors/route.ts**: Secure error collection API with validation and rate limiting
+- **ErrorBoundary**: Custom React component providing:
+  - Component-level isolation for standard and WebXR layouts
+  - Progressive fallback UI based on failure context
+  - Integration with React 19 Error Boundary APIs
 
 ### Mouse Interaction System
 - **Performance Optimized**: Custom mouse position tracking using requestAnimationFrame for 60fps performance
@@ -201,10 +198,9 @@ When creating new WebXR/3D components:
 
 ### Animation System Usage
 Choose the correct animation system for your use case:
-- **Spring Physics** (`utils/animation/springUtils.ts`): For 3D position/rotation/scale animations with realistic physics
-  - Use `SpringScalar` directly for custom implementations
-  - Use `useSpringValue` for single values, `useTripleSpring` for 3D positions
-  - Choose preset: `gentle` (smooth UI), `bouncy` (playful), `quick` (snappy), `slow` (dramatic)
+- **3D Animations**: Use `useSimpleLerp` or `useCardAnimation` for 3D position/rotation/scale.
+  - Leverages R3F `useFrame` for performance.
+  - Mapped presets: `gentle`, `bouncy`, `quick`, `slow`.
 - **Motion Library** (`motion` package): For 2D DOM animations and transitions
   - Use spring transitions with configured presets
   - Use variants for complex animation sequences
@@ -214,7 +210,7 @@ Choose the correct animation system for your use case:
 - **API routes**: Always validate input with type guards before processing
 - **Rate limiting**: Implement per-IP rate limiting for public APIs (see `/app/api/errors/route.ts`)
 - **Sanitization**: Remove sensitive data (stack traces, tokens) from client responses
-- **Logging**: Use `webxrErrorLogger.log()` for client-side errors requiring server persistence
+- **Logging**: Use console logging for client-side errors; implement custom monitoring as needed.
 
 ### Mouse Interaction Pattern
 When adding hover effects or custom cursor states:
