@@ -340,6 +340,7 @@ const HeroText = memo(function HeroText() {
   const scaleY = useSimpleLerp(initialState.scale.y, lerpConfig);
   const scaleZ = useSimpleLerp(initialState.scale.z, lerpConfig);
   const opacity = useSimpleLerp(initialState.opacity, lerpConfig);
+  const lastOpacityRef = useRef(-1);
 
   useFrame(() => {
     const group = groupRef.current;
@@ -366,7 +367,11 @@ const HeroText = memo(function HeroText() {
     const currentOpacity = opacity.value;
     group.visible = currentOpacity > WEBXR_ANIMATION_CONFIG.performance.hideThreshold;
 
-    group.traverse((child) => updateChildOpacity(child, currentOpacity));
+    // Performance optimization: only update materials if opacity changed significantly
+    if (Math.abs(currentOpacity - lastOpacityRef.current) > 0.001) {
+      group.traverse((child) => updateChildOpacity(child, currentOpacity));
+      lastOpacityRef.current = currentOpacity;
+    }
   });
 
   return (

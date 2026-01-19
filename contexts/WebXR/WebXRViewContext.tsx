@@ -1,4 +1,12 @@
-import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 export type WebXRView = 'home' | 'work';
 
@@ -58,20 +66,31 @@ export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
     detectCapabilities();
   }, []);
 
-  const navigateToView = (view: WebXRView) => {
+  const navigateToView = useCallback((view: WebXRView) => {
     setCurrentView(view);
-  };
+  }, []);
 
-  const contextValue: WebXRViewContextValue = {
-    currentView,
-    isTransitioning,
-    navigationVisible,
-    footerLinksVisible,
-    isVisionPro,
-    webXRSupported,
-    navigateToView,
-    setTransitioning: setIsTransitioning,
-  };
+  const contextValue: WebXRViewContextValue = useMemo(
+    () => ({
+      currentView,
+      isTransitioning,
+      navigationVisible,
+      footerLinksVisible,
+      isVisionPro,
+      webXRSupported,
+      navigateToView,
+      setTransitioning: setIsTransitioning,
+    }),
+    [
+      currentView,
+      isTransitioning,
+      navigationVisible,
+      footerLinksVisible,
+      isVisionPro,
+      webXRSupported,
+      navigateToView,
+    ],
+  );
 
   return <WebXRViewContext.Provider value={contextValue}>{children}</WebXRViewContext.Provider>;
 }
