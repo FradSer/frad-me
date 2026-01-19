@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.20.0](https://github.com/FradSer/frad-me/compare/v0.19.0...v0.20.0) (2026-01-19)
+
+### Refactoring
+
+- **logging:** remove `errorLogger` implementation and related logic
+  - Deleted `utils/errorLogger.ts`, `utils/errorConstants.ts`, and `utils/sanitization.ts`
+  - Removed `app/api/errors/route.ts` and related error collection logic
+  - Updated `ErrorBoundary` to remove external logging dependency
+- **docs:** update `CLAUDE.md` architecture and development notes
+
 ## [0.19.0](https://github.com/FradSer/frad-me/compare/v0.18.0...v0.19.0) (2026-01-19)
 
 ### Refactoring
