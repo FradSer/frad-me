@@ -89,7 +89,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
     // Log to console
     const logPrefix = componentName ? `[${componentName}]` : '[ErrorBoundary]';
-    console.error(logPrefix, error, errorInfo);
+    if (enableLogging) {
+      console.error(logPrefix, error, errorInfo);
+    }
 
     // Call custom error handler
     onError?.(error, errorInfo);

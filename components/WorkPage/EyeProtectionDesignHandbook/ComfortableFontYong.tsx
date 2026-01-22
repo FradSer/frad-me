@@ -6,11 +6,7 @@ import { COMMON_CLASSES, GRID_CLASSES } from '@/utils/constants';
 function ComfortableFontYong() {
   return (
     <MDXComponentProvider
-      className={clsx(
-        COMMON_CLASSES.workComponentLayout,
-        GRID_CLASSES.fullWidth,
-        'md:col-span-5',
-      )}
+      className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.fullWidth, 'md:col-span-5')}
     >
       <svg
         width="100%"

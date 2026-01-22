@@ -78,7 +78,9 @@ function WorkBeforeAfterImages({
   };
 
   return (
-    <MDXComponentProvider className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.fullWidth)}>
+    <MDXComponentProvider
+      className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.fullWidth)}
+    >
       <div className="cet flex w-full flex-col justify-center gap-3 md:flex-row">
         <span>Before:</span>
         <OptimizedImage src={beforeSrc} {...sharedImageProps} />
