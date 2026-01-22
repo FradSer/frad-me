@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.21.0](https://github.com/FradSer/frad-me/compare/v0.20.0...v0.21.0) (2026-01-19)
+
+### Refactoring
+
+- **landing:** simplify mouse context usage in WorkCard
+
+### Performance
+
+- **components:** optimize image sizes and hover behavior in work components
+- **motion:** memoize animation controls and group starter for better performance
+
+### Bug Fixes
+
+- **components:** respect enableLogging flag in ErrorBoundary
+
+### Maintenance
+
+- **style:** apply project-wide formatting and lint fixes with Biome
+- **chore:** bump version to 0.21.0 for release
+
 ## [0.20.0](https://github.com/FradSer/frad-me/compare/v0.19.0...v0.20.0) (2026-01-19)
 
 ### Refactoring
