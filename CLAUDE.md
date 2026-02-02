@@ -21,7 +21,34 @@ pnpm analyze          # Bundle analysis (forces webpack mode)
 
 **Before merging:** `pnpm check && pnpm build && pnpm test:all`
 
-**Package manager:** pnpm 10.15.0+ / Node.js 22.0.0+
+**Testing:**
+```bash
+pnpm test         # Run unit tests (Jest)
+pnpm test:watch   # Run unit tests in watch mode
+pnpm test:ci      # Run unit tests with coverage for CI
+pnpm test:coverage # Run unit tests with coverage report
+pnpm test:e2e     # Run end-to-end tests (Playwright)
+pnpm test:e2e:ui  # Run E2E tests with interactive UI
+pnpm test:e2e:headed # Run E2E tests in headed mode (visible browser)
+pnpm test:all     # Run all tests (unit + E2E) — note: internally uses npm run
+
+# Run specific test files:
+pnpm test utils/__tests__/mdx.test.ts
+# Note: E2E tests have been cleaned up to remove flaky suites.
+```
+
+**Package Management:**
+- Uses `pnpm` as package manager (version 10.15.0+)
+- Node.js version: 22.0.0+ (specified in engines)
+- pnpm lockfile version: 9.0
+
+**Troubleshooting:**
+```bash
+# Clear build cache and restart
+rm -rf .next && pnpm dev
+# Bundle analysis for performance debugging
+pnpm analyze      # Generates webpack bundle analysis
+```
 
 ## Architecture
 
