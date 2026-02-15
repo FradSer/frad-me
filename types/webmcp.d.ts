@@ -1,24 +1,25 @@
-export {};
-
 declare global {
   interface ModelContext {
     registerTool(tool: {
       name: string;
       description: string;
       inputSchema: Record<string, unknown>;
-      execute: (params: unknown) => { content: { type: string; text: string }[] } | Promise<{ content: { type: string; text: string }[] }>;
+      execute: (
+        params: unknown,
+      ) =>
+        | { content: { type: string; text: string }[] }
+        | Promise<{ content: { type: string; text: string }[] }>;
     }): void;
   }
 
   interface Navigator {
     modelContext?: ModelContext;
   }
+}
 
-  // Extend the native Event interface to include WebMCP properties
-  interface Event {
-    agentInvoked?: boolean;
-    respondWith?: (promise: Promise<unknown>) => void;
-  }
+export interface WebMCPFormEvent extends Event {
+  agentInvoked?: boolean;
+  respondWith?: (promise: Promise<unknown>) => void;
 }
 
 declare module 'react' {
