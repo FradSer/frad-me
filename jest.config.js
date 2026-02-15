@@ -16,6 +16,7 @@ const customJestConfig = {
   // Module name mapping for absolute imports
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^@mcp-b/global$': '<rootDir>/test/__mocks__/mcp-b-global.js',
   },
 
   // Test file patterns

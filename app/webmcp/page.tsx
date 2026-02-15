@@ -1,7 +1,7 @@
 'use client';
 
 import { ContactForm } from '@/components/webmcp/ContactForm';
-import { useWebMCPContext, WebMCPProvider } from '@/contexts/WebMCP/WebMCPContext';
+import { useWebMCPContext } from '@/contexts/WebMCP/WebMCPContext';
 
 function StatusBadge({ isReady }: { isReady: boolean }) {
   if (isReady) {
@@ -27,7 +27,7 @@ const TOOLS = [
   { name: 'read_work', desc: 'Open a project by slug' },
 ] as const;
 
-function WebMCPContent() {
+export default function WebMCPPage() {
   const { isReady, logs, messageSent } = useWebMCPContext();
 
   return (
@@ -39,12 +39,12 @@ function WebMCPContent() {
             <StatusBadge isReady={isReady} />
           </div>
           <p className="text-zinc-500 leading-relaxed">
-            This page exposes AI-agent tools via the{' '}
+            This site exposes AI-agent tools via the{' '}
             <span className="font-medium text-zinc-700 dark:text-zinc-300">
               Web Model Context Protocol
             </span>
-            . An agent with a WebMCP-compatible browser extension can navigate the site, browse
-            projects, and submit the contact form below — all programmatically.
+            . The tools are registered site-wide — an agent with a WebMCP-compatible browser
+            extension can navigate, browse projects, and interact from any page.
           </p>
         </header>
 
@@ -117,13 +117,5 @@ function WebMCPContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function WebMCPPage() {
-  return (
-    <WebMCPProvider>
-      <WebMCPContent />
-    </WebMCPProvider>
   );
 }

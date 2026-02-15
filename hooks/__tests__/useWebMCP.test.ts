@@ -3,11 +3,16 @@ import { useWebMCP, type WebMCPActions } from '../useWebMCP';
 
 const createMockModelContext = () => {
   const tools: Record<string, { execute: (params: unknown) => Promise<unknown> }> = {};
+  const unregisterFns: jest.Mock[] = [];
   return {
     registerTool: jest.fn((tool) => {
       tools[tool.name] = tool;
+      const unregister = jest.fn();
+      unregisterFns.push(unregister);
+      return { unregister };
     }),
     _tools: tools,
+    _unregisterFns: unregisterFns,
   };
 };
 
@@ -34,7 +39,7 @@ describe('useWebMCP', () => {
 
     expect(result.current.isReady).toBe(false);
     expect(result.current.logs).toEqual(
-      expect.arrayContaining([expect.stringContaining('WebMCP API not found')]),
+      expect.arrayContaining([expect.stringContaining('WebMCP API not available')]),
     );
   });
 
@@ -58,7 +63,7 @@ describe('useWebMCP', () => {
     expect(toolNames).toContain('read_work');
   });
 
-  it('should not register tools twice on re-render', () => {
+  it('should unregister all tools on unmount', () => {
     const mc = createMockModelContext();
     Object.defineProperty(window, 'navigator', {
       value: { ...originalNavigator, modelContext: mc },
@@ -67,12 +72,18 @@ describe('useWebMCP', () => {
     });
 
     const actions = createMockActions();
-    const { rerender } = renderHook(() => useWebMCP(actions));
+    const { unmount } = renderHook(() => useWebMCP(actions));
 
-    rerender();
-    rerender();
+    expect(mc._unregisterFns).toHaveLength(3);
+    for (const fn of mc._unregisterFns) {
+      expect(fn).not.toHaveBeenCalled();
+    }
 
-    expect(mc.registerTool).toHaveBeenCalledTimes(3);
+    unmount();
+
+    for (const fn of mc._unregisterFns) {
+      expect(fn).toHaveBeenCalledTimes(1);
+    }
   });
 
   describe('navigate tool', () => {
@@ -218,7 +229,7 @@ describe('useWebMCP', () => {
   });
 
   describe('logging', () => {
-    it('should cap logs at 20 entries', () => {
+    it('should cap logs at 50 entries', () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -229,8 +240,7 @@ describe('useWebMCP', () => {
       const actions = createMockActions();
       const { result } = renderHook(() => useWebMCP(actions));
 
-      // registration produces 1 log entry ("Tools registered successfully.")
-      expect(result.current.logs.length).toBeLessThanOrEqual(20);
+      expect(result.current.logs.length).toBeLessThanOrEqual(50);
     });
   });
 });

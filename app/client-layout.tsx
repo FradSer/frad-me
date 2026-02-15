@@ -8,6 +8,7 @@ import LayoutWrapper from '@/components/common/LayoutWrapper';
 import DotRing from '@/components/Mouse/DotRing';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
 import ThemeModeProvider from '@/contexts/Theme/ThemeModeProvider';
+import { WebMCPProvider } from '@/contexts/WebMCP/WebMCPContext';
 import useXRDetect from '@/hooks/useXRDetect';
 
 const WebXR = dynamic(() => import('./webxr/page'), {
@@ -59,5 +60,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     );
   }
 
-  return isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>;
+  const layout = isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>;
+
+  return <WebMCPProvider>{layout}</WebMCPProvider>;
 }

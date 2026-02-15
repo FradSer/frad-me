@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import '@mcp-b/global';
+import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 
 const VALID_PATHS = ['/', '/work', '/resume', 'work'] as const;
@@ -22,26 +23,21 @@ export interface WebMCPActions {
 export function useWebMCP(actions: WebMCPActions) {
   const [isReady, setIsReady] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
-  const registeredRef = useRef(false);
 
   const log = useCallback((msg: string) => {
     console.log(`[WebMCP] ${msg}`);
-    setLogs((prev) => [...prev, msg].slice(-20));
+    setLogs((prev) => [...prev, msg].slice(-50));
   }, []);
 
   useEffect(() => {
     if (typeof navigator === 'undefined' || !navigator.modelContext) {
-      log('WebMCP API not found (navigator.modelContext)');
-      return;
-    }
-
-    if (registeredRef.current) {
+      log('WebMCP API not available');
       return;
     }
 
     const mc = navigator.modelContext;
 
-    mc.registerTool({
+    const nav = mc.registerTool({
       name: 'navigate',
       description: 'Navigate to a specific page on the website.',
       inputSchema: {
@@ -66,18 +62,13 @@ export function useWebMCP(actions: WebMCPActions) {
         } catch (error) {
           log(`navigate error: ${error}`);
           return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify({ error: 'Invalid parameters' }),
-              },
-            ],
+            content: [{ type: 'text', text: JSON.stringify({ error: 'Invalid parameters' }) }],
           };
         }
       },
     });
 
-    mc.registerTool({
+    const works = mc.registerTool({
       name: 'get_works',
       description: "Get a list of Frad's projects and case studies.",
       inputSchema: { type: 'object', properties: {} },
@@ -90,7 +81,7 @@ export function useWebMCP(actions: WebMCPActions) {
       },
     });
 
-    mc.registerTool({
+    const read = mc.registerTool({
       name: 'read_work',
       description: 'Get details about a specific project by its slug.',
       inputSchema: {
@@ -114,20 +105,22 @@ export function useWebMCP(actions: WebMCPActions) {
         } catch (error) {
           log(`read_work error: ${error}`);
           return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify({ error: 'Invalid parameters' }),
-              },
-            ],
+            content: [{ type: 'text', text: JSON.stringify({ error: 'Invalid parameters' }) }],
           };
         }
       },
     });
 
-    registeredRef.current = true;
     setIsReady(true);
-    log('Tools registered successfully.');
+    log('Tools registered (navigate, get_works, read_work).');
+
+    return () => {
+      nav.unregister();
+      works.unregister();
+      read.unregister();
+      setIsReady(false);
+      log('Tools unregistered.');
+    };
   }, [actions, log]);
 
   return { isReady, logs };

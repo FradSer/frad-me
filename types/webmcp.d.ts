@@ -1,3 +1,7 @@
+interface ToolRegistration {
+  unregister(): void;
+}
+
 declare global {
   interface ModelContext {
     registerTool(tool: {
@@ -9,7 +13,7 @@ declare global {
       ) =>
         | { content: { type: string; text: string }[] }
         | Promise<{ content: { type: string; text: string }[] }>;
-    }): void;
+    }): ToolRegistration;
   }
 
   interface Navigator {
