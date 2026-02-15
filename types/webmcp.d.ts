@@ -5,8 +5,8 @@ declare global {
     registerTool(tool: {
       name: string;
       description: string;
-      inputSchema: any;
-      execute: (params: any) => { content: { type: string; text: string }[] } | Promise<{ content: { type: string; text: string }[] }>;
+      inputSchema: unknown;
+      execute: (params: unknown) => { content: { type: string; text: string }[] } | Promise<{ content: { type: string; text: string }[] }>;
     }): void;
   }
 

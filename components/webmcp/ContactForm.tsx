@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useWebMCPContext } from "@/contexts/WebMCPContext";
 
 export function ContactForm() {
@@ -8,13 +7,15 @@ export function ContactForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isAgent = (e.nativeEvent as any).agentInvoked;
     
     // Simulate sending
     setMessageSent(true);
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (isAgent && (e.nativeEvent as any).respondWith) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (e.nativeEvent as any).respondWith(
         Promise.resolve({ success: true, message: "Message sent to Frad." })
       );
@@ -29,8 +30,9 @@ export function ContactForm() {
       tooldescription="Send a message to Frad. Requires email and message body."
     >
       <div>
-        <label className="block text-xs uppercase text-zinc-500 mb-1">Your Email</label>
+        <label htmlFor="email" className="block text-xs uppercase text-zinc-500 mb-1">Your Email</label>
         <input 
+          id="email"
           name="email" 
           type="email"
           required 
@@ -41,8 +43,9 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label className="block text-xs uppercase text-zinc-500 mb-1">Message</label>
+        <label htmlFor="message" className="block text-xs uppercase text-zinc-500 mb-1">Message</label>
         <textarea 
+          id="message"
           name="message" 
           required
           className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded p-2 text-sm h-24"

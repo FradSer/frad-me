@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export interface WebMCPActions {
-  navigate: (path: string) => any;
-  getWorks: () => any;
-  readWork: (slug: string) => any;
+  navigate: (path: string) => unknown;
+  getWorks: () => unknown;
+  readWork: (slug: string) => unknown;
 }
 
 export function useWebMCP(actions: WebMCPActions) {
   const [isReady, setIsReady] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
-  const log = (msg: string) => {
+  const log = useCallback((msg: string) => {
     console.log(`[WebMCP] ${msg}`);
     setLogs((prev) => [...prev, msg].slice(-20));
-  };
+  }, []);
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.modelContext) {
@@ -40,6 +40,7 @@ export function useWebMCP(actions: WebMCPActions) {
         },
         required: ["path"],
       },
+      // @ts-expect-error
       execute: async ({ path }) => {
         const result = await actions.navigate(path);
         log(`navigate("${path}")`);
@@ -70,6 +71,7 @@ export function useWebMCP(actions: WebMCPActions) {
         },
         required: ["slug"],
       },
+      // @ts-expect-error
       execute: async ({ slug }) => {
         const result = await actions.readWork(slug);
         log(`read_work("${slug}")`);
@@ -80,7 +82,7 @@ export function useWebMCP(actions: WebMCPActions) {
     setIsReady(true);
     log("Tools registered successfully.");
 
-  }, [actions]);
+  }, [actions, log]);
 
   return { isReady, logs };
 }
