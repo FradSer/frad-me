@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebMCP } from '@/hooks/useWebMCP';
 import workLinks from '@/content/workLinks';

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { WebMCPProvider, useWebMCPContext } from "@/contexts/WebMCPContext";
 import { ContactForm } from "@/components/webmcp/ContactForm";
 
