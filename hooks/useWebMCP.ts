@@ -1,6 +1,16 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { z } from "zod";
+
+// Schema Definitions
+const NavigateSchema = z.object({
+  path: z.string().url().or(z.string().regex(/^\//, "Must be a relative path"))
+});
+
+const ReadWorkSchema = z.object({
+  slug: z.string().min(1, "Slug cannot be empty")
+});
 
 export interface WebMCPActions {
   navigate: (path: string) => unknown;
@@ -10,6 +20,7 @@ export interface WebMCPActions {
 
 export function useWebMCP(actions: WebMCPActions) {
   const [isReady, setIsReady] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [logs, setLogs] = useState<string[]>([]);
 
   const log = useCallback((msg: string) => {
@@ -41,10 +52,15 @@ export function useWebMCP(actions: WebMCPActions) {
         required: ["path"],
       },
       execute: async (params: unknown) => {
-        const { path } = params as { path: string };
-        const result = await actions.navigate(path);
-        log(`navigate("${path}")`);
-        return { content: [{ type: "text", text: JSON.stringify(result) }] };
+        try {
+          const { path } = NavigateSchema.parse(params);
+          const result = await actions.navigate(path);
+          log(`navigate("${path}")`);
+          return { content: [{ type: "text", text: JSON.stringify(result) }] };
+        } catch (error) {
+          log(`navigate error: ${error}`);
+          return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid parameters" }) }] };
+        }
       },
     });
 
@@ -72,10 +88,15 @@ export function useWebMCP(actions: WebMCPActions) {
         required: ["slug"],
       },
       execute: async (params: unknown) => {
-        const { slug } = params as { slug: string };
-        const result = await actions.readWork(slug);
-        log(`read_work("${slug}")`);
-        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        try {
+          const { slug } = ReadWorkSchema.parse(params);
+          const result = await actions.readWork(slug);
+          log(`read_work("${slug}")`);
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        } catch (error) {
+          log(`read_work error: ${error}`);
+          return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid parameters" }) }] };
+        }
       },
     });
 
