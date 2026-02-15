@@ -40,8 +40,8 @@ export function useWebMCP(actions: WebMCPActions) {
         },
         required: ["path"],
       },
-      // @ts-expect-error
-      execute: async ({ path }) => {
+      execute: async (params: unknown) => {
+        const { path } = params as { path: string };
         const result = await actions.navigate(path);
         log(`navigate("${path}")`);
         return { content: [{ type: "text", text: JSON.stringify(result) }] };
@@ -71,8 +71,8 @@ export function useWebMCP(actions: WebMCPActions) {
         },
         required: ["slug"],
       },
-      // @ts-expect-error
-      execute: async ({ slug }) => {
+      execute: async (params: unknown) => {
+        const { slug } = params as { slug: string };
         const result = await actions.readWork(slug);
         log(`read_work("${slug}")`);
         return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
@@ -81,7 +81,7 @@ export function useWebMCP(actions: WebMCPActions) {
 
     setIsReady(true);
     log("Tools registered successfully.");
-
+  
   }, [actions, log]);
 
   return { isReady, logs };

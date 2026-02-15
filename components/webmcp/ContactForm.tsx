@@ -1,22 +1,23 @@
 "use client";
 
 import { useWebMCPContext } from "@/contexts/WebMCPContext";
+import type React from "react";
 
 export function ContactForm() {
   const { setMessageSent } = useWebMCPContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isAgent = (e.nativeEvent as any).agentInvoked;
+    
+    // Cast to the extended Event type from global declaration
+    const nativeEvent = e.nativeEvent as Event;
+    const isAgent = nativeEvent.agentInvoked;
     
     // Simulate sending
     setMessageSent(true);
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (isAgent && (e.nativeEvent as any).respondWith) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (e.nativeEvent as any).respondWith(
+    if (isAgent && nativeEvent.respondWith) {
+      nativeEvent.respondWith(
         Promise.resolve({ success: true, message: "Message sent to Frad." })
       );
     }
