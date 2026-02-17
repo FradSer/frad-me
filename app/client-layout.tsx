@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
-import ChatButton from '@/components/Chat/ChatButton';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LayoutWrapper from '@/components/common/LayoutWrapper';
 import DotRing from '@/components/Mouse/DotRing';
@@ -31,7 +30,6 @@ const StandardLayout = ({ children }: ClientLayoutProps) => (
       <ThemeModeProvider>
         <DotRing />
         <LayoutWrapper>{children}</LayoutWrapper>
-        <ChatButton />
       </ThemeModeProvider>
     </MouseContextProvider>
   </ErrorBoundary>

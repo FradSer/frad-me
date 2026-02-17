@@ -1,3 +1,4 @@
+import ChatSection from '@/components/Chat/ChatSection';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Landing/Hero';
 import Patents from '@/components/Landing/Patents';
@@ -9,6 +10,7 @@ export default function Home() {
       <Hero />
       <Work />
       <Patents />
+      <ChatSection />
       <Footer />
     </>
   );

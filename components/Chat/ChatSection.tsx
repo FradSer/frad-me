@@ -1,0 +1,192 @@
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import type { UIMessage } from 'ai';
+import { clsx } from 'clsx';
+import { AnimatePresence, motion } from 'motion/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+const SUGGESTED_QUESTIONS = [
+  'What does Frad do?',
+  'Show me XR projects',
+  'What are his skills?',
+  'Tell me about his patents',
+];
+
+function getMessageText(message: UIMessage): string {
+  return message.parts
+    .filter((p) => p.type === 'text')
+    .map((p) => p.text)
+    .join('');
+}
+
+function ChatMessage({ role, text }: { role: string; text: string }) {
+  const isUser = role === 'user';
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={clsx('flex', isUser ? 'justify-end' : 'justify-start')}
+    >
+      <div
+        className={clsx(
+          'max-w-[85%] rounded-2xl px-5 py-3 text-base leading-relaxed sm:text-lg',
+          isUser
+            ? 'bg-black text-white dark:bg-white dark:text-black'
+            : 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-gray-100',
+        )}
+      >
+        <div className="whitespace-pre-wrap">{text}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div className="flex justify-start">
+      <div className="flex items-center gap-1.5 rounded-2xl bg-gray-100 px-5 py-3.5 dark:bg-neutral-800">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="h-2 w-2 rounded-full bg-gray-400 dark:bg-gray-500"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, delay: i * 0.2 }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function ChatSection() {
+  const { messages, sendMessage, status } = useChat();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, []);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when messages change
+  useEffect(scrollToBottom, [messages.length, scrollToBottom]);
+
+  useEffect(() => {
+    if (isExpanded) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [isExpanded]);
+
+  const send = useCallback(
+    (text: string) => {
+      if (!text.trim()) return;
+      if (!isExpanded) setIsExpanded(true);
+      sendMessage({ text });
+      setInput('');
+    },
+    [sendMessage, isExpanded],
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      send(input);
+    },
+    [send, input],
+  );
+
+  const visibleMessages = messages.filter((m) => {
+    if (m.role === 'system') return false;
+    const text = getMessageText(m);
+    return text.length > 0;
+  });
+
+  const hasMessages = visibleMessages.length > 0;
+
+  return (
+    <section className="layout-wrapper my-20 md:my-24 lg:my-32">
+      <div className="flex flex-col items-start">
+        {/* Section heading — same style as "work" and "patent" */}
+        <h2 className="mb-8 text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
+          ask
+        </h2>
+
+        {/* Prompt / input area */}
+        <div className="w-full max-w-3xl">
+          {/* Suggested questions — shown before first interaction */}
+          {!hasMessages && !isExpanded && (
+            <div className="mb-8 flex flex-wrap gap-3">
+              {SUGGESTED_QUESTIONS.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => send(q)}
+                  className="rounded-full border border-gray-300 px-5 py-2.5 text-base font-medium text-gray-600 transition-all hover:border-black hover:text-black dark:border-gray-600 dark:text-gray-400 dark:hover:border-white dark:hover:text-white sm:text-lg"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Chat conversation area — expands when there are messages */}
+          <AnimatePresence>
+            {(hasMessages || isExpanded) && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="overflow-hidden"
+              >
+                <div ref={scrollRef} className="mb-6 max-h-[28rem] space-y-4 overflow-y-auto">
+                  {visibleMessages.map((m) => (
+                    <ChatMessage key={m.id} role={m.role} text={getMessageText(m)} />
+                  ))}
+                  {isLoading && <TypingIndicator />}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Input field — always visible, styled like the site */}
+          <form onSubmit={handleSubmit}>
+            <div className="flex items-center gap-4">
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask me anything about Frad..."
+                onFocus={() => setIsExpanded(true)}
+                className="flex-1 border-b-2 border-gray-300 bg-transparent py-3 text-xl font-bold text-black outline-none transition-colors placeholder:font-normal placeholder:text-gray-400 focus:border-black dark:border-gray-600 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-white sm:text-2xl md:text-3xl"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="shrink-0 text-gray-400 transition-colors hover:text-black disabled:opacity-20 dark:hover:text-white"
+                aria-label="Send message"
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
