@@ -20,6 +20,8 @@ const createMockActions = (): WebMCPActions => ({
   navigate: jest.fn(() => ({ success: true, message: 'Navigated' })),
   getWorks: jest.fn(() => ({ success: true, count: 0, works: [] })),
   readWork: jest.fn(() => ({ success: true, work: {} })),
+  searchWorks: jest.fn(() => ({ success: true, query: '', count: 0, results: [] })),
+  getResume: jest.fn(() => ({ success: true, resume: {} })),
 });
 
 describe('useWebMCP', () => {
@@ -55,12 +57,14 @@ describe('useWebMCP', () => {
     const { result } = renderHook(() => useWebMCP(actions));
 
     expect(result.current.isReady).toBe(true);
-    expect(mc.registerTool).toHaveBeenCalledTimes(3);
+    expect(mc.registerTool).toHaveBeenCalledTimes(5);
 
     const toolNames = mc.registerTool.mock.calls.map((call: [{ name: string }]) => call[0].name);
     expect(toolNames).toContain('navigate');
     expect(toolNames).toContain('get_works');
     expect(toolNames).toContain('read_work');
+    expect(toolNames).toContain('search_works');
+    expect(toolNames).toContain('get_resume');
   });
 
   it('should unregister all tools on unmount', () => {
@@ -74,7 +78,7 @@ describe('useWebMCP', () => {
     const actions = createMockActions();
     const { unmount } = renderHook(() => useWebMCP(actions));
 
-    expect(mc._unregisterFns).toHaveLength(3);
+    expect(mc._unregisterFns).toHaveLength(5);
     for (const fn of mc._unregisterFns) {
       expect(fn).not.toHaveBeenCalled();
     }

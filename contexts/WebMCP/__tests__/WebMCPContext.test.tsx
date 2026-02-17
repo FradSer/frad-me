@@ -118,40 +118,67 @@ describe('WebMCPContext', () => {
     expect(result.works[0]).toHaveProperty('slug');
   });
 
-  it('should create actions with readWork returning work details', () => {
+  it('should create actions with readWork returning work details', async () => {
     const { useWebMCP } = require('@/hooks/useWebMCP');
+
+    // Mock fetch for the API call
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            success: true,
+            work: { title: 'BearyChat', slug: 'bearychat' },
+          }),
+      }),
+    ) as jest.Mock;
 
     renderHook(() => useWebMCPContext(), { wrapper });
 
     const actions = useWebMCP.mock.calls[0][0];
-    const result = actions.readWork('bearychat');
+    const result = await actions.readWork('bearychat');
 
     expect(result.success).toBe(true);
     expect(result.work.title).toBe('BearyChat');
     expect(mockPush).toHaveBeenCalledWith('/works/bearychat');
   });
 
-  it('should return error for unknown slug in readWork', () => {
+  it('should return error for unknown slug in readWork', async () => {
     const { useWebMCP } = require('@/hooks/useWebMCP');
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ success: false, error: 'Project not found' }),
+      }),
+    ) as jest.Mock;
 
     renderHook(() => useWebMCPContext(), { wrapper });
 
     const actions = useWebMCP.mock.calls[0][0];
-    const result = actions.readWork('nonexistent');
+    const result = await actions.readWork('nonexistent');
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Project not found');
   });
 
-  it('should open external link for works with externalLink', () => {
+  it('should open external link for works with externalLink', async () => {
     const { useWebMCP } = require('@/hooks/useWebMCP');
     const mockOpen = jest.fn();
     window.open = mockOpen;
 
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            success: true,
+            work: { title: 'vivo Vision', slug: 'vivo-vision' },
+          }),
+      }),
+    ) as jest.Mock;
+
     renderHook(() => useWebMCPContext(), { wrapper });
 
     const actions = useWebMCP.mock.calls[0][0];
-    const result = actions.readWork('vivo-vision');
+    const result = await actions.readWork('vivo-vision');
 
     expect(result.success).toBe(true);
     expect(mockOpen).toHaveBeenCalledWith('https://www.vivo.com.cn/vivo/vivovision/', '_blank');

@@ -24,7 +24,9 @@ function StatusBadge({ isReady }: { isReady: boolean }) {
 const TOOLS = [
   { name: 'navigate', desc: 'Go to /, /work, or /resume' },
   { name: 'get_works', desc: 'List all portfolio projects' },
-  { name: 'read_work', desc: 'Open a project by slug' },
+  { name: 'read_work', desc: 'Read project details + content summary' },
+  { name: 'search_works', desc: 'Search projects by keyword' },
+  { name: 'get_resume', desc: 'Get structured resume data' },
 ] as const;
 
 export default function WebMCPPage() {

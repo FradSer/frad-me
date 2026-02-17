@@ -20,6 +20,18 @@ export function useWebMCPContext() {
   return context;
 }
 
+async function fetchContent(action: string, params?: Record<string, string>) {
+  const url = new URL('/api/content', window.location.origin);
+  url.searchParams.set('action', action);
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      url.searchParams.set(k, v);
+    }
+  }
+  const res = await fetch(url.toString());
+  return res.json();
+}
+
 export function WebMCPProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [messageSent, setMessageSent] = useState(false);
@@ -45,26 +57,26 @@ export function WebMCPProvider({ children }: { children: ReactNode }) {
         return { success: true, count: works.length, works };
       },
 
-      readWork: (slug: string) => {
-        const work = workLinks.find((w) => w.slug === slug);
-        if (!work) return { success: false, error: 'Project not found' };
+      readWork: async (slug: string) => {
+        const data = await fetchContent('read_work', { slug });
+        if (!data.success) return data;
 
-        if (!work.externalLink) {
+        const work = workLinks.find((w) => w.slug === slug);
+        if (work && !work.externalLink) {
           router.push(`/works/${slug}`);
-        } else {
+        } else if (work?.externalLink) {
           window.open(work.externalLink, '_blank');
         }
 
-        return {
-          success: true,
-          work: {
-            title: work.title,
-            subtitle: work.subTitle,
-            slug: work.slug,
-            isWIP: work.isWIP,
-            description: 'Full case study available on the page.',
-          },
-        };
+        return data;
+      },
+
+      searchWorks: async (query: string) => {
+        return fetchContent('search_works', { query });
+      },
+
+      getResume: async () => {
+        return fetchContent('get_resume');
       },
     }),
     [router],
