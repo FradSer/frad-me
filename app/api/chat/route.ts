@@ -56,9 +56,10 @@ You have tools to look up Frad's projects and resume. Use them when visitors ask
 Be helpful, concise, and friendly. Answer in the same language the user writes in.
 If asked about things unrelated to Frad or his work, politely redirect the conversation.`;
 
+// Only allow user/assistant roles from clients — system prompt is set server-side.
 const MessagesSchema = z.array(
   z.object({
-    role: z.enum(['user', 'assistant', 'system']),
+    role: z.enum(['user', 'assistant']),
     content: z.union([z.string(), z.array(z.unknown())]),
   }),
 );

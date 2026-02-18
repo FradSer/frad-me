@@ -90,9 +90,9 @@ export default function ChatSection() {
   useEffect(scrollToBottom, [messages.length, scrollToBottom]);
 
   useEffect(() => {
-    if (isExpanded) {
-      setTimeout(() => inputRef.current?.focus(), 300);
-    }
+    if (!isExpanded) return;
+    const id = setTimeout(() => inputRef.current?.focus(), 300);
+    return () => clearTimeout(id);
   }, [isExpanded]);
 
   const send = useCallback(
