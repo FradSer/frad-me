@@ -3,6 +3,7 @@ import path from 'node:path';
 import { createOpenAI } from '@ai-sdk/openai';
 import { stepCountIs, streamText, tool } from 'ai';
 import matter from 'gray-matter';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
@@ -10,17 +11,22 @@ import workLinks from '@/content/workLinks';
 const WORKS_PATH = path.join(process.cwd(), 'content', 'works');
 const MAX_SUMMARY_LENGTH = 500;
 
-// OpenAI-compatible provider — priority: request body > environment variables > defaults
-//   AI_BASE_URL   Base URL of the OpenAI-compatible API (default: https://api.openai.com/v1)
-//   AI_API_KEY    API key for the provider
-//   AI_MODEL_ID   Model ID to use (default: gpt-4o-mini)
-function getModel(config?: { baseURL?: string; apiKey?: string; modelId?: string }) {
-  const baseURL = config?.baseURL || process.env.AI_BASE_URL;
-  const apiKey = config?.apiKey || process.env.AI_API_KEY || '';
-  const modelId = config?.modelId || process.env.AI_MODEL_ID || 'gpt-4o-mini';
+// Configure via Vercel environment variables:
+//   AI_BASE_URL   Base URL of the OpenAI-compatible API (optional, defaults to OpenAI)
+//   AI_API_KEY    API key  (required)
+//   AI_MODEL_ID   Model ID (optional, defaults to gpt-4o-mini)
+function getModel() {
+  const baseURL = process.env.AI_BASE_URL;
+  const apiKey = process.env.AI_API_KEY || '';
+  const modelId = process.env.AI_MODEL_ID || 'gpt-4o-mini';
 
   const provider = createOpenAI({ baseURL, apiKey });
   return provider(modelId);
+}
+
+/** Returns whether the chat feature is configured on the server. */
+export async function GET() {
+  return NextResponse.json({ enabled: !!process.env.AI_API_KEY });
 }
 
 function stripMdx(content: string): string {
@@ -70,10 +76,14 @@ Be helpful, concise, and friendly. Answer in the same language the user writes i
 If asked about things unrelated to Frad or his work, politely redirect the conversation.`;
 
 export async function POST(req: Request) {
-  const { messages, config } = await req.json();
+  if (!process.env.AI_API_KEY) {
+    return NextResponse.json({ error: 'Chat is not configured.' }, { status: 503 });
+  }
+
+  const { messages } = await req.json();
 
   const result = streamText({
-    model: getModel(config),
+    model: getModel(),
     system: SYSTEM_PROMPT,
     messages,
     tools: {
