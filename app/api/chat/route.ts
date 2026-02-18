@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { anthropic } from '@ai-sdk/anthropic';
+import { createOpenAI } from '@ai-sdk/openai';
 import { stepCountIs, streamText, tool } from 'ai';
 import matter from 'gray-matter';
 import { z } from 'zod';
@@ -9,6 +9,19 @@ import workLinks from '@/content/workLinks';
 
 const WORKS_PATH = path.join(process.cwd(), 'content', 'works');
 const MAX_SUMMARY_LENGTH = 500;
+
+// OpenAI-compatible provider — configure via environment variables:
+//   AI_BASE_URL   Base URL of the OpenAI-compatible API (default: https://api.openai.com/v1)
+//   AI_API_KEY    API key for the provider
+//   AI_MODEL_ID   Model ID to use (default: gpt-4o-mini)
+function getModel() {
+  const baseURL = process.env.AI_BASE_URL;
+  const apiKey = process.env.AI_API_KEY ?? '';
+  const modelId = process.env.AI_MODEL_ID ?? 'gpt-4o-mini';
+
+  const provider = createOpenAI({ baseURL, apiKey });
+  return provider(modelId);
+}
 
 function stripMdx(content: string): string {
   return content
@@ -60,7 +73,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-sonnet-4-20250514'),
+    model: getModel(),
     system: SYSTEM_PROMPT,
     messages,
     tools: {
