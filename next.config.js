@@ -30,6 +30,10 @@ const nextConfig = {
     // Turbopack handles @bufbuild/protobuf dependencies automatically
     // No special configuration needed
   },
+  experimental: {
+    // Allow Turbopack to reach Google Fonts in restricted network environments (e.g. CI)
+    turbopackUseSystemTlsCerts: true,
+  },
 };
 
 module.exports = withBundleAnalyzer(million.next(nextConfig));

@@ -61,9 +61,7 @@ export const WebXRMockUtils = {
   async disableWebGL(page: Page): Promise<void> {
     await page.addInitScript(() => {
       // Mock all WebGL context creation to fail
-      const originalGetContext = HTMLCanvasElement.prototype.getContext.bind(
-        HTMLCanvasElement.prototype,
-      );
+      const originalGetContext = HTMLCanvasElement.prototype.getContext;
       Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
         value: function (
           contextType: string,
@@ -72,7 +70,7 @@ export const WebXRMockUtils = {
           if (contextType.toLowerCase().includes('webgl')) {
             return null;
           }
-          return originalGetContext.call(this, contextType, contextAttributes);
+          return Reflect.apply(originalGetContext, this, [contextType, contextAttributes]);
         },
         writable: true,
         configurable: true,
@@ -403,7 +401,6 @@ export const WebXRMockUtils = {
 
       // Mock permissions denial
       const originalGetContext = HTMLCanvasElement.prototype.getContext;
-      // @ts-expect-error - Mocking prototype method for testing
       HTMLCanvasElement.prototype.getContext = function (
         type: string,
         attributes?: WebGLContextAttributes,
@@ -414,7 +411,7 @@ export const WebXRMockUtils = {
             'SecurityError',
           );
         }
-        return originalGetContext.call(this, type, attributes);
+        return Reflect.apply(originalGetContext, this, [type, attributes]);
       };
     });
   },

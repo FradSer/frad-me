@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { stepCountIs, streamText, tool } from 'ai';
+import { type ModelMessage, stepCountIs, streamText, tool } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
@@ -30,9 +30,9 @@ function checkRateLimit(ip: string): boolean {
 
   // Prune expired entries when map grows large
   if (rateLimitMap.size > PRUNE_THRESHOLD) {
-    for (const [key, val] of rateLimitMap) {
+    rateLimitMap.forEach((val, key) => {
       if (now >= val.resetAt) rateLimitMap.delete(key);
-    }
+    });
   }
 
   const entry = rateLimitMap.get(ip);
@@ -99,7 +99,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid messages format.' }, { status: 400 });
   }
 
-  const messages = parsed.data;
+  // Zod validates structure; cast to SDK type which uses a discriminated union
+  const messages = parsed.data as unknown as ModelMessage[];
 
   const result = streamText({
     model: getModel(),
