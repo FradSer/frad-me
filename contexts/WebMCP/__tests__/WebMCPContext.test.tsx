@@ -57,22 +57,6 @@ describe('WebMCPContext', () => {
     expect(result.current.messageSent).toBe(true);
   });
 
-  it("should create actions with navigate handling 'work' path", () => {
-    // Access actions indirectly by checking what useWebMCP received
-    const { useWebMCP } = require('@/hooks/useWebMCP');
-
-    renderHook(() => useWebMCPContext(), { wrapper });
-
-    const actions = useWebMCP.mock.calls[0][0];
-
-    const result = actions.navigate('work');
-    expect(mockPush).toHaveBeenCalledWith('/#work');
-    expect(result).toEqual({
-      success: true,
-      message: 'Navigated to Work section',
-    });
-  });
-
   it("should create actions with navigate handling '/work' path", () => {
     const { useWebMCP } = require('@/hooks/useWebMCP');
 

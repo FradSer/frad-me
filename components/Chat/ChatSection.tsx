@@ -15,7 +15,7 @@ const SUGGESTED_QUESTIONS = [
 
 function getMessageText(message: UIMessage): string {
   return message.parts
-    .filter((p) => p.type === 'text')
+    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
     .map((p) => p.text)
     .join('');
 }
@@ -118,7 +118,11 @@ export default function ChatSection() {
   });
 
   const hasMessages = visibleMessages.length > 0;
-  const isDisabled = enabled === false;
+  // null = still loading (treat as disabled); false = confirmed not configured
+  const isDisabled = enabled !== true;
+
+  // Don't render the section at all if chat is confirmed not configured
+  if (enabled === false) return null;
 
   return (
     <section className="layout-wrapper my-20 md:my-24 lg:my-32">

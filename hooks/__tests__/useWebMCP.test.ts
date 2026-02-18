@@ -141,7 +141,7 @@ describe('useWebMCP', () => {
       });
     });
 
-    it("should accept 'work' without leading slash", async () => {
+    it("should reject 'work' without leading slash", async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -154,11 +154,16 @@ describe('useWebMCP', () => {
 
       const navigateTool = mc._tools.navigate;
 
+      let result: unknown;
       await act(async () => {
-        await navigateTool.execute({ path: 'work' });
+        result = await navigateTool.execute({ path: 'work' });
       });
 
-      expect(actions.navigate).toHaveBeenCalledWith('work');
+      // 'work' (without leading slash) is not in VALID_PATHS, so it should be rejected
+      expect(actions.navigate).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        content: [{ type: 'text', text: JSON.stringify({ error: 'Invalid parameters' }) }],
+      });
     });
   });
 

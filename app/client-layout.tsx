@@ -26,12 +26,14 @@ type ClientLayoutProps = {
 
 const StandardLayout = ({ children }: ClientLayoutProps) => (
   <ErrorBoundary componentName="StandardLayout">
-    <MouseContextProvider>
-      <ThemeModeProvider>
-        <DotRing />
-        <LayoutWrapper>{children}</LayoutWrapper>
-      </ThemeModeProvider>
-    </MouseContextProvider>
+    <WebMCPProvider>
+      <MouseContextProvider>
+        <ThemeModeProvider>
+          <DotRing />
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </ThemeModeProvider>
+      </MouseContextProvider>
+    </WebMCPProvider>
   </ErrorBoundary>
 );
 
@@ -60,7 +62,5 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     );
   }
 
-  const layout = isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>;
-
-  return <WebMCPProvider>{layout}</WebMCPProvider>;
+  return isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>;
 }

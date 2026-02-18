@@ -1,15 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { createOpenAI } from '@ai-sdk/openai';
 import { stepCountIs, streamText, tool } from 'ai';
-import matter from 'gray-matter';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
-
-const WORKS_PATH = path.join(process.cwd(), 'content', 'works');
-const MAX_SUMMARY_LENGTH = 500;
+import { getWorkSummary } from '@/utils/workContent';
 
 // Configure via Vercel environment variables:
 //   AI_BASE_URL   Base URL of the OpenAI-compatible API (optional, defaults to OpenAI)
@@ -27,37 +22,6 @@ function getModel() {
 /** Returns whether the chat feature is configured on the server. */
 export async function GET() {
   return NextResponse.json({ enabled: !!process.env.AI_API_KEY });
-}
-
-function stripMdx(content: string): string {
-  return content
-    .replace(/<[^>]+\/>/g, '')
-    .replace(/<[^>]+>[\s\S]*?<\/[^>]+>/g, '')
-    .replace(/^---[\s\S]*?---/m, '')
-    .replace(/^#+\s+.*/gm, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/[*_~`]/g, '')
-    .replace(/^>\s+/gm, '')
-    .replace(/^[-*]\s+/gm, '')
-    .replace(/^\d+\.\s+/gm, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
-function getWorkSummary(slug: string): string | null {
-  try {
-    const filePath = path.join(WORKS_PATH, `${slug}.mdx`);
-    const source = fs.readFileSync(filePath, 'utf8');
-    const { content } = matter(source);
-    const plain = stripMdx(content);
-    if (plain.length <= MAX_SUMMARY_LENGTH) return plain;
-    const truncated = plain.slice(0, MAX_SUMMARY_LENGTH);
-    const lastSpace = truncated.lastIndexOf(' ');
-    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : MAX_SUMMARY_LENGTH)}...`;
-  } catch {
-    return null;
-  }
 }
 
 const SYSTEM_PROMPT = `You are Frad LEE's AI assistant on his personal portfolio website frad.me.

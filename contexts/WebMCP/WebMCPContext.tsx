@@ -39,7 +39,7 @@ export function WebMCPProvider({ children }: { children: ReactNode }) {
   const actions = useMemo(
     () => ({
       navigate: (path: string) => {
-        if (path === 'work' || path === '/work') {
+        if (path === '/work') {
           router.push('/#work');
           return { success: true, message: 'Navigated to Work section' };
         }

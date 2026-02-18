@@ -4,7 +4,7 @@ import '@mcp-b/global';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 
-const VALID_PATHS = ['/', '/work', '/resume', 'work'] as const;
+const VALID_PATHS = ['/', '/work', '/resume'] as const;
 
 const NavigateSchema = z.object({
   path: z.enum(VALID_PATHS),
@@ -52,7 +52,7 @@ export function useWebMCP(actions: WebMCPActions) {
           path: {
             type: 'string',
             description: "The path to navigate to (e.g., '/', '/work', '/resume').",
-            enum: ['/', '/work', '/resume', 'work'],
+            enum: ['/', '/work', '/resume'],
           },
         },
         required: ['path'],
