@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid messages format.' }, { status: 400 });
   }
 
-  const { messages } = { messages: parsed.data };
+  const messages = parsed.data;
 
   const result = streamText({
     model: getModel(),
