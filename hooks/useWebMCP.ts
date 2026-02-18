@@ -79,11 +79,18 @@ export function useWebMCP(actions: WebMCPActions) {
       description: "Get a list of all Frad's portfolio projects and case studies.",
       inputSchema: { type: 'object', properties: {} },
       execute: async () => {
-        const result = await actions.getWorks();
-        log('get_works()');
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        try {
+          const result = await actions.getWorks();
+          log('get_works()');
+          return {
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          log(`get_works error: ${error}`);
+          return {
+            content: [{ type: 'text', text: JSON.stringify({ error: 'Failed to get works' }) }],
+          };
+        }
       },
     });
 
@@ -155,11 +162,18 @@ export function useWebMCP(actions: WebMCPActions) {
         "Get Frad's structured resume data including experience, skills, patents, and contact information.",
       inputSchema: { type: 'object', properties: {} },
       execute: async () => {
-        const result = await actions.getResume();
-        log('get_resume()');
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        try {
+          const result = await actions.getResume();
+          log('get_resume()');
+          return {
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          log(`get_resume error: ${error}`);
+          return {
+            content: [{ type: 'text', text: JSON.stringify({ error: 'Failed to get resume' }) }],
+          };
+        }
       },
     });
 

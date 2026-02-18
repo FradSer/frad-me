@@ -23,9 +23,18 @@ function getModel() {
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 20;
 const RATE_WINDOW_MS = 60_000;
+const PRUNE_THRESHOLD = 500;
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
+
+  // Prune expired entries when map grows large
+  if (rateLimitMap.size > PRUNE_THRESHOLD) {
+    for (const [key, val] of rateLimitMap) {
+      if (now >= val.resetAt) rateLimitMap.delete(key);
+    }
+  }
+
   const entry = rateLimitMap.get(ip);
   if (!entry || now >= entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
