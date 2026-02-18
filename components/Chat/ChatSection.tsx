@@ -75,9 +75,10 @@ export default function ChatSection() {
       .catch(() => setEnabled(false));
   }, []);
 
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, error } = useChat();
 
   const isLoading = status === 'submitted' || status === 'streaming';
+  const isError = status === 'error';
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -166,6 +167,13 @@ export default function ChatSection() {
                     <ChatMessage key={m.id} role={m.role} text={getMessageText(m)} />
                   ))}
                   {isLoading && <TypingIndicator />}
+                  {isError && (
+                    <div className="flex justify-start">
+                      <span className="rounded-2xl bg-red-50 px-5 py-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                        {error?.message ?? 'Something went wrong. Please try again.'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
