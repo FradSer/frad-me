@@ -8,6 +8,7 @@ import LayoutWrapper from '@/components/common/LayoutWrapper';
 import DotRing from '@/components/Mouse/DotRing';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
 import ThemeModeProvider from '@/contexts/Theme/ThemeModeProvider';
+import { WebMCPProvider } from '@/contexts/WebMCP/WebMCPContext';
 import useXRDetect from '@/hooks/useXRDetect';
 
 const WebXR = dynamic(() => import('./webxr/page'), {
@@ -25,12 +26,14 @@ type ClientLayoutProps = {
 
 const StandardLayout = ({ children }: ClientLayoutProps) => (
   <ErrorBoundary componentName="StandardLayout">
-    <MouseContextProvider>
-      <ThemeModeProvider>
-        <DotRing />
-        <LayoutWrapper>{children}</LayoutWrapper>
-      </ThemeModeProvider>
-    </MouseContextProvider>
+    <WebMCPProvider>
+      <MouseContextProvider>
+        <ThemeModeProvider>
+          <DotRing />
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </ThemeModeProvider>
+      </MouseContextProvider>
+    </WebMCPProvider>
   </ErrorBoundary>
 );
 

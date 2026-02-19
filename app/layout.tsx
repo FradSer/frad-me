@@ -1,20 +1,12 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
-import { Fira_Code } from 'next/font/google';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 
 import ClientLayout from './client-layout';
 
 import '@/styles/globals.css';
-
-// Optimize Google Fonts loading
-const firaCode = Fira_Code({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-fira-code',
-});
 
 // Optimize GT Eesti font loading - only load necessary weights
 const gtEestiText = localFont({
@@ -83,7 +75,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${firaCode.variable} ${gtEestiText.variable} ${gtEestiDisplay.variable}`}
+      className={`${gtEestiText.variable} ${gtEestiDisplay.variable}`}
     >
       <body
         className="antialiased min-h-screen bg-white text-black transition-colors duration-300 ease-out dark:bg-black dark:text-white"

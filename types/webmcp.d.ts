@@ -1,0 +1,42 @@
+interface ToolRegistration {
+  unregister(): void;
+}
+
+declare global {
+  interface ModelContext {
+    registerTool(tool: {
+      name: string;
+      description: string;
+      inputSchema: Record<string, unknown>;
+      execute: (
+        params: unknown,
+      ) =>
+        | { content: { type: string; text: string }[] }
+        | Promise<{ content: { type: string; text: string }[] }>;
+    }): ToolRegistration;
+  }
+
+  interface Navigator {
+    modelContext?: ModelContext;
+  }
+}
+
+export interface WebMCPFormEvent extends Event {
+  agentInvoked?: boolean;
+  respondWith?: (promise: Promise<unknown>) => void;
+}
+
+declare module 'react' {
+  interface FormHTMLAttributes<T> extends HTMLAttributes<T> {
+    toolname?: string;
+    tooldescription?: string;
+  }
+
+  interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
+    toolparamdescription?: string;
+  }
+
+  interface TextareaHTMLAttributes<T> extends HTMLAttributes<T> {
+    toolparamdescription?: string;
+  }
+}

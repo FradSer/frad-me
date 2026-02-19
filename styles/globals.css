@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,8 +9,8 @@
     var(--font-gt-eesti-text), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono:
-    var(--font-fira-code), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, "Cascadia Code",
-    "Roboto Mono", Consolas, "Courier New", monospace;
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, "Cascadia Code", "Roboto Mono",
+    Consolas, "Courier New", monospace;
   --font-display:
     var(--font-gt-eesti-display), var(--font-gt-eesti-text), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
