@@ -24,7 +24,7 @@ function getModel() {
   const modelId = process.env.AI_MODEL_ID || 'gpt-4o-mini';
 
   const provider = createOpenAI({ baseURL, apiKey });
-  return provider(modelId);
+  return provider.chat(modelId);
 }
 
 // Simple in-memory rate limiter: max 20 requests per IP per minute.
