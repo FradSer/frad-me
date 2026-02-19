@@ -5,6 +5,8 @@ import type { UIMessage } from 'ai';
 import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const SUGGESTED_QUESTIONS = [
   'What does Frad do?',
@@ -36,7 +38,24 @@ function ChatMessage({ role, text }: { role: string; text: string }) {
             : 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-gray-100',
         )}
       >
-        <div className="whitespace-pre-wrap">{text}</div>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          className={clsx(
+            'prose max-w-none break-words',
+            isUser ? 'prose-invert dark:prose' : 'prose-neutral dark:prose-invert',
+            // Override prose defaults to fit bubble tightly
+            'prose-p:my-0 prose-ul:my-0 prose-ol:my-0 prose-li:my-0 prose-headings:my-1',
+            // Specific overrides for User bubble
+            isUser && 'dark:prose-headings:text-black dark:prose-strong:text-black',
+          )}
+          components={{
+            a: ({ node, ...props }) => (
+              <a {...props} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" />
+            ),
+          }}
+        >
+          {text}
+        </ReactMarkdown>
       </div>
     </motion.div>
   );
