@@ -37,7 +37,7 @@ const resumeData: ResumeData = {
   name: 'Frad LEE',
   title: '"T-shaped" Product Expert & Interactive Designer',
   summary:
-    'A "T-shaped" product expert with 10+ years bridging AI system architecture and interaction design. Transforms complex technical challenges into intuitive user experiences, combining strategic vision with hands-on execution across the entire product lifecycle. Currently pioneering Multi-Agent Systems and MCP server development.',
+    'AI Product Manager at RayNeo focused on AI-native systems and spatial computing. Specializing in Multi-modal interaction and Long-term Memory (LTM) architectures for AR glasses. Bridging technical depth in Multi-Agent Systems with 10+ years of interaction design expertise to build next-generation hardware experiences.',
   contact: {
     email: 'fradser@gmail.com',
     website: 'https://frad.me',
