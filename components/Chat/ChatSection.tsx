@@ -38,8 +38,7 @@ function ChatMessage({ role, text }: { role: string; text: string }) {
             : 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-gray-100',
         )}
       >
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
+        <div
           className={clsx(
             'prose max-w-none break-words',
             isUser ? 'prose-invert dark:prose' : 'prose-neutral dark:prose-invert',
@@ -48,14 +47,23 @@ function ChatMessage({ role, text }: { role: string; text: string }) {
             // Specific overrides for User bubble
             isUser && 'dark:prose-headings:text-black dark:prose-strong:text-black',
           )}
-          components={{
-            a: ({ node, ...props }) => (
-              <a {...props} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80" />
-            ),
-          }}
         >
-          {text}
-        </ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: ({ node, ...props }) => (
+                <a
+                  {...props}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:opacity-80"
+                />
+              ),
+            }}
+          >
+            {text}
+          </ReactMarkdown>
+        </div>
       </div>
     </motion.div>
   );
