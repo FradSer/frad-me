@@ -20,8 +20,8 @@ export function normalizeSlug(input: string): string | null {
   // Normalize input: lowercase and replace various separators with hyphens
   const normalized = input
     .toLowerCase()
-    .replace(/[^a-z0-9\s\-]/g, '') // Remove non-alphanumeric except spaces and hyphens
-    .replace(/[\s\-]+/g, '-');      // Replace spaces/hyphens with single hyphen
+    .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric except spaces and hyphens
+    .replace(/[\s-]+/g, '-');      // Replace spaces/hyphens with single hyphen
   
   // Try direct match with normalized version
   const directMatch = workLinks.find(w => w.slug === normalized);
