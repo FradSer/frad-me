@@ -47,9 +47,22 @@ const resumeData: ResumeData = {
   },
   experience: [
     {
+      title: 'AI Product Manager',
+      company: 'RayNeo',
+      startDate: '2024-03-01',
+      location: 'Shenzhen, Guangdong, China',
+      description: [
+        'Focus on AI-native system architecture and product strategy',
+        'Specializing in Multi-modal interaction and Long-term Memory (LTM) systems',
+        'Leading development of next-generation AI assistant features for AR glasses',
+        'Bridging the gap between advanced AI models and user-centric hardware experiences',
+      ],
+    },
+    {
       title: 'Senior Interactive Designer',
       company: 'vivo',
       startDate: '2023-03-01',
+      endDate: '2024-03-01',
       location: 'Shenzhen, Guangdong, China',
       description: [
         'Actively participated in the interactive design of the operating system of Vivo Vision since joining Vivo XR Lab',
