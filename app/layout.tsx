@@ -61,6 +61,10 @@ export const metadata: Metadata = {
     icon: ['/favicon-16x16.png', '/favicon-32x32.png'],
     apple: '/apple-touch-icon.png',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+  },
   other: {
     'google-adsense-account': 'ca-pub-6009006635541295',
   },
