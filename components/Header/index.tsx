@@ -10,7 +10,7 @@ function Header() {
     <>
       {/* Light mode 毛玻璃背景层 - 使用mask-image实现自然边缘过渡 */}
       <div
-        className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 dark:hidden"
+        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-50 dark:hidden"
         style={{
           background: 'rgba(255,255,255,0.08)',
           maskImage:
@@ -22,7 +22,7 @@ function Header() {
 
       {/* Dark mode 毛玻璃背景层 */}
       <div
-        className="fixed inset-x-0 top-0 h-24 backdrop-blur-lg pointer-events-none z-50 hidden dark:block"
+        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-50 hidden dark:block"
         style={{
           background: 'rgba(0,0,0,0.08)',
           maskImage:
@@ -32,7 +32,7 @@ function Header() {
         }}
       />
 
-      <nav className="flex h-24 flex-row items-center justify-between text-black dark:text-white relative z-55">
+      <nav className="flex h-[calc(6rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] flex-row items-center justify-between text-black dark:text-white relative z-55">
         <div className="flex items-center justify-center">
           <Link href="/" className="hover:cursor-none">
             <FLogo />

@@ -98,13 +98,13 @@ export default function DotRing() {
   // * Memoized styling classes
   const textClass = useMemo(
     () =>
-      'fixed flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-70',
+      'fixed hidden md:flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-70',
     [],
   );
 
   const backgroundClass = useMemo(
     () =>
-      clsx('fixed rounded-full bg-white pointer-events-none z-60 duration-100', {
+      clsx('fixed hidden md:block rounded-full bg-white pointer-events-none z-60 duration-100', {
         'mix-blend-difference': mouseContext.cursorType === 'default',
       }),
     [mouseContext.cursorType],
