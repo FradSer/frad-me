@@ -1,5 +1,12 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { type ModelMessage, stepCountIs, streamText, tool } from 'ai';
+import {
+  convertToModelMessages,
+  safeValidateUIMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  type UIMessage,
+} from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
@@ -65,14 +72,6 @@ You have tools to look up Frad's projects and resume. Use them when visitors ask
 Be helpful, concise, and friendly. Answer in the same language the user writes in.
 If asked about things unrelated to Frad or his work, politely redirect the conversation.`;
 
-// Only allow user/assistant roles from clients — system prompt is set server-side.
-const MessagesSchema = z.array(
-  z.object({
-    role: z.enum(['user', 'assistant']),
-    content: z.union([z.string(), z.array(z.unknown())]),
-  }),
-);
-
 export async function POST(req: NextRequest) {
   if (!process.env.AI_API_KEY) {
     return NextResponse.json({ error: 'Chat is not configured.' }, { status: 503 });
@@ -94,18 +93,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing messages field.' }, { status: 400 });
   }
 
-  const parsed = MessagesSchema.safeParse((body as { messages: unknown }).messages);
-  if (!parsed.success) {
+  const validated = await safeValidateUIMessages({
+    messages: (body as { messages: unknown }).messages,
+  });
+  if (!validated.success) {
     return NextResponse.json({ error: 'Invalid messages format.' }, { status: 400 });
   }
 
-  // Zod validates structure; cast to SDK type which uses a discriminated union
-  const messages = parsed.data as unknown as ModelMessage[];
+  const messages = validated.data;
 
   const result = streamText({
     model: getModel(),
     system: SYSTEM_PROMPT,
-    messages,
+    messages: await convertToModelMessages(messages),
     tools: {
       get_works: tool({
         description: "Get a list of all Frad's portfolio projects",
