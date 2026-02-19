@@ -49,7 +49,7 @@ const resumeData: ResumeData = {
     {
       title: 'AI Product Manager',
       company: 'RayNeo',
-      startDate: '2024-03-01',
+      startDate: '2025-12-09',
       location: 'Shenzhen, Guangdong, China',
       description: [
         'Focus on AI-native system architecture and product strategy',
@@ -62,7 +62,7 @@ const resumeData: ResumeData = {
       title: 'Senior Interactive Designer',
       company: 'vivo',
       startDate: '2023-03-01',
-      endDate: '2024-03-01',
+      endDate: '2025-12-01',
       location: 'Shenzhen, Guangdong, China',
       description: [
         'Actively participated in the interactive design of the operating system of Vivo Vision since joining Vivo XR Lab',
