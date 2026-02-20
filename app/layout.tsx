@@ -92,7 +92,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${gtEestiText.variable} ${gtEestiDisplay.variable}`}
     >
       <body
-        className="antialiased min-h-screen bg-white text-black transition-colors duration-300 ease-out dark:bg-black dark:text-white"
+        className="antialiased min-h-screen bg-white text-black dark:bg-black dark:text-white"
         // Keep native UI controls in sync with theme
         style={{ colorScheme: 'light dark' }}
       >

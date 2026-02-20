@@ -67,7 +67,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
       {/* Solid status bar cover: pure white (light) / pure black (dark).
           black-translucent + viewport-fit=cover lets content extend behind the bar;
           this div covers that zone with an opaque solid color. */}
-      <div className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
+      <div className="fixed inset-x-0 top-0 min-h-[1px] h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
 
       {/* Header gradient blur: covers full header + safe area with a fade-out edge */}
       <div
