@@ -89,7 +89,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${gtEestiText.variable} ${gtEestiDisplay.variable}`}
+      className={`${gtEestiText.variable} ${gtEestiDisplay.variable} bg-white dark:bg-black`}
     >
       <body
         className="antialiased min-h-screen bg-white text-black dark:bg-black dark:text-white"

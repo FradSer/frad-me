@@ -66,8 +66,9 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
 
       {/* Solid status bar cover: pure white (light) / pure black (dark).
           black-translucent + viewport-fit=cover lets content extend behind the bar;
-          this div covers that zone with an opaque solid color. */}
-      <div className="fixed inset-x-0 top-0 min-h-[1px] h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
+          this div covers that zone with an opaque solid color.
+          max(47px, env()) ensures at least 47px height even when env() returns 0. */}
+      <div className="fixed inset-x-0 top-0 min-h-[47px] h-[max(47px,env(safe-area-inset-top))] pointer-events-none z-[60] bg-white dark:bg-black" />
 
       {/* Header gradient blur: covers full header + safe area with a fade-out edge */}
       <div
@@ -95,7 +96,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         variants={headerVariants}
         initial="initial"
         animate="animate"
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black"
       >
         <div className="layout-wrapper pointer-events-auto mx-auto">
           <Header />
