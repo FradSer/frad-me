@@ -59,6 +59,56 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center bg-white dark:bg-black">
+      {/* === STATUS BAR BLUR ===
+          Must live here (outside motion.header) because Framer Motion applies
+          transform: translateY() during animation, which breaks backdrop-filter
+          on position:fixed children in Safari. */}
+
+      {/* Dedicated status bar layer: covers exactly env(safe-area-inset-top).
+          backdrop-blur-xl + opaque tint keeps white iOS icons readable. */}
+      <div
+        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] dark:hidden"
+        style={{
+          background: 'rgba(255,255,255,0.4)',
+          maskImage:
+            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
+        }}
+      />
+      <div
+        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] hidden dark:block"
+        style={{
+          background: 'rgba(0,0,0,0.4)',
+          maskImage:
+            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
+        }}
+      />
+
+      {/* Header gradient blur: covers full header + safe area with a fade-out edge */}
+      <div
+        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:hidden"
+        style={{
+          background: 'rgba(255,255,255,0.08)',
+          maskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+        }}
+      />
+      <div
+        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 hidden dark:block"
+        style={{
+          background: 'rgba(0,0,0,0.08)',
+          maskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
+        }}
+      />
+
       <motion.header
         variants={headerVariants}
         initial="initial"

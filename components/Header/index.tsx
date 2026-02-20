@@ -7,57 +7,9 @@ import headerLinks from '@/content/headerLinks';
 
 function Header() {
   return (
-    <>
-      {/* Status bar dedicated blur - covers exactly env(safe-area-inset-top) */}
-      {/* Light mode: opaque enough tint so white iOS status bar icons remain readable */}
-      <div
-        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] dark:hidden"
-        style={{
-          background: 'rgba(255,255,255,0.4)',
-          maskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-        }}
-      />
-      {/* Dark mode */}
-      <div
-        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] hidden dark:block"
-        style={{
-          background: 'rgba(0,0,0,0.4)',
-          maskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-        }}
-      />
-
-      {/* Header gradient blur - top-0 is correct with viewport-fit=cover (no -mt needed) */}
-      {/* Light mode 毛玻璃背景层 - 使用mask-image实现自然边缘过渡 */}
-      <div
-        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-50 dark:hidden"
-        style={{
-          background: 'rgba(255,255,255,0.08)',
-          maskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-        }}
-      />
-
-      {/* Dark mode 毛玻璃背景层 */}
-      <div
-        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-50 hidden dark:block"
-        style={{
-          background: 'rgba(0,0,0,0.08)',
-          maskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-        }}
-      />
-
-      <nav className="flex h-[calc(6rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] flex-row items-center justify-between text-black dark:text-white relative z-55">
+    // Blur layers are intentionally in LayoutWrapper (outside motion.header) to avoid
+    // backdrop-filter being broken by Framer Motion's transform on the parent element.
+    <nav className="flex h-[calc(6rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] flex-row items-center justify-between text-black dark:text-white relative z-55">
         <div className="flex items-center justify-center">
           <Link href="/" className="hover:cursor-none">
             <FLogo />
@@ -77,8 +29,7 @@ function Header() {
             <ThemeSwitcher />
           </li>
         </ul>
-      </nav>
-    </>
+    </nav>
   );
 }
 
