@@ -64,28 +64,10 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           transform: translateY() during animation, which breaks backdrop-filter
           on position:fixed children in Safari. */}
 
-      {/* Dedicated status bar layer: covers exactly env(safe-area-inset-top).
-          backdrop-blur-xl + opaque tint keeps white iOS icons readable. */}
-      <div
-        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] dark:hidden"
-        style={{
-          background: 'rgba(255,255,255,0.4)',
-          maskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-        }}
-      />
-      <div
-        className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] backdrop-blur-xl pointer-events-none z-[60] hidden dark:block"
-        style={{
-          background: 'rgba(0,0,0,0.4)',
-          maskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, black 60%, rgba(0,0,0,0.5) 85%, transparent 100%)',
-        }}
-      />
+      {/* Solid status bar cover: pure white (light) / pure black (dark).
+          black-translucent + viewport-fit=cover lets content extend behind the bar;
+          this div covers that zone with an opaque solid color. */}
+      <div className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
 
       {/* Header gradient blur: covers full header + safe area with a fade-out edge */}
       <div
