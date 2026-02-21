@@ -11,8 +11,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
-import { getWorkSummary } from '@/utils/workContent';
 import { normalizeSlug } from '@/utils/slugMapping';
+import { getWorkSummary } from '@/utils/workContent';
 
 // Configure via Vercel environment variables:
 //   AI_BASE_URL   Base URL of the OpenAI-compatible API (optional, defaults to OpenAI)
@@ -122,27 +122,30 @@ export async function POST(req: NextRequest) {
         },
       }),
       read_work: tool({
-        description: 'Get detailed information about a specific project including content summary. Accepts natural language project names like "BearyChat", "vivo Vision", etc.',
+        description:
+          'Get detailed information about a specific project including content summary. Accepts natural language project names like "BearyChat", "vivo Vision", etc.',
         inputSchema: z.object({
           slug: z.string().describe('The project name or slug (natural language accepted)'),
         }),
         execute: async ({ slug }: { slug: string }) => {
           // Normalize the slug using our mapping utility
           const normalizedSlug = normalizeSlug(slug);
-          
+
           if (!normalizedSlug) {
-            return { 
-              error: 'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video' 
+            return {
+              error:
+                'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
             };
           }
-          
+
           const work = workLinks.find((w) => w.slug === normalizedSlug);
           if (!work) {
-            return { 
-              error: 'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video' 
+            return {
+              error:
+                'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
             };
           }
-          
+
           const summary = getWorkSummary(normalizedSlug);
           return {
             title: work.title,

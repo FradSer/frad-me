@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
-import { getWorkSummary } from '@/utils/workContent';
 import { normalizeSlug } from '@/utils/slugMapping';
+import { getWorkSummary } from '@/utils/workContent';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     // First try exact match (for backward compatibility)
     let work = workLinks.find((w) => w.slug === slugParam);
-    
+
     // If not found, try normalized slug
     if (!work) {
       const normalized = normalizeSlug(slugParam);
