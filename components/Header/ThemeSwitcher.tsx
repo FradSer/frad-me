@@ -34,7 +34,7 @@ export default function ThemeSwitcher() {
       <motion.button
         aria-label="Toggle Dark Mode"
         type="button"
-        className="flex h-8 w-8 items-center justify-center text-black dark:text-white dark:mix-blend-difference"
+        className="flex h-8 w-8 items-center justify-center text-black dark:text-white sm:dark:mix-blend-difference"
         onClick={toggleTheme}
         initial="initial"
         whileHover="hover"

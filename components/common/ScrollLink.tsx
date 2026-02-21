@@ -3,6 +3,7 @@ import type { MouseEvent, ReactNode } from 'react';
 type IScrollLinkProps = {
   destination: string;
   children: ReactNode;
+  onClick?: () => void;
 };
 
 export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
@@ -15,6 +16,7 @@ export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
         block: 'start',
       });
     }
+    props.onClick?.();
   };
 
   return (

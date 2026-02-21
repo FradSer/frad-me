@@ -59,20 +59,18 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center bg-white dark:bg-black">
-      {/* === STATUS BAR BLUR ===
+      {/* === STATUS BAR COVER ===
+          Solid status bar cover for iOS safe area.
+          black-translucent + viewport-fit=cover lets content extend behind the bar;
+          this div covers that zone with an opaque solid color. */}
+      <div className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
+
+      {/* === DESKTOP HEADER BLUR (hidden on mobile) ===
           Must live here (outside motion.header) because Framer Motion applies
           transform: translateY() during animation, which breaks backdrop-filter
           on position:fixed children in Safari. */}
-
-      {/* Solid status bar cover: pure white (light) / pure black (dark).
-          black-translucent + viewport-fit=cover lets content extend behind the bar;
-          this div covers that zone with an opaque solid color.
-          max(47px, env()) ensures at least 47px height even when env() returns 0. */}
-      <div className="fixed inset-x-0 top-0 min-h-[47px] h-[max(47px,env(safe-area-inset-top))] pointer-events-none z-[60] bg-white dark:bg-black" />
-
-      {/* Header gradient blur: covers full header + safe area with a fade-out edge */}
       <div
-        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:hidden"
+        className="hidden sm:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:!hidden"
         style={{
           background: 'rgba(255,255,255,0.08)',
           maskImage:
@@ -82,7 +80,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         }}
       />
       <div
-        className="fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 hidden dark:block"
+        className="hidden sm:dark:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40"
         style={{
           background: 'rgba(0,0,0,0.08)',
           maskImage:
@@ -96,7 +94,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         variants={headerVariants}
         initial="initial"
         animate="animate"
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black sm:bg-transparent sm:dark:bg-transparent"
       >
         <div className="layout-wrapper pointer-events-auto mx-auto">
           <Header />

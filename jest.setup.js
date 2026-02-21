@@ -68,6 +68,7 @@ jest.mock('motion/react', () => {
       button: createMotionWrapper('button'),
       svg: createMotionWrapper('svg'),
       path: createMotionWrapper('path'),
+      line: createMotionWrapper('line'),
     },
     AnimatePresence: ({ children }) => children,
     useAnimationControls: () => ({

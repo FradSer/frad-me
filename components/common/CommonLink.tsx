@@ -14,6 +14,8 @@ interface ICommonLinkProps {
   title: string;
   href: string;
   destinationType?: DestinationType;
+  className?: string;
+  onNavigate?: () => void;
 }
 
 enum DestinationType {
@@ -25,21 +27,24 @@ function CommonLink({
   title,
   href,
   destinationType = DestinationType.link,
+  className,
+  onNavigate,
 }: Readonly<ICommonLinkProps>) {
   const pathname = usePathname();
 
   const titleClass = useMemo(
     () =>
       clsx(
-        'text-black dark:text-white dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
+        'text-black dark:text-white sm:dark:mix-blend-difference hover:decoration-4 hover:underline hover:delay-1000 hover:cursor-pointer',
+        className,
       ),
-    [],
+    [className],
   );
 
   const link = useMemo(() => {
     if (destinationType === DestinationType.link) {
       return (
-        <Link href={href} className={titleClass}>
+        <Link href={href} className={titleClass} onClick={onNavigate}>
           {title}
         </Link>
       );
@@ -47,19 +52,19 @@ function CommonLink({
     if (destinationType === DestinationType.section) {
       if (pathname === '/') {
         return (
-          <ScrollLink destination={href}>
+          <ScrollLink destination={href} onClick={onNavigate}>
             <span className={titleClass}>{title}</span>
           </ScrollLink>
         );
       }
       return (
-        <Link href={`/#${href}`} className={titleClass}>
+        <Link href={`/#${href}`} className={titleClass} onClick={onNavigate}>
           {title}
         </Link>
       );
     }
     return null;
-  }, [destinationType, href, pathname, title, titleClass]);
+  }, [destinationType, href, pathname, title, titleClass, onNavigate]);
 
   // * Render
   return <CursorProvider targetCursorType={CursorType.headerLinkHovered}>{link}</CursorProvider>;

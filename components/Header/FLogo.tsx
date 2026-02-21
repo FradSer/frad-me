@@ -12,7 +12,7 @@ export default function FLogo() {
         viewBox="0 0 1024 1024"
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-        className="h-12 w-12 fill-black hover:cursor-pointer dark:fill-white dark:mix-blend-difference"
+        className="h-10 w-10 sm:h-12 sm:w-12 fill-black hover:cursor-pointer dark:fill-white sm:dark:mix-blend-difference"
         aria-label="Frad Logo"
       >
         <title>Frad Logo</title>
