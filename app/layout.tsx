@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 
@@ -61,9 +61,23 @@ export const metadata: Metadata = {
     icon: ['/favicon-16x16.png', '/favicon-32x32.png'],
     apple: '/apple-touch-icon.png',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+  },
   other: {
     'google-adsense-account': 'ca-pub-6009006635541295',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
 };
 
 type RootLayoutProps = {
@@ -75,10 +89,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${gtEestiText.variable} ${gtEestiDisplay.variable}`}
+      className={`${gtEestiText.variable} ${gtEestiDisplay.variable} bg-white dark:bg-black`}
     >
       <body
-        className="antialiased min-h-screen bg-white text-black transition-colors duration-300 ease-out dark:bg-black dark:text-white"
+        className="antialiased min-h-screen bg-white text-black dark:bg-black dark:text-white"
         // Keep native UI controls in sync with theme
         style={{ colorScheme: 'light dark' }}
       >
