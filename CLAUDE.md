@@ -13,7 +13,7 @@ pnpm dev              # Start dev server on localhost:3000
 pnpm build            # Production build (Turbopack by default)
 pnpm check            # Biome format + lint + import organize (recommended before commit)
 pnpm test             # Jest unit tests
-pnpm test -- path     # Run specific test, e.g. pnpm test components/Header/__tests__/Header.test.tsx
+pnpm test path         # Run specific test, e.g. pnpm test utils/__tests__/mdx.test.ts
 pnpm test:e2e         # Playwright E2E tests
 pnpm test:all         # Unit + E2E
 pnpm analyze          # Bundle analysis (forces webpack mode)
