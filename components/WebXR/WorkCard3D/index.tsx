@@ -1,3 +1,5 @@
+'use client';
+
 import { Html, Text } from '@react-three/drei';
 import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';

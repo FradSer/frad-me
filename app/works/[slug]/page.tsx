@@ -8,6 +8,12 @@ type WorkPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+// Wraps mdx-bundler (uses crypto.randomUUID) in cache for static generation
+async function getCachedPostData(slug: string) {
+  'use cache';
+  return await getSinglePost(slug);
+}
+
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({
@@ -18,14 +24,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const work = await getSinglePost(slug);
+    const { frontmatter } = await getCachedPostData(slug);
     return {
-      title: work.frontmatter.title,
-      description: work.frontmatter.description || `Work showcase: ${work.frontmatter.title}`,
+      title: frontmatter.title,
+      description: frontmatter.description || `Work showcase: ${frontmatter.title}`,
       openGraph: {
-        title: work.frontmatter.title,
-        description: work.frontmatter.description,
-        images: work.frontmatter.cover ? [{ url: work.frontmatter.cover }] : [],
+        title: frontmatter.title,
+        description: frontmatter.description,
+        images: frontmatter.cover ? [{ url: frontmatter.cover }] : [],
       },
     };
   } catch {
@@ -38,7 +44,7 @@ export async function generateMetadata({ params }: WorkPageProps): Promise<Metad
 export default async function WorkPage({ params }: WorkPageProps) {
   try {
     const { slug } = await params;
-    const { code, frontmatter } = await getSinglePost(slug);
+    const { code, frontmatter } = await getCachedPostData(slug);
     return <WorkPageClient code={code} frontmatter={frontmatter} />;
   } catch {
     notFound();

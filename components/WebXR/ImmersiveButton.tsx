@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useCallback, useState } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
 import { xrStore } from './WebXRCanvas';

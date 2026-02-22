@@ -1,3 +1,5 @@
+'use client';
+
 import { Canvas } from '@react-three/fiber';
 import { createXRStore, XR } from '@react-three/xr';
 import { memo, useEffect, useMemo, useState } from 'react';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useFrame } from '@react-three/fiber';
 import dynamic from 'next/dynamic';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';

@@ -23,6 +23,7 @@ const nextConfig = {
     'three',
     'three-stdlib',
   ],
+  cacheComponents: true,
   // Turbopack configuration for Next.js 16
   // Note: Bundle analyzer (ANALYZE=true) requires webpack mode
   // Run with: pnpm run build -- --webpack for bundle analysis

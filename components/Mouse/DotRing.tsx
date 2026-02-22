@@ -1,3 +1,5 @@
+'use client';
+
 import { clsx } from 'clsx';
 import { motion, useAnimationControls, useMotionValue, useSpring } from 'motion/react';
 import { useEffect, useMemo } from 'react';

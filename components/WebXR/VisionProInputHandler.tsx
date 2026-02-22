@@ -1,3 +1,5 @@
+'use client';
+
 import { useXR } from '@react-three/xr';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';

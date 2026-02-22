@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, useMotionValue, useTransform } from 'motion/react';
 
 import useMousePosition from '@/hooks/useMousePosition';

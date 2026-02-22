@@ -1,3 +1,5 @@
+'use client';
+
 import { CommonLink } from '@/components/common/CommonLink';
 
 import footerLinks from '@/content/footerLinks';
