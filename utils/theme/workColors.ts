@@ -9,4 +9,3 @@ export const workColorMap = {
 export const getWorkColor = (slug: string): string => {
   return workColorMap[slug as keyof typeof workColorMap] || 'bg-white';
 };
-

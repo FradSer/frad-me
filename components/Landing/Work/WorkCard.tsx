@@ -5,8 +5,8 @@ import { motion, type useAnimationControls } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import useMouseContext from '@/hooks/useMouseContext';
 import { CursorType } from '@/contexts/Mouse/MouseContext';
+import useMouseContext from '@/hooks/useMouseContext';
 import {
   type AnimationVariants,
   createVariants,

@@ -1,9 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-
-import useMouseContext from '@/hooks/useMouseContext';
 import { CursorType } from '@/contexts/Mouse/MouseContext';
+import useMouseContext from '@/hooks/useMouseContext';
 
 type ICursorProviderProps = {
   children: React.ReactNode;

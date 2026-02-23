@@ -1,11 +1,14 @@
 'use client';
 
 import { clsx } from 'clsx';
+import { motion } from 'motion/react';
 import { PlayIcon, StopIcon } from '@/components/common/Icons';
 import ScrollLink from '@/components/common/ScrollLink';
 import DotCircle from '@/components/Landing/Hero/DotCircle';
 import Rectangle from '@/components/Landing/Hero/Rectangle';
 import Triangle from '@/components/Landing/Hero/Triangle';
+import { CursorType } from '@/contexts/Mouse/MouseContext';
+import useMouseContext from '@/hooks/useMouseContext';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 
 interface IHeroProps {
@@ -27,23 +30,34 @@ const mutedTextClass = 'text-gray-400';
 
 function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis();
+  const { cursorChangeHandler } = useMouseContext();
 
   const heroH1 = clsx(
     'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
   );
 
+  const handleButtonHoverStart = () => {
+    cursorChangeHandler(CursorType.headerLinkHovered);
+  };
+
+  const handleButtonHoverEnd = () => {
+    cursorChangeHandler(CursorType.default);
+  };
+
   return (
     <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
       <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
         {isSupported && (
-          <button
+          <motion.button
             type="button"
             onClick={isSpeaking ? stop : () => speak(heroText, 'Fred')}
-            className="absolute -left-10 top-1 z-10 rounded bg-gray-200 p-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+            onHoverStart={handleButtonHoverStart}
+            onHoverEnd={handleButtonHoverEnd}
+            className="absolute -left-10 top-1 z-10 cursor-pointer rounded bg-gray-200 p-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             aria-label={isSpeaking ? 'Stop speaking' : 'Speak text'}
           >
             {isSpeaking ? <StopIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
-          </button>
+          </motion.button>
         )}
         <div className="relative">
           <div className={trianglePositionClass}>
