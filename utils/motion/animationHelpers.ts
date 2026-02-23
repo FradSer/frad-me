@@ -1,16 +1,12 @@
-import type { Transition, Variant, Variants } from 'motion/react';
+import type { Variant, Variants } from 'motion/react';
 import { useAnimationControls } from 'motion/react';
 import { useCallback, useMemo } from 'react';
 
 import type { Position } from '@/types/common';
 import { primaryTransition } from './springTransitions';
 
-export type AnimationVariant = Variant & {
-  transition?: Transition;
-};
-
 export type AnimationVariants = Record<string, Variants>;
-export type AnimationStateMap = Record<string, string>;
+type AnimationStateMap = Record<string, string>;
 
 const DEFAULT_BLEND_FACTOR = 0.7;
 

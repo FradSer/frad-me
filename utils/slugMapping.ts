@@ -41,13 +41,3 @@ export function normalizeSlug(input: string): string | null {
   // If we can't find a match, return null
   return null;
 }
-
-/**
- * Get a project by slug or natural language name.
- * Returns the work object if found, null otherwise.
- */
-export function getWorkBySlugOrName(input: string) {
-  const slug = normalizeSlug(input);
-  if (!slug) return null;
-  return workLinks.find((w) => w.slug === slug) || null;
-}

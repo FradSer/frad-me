@@ -1,8 +1,6 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import type { WorkFrontmatter } from '@/types/work';
-
-const WORKS_PATH = path.join(process.cwd(), 'markdown', 'works');
+import { WORKS_PATH } from '@/utils/workContent';
 
 export interface WorkListItem {
   slug: string;

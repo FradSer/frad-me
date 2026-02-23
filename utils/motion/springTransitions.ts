@@ -1,4 +1,4 @@
-export const SPRING_STIFFNESS = {
+const SPRING_STIFFNESS = {
   primary: 100,
   secondary: 50,
 } as const;

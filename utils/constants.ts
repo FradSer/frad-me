@@ -30,5 +30,4 @@ export const ANIMATION_CONSTANTS = {
 // Site metadata
 export const SITE_CONFIG = {
   domain: 'https://frad.me',
-  title: 'Work by Frad',
 } as const;

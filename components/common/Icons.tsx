@@ -102,13 +102,3 @@ export const DownArrowIcon = memo(
 
 DownArrowIcon.displayName = 'DownArrowIcon';
 
-// Triangle shape
-export const TriangleIcon = memo(
-  forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-    <SVGIcon ref={ref} viewBox="0 0 149 129" {...props}>
-      <path d="M74.5 0L148.545 128.25H0.454826L74.5 0Z" />
-    </SVGIcon>
-  )),
-);
-
-TriangleIcon.displayName = 'TriangleIcon';

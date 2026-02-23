@@ -6,14 +6,6 @@ const headerLinks = [
     href: 'work',
     destinationType: DestinationType.section,
   },
-  // {
-  //   title: 'blog',
-  //   href: '/blog',
-  // },
-  // {
-  //   title: 'side',
-  //   href: '/side',
-  // },
   {
     title: 'resume',
     href: '/resume',

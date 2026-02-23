@@ -11,11 +11,3 @@ export type Size = {
   readonly width: number;
   readonly height: number;
 };
-
-export type Dimensions = Position & Size;
-
-export type AnimationState = 'initial' | 'animate' | 'exit';
-
-export type ThemeMode = 'light' | 'dark' | 'system';
-
-// Utility types for better type safety
