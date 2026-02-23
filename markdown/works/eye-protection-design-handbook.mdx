@@ -1,17 +1,13 @@
----
-cover: '/works/eye-protection-design-handbook/cover.png'
-coverBackground: bg-[#313131]
-title: Eye Protection Design Handbook
-description: is a design study for the vast majority of ByteDance’s products.
-platforms:
-  - Web
-  - iOS
-  - Android
-contributors:
-  - Design Researcher
-  - UX Designer
-site: https://bytedance.com
----
+export const metadata = {
+  cover: '/works/eye-protection-design-handbook/cover.png',
+  coverBackground: 'bg-[#313131]',
+  title: 'Eye Protection Design Handbook',
+  description: 'is a design study for the vast majority of ByteDance\'s products.',
+  platforms: ['Web', 'iOS', 'Android'],
+  contributors: ['Design Researcher', 'UX Designer'],
+  site: 'https://bytedance.com',
+  nextWork: 'bearychat',
+}
 
 After joining ByteDance, I helped found the GIP UED Creative Design Lab and led the first design study to reduce the visual damage while people were using our products. This handbook is now widely used, such as Douyin, Xigua Video, Jinri Toutiao, and other applications to help product designers explain the principles of vision impairment and design recommendations for eye protection.
 
@@ -25,7 +21,7 @@ _For some reason, the details of the original document cannot be shown._
 
 # Visual Fatigue
 
-The most significant damage to the eyes from using screens is visual fatigue. Visual fatigue can lead to dry eyes, astringent eyes, sore eyes, blurred vision, and even vision loss, affecting a person’s work and life.
+The most significant damage to the eyes from using screens is visual fatigue. Visual fatigue can lead to dry eyes, astringent eyes, sore eyes, blurred vision, and even vision loss, affecting a person's work and life.
 
 ## Causes of Visual Fatigue
 
@@ -38,7 +34,7 @@ When people view a screen at close range, their eyes perform a series of actions
 
 ### Light Intensity
 
-When the difference between the screen brightness and the people’s ambient light intensity is significant, the pupil needs to remain contracted or dilated for a long time to make the light enter the eye appropriately. At this time, the muscles in the eye are under tension, which will increase people’s visual fatigue. Such a difference in brightness will also be more likely to distract people’s attention.
+When the difference between the screen brightness and the people's ambient light intensity is significant, the pupil needs to remain contracted or dilated for a long time to make the light enter the eye appropriately. At this time, the muscles in the eye are under tension, which will increase people's visual fatigue. Such a difference in brightness will also be more likely to distract people's attention.
 
 ### Highly Saturated Colors
 
@@ -52,11 +48,11 @@ When the screen and the people are in vibration or motion, the eyes need to cons
 
 ### Viewing from a Distance
 
-The farther the people are from the screen, the better the protection for vision. However, there are more complex factors to consider in real design scenarios. Therefore, designers should have a comprehensive expectation of the distance between the people’s eyes and the screen, called the “design viewing distance.” The design viewing distance is determined by eye hygiene, a people operating range, viewing comfort, and other conditions.
+The farther the people are from the screen, the better the protection for vision. However, there are more complex factors to consider in real design scenarios. Therefore, designers should have a comprehensive expectation of the distance between the people's eyes and the screen, called the "design viewing distance." The design viewing distance is determined by eye hygiene, a people operating range, viewing comfort, and other conditions.
 
-According to the Human Factors and Ergonomics Society (2007), the minimum viewing distance for eye protection is 40cm, and the typical close eye distance is 40cm. This distance needs to be considered first and is called the “**standard eye protection distance**”.
+According to the Human Factors and Ergonomics Society (2007), the minimum viewing distance for eye protection is 40cm, and the typical close eye distance is 40cm. This distance needs to be considered first and is called the "**standard eye protection distance**".
 
-People should be able to see every logical pixel when viewing the screen. Otherwise, they will not be able to recognize some details. Similar to the Snellen chart, the limit of visual angle that the eye can recognize is 1/60th of a degree. However, when designing an interface, it is more important to make it comfortable for the user. Therefore, the more widely accepted 1.5/60 degrees are used as each logical pixel's visual angle size. The distance at which people can see precisely 1.5/60 degrees is the “**eye comfort distance**”.
+People should be able to see every logical pixel when viewing the screen. Otherwise, they will not be able to recognize some details. Similar to the Snellen chart, the limit of visual angle that the eye can recognize is 1/60th of a degree. However, when designing an interface, it is more important to make it comfortable for the user. Therefore, the more widely accepted 1.5/60 degrees are used as each logical pixel's visual angle size. The distance at which people can see precisely 1.5/60 degrees is the "**eye comfort distance**".
 
 Through some research, we have obtained the formula for calculating the eye comfort distance:
 
@@ -65,15 +61,15 @@ Through some research, we have obtained the formula for calculating the eye comf
 - _L_ is the diagonal size of the device screen.
 - _H_ is the number of logical pixels on the device's screen height.
 - _W_ is the number of logical pixels on the device screen width.
-- _δ_ is the viewing angle that meets the eye's comfort. It is usually 1.5/60 degrees.
+- _d_ is the viewing angle that meets the eye's comfort. It is usually 1.5/60 degrees.
 
 In summary: the larger the size of the device and the smaller the logical resolution, the greater the eye comfort distance between the human eye and the screen.
 
 Nevertheless, keep in mind that when using devices such as cell phones and tablets, they all belong to the eyes working at close range, and the relief of visual fatigue is minimal. If people can use the screen casting function to display the content on the TV and projection, the comfort level for the eyes is ideal. The effect is even better when the mobile device becomes a controller-like device that can be linked to the content on the TV.
 
-Different devices require different interaction methods. Cell phones and tablets are touch-operated, laptops and desktop computers are mouse and keyboard, and TVs and projections are remote-controlled. Therefore, the range of operation is different when people use different devices. It is called the “**operable distance**”.
+Different devices require different interaction methods. Cell phones and tablets are touch-operated, laptops and desktop computers are mouse and keyboard, and TVs and projections are remote-controlled. Therefore, the range of operation is different when people use different devices. It is called the "**operable distance**".
 
-At the center of the eye, about 10 degrees is the most sensitive area, 10 to 20 degrees can correctly identify information, and 20 to 30 degrees is more sensitive to dynamics. When the vertical viewing angle of an image is 20 degrees, and the horizontal viewing angle is 36 degrees, there is a perfect sense of visual presence and no fatigue caused by the frequent turning of the eyes. The viewing distance calculated from the size of the people’s screen is called the “**presence distance**.”
+At the center of the eye, about 10 degrees is the most sensitive area, 10 to 20 degrees can correctly identify information, and 20 to 30 degrees is more sensitive to dynamics. When the vertical viewing angle of an image is 20 degrees, and the horizontal viewing angle is 36 degrees, there is a perfect sense of visual presence and no fatigue caused by the frequent turning of the eyes. The viewing distance calculated from the size of the people's screen is called the "**presence distance**".
 
 An appropriate design viewing distance can be derived according to the scenario when these three distances are calculated. When we want to remind users not to watch too close to the screen in the product, this distance can be used as a threshold value. In addition, the design viewing distance can help us examine the interface's usability and visual effect from the user's point of view for some devices that are not used daily, such as large screens. Of course, it is also better to use this distance when doing usability testing.
 
@@ -107,7 +103,7 @@ We also need to reconsider the font size when calculating the design viewing dis
 
 Comfortable font size for body text should have a stroke thickness equal to or greater than one logical pixel in height. Take PingFang Regular as an example. When its stroke thickness equals 1 pt, its font size is 14.5 pt. When people sit at eye comfort distance, the 14.5 pt appendix looks comfortable and eye-friendly. Keep in mind that this size also varies for different font weights of the same font family or different font families.
 
-However, the “design viewing distance” and “eye comfort distance” are different. In order to ensure the people’s comfort at the “design viewing distance,” the font size of the text selected for our design needs to be scaled accordingly. This ratio follows the following formula:
+However, the "design viewing distance" and "eye comfort distance" are different. In order to ensure the people's comfort at the "design viewing distance," the font size of the text selected for our design needs to be scaled accordingly. This ratio follows the following formula:
 
 <ComfortableFontSFormula />
 
@@ -195,7 +191,7 @@ Short-wave blue light with wavelengths between 400-450 nm is harmful to the eyes
 
 ### Hardware Filtering
 
-Anti-blue light stick for screen or people wearing anti-blue light glasses can effectively filter the blue light emitted from the screen. However, one must consider the impact of filtering blue light simultaneously—the screen displays contrast, saturation, brightness, and other indicators.
+Anti-blue light stick for screen or people wearing anti-blue light glasses can effectively filter the blue light emitted from the screen. However, one must consider the impact of filtering blue light simultaneously-the screen displays contrast, saturation, brightness, and other indicators.
 
 ### Screen Reduction
 
@@ -217,7 +213,7 @@ Of course, it is technically possible to change the color temperature of an appl
 
 The color temperature of the content changes, the contrast between elements will also change. People need to maintain enough contrast between different elements to distinguish the content clearly.
 
-In the standard eye-care mode design for black-on-white (background color is brighter than foreground color) scenes, as the background color temperature decreases, the relative brightness of the background also decreases. In order to keep the contrast stable, it is necessary to reduce the brightness of the foreground color accordingly after reducing the color temperature (i.e., use HSL color mode to reduce the L value of the foreground color appropriately) to keep the contrast stable.
+In the standard eye-care mode design for black-on-white (background color is brighter than foreground color) scenes, as the background color temperature decreases, the relative brightness of the background also decreases. In order to keep the contrast stable, it is necessary to reduce the brightness of the foreground color accordingly after reducing the color temperature (i.e. use HSL color mode to reduce the L value of the foreground color appropriately) to keep the contrast stable.
 
 **Real Cases:**
 
