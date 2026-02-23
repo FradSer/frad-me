@@ -10,8 +10,8 @@ export interface WorkFrontmatter {
 }
 
 export interface WorkPageProps {
-  code: string;
-  frontmatter: WorkFrontmatter;
+  children: React.ReactNode;
+  metadata: WorkFrontmatter;
 }
 
 export interface WorkImageProps {

@@ -16,7 +16,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/markdown/*": ["./markdown/*"]
     },
     "types": ["jest", "@types/node"],
     "plugins": [
@@ -29,6 +30,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.d.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next/dev/dev/types/**/*.ts"
