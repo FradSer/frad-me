@@ -17,8 +17,7 @@ import {
   WORK_GRID_INITIAL_STATE,
   WORK_GRID_LIGHTING,
 } from '@/utils/webxr/workGridConstants';
-import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
-import WorkCard3D from '../WorkCard3D';
+import WorkCardsInstanced from '../WorkCardsInstanced';
 
 const _Html = dynamic(
   () =>
@@ -106,6 +105,9 @@ const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible
     }
   });
 
+  const currentOpacity = opacitySpring.value;
+  const shouldBeVisible = currentOpacity > WORK_GRID_CONFIG.VISIBILITY_THRESHOLD && isWorkView;
+
   const displayWorks = workLinks.slice(0, WORK_GRID_CONFIG.MAX_DISPLAY_WORKS);
   const totalWorks = workLinks.length;
 
@@ -122,18 +124,7 @@ const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible
         color={WORK_GRID_LIGHTING.POINT_COLOR}
       />
 
-      {displayWorks.map((work, index) => {
-        const position = calculateCardPosition(index + 1, work.isFullScreen || false, totalWorks);
-        return (
-          <WorkCard3D
-            key={work.slug}
-            work={work}
-            position={position}
-            index={index}
-            visible={true}
-          />
-        );
-      })}
+      <WorkCardsInstanced works={displayWorks} visible={isWorkView} />
     </group>
   );
 });
