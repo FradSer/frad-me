@@ -232,3 +232,102 @@ if (!global.performance.measure) {
 
 // Keep original console methods for tests that need to spy on them
 // Tests will mock these individually as needed
+
+// Mock HTMLCanvasElement.getContext for three.js tests
+HTMLCanvasElement.prototype.getContext = jest.fn((contextType) => {
+  if (contextType === 'webgl' || contextType === 'webgl2') {
+    return {
+      getParameter: jest.fn(() => 0),
+      enable: jest.fn(),
+      disable: jest.fn(),
+      createShader: jest.fn(() => ({})),
+      createProgram: jest.fn(() => ({})),
+      attachShader: jest.fn(),
+      linkProgram: jest.fn(),
+      useProgram: jest.fn(),
+      deleteProgram: jest.fn(),
+      deleteShader: jest.fn(),
+      getShaderParameter: jest.fn(() => true),
+      getProgramParameter: jest.fn(() => true),
+      getProgramInfoLog: jest.fn(() => ''),
+      getShaderInfoLog: jest.fn(() => ''),
+      createBuffer: jest.fn(() => ({})),
+      bindBuffer: jest.fn(),
+      bufferData: jest.fn(),
+      vertexAttribPointer: jest.fn(),
+      enableVertexAttribArray: jest.fn(),
+      disableVertexAttribArray: jest.fn(),
+      drawElements: jest.fn(),
+      drawArrays: jest.fn(),
+      activeTexture: jest.fn(),
+      bindTexture: jest.fn(),
+      texImage2D: jest.fn(),
+      texParameteri: jest.fn(),
+      createTexture: jest.fn(() => ({})),
+      deleteBuffer: jest.fn(),
+      deleteTexture: jest.fn(),
+      getUniformLocation: jest.fn(() => ({})),
+      getAttribLocation: jest.fn(() => 0),
+      uniform1f: jest.fn(),
+      uniform2f: jest.fn(),
+      uniform3f: jest.fn(),
+      uniform4f: jest.fn(),
+      uniform1i: jest.fn(),
+      uniform2i: jest.fn(),
+      uniform3i: jest.fn(),
+      uniform4i: jest.fn(),
+      uniformMatrix4fv: jest.fn(),
+      createFramebuffer: jest.fn(() => ({})),
+      bindFramebuffer: jest.fn(),
+      framebufferTexture2D: jest.fn(),
+      deleteFramebuffer: jest.fn(),
+      createRenderbuffer: jest.fn(() => ({})),
+      bindRenderbuffer: jest.fn(),
+      framebufferRenderbuffer: jest.fn(),
+      deleteRenderbuffer: jest.fn(),
+      clearColor: jest.fn(),
+      clear: jest.fn(),
+      enable: jest.fn(),
+      disable: jest.fn(),
+      depthFunc: jest.fn(),
+      cullFace: jest.fn(),
+      frontFace: jest.fn(),
+      viewport: jest.fn(),
+      scissor: jest.fn(),
+      enable: jest.fn(),
+      disable: jest.fn(),
+      blendFunc: jest.fn(),
+      blendEquation: jest.fn(),
+    };
+  }
+  return null;
+});
+
+// Mock WebGLRenderer in three.js
+jest.mock('three', () => {
+  const actualThree = jest.requireActual('three');
+
+  return {
+    ...actualThree,
+    WebGLRenderer: jest.fn().mockImplementation(() => ({
+      setSize: jest.fn(),
+      render: jest.fn(),
+      dispose: jest.fn(),
+      info: {
+        render: {
+          calls: 0,
+          triangles: 0,
+          points: 0,
+          lines: 0,
+        },
+        memory: {
+          geometries: 0,
+          textures: 0,
+        },
+      },
+      domElement: document.createElement('canvas'),
+      setPixelRatio: jest.fn(),
+      getPixelRatio: jest.fn(() => 1),
+    })),
+  };
+});

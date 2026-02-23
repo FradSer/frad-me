@@ -86,31 +86,35 @@ export class DrawCallOptimizer {
         const material = object.material;
         if (Array.isArray(material)) {
           material.forEach((mat) => {
-            if (!this.materialCache.has(mat)) {
+            const cache = this.materialCache.get(mat);
+            if (!cache) {
               this.materialCache.set(mat, []);
             }
-            this.materialCache.get(mat)!.push(object);
+            this.materialCache.get(mat)?.push(object);
           });
         } else if (material) {
-          if (!this.materialCache.has(material)) {
+          const cache = this.materialCache.get(material);
+          if (!cache) {
             this.materialCache.set(material, []);
           }
-          this.materialCache.get(material)!.push(object);
+          this.materialCache.get(material)?.push(object);
         }
 
         if (object.geometry) {
-          if (!this.geometryCache.has(object.geometry)) {
+          const cache = this.geometryCache.get(object.geometry);
+          if (!cache) {
             this.geometryCache.set(object.geometry, []);
           }
-          this.geometryCache.get(object.geometry)!.push(object);
+          this.geometryCache.get(object.geometry)?.push(object);
         }
 
         if (material && !Array.isArray(material)) {
           if ('map' in material && material.map instanceof THREE.Texture) {
-            if (!this.textureCache.has(material.map)) {
+            const cache = this.textureCache.get(material.map);
+            if (!cache) {
               this.textureCache.set(material.map, []);
             }
-            this.textureCache.get(material.map)!.push(object);
+            this.textureCache.get(material.map)?.push(object);
           }
         }
       }
@@ -220,7 +224,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [geometry, meshes] of this.geometryCache) {
+    for (const [_geometry, meshes] of this.geometryCache) {
       if (meshes.length >= this.config.instancingMinimumCount) {
         const material = meshes[0].material;
         const sameMaterialMeshes = meshes.filter((mesh) => mesh.material === material);
@@ -246,7 +250,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [material, meshes] of this.materialCache) {
+    for (const [_material, meshes] of this.materialCache) {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;
@@ -280,7 +284,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [geometry, meshes] of this.geometryCache) {
+    for (const [_geometry, meshes] of this.geometryCache) {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;
