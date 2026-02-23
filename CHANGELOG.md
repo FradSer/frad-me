@@ -1,5 +1,76 @@
 # Changelog
 
+## [0.22.0](https://github.com/FradSer/frad-me/compare/v0.21.0...v0.22.0) (2026-02-24)
+
+### Features
+
+- **webxr:** add instanced work cards with GPU-first instancing for improved performance
+- **webxr:** add performance monitoring and accessibility enhancements
+- **webxr:** add instanced hover detection hook for efficient cursor interactions
+- **hero:** add hover cursor effect for better user feedback
+- **chat:** add AI-native chat with enhanced WebMCP tools integration
+- **chat:** support markdown rendering with syntax highlighting and typography
+- **chat:** switch to OpenAI-compatible provider with environment configuration
+- **chat:** add client-side AI provider configuration support
+- **chat:** move chat config to server-side environment variables
+- **webmcp:** make WebMCP site-wide with @mcp-b/global polyfill
+- **webmcp:** implement Portfolio-specific WebMCP tools (navigate, get_works, contact)
+- **resume:** update role to AI Product Manager at RayNeo
+- **resume:** update summary to reflect AI Product Manager focus
+
+### Bug Fixes
+
+- **webxr:** set atlas UV offsets per instance for correct texture mapping
+- **webxr:** remove flaky feature test specs for more stable CI
+- **app:** update work pages for new MDX structure
+- **header:** redesign mobile header with solid background and expandable menu
+- **header:** extend frosted glass to status bar with negative margin
+- **header:** fix status bar blur with dedicated safe-area layer
+- **header:** use solid white/black status bar instead of blur
+- **ios:** add Apple web app meta tags
+- **ios:** solid status bar background
+- **ios:** remove body transition for status bar
+- **ui:** hide custom cursor on mobile and enable status bar frosted glass on iOS
+- **resume:** correct RayNeo start date to 2025-12-09
+- **chat:** wrap ReactMarkdown in div to support styling and avoid type error
+- **chat:** use explicit chat method to support compatible APIs
+- **chat:** resolve 'Not Found' issue with slug normalization for natural language queries
+- **chat:** update SYSTEM_PROMPT to reflect current role at RayNeo
+- **lint:** remove unused UIMessage import and normalize slug mapping
+
+### Refactoring
+
+- **webxr:** remove unused visible prop for cleaner component API
+- **utils:** remove unused exports
+- **cmpts:** convert cursor type to enum for better type safety
+- **cmpts:** simplify mouse interactions across components
+- **content:** reorganize MDX structure
+- **cmpts:** replace floating chat with inline homepage section
+- **webmcp:** use Zod for strict runtime validation of WebMCP inputs
+- **webmcp:** enforce strict type safety for WebMCP integration
+
+### Testing
+
+- **webxr:** add BDD feature and unit tests
+
+### Documentation
+
+- **docs:** add WebXR GPU-first instancing plan
+- **docs:** add WebXR GPU-first instancing design
+- **docs:** fix Jest test command syntax
+- **docs:** fix CLAUDE.md inaccuracies and redundancy
+- **docs:** rewrite CLAUDE.md with accurate versions and missing features
+- **docs:** update .env.example and chat route docs for Qwen API configuration
+
+### Maintenance
+
+- **project:** upgrade Next.js to v16
+- **project:** upgrade Next.js and React versions
+- **project:** enable Next.js 16 cache components mode
+- **style:** fix code formatting and imports
+- **style:** fix remaining unused import warnings
+- **chore:** bump version to 0.22.0 for release
+
 ## [0.21.0](https://github.com/FradSer/frad-me/compare/v0.20.0...v0.21.0) (2026-01-19)
 
 ### Refactoring
