@@ -98,6 +98,17 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
 
       const position = calculateCardPosition(workIndex, isFullScreen, totalCards);
 
+      const column = index % atlasConfig.columns;
+      const row = Math.floor(index / atlasConfig.columns);
+
+      const padding = atlasConfig.padding ?? 0;
+      const tileWidth =
+        (atlasConfig.width - padding * (atlasConfig.columns + 1)) / atlasConfig.columns;
+      const tileHeight = (atlasConfig.height - padding * (atlasConfig.rows + 1)) / atlasConfig.rows;
+
+      const uvX = (padding + column * (tileWidth + padding)) / atlasConfig.width;
+      const uvY = 1 - (padding + row * (tileHeight + padding) + tileHeight) / atlasConfig.height;
+
       data.push(
         workLinkToInstanceData(
           index,
@@ -106,10 +117,12 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
           displayWorks.length,
         ),
       );
+
+      data[data.length - 1].uvOffset = [uvX, uvY];
     });
 
     return data;
-  }, [displayWorks]);
+  }, [displayWorks, atlasConfig]);
 
   const meshConfig = useMemo(
     () => ({
@@ -173,18 +186,14 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
     }
   }, [isWorkView, opacitySpring, scaleSpring, positionYSpring]);
 
-  // Initialize instance matrices with grid positions
+  // Initialize instance matrices with grid positions and UV offsets
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
 
     const dummy = new THREE.Object3D();
     instanceData.forEach((data, index) => {
-      dummy.position.set(
-        data.basePosition[0],
-        data.basePosition[1],
-        data.basePosition[2],
-      );
+      dummy.position.set(data.basePosition[0], data.basePosition[1], data.basePosition[2]);
       dummy.rotation.set(0, 0, 0);
       dummy.scale.set(1, 1, 1);
       dummy.updateMatrix();
@@ -192,6 +201,13 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
     });
 
     mesh.instanceMatrix.needsUpdate = true;
+
+    // Set UV offset attribute for texture atlas
+    const uvOffsets = instanceData.flatMap((data) => data.uvOffset);
+    mesh.geometry.setAttribute(
+      'aUvOffset',
+      new THREE.InstancedBufferAttribute(new Float32Array(uvOffsets), 2),
+    );
   }, [instanceData]);
 
   useFrame((state, _delta) => {
