@@ -1,16 +1,17 @@
 import type { MetadataRoute } from 'next';
-import { SITE_CONFIG } from '@/utils/constants';
-import { getAllPosts } from '@/utils/mdx';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+import { SITE_CONFIG } from '@/utils/constants';
+import { getAllWorkSlugs } from '@/utils/workList';
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date().toISOString();
 
-  let posts: ReturnType<typeof getAllPosts> = [];
+  let slugs: string[] = [];
   try {
-    posts = getAllPosts();
+    slugs = getAllWorkSlugs();
   } catch (error) {
-    console.error('Failed to get posts for sitemap:', error);
-    // Continue with empty posts array to prevent build failure
+    console.error('Failed to get works for sitemap:', error);
+    // Continue with empty works array to prevent build failure
   }
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -28,8 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const workPages: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(post.slug)}`,
+  const workPages: MetadataRoute.Sitemap = slugs.map((slug) => ({
+    url: `${SITE_CONFIG.domain}/works/${encodeURIComponent(slug)}`,
     lastModified: currentDate,
     changeFrequency: 'yearly' as const,
     priority: 0.9,

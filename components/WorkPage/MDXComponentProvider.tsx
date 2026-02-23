@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'motion/react';
 
 interface IMDXComponentProviderProps {
@@ -6,7 +8,6 @@ interface IMDXComponentProviderProps {
 }
 
 function MDXComponentProvider(props: Readonly<IMDXComponentProviderProps>) {
-  // * Animation
   const variants = {
     hidden: {
       opacity: 0,

@@ -25,10 +25,11 @@ const WebXRViewContext = createContext<WebXRViewContextValue | null>(null);
 
 interface WebXRViewProviderProps {
   children: ReactNode;
+  initialView?: WebXRView;
 }
 
-export function WebXRViewProvider({ children }: WebXRViewProviderProps) {
-  const [currentView, setCurrentView] = useState<WebXRView>('home');
+export function WebXRViewProvider({ children, initialView = 'home' }: WebXRViewProviderProps) {
+  const [currentView, setCurrentView] = useState<WebXRView>(initialView);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [navigationVisible] = useState(true); // Always visible in this implementation
   const [isVisionPro, setIsVisionPro] = useState(false);

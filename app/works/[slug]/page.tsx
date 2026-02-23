@@ -1,37 +1,33 @@
 import type { Metadata } from 'next';
 
 import { notFound } from 'next/navigation';
-import { getAllPosts, getSinglePost } from '@/utils/mdx';
+import type { WorkFrontmatter } from '@/types/work';
 import WorkPageClient from './work-page-client';
 
 type WorkPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-// Wraps mdx-bundler (uses crypto.randomUUID) in cache for static generation
-async function getCachedPostData(slug: string) {
-  'use cache';
-  return await getSinglePost(slug);
-}
+// Works list for generating static params
+const WORKS = ['bearychat', 'eye-protection-design-handbook', 'pachino'];
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return WORKS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const { frontmatter } = await getCachedPostData(slug);
+    const module = await import(`@/markdown/works/${slug}.mdx`);
+    const workMetadata = module.metadata as WorkFrontmatter;
+
     return {
-      title: frontmatter.title,
-      description: frontmatter.description || `Work showcase: ${frontmatter.title}`,
+      title: workMetadata.title,
+      description: workMetadata.description || `Work showcase: ${workMetadata.title}`,
       openGraph: {
-        title: frontmatter.title,
-        description: frontmatter.description,
-        images: frontmatter.cover ? [{ url: frontmatter.cover }] : [],
+        title: workMetadata.title,
+        description: workMetadata.description,
+        images: workMetadata.cover ? [{ url: workMetadata.cover }] : [],
       },
     };
   } catch {
@@ -44,8 +40,11 @@ export async function generateMetadata({ params }: WorkPageProps): Promise<Metad
 export default async function WorkPage({ params }: WorkPageProps) {
   try {
     const { slug } = await params;
-    const { code, frontmatter } = await getCachedPostData(slug);
-    return <WorkPageClient code={code} frontmatter={frontmatter} />;
+    const module = await import(`@/markdown/works/${slug}.mdx`);
+    const WorkContent = module.default;
+    const workMetadata = module.metadata as WorkFrontmatter;
+
+    return <WorkPageClient metadata={workMetadata}>{<WorkContent />}</WorkPageClient>;
   } catch {
     notFound();
   }
