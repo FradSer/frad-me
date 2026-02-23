@@ -235,6 +235,10 @@ export const createTextureAtlas = async (
 };
 
 export const disposeAtlas = (atlas: AtlasResult): void => {
+  if (!atlas || !atlas.texture) {
+    return;
+  }
+
   atlas.texture.dispose();
 
   if (atlas.texture.image instanceof HTMLCanvasElement) {

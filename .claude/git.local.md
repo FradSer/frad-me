@@ -4,7 +4,7 @@ scopes:
   - app
   - webxr
   - hooks
-  - components
+  - cmpts
   - contexts
   - utils
   - content

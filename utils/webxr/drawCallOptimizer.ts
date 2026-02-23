@@ -224,7 +224,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [_geometry, meshes] of this.geometryCache) {
+    this.geometryCache.forEach((meshes, geometry) => {
       if (meshes.length >= this.config.instancingMinimumCount) {
         const material = meshes[0].material;
         const sameMaterialMeshes = meshes.filter((mesh) => mesh.material === material);
@@ -234,7 +234,7 @@ export class DrawCallOptimizer {
           affectedMeshes += sameMaterialMeshes.length;
         }
       }
-    }
+    });
 
     if (totalReduction === 0) return null;
 
@@ -250,12 +250,12 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [_material, meshes] of this.materialCache) {
+    this.materialCache.forEach((meshes, material) => {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;
       }
-    }
+    });
 
     if (totalReduction === 0) return null;
 
@@ -284,12 +284,12 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    for (const [_geometry, meshes] of this.geometryCache) {
+    this.geometryCache.forEach((meshes, geometry) => {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;
       }
-    }
+    });
 
     if (totalReduction === 0) return null;
 
@@ -345,11 +345,11 @@ export class DrawCallOptimizer {
   findShareableMaterials(): Map<THREE.Material, THREE.Mesh[]> {
     const shareable = new Map<THREE.Material, THREE.Mesh[]>();
 
-    for (const [material, meshes] of this.materialCache) {
+    this.materialCache.forEach((meshes, material) => {
       if (meshes.length > 1) {
         shareable.set(material, [...meshes]);
       }
-    }
+    });
 
     return shareable;
   }
@@ -357,11 +357,11 @@ export class DrawCallOptimizer {
   findDuplicateGeometries(): Map<THREE.BufferGeometry, THREE.Mesh[]> {
     const duplicates = new Map<THREE.BufferGeometry, THREE.Mesh[]>();
 
-    for (const [geometry, meshes] of this.geometryCache) {
+    this.geometryCache.forEach((meshes, geometry) => {
       if (meshes.length > 1) {
         duplicates.set(geometry, [...meshes]);
       }
-    }
+    });
 
     return duplicates;
   }

@@ -36,12 +36,19 @@ interface NavItemProps {
   text: string;
   isActive: boolean;
   onClick: () => void;
+  ariaLabel?: string;
 }
 
-const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, onClick }) {
+const NavItem = memo<NavItemProps>(function NavItem({
+  position,
+  text,
+  isActive,
+  onClick,
+  ariaLabel,
+}) {
   const [hovered, setHovered] = useState(false);
   const [hasBeenInteracted, setHasBeenInteracted] = useState(false);
-  const textRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
   const lerpSpeed = springConfigToLerpSpeed(WEBXR_ANIMATION_CONFIG.springs.fast);
   const scaleSpring = useSimpleLerp(1, { speed: lerpSpeed });
@@ -70,11 +77,11 @@ const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, 
   }, [hovered, isActive, hasBeenInteracted, scaleSpring, scales]);
 
   useFrame(() => {
-    const mesh = textRef.current;
-    if (mesh) {
+    const group = groupRef.current;
+    if (group) {
       const currentScale = scaleSpring.value;
       if (Math.abs(currentScale - lastScaleRef.current) > 0.001) {
-        mesh.scale.setScalar(currentScale);
+        group.scale.setScalar(currentScale);
         lastScaleRef.current = currentScale;
       }
     }
@@ -101,20 +108,24 @@ const NavItem = memo<NavItemProps>(function NavItem({ position, text, isActive, 
       : TEXT_COLORS.default;
 
   return (
-    <Text
-      ref={textRef}
-      position={position}
-      color={textColor}
-      anchorX={TEXT_CONFIG.anchorX}
-      anchorY={TEXT_CONFIG.anchorY}
-      fontSize={TEXT_CONFIG.fontSize}
-      font={TEXT_CONFIG.font}
+    <group
+      ref={groupRef}
       onClick={handleClick}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
+      userData={{ 'aria-label': ariaLabel || text }}
     >
-      {text}
-    </Text>
+      <Text
+        position={position}
+        color={textColor}
+        anchorX={TEXT_CONFIG.anchorX}
+        anchorY={TEXT_CONFIG.anchorY}
+        fontSize={TEXT_CONFIG.fontSize}
+        font={TEXT_CONFIG.font}
+      >
+        {text}
+      </Text>
+    </group>
   );
 });
 
@@ -138,6 +149,7 @@ const Navigation3D = memo(function Navigation3D() {
           text={navText}
           isActive={false}
           onClick={handleNavigate}
+          ariaLabel={`Navigate to ${navText} view`}
         />
       </group>
     </group>

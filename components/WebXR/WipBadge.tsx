@@ -43,7 +43,7 @@ const WipBadge = memo<WipBadgeProps>(function WipBadge({ show }) {
       distanceFactor={BADGE_CONFIG.distanceFactor}
       style={{ zIndex: BADGE_CONFIG.zIndex }}
     >
-      <div className={BADGE_CLASSES}>WIP</div>
+      <span className={BADGE_CLASSES}>WIP</span>
     </_Html>
   );
 });
