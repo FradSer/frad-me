@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { type CursorType, MouseContext } from '@/contexts/Mouse/MouseContext';
+import { CursorType, MouseContext } from '@/contexts/Mouse/MouseContext';
 import type { Position } from '@/types/common';
 
 type MouseContextProps = {
@@ -9,9 +9,9 @@ type MouseContextProps = {
 const WORK_CARD_RESET_DEBOUNCE_MS = 50;
 
 export default function MouseContextProvider({ children }: Readonly<MouseContextProps>) {
-  const [cursorType, setCursorType] = useState<CursorType>('default');
+  const [cursorType, setCursorType] = useState<CursorType>(CursorType.default);
   const [attractorPosition, setAttractorPosition] = useState<Position | null>(null);
-  const cursorTypeRef = useRef<CursorType>('default');
+  const cursorTypeRef = useRef<CursorType>(CursorType.default);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const cursorChangeHandler = useCallback((newCursorType: CursorType) => {
@@ -22,12 +22,12 @@ export default function MouseContextProvider({ children }: Readonly<MouseContext
 
     const current = cursorTypeRef.current;
     if (
-      (current === 'work-card-hovered' || current === 'work-card-hovered-wip') &&
-      newCursorType === 'default'
+      (current === CursorType.workCardHovered || current === CursorType.workCardHoveredWIP) &&
+      newCursorType === CursorType.default
     ) {
       resetTimeoutRef.current = setTimeout(() => {
-        cursorTypeRef.current = 'default';
-        setCursorType('default');
+        cursorTypeRef.current = CursorType.default;
+        setCursorType(CursorType.default);
       }, WORK_CARD_RESET_DEBOUNCE_MS);
     } else {
       cursorTypeRef.current = newCursorType;

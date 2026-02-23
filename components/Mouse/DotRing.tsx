@@ -15,6 +15,12 @@ const SPRING_CONFIG = {
   damping: 30,
 } as const;
 
+// Slower spring config for text label
+const TEXT_SPRING_CONFIG = {
+  stiffness: 150,
+  damping: 25,
+} as const;
+
 const BLEND_FACTOR = 0.7;
 
 // Base CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
@@ -66,6 +72,12 @@ export default function DotRing() {
   const springX = useSpring(attractedX, SPRING_CONFIG);
   const springY = useSpring(attractedY, SPRING_CONFIG);
 
+  // * Text position with slower spring for more delay/lag effect
+  const textAttractedX = useMotionValue(0);
+  const textAttractedY = useMotionValue(0);
+  const textSpringX = useSpring(textAttractedX, TEXT_SPRING_CONFIG);
+  const textSpringY = useSpring(textAttractedY, TEXT_SPRING_CONFIG);
+
   // * Retain last non-empty title so fade-out animates visible text
   const [displayTitle, setDisplayTitle] = useState('');
 
@@ -80,7 +92,16 @@ export default function DotRing() {
     );
     attractedX.set(blendedPosition.x);
     attractedY.set(blendedPosition.y);
-  }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY]);
+    textAttractedX.set(blendedPosition.x);
+    textAttractedY.set(blendedPosition.y);
+  }, [
+    mousePosition,
+    mouseContext.attractorPosition,
+    attractedX,
+    attractedY,
+    textAttractedX,
+    textAttractedY,
+  ]);
 
   useEffect(() => {
     if (currentState.title) setDisplayTitle(currentState.title);
@@ -88,13 +109,14 @@ export default function DotRing() {
 
   // * Render
   const positionStyle = { left: springX, top: springY, x: '-50%', y: '-50%' } as const;
+  const textPositionStyle = { left: textSpringX, top: textSpringY, x: '-50%', y: '-50%' } as const;
 
   return (
     <>
       {/* Text label: fixed 4rem wrapper handles centering; inner span animates */}
       <motion.div
         className="fixed hidden md:flex w-16 h-16 items-center justify-center pointer-events-none z-70"
-        style={positionStyle}
+        style={textPositionStyle}
       >
         <motion.span
           animate={currentState.text}

@@ -3,19 +3,12 @@
 import { motion } from 'motion/react';
 
 import useMouseContext from '@/hooks/useMouseContext';
+import { CursorType } from '@/contexts/Mouse/MouseContext';
 
 type ICursorProviderProps = {
   children: React.ReactNode;
   targetCursorType: CursorType;
 };
-
-enum CursorType {
-  default = 'default',
-  headerLinkHovered = 'header-link-hovered',
-  workCardHovered = 'work-card-hovered',
-  workCardHoveredWIP = 'work-card-hovered-wip',
-  attracted = 'attracted',
-}
 
 function CursorProvider<T extends ICursorProviderProps>(props: Readonly<T>) {
   // * Hooks

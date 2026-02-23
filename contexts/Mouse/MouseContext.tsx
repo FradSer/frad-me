@@ -2,12 +2,13 @@ import { createContext } from 'react';
 
 import type { Position } from '@/types/common';
 
-export type CursorType =
-  | 'default'
-  | 'header-link-hovered'
-  | 'work-card-hovered'
-  | 'work-card-hovered-wip'
-  | 'attracted';
+export enum CursorType {
+  default = 'default',
+  headerLinkHovered = 'header-link-hovered',
+  workCardHovered = 'work-card-hovered',
+  workCardHoveredWIP = 'work-card-hovered-wip',
+  attracted = 'attracted',
+}
 
 export type MouseContextType = {
   cursorType: CursorType;
@@ -17,7 +18,7 @@ export type MouseContextType = {
 };
 
 const defaultContext: MouseContextType = {
-  cursorType: 'default',
+  cursorType: CursorType.default,
   cursorChangeHandler: () => {},
   attractorPosition: null,
   setAttractorPosition: () => {},

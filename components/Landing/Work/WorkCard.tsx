@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import useMouseContext from '@/hooks/useMouseContext';
+import { CursorType } from '@/contexts/Mouse/MouseContext';
 import {
   type AnimationVariants,
   createVariants,
@@ -166,7 +167,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
     isHoveredRef.current = true;
 
-    const cursorType = props.isWIP ? 'work-card-hovered-wip' : 'work-card-hovered';
+    const cursorType = props.isWIP ? CursorType.workCardHoveredWIP : CursorType.workCardHovered;
     cursorChangeHandler(cursorType);
 
     startGroup({
@@ -178,7 +179,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   const handleHoverEnd = useCallback(() => {
     isHoveredRef.current = false;
-    cursorChangeHandler('default');
+    cursorChangeHandler(CursorType.default);
 
     animationTimeoutRef.current = setTimeout(() => {
       startGroup({
@@ -199,7 +200,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   const handleClick = useCallback(() => {
     if (!props.isWIP) {
-      cursorChangeHandler('default');
+      cursorChangeHandler(CursorType.default);
     }
   }, [props.isWIP, cursorChangeHandler]);
 
