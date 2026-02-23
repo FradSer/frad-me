@@ -9,7 +9,6 @@ import { applyOpacityToObject } from '@/utils/webxr/materialUtils';
 
 interface UseCardAnimationProps {
   groupRef: RefObject<THREE.Group | null>;
-  visible: boolean;
   hovered: boolean;
   position: [number, number, number];
   index: number;
@@ -29,7 +28,6 @@ const createSpringConfig = (preset: keyof typeof WEBXR_ANIMATION_CONFIG.springs)
 
 export function useCardAnimation({
   groupRef,
-  visible: _visible,
   hovered,
   position,
   index,

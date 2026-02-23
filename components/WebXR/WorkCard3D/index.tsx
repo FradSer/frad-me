@@ -96,7 +96,6 @@ const WorkCard3D = memo<WorkCard3DProps>(function WorkCard3D({
 
   useCardAnimation({
     groupRef,
-    visible,
     hovered,
     position,
     index,

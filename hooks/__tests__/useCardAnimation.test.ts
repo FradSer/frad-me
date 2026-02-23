@@ -106,7 +106,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -121,7 +120,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: nullRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -148,7 +146,6 @@ describe('useCardAnimation Hook', () => {
       renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -177,7 +174,6 @@ describe('useCardAnimation Hook', () => {
       renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -202,7 +198,6 @@ describe('useCardAnimation Hook', () => {
       const { result: card0 } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -212,7 +207,6 @@ describe('useCardAnimation Hook', () => {
       const { result: card1 } = renderHook(() =>
         useCardAnimation({
           groupRef: { current: { ...mockGroup } as unknown as THREE.Group },
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 1,
@@ -228,7 +222,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -245,7 +238,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: true,
           position: [0, 0, 0],
           index: 0,
@@ -267,7 +259,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -293,7 +284,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: targetPosition,
           index: 0,
@@ -315,7 +305,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 1,
@@ -341,7 +330,6 @@ describe('useCardAnimation Hook', () => {
       renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -365,7 +353,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -389,7 +376,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: true,
           position: [1, 2, 3],
           index: 0,
@@ -411,7 +397,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -437,7 +422,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: mockGroupRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,
@@ -465,7 +449,6 @@ describe('useCardAnimation Hook', () => {
       const { result } = renderHook(() =>
         useCardAnimation({
           groupRef: nullRef,
-          visible: true,
           hovered: false,
           position: [0, 0, 0],
           index: 0,

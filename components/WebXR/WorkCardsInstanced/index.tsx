@@ -173,6 +173,27 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
     }
   }, [isWorkView, opacitySpring, scaleSpring, positionYSpring]);
 
+  // Initialize instance matrices with grid positions
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+
+    const dummy = new THREE.Object3D();
+    instanceData.forEach((data, index) => {
+      dummy.position.set(
+        data.basePosition[0],
+        data.basePosition[1],
+        data.basePosition[2],
+      );
+      dummy.rotation.set(0, 0, 0);
+      dummy.scale.set(1, 1, 1);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(index, dummy.matrix);
+    });
+
+    mesh.instanceMatrix.needsUpdate = true;
+  }, [instanceData]);
+
   useFrame((state, _delta) => {
     const mesh = meshRef.current;
     const material = materialRef.current;
