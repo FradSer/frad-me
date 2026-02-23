@@ -1,8 +1,7 @@
 'use client';
 
-import { clsx } from 'clsx';
-import { motion, useAnimationControls, useMotionValue, useSpring } from 'motion/react';
-import { useEffect, useMemo } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
@@ -18,72 +17,42 @@ const SPRING_CONFIG = {
 
 const BLEND_FACTOR = 0.7;
 
-const CURSOR_SIZES = {
-  small: '1rem',
-  medium: '2rem',
-  large: '4rem',
+// Base CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
+// so that translate(-50%, -50%) always centers correctly regardless of visual size.
+const DOT_SCALE = {
+  small: 0.25,
+  large: 1,
 } as const;
 
-const CURSOR_SCALE = {
-  small: 0.5,
-  normal: 1,
-} as const;
-
-// * Move static objects outside component to prevent recreation
-const transitionOffset = { x: '-50%', y: '-50%' };
-
-const backgroundVariants = {
-  initial: {
-    ...transitionOffset,
-    height: CURSOR_SIZES.small,
-    width: CURSOR_SIZES.small,
-    opacity: 1,
-    transition: primaryTransition,
-  },
-  headerLinkHovered: {
-    opacity: 0,
-    transition: primaryTransition,
-  },
-  workCardHover: {
-    ...transitionOffset,
-    height: CURSOR_SIZES.large,
-    width: CURSOR_SIZES.large,
-    transition: primaryTransition,
-  },
-  attracted: {
-    ...transitionOffset,
-    height: CURSOR_SIZES.small,
-    width: CURSOR_SIZES.small,
-    opacity: 0,
-    transition: primaryTransition,
-  },
+// Solid circle (no blend mode): visible only during work-card hover
+const solidCircleVariants = {
+  initial: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  workCardHover: { scale: DOT_SCALE.large, opacity: 1, transition: primaryTransition },
+  attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
 };
 
+// Blend circle (mix-blend-difference always on): visible in default state, hides on hover
+const blendCircleVariants = {
+  initial: { scale: DOT_SCALE.small, opacity: 1, transition: primaryTransition },
+  headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  workCardHover: { scale: DOT_SCALE.large, opacity: 0, transition: primaryTransition },
+  attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+};
+
+// Text label (READ / WIP): pixel y slide-up + opacity fade only.
 const textVariants = {
-  initial: {
-    ...transitionOffset,
-    height: CURSOR_SIZES.medium,
-    width: CURSOR_SIZES.medium,
-    opacity: 0,
-    scale: CURSOR_SCALE.small,
-    transition: primaryTransition,
-  },
-  workCardHover: {
-    ...transitionOffset,
-    height: CURSOR_SIZES.large,
-    width: CURSOR_SIZES.large,
-    opacity: 1,
-    scale: CURSOR_SCALE.normal,
-    transition: primaryTransition,
-  },
+  initial: { opacity: 0, y: 8, transition: primaryTransition },
+  workCardHover: { opacity: 1, y: 0, transition: primaryTransition },
 };
 
+// Separate background and text animation targets per cursor state
 const cursorStateMap = {
-  'header-link-hovered': { animation: 'headerLinkHovered', title: '' },
-  'work-card-hovered': { animation: 'workCardHover', title: 'READ' },
-  'work-card-hovered-wip': { animation: 'workCardHover', title: 'WIP' },
-  attracted: { animation: 'attracted', title: '' },
-  default: { animation: 'initial', title: '' },
+  'header-link-hovered': { background: 'headerLinkHovered', text: 'initial', title: '' },
+  'work-card-hovered': { background: 'workCardHover', text: 'workCardHover', title: 'READ' },
+  'work-card-hovered-wip': { background: 'workCardHover', text: 'workCardHover', title: 'WIP' },
+  attracted: { background: 'attracted', text: 'initial', title: '' },
+  default: { background: 'initial', text: 'initial', title: '' },
 } as const;
 
 export default function DotRing() {
@@ -97,66 +66,62 @@ export default function DotRing() {
   const springX = useSpring(attractedX, SPRING_CONFIG);
   const springY = useSpring(attractedY, SPRING_CONFIG);
 
-  // * Memoized styling classes
-  const textClass = useMemo(
-    () =>
-      'fixed hidden md:flex items-center justify-center duration-200 pointer-events-none text-black font-bold text-xl z-70',
-    [],
-  );
+  // * Retain last non-empty title so fade-out animates visible text
+  const [displayTitle, setDisplayTitle] = useState('');
 
-  const backgroundClass = useMemo(
-    () =>
-      clsx('fixed hidden md:block rounded-full bg-white pointer-events-none z-60 duration-100', {
-        'mix-blend-difference': mouseContext.cursorType === 'default',
-      }),
-    [mouseContext.cursorType],
-  );
+  const currentState = cursorStateMap[mouseContext.cursorType] ?? cursorStateMap.default;
 
-  // * Animation
-  const controls = useAnimationControls();
-
-  // * Memoized current state calculation
-  const currentState = useMemo(
-    () => cursorStateMap[mouseContext.cursorType] || cursorStateMap.default,
-    [mouseContext.cursorType],
-  );
-
-  const dotRingTitle = currentState.title;
-
-  // * Effects - optimize position updates
+  // * Effects
   useEffect(() => {
     const blendedPosition = calculateBlendPosition(
       mousePosition,
       mouseContext.attractorPosition,
       BLEND_FACTOR,
     );
-
     attractedX.set(blendedPosition.x);
     attractedY.set(blendedPosition.y);
   }, [mousePosition, mouseContext.attractorPosition, attractedX, attractedY]);
 
   useEffect(() => {
-    controls.start(currentState.animation);
-  }, [currentState.animation, controls]);
+    if (currentState.title) setDisplayTitle(currentState.title);
+  }, [currentState.title]);
 
   // * Render
+  const positionStyle = { left: springX, top: springY, x: '-50%', y: '-50%' } as const;
+
   return (
     <>
+      {/* Text label: fixed 4rem wrapper handles centering; inner span animates */}
       <motion.div
-        animate={controls}
-        variants={textVariants}
-        initial="initial"
-        className={textClass}
-        style={{ left: springX, top: springY }}
+        className="fixed hidden md:flex w-16 h-16 items-center justify-center pointer-events-none z-70"
+        style={positionStyle}
       >
-        <h1>{dotRingTitle}</h1>
+        <motion.span
+          animate={currentState.text}
+          variants={textVariants}
+          initial="initial"
+          className="text-black font-bold text-xl"
+        >
+          {displayTitle}
+        </motion.span>
       </motion.div>
+
+      {/* Solid circle - no blend mode, fades in during work-card hover */}
       <motion.div
-        animate={controls}
-        variants={backgroundVariants}
+        animate={currentState.background}
+        variants={solidCircleVariants}
         initial="initial"
-        className={backgroundClass}
-        style={{ left: springX, top: springY }}
+        className="fixed hidden md:block w-16 h-16 rounded-full bg-white pointer-events-none z-60"
+        style={positionStyle}
+      />
+
+      {/* Blend circle - mix-blend-difference always on, visible in default state */}
+      <motion.div
+        animate={currentState.background}
+        variants={blendCircleVariants}
+        initial="initial"
+        className="fixed hidden md:block w-16 h-16 rounded-full bg-white pointer-events-none z-60 mix-blend-difference"
+        style={positionStyle}
       />
     </>
   );

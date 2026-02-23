@@ -113,7 +113,7 @@ const WorkCardContent = memo(
 WorkCardContent.displayName = 'WorkCardContent';
 
 const ANIMATION_KEYS = ['backgroundImage', 'backgroundMask', 'text'];
-const HOVER_DEBOUNCE_MS = 50; // hover 状态切换的防抖阈值
+const ANIMATION_RESET_DEBOUNCE_MS = 50;
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
@@ -152,18 +152,16 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   // * Hooks
   const { cursorChangeHandler } = useMouseContext();
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isHoveredRef = useRef(false);
 
   // * Animation handlers
   const handleHoverStart = useCallback(() => {
-    // 清除可能存在的 hoverEnd 定时器
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
     }
 
-    // 防止在防抖期内重复触发
     if (isHoveredRef.current) return;
 
     isHoveredRef.current = true;
@@ -179,25 +177,22 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   }, [props.isWIP, cursorChangeHandler, startGroup]);
 
   const handleHoverEnd = useCallback(() => {
-    // 使用防抖延迟执行 hoverEnd
-    hoverTimeoutRef.current = setTimeout(() => {
-      isHoveredRef.current = false;
+    isHoveredRef.current = false;
+    cursorChangeHandler('default');
 
-      cursorChangeHandler('default');
-
+    animationTimeoutRef.current = setTimeout(() => {
       startGroup({
         backgroundImage: 'initial',
         backgroundMask: 'initial',
         text: 'initial',
       });
-    }, HOVER_DEBOUNCE_MS);
+    }, ANIMATION_RESET_DEBOUNCE_MS);
   }, [cursorChangeHandler, startGroup]);
 
-  // 组件卸载时清理定时器
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
       }
     };
   }, []);
