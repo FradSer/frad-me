@@ -78,7 +78,7 @@ function calculateFinalColor(
 /**
  * Sample texture color (simulated - returns fixed color based on UV)
  */
-function sampleTexture(u: number, v: number): { color: [number, number, number]; alpha: number } {
+function _sampleTexture(u: number, v: number): { color: [number, number, number]; alpha: number } {
   // Simulate a simple texture that varies with UV
   const r = u;
   const g = v;
@@ -159,8 +159,6 @@ describe('fragment shader logic', () => {
     });
 
     it('mix amount is 0 when hovered is 0', () => {
-      const texColor: [number, number, number] = [1.0, 0.0, 0.0];
-      const glowColor: [number, number, number] = [0.0, 0.5, 1.0];
       const hovered = 0.0;
 
       const mixAmount = hovered * GLOW_INTENSITY;
@@ -168,8 +166,6 @@ describe('fragment shader logic', () => {
     });
 
     it('mix amount is 0.3 when hovered is 1', () => {
-      const texColor: [number, number, number] = [1.0, 0.0, 0.0];
-      const glowColor: [number, number, number] = [0.0, 0.5, 1.0];
       const hovered = 1.0;
 
       const mixAmount = hovered * GLOW_INTENSITY;
