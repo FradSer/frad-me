@@ -1,4 +1,4 @@
-# WebXR GPU-First Instancing Optimization - Execution Plan
+# WebXR GPU-First Instancing - Implementation Plan
 
 **Date**: 2025-02-22
 **Status**: Draft
@@ -8,27 +8,39 @@
 
 ## Goal
 
-Implement GPU-first instancing architecture for WebXR portfolio experience to achieve 60fps on Vision Pro and 45fps on Quest while maintaining all existing features and user experience quality.
+Verify the WebXR GPU-First Instancing implementation against BDD specifications. Since core implementation exists in codebase, this plan focuses on Test-First verification using Gherkin scenarios from `bdd-specs.md`.
 
 **Business Objective**: Deliver fluid portfolio showcase (2-3 min visits) with instant hover feedback (<16ms) and smooth transitions (<500ms).
 
 ---
 
-## Architecture Overview
+## Architecture
 
-### Chosen Architecture: GPU-First Instancing
+### Existing Implementation (To Be Verified)
 
-**Key Components**:
-- `WorkCardsInstanced`: Single instanced mesh replacing 5 individual card components
-- Texture Atlas: Combined card images (2048x2048, 2x2 grid)
-- Custom Shaders: Vertex shader for floating/hover animations, fragment shader for opacity effects
-- CPU-based Hover Detection: Distance calculation in useFrame loop
+| Component | Location | Status |
+|-----------|----------|--------|
+| WorkCardsInstanced | `components/WebXR/WorkCardsInstanced/` | Implemented |
+| Texture Atlas | `utils/webxr/textureAtlas.ts` | Implemented |
+| Shader System | `utils/webxr/shaders/` | Implemented |
+| InstancedMeshManager | `utils/webxr/instancedMeshManager.ts` | Implemented |
+| PerformanceMonitor | `utils/webxr/performanceMonitor.ts` | Implemented |
 
-**Performance Targets**:
-- Draw Calls: ~75 → <50 (60%+ reduction)
-- Frame Rate: 30+ baseline → 60fps Vision Pro, 45fps Quest
-- Hover Response: <16ms
-- View Transition: <500ms
+### Testing Infrastructure (To Create)
+
+- BDD feature files: `tests/features/webxr/*.feature`
+- Step definitions: `tests/steps/webxr/`
+- Test utilities: `tests/utils/`
+
+### Performance Targets
+
+| Metric | Target |
+|--------|--------|
+| Draw Calls | ≤ 50 |
+| Frame Rate (Vision Pro) | ≥ 60 FPS |
+| Frame Rate (Quest) | ≥ 45 FPS |
+| Hover Response | < 16ms |
+| View Transition | < 800ms |
 
 ---
 
@@ -67,38 +79,27 @@ Implement GPU-first instancing architecture for WebXR portfolio experience to ac
 
 ---
 
-## Implementation Phases
+## Verification Phases
 
-### Phase 1: Foundation (Week 1-2)
-- Shader infrastructure setup
-- Texture atlas utility
-- Instanced mesh management
+### Phase 1: Test Infrastructure
+- Create BDD feature files from bdd-specs.md
+- Set up Cucumber step definitions
+- Configure Jest for WebXR testing
 
-### Phase 2: Work Card Instancing (Week 3-4)
-- WorkCardsInstanced component
-- Data migration to instanced attributes
-- Hover detection implementation
+### Phase 2: Feature 1 - Hover Interactions
+8 scenarios covering instant response, spring physics, multiple cards, WIP badge, smooth exit, hand tracking, reduced motion, cross-device
 
-### Phase 3: GPU Animation (Week 5-6)
-- Vertex shader for floating animation
-- Vertex shader for hover effect
-- Fragment shader for opacity transitions
+### Phase 3: Feature 2 - View Transitions
+10 scenarios covering home↔work transitions, camera movement, staggered entrance, opacity, rapid switching, performance, links visibility, reduced motion, button state
 
-### Phase 4: Text & Hero Optimization (Week 7-8)
-- Instanced geometry for HeroText shapes
-- Text pre-rendering considerations
-- WIP badge functionality
+### Phase 4: Feature 3 - Navigation
+10 scenarios covering breathing animation, hover state, click behavior, input methods (mouse, hand tracking, Quest controller), position, text readability, accessibility
 
-### Phase 5: Performance Tuning (Week 9)
-- Device profiling
-- Draw call optimization
-- Performance monitoring
+### Phase 5: Feature 4 - Loading States
+10 scenarios covering loading indicator, async loading, texture/font loading, interactive state, error handling, bundle size, cache, Vision Pro, performance budget
 
-### Phase 6: Testing & Validation (Week 10)
-- Unit tests update
-- Performance benchmarking
-- Visual regression testing
-- Accessibility validation
+### Phase 6: Feature 5 - Performance Monitoring
+10 scenarios covering FPS tracking, quality adaptation, draw call monitoring, memory tracking, performance gates, device targets, hot path, visibility culling, instancing verification, production monitoring
 
 ---
 
@@ -118,64 +119,69 @@ Implement GPU-first instancing architecture for WebXR portfolio experience to ac
 
 ## Execution Plan
 
-### Phase 1: Foundation Tasks
+### Phase 1: Test Infrastructure
 
-- [Task 001: Shader Infrastructure Setup](./task-001-shader-infrastructure-setup.md)
-- [Task 002: Texture Atlas Utility](./task-002-texture-atlas-utility.md)
-- [Task 003: Instanced Mesh Manager](./task-003-instance-manager.md)
+- [Task 001: Create BDD feature files](./task-001-create-bdd-feature-files.md)
+- [Task 002: Set up Cucumber step definitions](./task-002-setup-step-definitions.md)
+- [Task 003: Configure Jest for WebXR](./task-003-configure-jest-webxr.md)
 
-### Phase 2: Work Card Instancing Tasks
+### Phase 2: Feature 1 - Hover Interactions
 
-- [Task 004: WorkCardsInstanced Component](./task-004-workcardsinstanced-component.md)
-- [Task 005: Data Migration to Instanced Attributes](./task-005-data-migration.md)
-- [Task 006: Hover Detection Implementation](./task-006-hover-detection.md)
+- [Task 004: Hover state tests](./task-004-hover-state-tests.md)
+- [Task 005: Verify hover behavior](./task-005-verify-hover-behavior.md)
 
-### Phase 3: GPU Animation Tasks
+### Phase 3: Feature 2 - View Transitions
 
-- [Task 007: Vertex Shader Floating Animation](./task-007-vertex-shader-floating.md)
-- [Task 008: Vertex Shader Hover Effect](./task-008-vertex-shader-hover.md)
-- [Task 009: Fragment Shader Opacity Transitions](./task-009-fragment-shader-opacity.md)
+- [Task 006: View transition tests](./task-006-view-transition-tests.md)
+- [Task 007: Verify transition timing](./task-007-verify-transition-timing.md)
 
-### Phase 4: Text & Hero Tasks
+### Phase 4: Feature 3 - Navigation
 
-- [Task 010: HeroText Instanced Shapes](./task-010-herotext-instanced-shapes.md)
-- [Task 011: WIP Badge Functionality](./task-011-wip-badge.md)
+- [Task 008: Navigation button tests](./task-008-navigation-button-tests.md)
+- [Task 009: Verify navigation accessibility](./task-009-verify-navigation-a11y.md)
 
-### Phase 5: Performance Tasks
+### Phase 5: Feature 4 - Loading States
 
-- [Task 012: Performance Monitoring](./task-012-performance-monitoring.md)
-- [Task 013: Draw Call Optimization](./task-013-draw-call-optimization.md)
+- [Task 010: Loading state tests](./task-010-loading-state-tests.md)
+- [Task 011: Verify bundle optimization](./task-011-verify-bundle-optimization.md)
 
-### Phase 6: Testing Tasks
+### Phase 6: Feature 5 - Performance
 
-- [Task 014: Update Unit Tests](./task-014-update-unit-tests.md)
-- [Task 015: Performance Benchmarking](./task-015-performance-benchmarking.md)
-- [Task 016: Visual Regression Testing](./task-016-visual-regression.md)
-- [Task 017: Accessibility Validation](./task-017-accessibility-validation.md)
+- [Task 012: Performance benchmark tests](./task-012-performance-benchmark-tests.md)
+- [Task 013: Verify performance targets](./task-013-verify-performance-targets.md)
+
+### Phase 7: Integration
+
+- [Task 014: E2E portfolio flow test](./task-014-e2e-portfolio-flow.md)
+- [Task 015: Visual regression validation](./task-015-visual-regression-validation.md)
 
 ---
 
-## Testing Strategy
+## BDD Test Strategy
+
+### Test-First Workflow
+
+Each task follows Red-Green-Refactor:
+1. **Red**: Create failing test based on BDD scenario
+2. **Green**: Run test, verify it fails with expected error
+3. **Refactor**: Implementation exists; verify test passes
 
 ### BDD Feature Coverage
 
-| Feature | Scenarios | Tasks |
-|---------|-----------|-------|
-| Work Card Hover | 8 scenarios | Tasks 004-009 |
-| View Transitions | 10 scenarios | Tasks 004-009, 013 |
-| Navigation | 10 scenarios | Existing (unchanged) |
-| Loading States | 10 scenarios | Tasks 002, 004 |
-| Performance | 10 scenarios | Tasks 012-015 |
+| Feature | Scenarios | Test File |
+|---------|-----------|-----------|
+| Work Card Hover | 8 | `work-card-hover-interactions.feature` |
+| View Transitions | 10 | `view-transitions.feature` |
+| Navigation | 10 | `navigation-interactions.feature` |
+| Loading States | 10 | `loading-states.feature` |
+| Performance | 10 | `performance-monitoring.feature` |
 
 ### Test Types
 
-- **Unit Tests**: Test pure functions (textureAtlas, instanceManager)
-- **Component Tests**: Test React components (WorkCardsInstanced)
-- **Integration Tests**: Test context and view transitions
-- **E2E Tests**: Test complete user flows
-- **Visual Tests**: Screenshot comparison for key states
-- **Performance Tests**: FPS, draw calls, response times
-- **Accessibility Tests**: WCAG AA, reduced motion
+- **BDD (Gherkin)**: Feature files in `tests/features/webxr/`
+- **Unit**: Pure function tests in `tests/unit/webxr/`
+- **Component**: React component tests
+- **E2E**: Playwright tests in `tests/e2e/webxr/`
 
 ---
 
