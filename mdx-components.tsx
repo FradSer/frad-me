@@ -6,7 +6,20 @@ import EyeComfortDFormula from '@/components/WorkPage/EyeProtectionDesignHandboo
 import { Blockquote, H1, H2, H3, Line, OL, P, UL } from '@/components/WorkPage/MDXComponents';
 import { WorkBeforeAfterImages, WorkSingleImage } from '@/components/WorkPage/WorkImage';
 
-export type MDXComponents = Record<string, React.ComponentType<any> | ReactNode>;
+export type MDXComponents = Record<
+  string,
+  | React.ComponentType<Record<string, unknown>>
+  | React.ComponentType<{
+      src: string;
+      width: number;
+      height: number;
+      alt: string;
+      position?: [number, number];
+      unoptimized?: boolean;
+      priority?: boolean;
+    }>
+  | ReactNode
+>;
 
 const components: MDXComponents = {
   blockquote: Blockquote,
@@ -17,12 +30,12 @@ const components: MDXComponents = {
   ol: OL,
   p: P,
   ul: UL,
-  WorkSingleImage,
-  WorkBeforeAfterImages,
-  Topography,
-  ComfortableFontSFormula,
-  ComfortableFontYong,
-  EyeComfortDFormula,
+  WorkSingleImage: WorkSingleImage as any,
+  WorkBeforeAfterImages: WorkBeforeAfterImages as any,
+  Topography: Topography as any,
+  ComfortableFontSFormula: ComfortableFontSFormula as any,
+  ComfortableFontYong: ComfortableFontYong as any,
+  EyeComfortDFormula: EyeComfortDFormula as any,
 };
 
 export function useMDXComponents(): MDXComponents {
