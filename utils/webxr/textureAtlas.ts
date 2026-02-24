@@ -178,7 +178,7 @@ export const createTextureAtlas = async (
         const imageAspect = image.width / image.height;
         const tileAspect = tileWidth / tileHeight;
 
-        let drawWidth, drawHeight, drawX, drawY;
+        let drawWidth: number, drawHeight: number, drawX: number, drawY: number;
 
         if (imageAspect > tileAspect) {
           drawHeight = tileHeight;
@@ -194,21 +194,18 @@ export const createTextureAtlas = async (
 
         ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error(`Failed to load image for tile ${index}:`, url, error);
-        }
         const column = index % finalConfig.columns;
         const row = Math.floor(index / finalConfig.columns);
         const x = padding + column * (tileWidth + padding);
         const y = padding + row * (tileHeight + padding);
 
-        ctx.fillStyle = '#333333';
+        ctx.fillStyle = '#333';
         ctx.fillRect(x, y, tileWidth, tileHeight);
-        ctx.fillStyle = '#666666';
+        ctx.fillStyle = '#666';
         ctx.font = '24px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Image failed to load', x + tileWidth / 2, y + tileHeight / 2);
+        ctx.fillText('Load failed', x + tileWidth / 2, y + tileHeight / 2);
       }
 
       const tileInfo = getTileInfo(index, finalConfig);

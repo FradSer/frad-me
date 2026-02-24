@@ -52,7 +52,7 @@ const useWorkGridAnimation = () => {
   return { opacitySpring, scaleSpring, positionYSpring };
 };
 
-const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible = true }) {
+const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D() {
   const { currentView } = useWebXRView();
   const groupRef = useRef<THREE.Group>(null);
   const { opacitySpring, scaleSpring, positionYSpring } = useWorkGridAnimation();
@@ -105,11 +105,7 @@ const WorkGrid3D = memo<WorkGrid3DProps>(function WorkGrid3D({ visible: _visible
     }
   });
 
-  const currentOpacity = opacitySpring.value;
-  const shouldBeVisible = currentOpacity > WORK_GRID_CONFIG.VISIBILITY_THRESHOLD && isWorkView;
-
   const displayWorks = workLinks.slice(0, WORK_GRID_CONFIG.MAX_DISPLAY_WORKS);
-  const totalWorks = workLinks.length;
 
   return (
     <group ref={groupRef}>

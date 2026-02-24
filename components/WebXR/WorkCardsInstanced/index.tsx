@@ -302,7 +302,6 @@ const WorkCardsInstanced = memo<WorkCardsInstancedProps>(function WorkCardsInsta
       <pointLight position={[-5, 3, 2]} intensity={0.6} color="#60a5fa" />
 
       <Suspense fallback={null}>
-        {/* biome-ignore lint/a11y/useSemanticElements: Three.js instancedMesh cannot be replaced with button element */}
         <instancedMesh
           ref={meshRef}
           args={[undefined, undefined, meshConfig.count]}

@@ -224,7 +224,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    this.geometryCache.forEach((meshes, geometry) => {
+    this.geometryCache.forEach((meshes) => {
       if (meshes.length >= this.config.instancingMinimumCount) {
         const material = meshes[0].material;
         const sameMaterialMeshes = meshes.filter((mesh) => mesh.material === material);
@@ -240,7 +240,7 @@ export class DrawCallOptimizer {
 
     return {
       strategy: OptimizationStrategy.InstancedMesh,
-      description: `Use InstancedMesh for ${affectedMeshes} meshes with shared geometry and material`,
+      description: `Use InstancedMesh for ${affectedMeshes} meshes`,
       potentialDrawCallReduction: totalReduction,
       affectedMeshes,
     };
@@ -250,7 +250,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    this.materialCache.forEach((meshes, material) => {
+    this.materialCache.forEach((meshes, _material) => {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;
@@ -284,7 +284,7 @@ export class DrawCallOptimizer {
     let totalReduction = 0;
     let affectedMeshes = 0;
 
-    this.geometryCache.forEach((meshes, geometry) => {
+    this.geometryCache.forEach((meshes, _geometry) => {
       if (meshes.length > 1) {
         totalReduction += meshes.length - 1;
         affectedMeshes += meshes.length;

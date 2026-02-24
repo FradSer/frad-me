@@ -6,12 +6,7 @@
  */
 
 import * as THREE from 'three';
-import {
-  type PerformanceMetrics,
-  PerformanceMonitor,
-  QualityLevel,
-  type RendererInfo,
-} from '@/utils/webxr/performanceMonitor';
+import { PerformanceMonitor } from '@/utils/webxr/performanceMonitor';
 
 export type DeviceType = 'vision-pro' | 'quest' | 'desktop';
 
@@ -133,7 +128,6 @@ const DEFAULT_CONFIG: Omit<BenchmarkConfig, 'deviceType'> = {
 export class BenchmarkRunner {
   private renderer: THREE.WebGLRenderer;
   private scene: THREE.Scene;
-  private camera: THREE.Camera;
   private config: BenchmarkConfig;
   private monitor: PerformanceMonitor;
   private frameTimestamps: number[] = [];
@@ -147,13 +141,12 @@ export class BenchmarkRunner {
   constructor(
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
-    camera: THREE.Camera,
+    _camera: THREE.Camera,
     deviceType: DeviceType,
     config: Partial<BenchmarkConfig> = {},
   ) {
     this.renderer = renderer;
     this.scene = scene;
-    this.camera = camera;
     this.config = {
       deviceType,
       ...DEFAULT_CONFIG,
@@ -190,7 +183,8 @@ export class BenchmarkRunner {
   private estimateMemoryMb(memInfo: THREE.WebGLInfo['memory']): number {
     const geometryBytes = memInfo.geometries * 1024;
     const textureBytes = memInfo.textures * 1024 * 8;
-    const programBytes = ((memInfo as { programs?: number }).programs ?? 0) * 512;
+    const programCount = (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
+    const programBytes = programCount * 512;
     return (geometryBytes + textureBytes + programBytes) / (1024 * 1024);
   }
 
@@ -329,7 +323,8 @@ export class BenchmarkRunner {
     const memInfo = this.renderer.info.memory;
     const geometriesMb = (memInfo.geometries * 1024) / (1024 * 1024);
     const texturesMb = (memInfo.textures * 1024 * 8) / (1024 * 1024);
-    const programsMb = ((memInfo as { programs?: number }).programs ?? 0 * 512) / (1024 * 1024);
+    const programCount = (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
+    const programsMb = (programCount * 512) / (1024 * 1024);
 
     const hasLeaks = this.detectMemoryLeaks();
 

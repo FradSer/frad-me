@@ -73,60 +73,31 @@ const ShapesInstanced = memo<ShapesInstancedProps>(function ShapesInstanced({
   const shapeStatesRef = useRef<Map<number, ShapeInstanceState>>(new Map());
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Always create springs - follow Rules of Hooks
-  const scaleSpring1 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring2 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring3 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring4 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring5 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring6 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring7 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring8 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring9 = useSimpleLerp(1, { speed: lerpSpeed });
-  const scaleSpring10 = useSimpleLerp(1, { speed: lerpSpeed });
+  // Individual hooks for spring values as per React's rules (limit 10)
+  const s1 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s2 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s3 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s4 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s5 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s6 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s7 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s8 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s9 = useSimpleLerp(1, { speed: lerpSpeed });
+  const s10 = useSimpleLerp(1, { speed: lerpSpeed });
 
-  const rotationSpring1 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring2 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring3 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring4 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring5 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring6 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring7 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring8 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring9 = useSimpleLerp(0, { speed: fastLerpSpeed });
-  const rotationSpring10 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r1 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r2 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r3 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r4 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r5 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r6 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r7 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r8 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r9 = useSimpleLerp(0, { speed: fastLerpSpeed });
+  const r10 = useSimpleLerp(0, { speed: fastLerpSpeed });
 
-  const scaleSprings = useMemo(
-    () => [
-      scaleSpring1,
-      scaleSpring2,
-      scaleSpring3,
-      scaleSpring4,
-      scaleSpring5,
-      scaleSpring6,
-      scaleSpring7,
-      scaleSpring8,
-      scaleSpring9,
-      scaleSpring10,
-    ],
-    [],
-  );
-
-  const rotationSprings = useMemo(
-    () => [
-      rotationSpring1,
-      rotationSpring2,
-      rotationSpring3,
-      rotationSpring4,
-      rotationSpring5,
-      rotationSpring6,
-      rotationSpring7,
-      rotationSpring8,
-      rotationSpring9,
-      rotationSpring10,
-    ],
-    [],
-  );
+  const scaleSprings = useMemo(() => [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10], [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10]);
+  const rotationSprings = useMemo(() => [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10], [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10]);
 
   // Group shapes by type and create mappings
   const { boxes, cones, spheres, shapeToManagerIndex } = useMemo(() => {

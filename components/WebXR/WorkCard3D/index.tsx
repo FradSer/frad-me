@@ -76,7 +76,6 @@ const WorkCard3D = memo<WorkCard3DProps>(function WorkCard3D({
   work,
   position,
   index,
-  visible = true,
   onHover,
   onClick,
 }) {
@@ -122,7 +121,6 @@ const WorkCard3D = memo<WorkCard3DProps>(function WorkCard3D({
 
   return (
     <group ref={groupRef} position={position} renderOrder={renderOrder}>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: mesh element is interactive in 3D context */}
       <mesh
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
