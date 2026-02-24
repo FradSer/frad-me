@@ -62,6 +62,10 @@ const triggerUseFrame = (delta = 0.016, time = 0) => {
   });
 };
 
+const clearUseFrameCallbacks = () => {
+  (window as any).__useFrameCallbacks = [];
+};
+
 describe('useInstancedHover', () => {
   let mockMeshRef: React.RefObject<THREE.InstancedMesh>;
 
