@@ -9,52 +9,40 @@ import useMousePosition from '@/hooks/useMousePosition';
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
 import { primaryTransition } from '@/utils/motion/springTransitions';
 
-// * Configuration constants
-const SPRING_CONFIG = {
-  stiffness: 300,
-  damping: 30,
-} as const;
-
-// Slower spring config for text label
-const TEXT_SPRING_CONFIG = {
-  stiffness: 150,
-  damping: 25,
-} as const;
-
-const BLEND_FACTOR = 0.7;
-
-// Base CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
-// so that translate(-50%, -50%) always centers correctly regardless of visual size.
+// CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
+// Center regardless of visual size.
 const DOT_SCALE = {
   small: 0.25,
   large: 1,
 } as const;
 
-// Solid circle (no blend mode): visible only during work-card hover
+// Solid circle: visible only during work-card hover
 const solidCircleVariants = {
   initial: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   workCardHover: { scale: DOT_SCALE.large, opacity: 1, transition: primaryTransition },
   attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
 };
 
-// Blend circle (mix-blend-difference always on): visible in default state, hides on hover
+// Blend circle: visible in default state, hides on hover
 const blendCircleVariants = {
   initial: { scale: DOT_SCALE.small, opacity: 1, transition: primaryTransition },
   headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   workCardHover: { scale: DOT_SCALE.large, opacity: 0, transition: primaryTransition },
   attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
 };
 
-// Text label (READ / WIP): pixel y slide-up + opacity fade only.
+// Text label (READ / WIP)
 const textVariants = {
   initial: { opacity: 0, y: 8, transition: primaryTransition },
   workCardHover: { opacity: 1, y: 0, transition: primaryTransition },
 };
 
-// Separate background and text animation targets per cursor state
 const cursorStateMap = {
   'header-link-hovered': { background: 'headerLinkHovered', text: 'initial', title: '' },
+  'button-hovered': { background: 'buttonHovered', text: 'initial', title: '' },
   'work-card-hovered': { background: 'workCardHover', text: 'workCardHover', title: 'READ' },
   'work-card-hovered-wip': { background: 'workCardHover', text: 'workCardHover', title: 'WIP' },
   attracted: { background: 'attracted', text: 'initial', title: '' },
@@ -62,28 +50,23 @@ const cursorStateMap = {
 } as const;
 
 export default function DotRing() {
-  // * Hooks
   const mousePosition = useMousePosition();
   const mouseContext = useMouseContext();
 
-  // * Physical attraction - initialize motion values once
   const attractedX = useMotionValue(0);
   const attractedY = useMotionValue(0);
   const springX = useSpring(attractedX, SPRING_CONFIG);
   const springY = useSpring(attractedY, SPRING_CONFIG);
 
-  // * Text position with slower spring for more delay/lag effect
   const textAttractedX = useMotionValue(0);
   const textAttractedY = useMotionValue(0);
   const textSpringX = useSpring(textAttractedX, TEXT_SPRING_CONFIG);
   const textSpringY = useSpring(textAttractedY, TEXT_SPRING_CONFIG);
 
-  // * Retain last non-empty title so fade-out animates visible text
   const [displayTitle, setDisplayTitle] = useState('');
 
   const currentState = cursorStateMap[mouseContext.cursorType] ?? cursorStateMap.default;
 
-  // * Effects
   useEffect(() => {
     const blendedPosition = calculateBlendPosition(
       mousePosition,
@@ -107,13 +90,11 @@ export default function DotRing() {
     if (currentState.title) setDisplayTitle(currentState.title);
   }, [currentState.title]);
 
-  // * Render
   const positionStyle = { left: springX, top: springY, x: '-50%', y: '-50%' } as const;
   const textPositionStyle = { left: textSpringX, top: textSpringY, x: '-50%', y: '-50%' } as const;
 
   return (
     <>
-      {/* Text label: fixed 4rem wrapper handles centering; inner span animates */}
       <motion.div
         className="fixed hidden md:flex w-16 h-16 items-center justify-center pointer-events-none z-70"
         style={textPositionStyle}
@@ -128,7 +109,6 @@ export default function DotRing() {
         </motion.span>
       </motion.div>
 
-      {/* Solid circle - no blend mode, fades in during work-card hover */}
       <motion.div
         animate={currentState.background}
         variants={solidCircleVariants}
@@ -137,7 +117,6 @@ export default function DotRing() {
         style={positionStyle}
       />
 
-      {/* Blend circle - mix-blend-difference always on, visible in default state */}
       <motion.div
         animate={currentState.background}
         variants={blendCircleVariants}

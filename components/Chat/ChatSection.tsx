@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { CursorType } from '@/contexts/Mouse/MouseContext';
+import useMouseContext from '@/hooks/useMouseContext';
 
 const SUGGESTED_QUESTIONS = [
   'What does Frad do?',
@@ -93,6 +95,7 @@ export default function ChatSection() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const mouseContext = useMouseContext();
 
   // Check if chat is configured on the server
   useEffect(() => {
@@ -146,10 +149,8 @@ export default function ChatSection() {
   });
 
   const hasMessages = visibleMessages.length > 0;
-  // null = still loading (treat as disabled); false = confirmed not configured
   const isDisabled = enabled !== true;
 
-  // Don't render the section at all if chat is confirmed not configured
   if (enabled === false) return null;
 
   return (
@@ -171,6 +172,8 @@ export default function ChatSection() {
                   key={q}
                   type="button"
                   onClick={() => send(q)}
+                  onMouseEnter={() => mouseContext.cursorChangeHandler(CursorType.buttonHovered)}
+                  onMouseLeave={() => mouseContext.cursorChangeHandler(CursorType.default)}
                   className="rounded-full border border-gray-300 px-5 py-2.5 text-base font-medium text-gray-600 transition-all hover:border-black hover:text-black dark:border-gray-600 dark:text-gray-400 dark:hover:border-white dark:hover:text-white sm:text-lg"
                 >
                   {q}

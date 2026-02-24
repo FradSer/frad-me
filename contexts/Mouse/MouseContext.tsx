@@ -7,6 +7,7 @@ export enum CursorType {
   headerLinkHovered = 'header-link-hovered',
   workCardHovered = 'work-card-hovered',
   workCardHoveredWIP = 'work-card-hovered-wip',
+  buttonHovered = 'button-hovered',
   attracted = 'attracted',
 }
 
