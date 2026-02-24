@@ -11,8 +11,6 @@ import {
   type BenchmarkConfig,
   type BenchmarkResults,
   BenchmarkRunner,
-  type BenchmarkTarget,
-  type DeviceType,
 } from '@/utils/webxr/benchmarkRunner';
 
 describe('WebXR Performance Benchmarks', () => {
@@ -34,18 +32,15 @@ describe('WebXR Performance Benchmarks', () => {
   });
 
   afterEach(() => {
-    try {
-      jest.runOnlyPendingTimers();
-    } catch {
-      // Ignore if fake timers are not active
-    }
     jest.useRealTimers();
     renderer.dispose();
     scene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         if (Array.isArray(object.material)) {
-          object.material.forEach((mat) => mat.dispose());
+          object.material.forEach((mat) => {
+            mat.dispose();
+          });
         } else if (object.material) {
           object.material.dispose();
         }

@@ -1,9 +1,3 @@
-/**
- * Texture Atlas Utility Tests
- *
- * Tests for texture atlas creation, validation, and utility functions.
- */
-
 import {
   type AtlasConfig,
   type AtlasTileInfo,
@@ -77,7 +71,6 @@ describe('Texture Atlas Utility', () => {
       const invalidConfigs = [
         { width: 0, height: 512, columns: 2, rows: 2 },
         { width: 100, height: 512, columns: 2, rows: 2 },
-        { width: 512, height: 512, columns: 2, rows: 2, width: 100 },
       ];
 
       invalidConfigs.forEach((config) => {
@@ -99,10 +92,11 @@ describe('Texture Atlas Utility', () => {
     });
 
     it('should reject non-power-of-two dimensions', () => {
-      const invalidConfigs = [
-        { width: 512, height: 512, columns: 2, rows: 2, width: 1000 },
-        { width: 512, height: 512, columns: 2, rows: 2, height: 1000 },
-        { width: 512, height: 512, columns: 2, rows: 2, width: 1024, height: 1025 },
+      const invalidConfigs: Partial<AtlasConfig>[] = [
+        { width: 511, height: 512, columns: 2, rows: 2 },
+        { width: 513, height: 512, columns: 2, rows: 2 },
+        { width: 512, height: 1023, columns: 2, rows: 2 },
+        { width: 512, height: 1025, columns: 2, rows: 2 },
       ];
 
       invalidConfigs.forEach((config) => {

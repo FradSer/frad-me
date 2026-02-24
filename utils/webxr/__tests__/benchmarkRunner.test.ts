@@ -1,9 +1,3 @@
-/**
- * Benchmark Runner Unit Tests
- *
- * Tests for the BenchmarkRunner class and its methods.
- */
-
 import * as THREE from 'three';
 import {
   BENCHMARK_TARGETS,
@@ -48,7 +42,9 @@ describe('BenchmarkRunner', () => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         if (Array.isArray(object.material)) {
-          object.material.forEach((mat) => mat.dispose());
+          object.material.forEach((mat) => {
+            mat.dispose();
+          });
         } else if (object.material) {
           object.material.dispose();
         }

@@ -1,18 +1,10 @@
-/**
- * Migration Helper Utility Tests
- *
- * Tests for migrating WorkCard3D data to instanced attributes.
- * Following BDD TDD Red-Green-Refactor approach.
- */
-
 import { ENTRANCE_POSITIONS } from '@/utils/webxr/animationConstants';
 import {
   createInstanceDataForWorks,
-  type InstanceData,
   setupWorkCardInstanceData,
   type WorkLink,
 } from '@/utils/webxr/migrationHelper';
-import { type AtlasConfig, getTileInfo } from '@/utils/webxr/textureAtlas';
+import { getTileInfo } from '@/utils/webxr/textureAtlas';
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
 
 // Mock dependencies
