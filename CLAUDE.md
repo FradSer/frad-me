@@ -13,7 +13,7 @@ pnpm dev              # Start dev server on localhost:3000
 pnpm build            # Production build (Turbopack by default)
 pnpm check            # Biome format + lint + import organize (recommended before commit)
 pnpm test             # Jest unit tests
-pnpm test path         # Run specific test, e.g. pnpm test utils/__tests__/mdx.test.ts
+pnpm test path         # Run specific test, e.g. pnpm test utils/__tests__/performance.test.ts
 pnpm test:e2e         # Playwright E2E tests
 pnpm test:all         # Unit + E2E
 pnpm analyze          # Bundle analysis (forces webpack mode)
@@ -33,7 +33,7 @@ pnpm test:e2e:headed # Run E2E tests in headed mode (visible browser)
 pnpm test:all     # Run all tests (unit + E2E) — note: internally uses npm run
 
 # Run specific test files:
-pnpm test utils/__tests__/mdx.test.ts
+pnpm test utils/__tests__/performance.test.ts
 # Note: E2E tests have been cleaned up to remove flaky suites.
 ```
 
@@ -83,10 +83,10 @@ The "ask" section on the homepage uses Vercel AI SDK v6 with an OpenAI-compatibl
 
 ### Content Management
 
-- `content/works/*.mdx`: Portfolio case studies with frontmatter (`title`, `description`, `date`, `tags`, `image`, optional `externalLink`)
+- `markdown/works/*.mdx`: Portfolio case studies with frontmatter (`title`, `description`, `date`, `tags`, `image`, optional `externalLink`)
 - `content/workLinks.ts`, `content/headerLinks.ts`, `content/footerLinks.ts`: Link configuration
 - `content/resume.ts`: Structured resume data used by both `/resume` page and AI chat tools
-- `utils/mdx.ts`: MDX processing with mdx-bundler
+- MDX rendering via `@next/mdx` (native Next.js); `utils/workContent.ts` handles plain-text extraction for AI tools
 
 ### WebXR Experience
 
