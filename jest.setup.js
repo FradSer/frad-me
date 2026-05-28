@@ -75,6 +75,44 @@ jest.mock('motion/react', () => {
       start: jest.fn(),
       stop: jest.fn(),
     }),
+    useMotionValue: (initial) => {
+      let value = initial;
+      return {
+        get: () => value,
+        set: (next) => {
+          value = next;
+        },
+        on: () => () => {},
+        onChange: () => () => {},
+        destroy: () => {},
+      };
+    },
+    useSpring: (source) => {
+      if (source && typeof source === 'object' && 'get' in source) return source;
+      let value = source;
+      return {
+        get: () => value,
+        set: (next) => {
+          value = next;
+        },
+        on: () => () => {},
+        onChange: () => () => {},
+        destroy: () => {},
+      };
+    },
+    useTransform: (_source, _input, output) => {
+      const value = Array.isArray(output) ? output[0] : output;
+      let current = value;
+      return {
+        get: () => current,
+        set: (next) => {
+          current = next;
+        },
+        on: () => () => {},
+        onChange: () => () => {},
+        destroy: () => {},
+      };
+    },
   };
 });
 

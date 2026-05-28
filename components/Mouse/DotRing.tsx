@@ -9,6 +9,13 @@ import useMousePosition from '@/hooks/useMousePosition';
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
 import { primaryTransition } from '@/utils/motion/springTransitions';
 
+// Spring physics for the cursor follow — see CLAUDE.md (stiffness 300, damping 30).
+const SPRING_CONFIG = { stiffness: 300, damping: 30 } as const;
+// Looser spring for the text label so it lags slightly behind the dot.
+const TEXT_SPRING_CONFIG = { stiffness: 150, damping: 25 } as const;
+// Blend factor passed to calculateBlendPosition() when an attractor is set.
+const BLEND_FACTOR = 0.7;
+
 // CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
 // Center regardless of visual size.
 const DOT_SCALE = {

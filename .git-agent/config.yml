@@ -1,0 +1,17 @@
+scopes:
+    - name: app
+      description: App router pages, routes, and layouts in app/; does not cover reusable UI components.
+    - name: components
+      description: UI components, WebXR scenes, and landing sections in components/; does not cover app routing or state contexts.
+    - name: content
+      description: Portfolio data, resume info, and link configs in content/ and markdown/; does not cover dynamic API handling.
+    - name: context
+      description: State providers for theme, mouse, and WebMCP in contexts/; does not cover component rendering or hooks.
+    - name: hooks
+      description: Custom React hooks for animation, XR, and MCP in hooks/; does not cover utility libraries or contexts.
+    - name: utils
+      description: Cross-cutting helpers, render utilities, and math in utils/; does not cover framework hooks or contexts.
+    - name: styles
+      description: Global CSS, design tokens, and PostCSS config; does not cover inline styles or component-specific classes.
+    - name: types
+      description: TypeScript interfaces and declarations across types/; does not cover runtime implementation logic.
