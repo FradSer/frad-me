@@ -45,7 +45,11 @@ jest.mock('@/contexts/WebXR/WebXRViewContext', () => ({
 }));
 
 const createMockInstancedMesh = (instanceCount = 10): THREE.InstancedMesh => {
-  const mesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial(), instanceCount);
+  const mesh = new THREE.InstancedMesh(
+    new THREE.PlaneGeometry(1, 1),
+    new THREE.MeshBasicMaterial(),
+    instanceCount,
+  );
   const dummy = new THREE.Object3D();
   for (let i = 0; i < instanceCount; i++) {
     dummy.position.set(i * 1.5, 0, -5);
