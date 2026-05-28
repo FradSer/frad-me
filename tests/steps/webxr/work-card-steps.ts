@@ -1,5 +1,4 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '@cucumber/cucumber';
+import { Given, Then, When, type World } from '@cucumber/cucumber';
 
 // Background: WebXR loaded, on work view, cards visible
 Given('the WebXR experience is loaded', async function (this: World) {
@@ -16,7 +15,7 @@ Given('all 5 work cards are visible', async function (this: World) {
 });
 
 // Scenario: Instant hover response
-When('the user\'s gaze or cursor hovers over a work card', async function (this: World) {
+When("the user's gaze or cursor hovers over a work card", async function (this: World) {
   // Simulate hover event
   this.set('hovered', true);
 });
@@ -113,7 +112,7 @@ Given('the user is using Vision Pro with hand tracking', async function (this: W
   this.set('device', 'vision-pro');
 });
 
-When('the user\'s gaze focuses on a work card', async function (this: World) {
+When("the user's gaze focuses on a work card", async function (this: World) {
   this.set('gazeFocused', true);
 });
 
@@ -155,9 +154,12 @@ And('given the user accesses WebXR on desktop browser', async function (this: Wo
   this.set('device', 'desktop');
 });
 
-Then('hover response time should be consistent (less than 20ms variance)', async function (this: World) {
-  // Verify consistent timing across devices
-});
+Then(
+  'hover response time should be consistent (less than 20ms variance)',
+  async function (this: World) {
+    // Verify consistent timing across devices
+  },
+);
 
 Then('visual feedback should be identical', async function (this: World) {
   // Verify visual consistency

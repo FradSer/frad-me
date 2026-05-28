@@ -1,5 +1,4 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '@cucumber/cucumber';
+import { Given, Then, When, type World } from '@cucumber/cucumber';
 
 // Background
 Given('all assets have finished loading', async function (this: World) {
@@ -45,17 +44,23 @@ When('transitioning to {string} view', async function (this: World, view: string
   this.set('transitioningTo', view);
 });
 
-Then('the camera should move from {string} to {string}', async function (this: World, from: string, to: string) {
-  // Verify camera position
-});
+Then(
+  'the camera should move from {string} to {string}',
+  async function (this: World, from: string, to: string) {
+    // Verify camera position
+  },
+);
 
 Then('the camera movement should use spring physics', async function (this: World) {
   // Verify spring animation
 });
 
-Then('the FOV should change from {int}deg to {int}deg', async function (this: World, fromFov: number, toFov: number) {
-  // Verify FOV change
-});
+Then(
+  'the FOV should change from {int}deg to {int}deg',
+  async function (this: World, fromFov: number, toFov: number) {
+    // Verify FOV change
+  },
+);
 
 Then('the look-at point should remain at {string}', async function (this: World, point: string) {
   // Verify look-at point
@@ -79,22 +84,31 @@ Then('fading elements should use spring-based opacity', async function (this: Wo
   // Verify spring opacity
 });
 
-Then('opacity should never drop below 0.01 before becoming invisible', async function (this: World) {
-  // Verify opacity threshold
-});
+Then(
+  'opacity should never drop below 0.01 before becoming invisible',
+  async function (this: World) {
+    // Verify opacity threshold
+  },
+);
 
-Then('opacity transitions should be synchronized with position changes', async function (this: World) {
-  // Verify synchronization
-});
+Then(
+  'opacity transitions should be synchronized with position changes',
+  async function (this: World) {
+    // Verify synchronization
+  },
+);
 
 // Scenario: Rapid switching
 Given('the user is transitioning to work view', async function (this: World) {
   this.set('transitioning', true);
 });
 
-When('the user clicks navigation button again before transition completes', async function (this: World) {
-  this.set('rapidClick', true);
-});
+When(
+  'the user clicks navigation button again before transition completes',
+  async function (this: World) {
+    this.set('rapidClick', true);
+  },
+);
 
 Then('the current transition should reverse', async function (this: World) {
   // Verify reversal

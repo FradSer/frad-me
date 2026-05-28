@@ -1,5 +1,4 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '@cucumber/cucumber';
+import { Given, Then, When, type World } from '@cucumber/cucumber';
 
 // Background
 Given('performance monitoring is enabled', async function (this: World) {
@@ -130,7 +129,7 @@ Then('object traversal should be minimized', async function (this: World) {
 });
 
 // Scenario: Visibility culling
-Given('an object\'s opacity is below 0.01', async function (this: World) {
+Given("an object's opacity is below 0.01", async function (this: World) {
   this.set('objectOpacity', 0.005);
 });
 

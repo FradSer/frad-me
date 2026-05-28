@@ -1,7 +1,7 @@
 import {
-  WEBXR_ANIMATION_CONFIG,
   getCompatibleSpringConfig,
   getLerpSpeed,
+  WEBXR_ANIMATION_CONFIG,
 } from '../animationConfig';
 
 describe('Work Card Hover Interactions', () => {

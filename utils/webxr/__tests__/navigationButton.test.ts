@@ -1,7 +1,4 @@
-import {
-  WEBXR_ANIMATION_CONFIG,
-  getCompatibleSpringConfig,
-} from '../animationConfig';
+import { getCompatibleSpringConfig, WEBXR_ANIMATION_CONFIG } from '../animationConfig';
 
 describe('Navigation Button', () => {
   describe('Breathing animation', () => {

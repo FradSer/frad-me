@@ -1,8 +1,8 @@
 import {
-  WEBXR_ANIMATION_CONFIG,
   getQualityLevel,
-  updateFPS,
   shouldHideComponent,
+  updateFPS,
+  WEBXR_ANIMATION_CONFIG,
 } from '../animationConfig';
 
 describe('Performance Monitoring', () => {

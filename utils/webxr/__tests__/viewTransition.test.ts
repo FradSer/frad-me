@@ -1,9 +1,9 @@
 import {
-  WEBXR_ANIMATION_CONFIG,
   getCompatibleSpringConfig,
   getLerpSpeed,
   getStaggerDelay,
   shouldHideComponent,
+  WEBXR_ANIMATION_CONFIG,
 } from '../animationConfig';
 
 describe('View Transitions', () => {

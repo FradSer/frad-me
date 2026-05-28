@@ -1,5 +1,4 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '@cucumber/cucumber';
+import { Given, Then, When, type World } from '@cucumber/cucumber';
 
 // Background
 Given('the navigation button is visible', async function (this: World) {

@@ -183,7 +183,8 @@ export class BenchmarkRunner {
   private estimateMemoryMb(memInfo: THREE.WebGLInfo['memory']): number {
     const geometryBytes = memInfo.geometries * 1024;
     const textureBytes = memInfo.textures * 1024 * 8;
-    const programCount = (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
+    const programCount =
+      (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
     const programBytes = programCount * 512;
     return (geometryBytes + textureBytes + programBytes) / (1024 * 1024);
   }
@@ -323,7 +324,8 @@ export class BenchmarkRunner {
     const memInfo = this.renderer.info.memory;
     const geometriesMb = (memInfo.geometries * 1024) / (1024 * 1024);
     const texturesMb = (memInfo.textures * 1024 * 8) / (1024 * 1024);
-    const programCount = (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
+    const programCount =
+      (this.renderer.info as any).programs?.length ?? (this.renderer.info as any).programs ?? 0;
     const programsMb = (programCount * 512) / (1024 * 1024);
 
     const hasLeaks = this.detectMemoryLeaks();
