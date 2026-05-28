@@ -19,8 +19,8 @@ const headerLinks = [
     destinationType: DestinationType.section,
   },
   {
-    title: 'listen',
-    href: 'listen',
+    title: 'sonics',
+    href: 'sonics',
     destinationType: DestinationType.section,
   },
   {
