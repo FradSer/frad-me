@@ -154,7 +154,7 @@ export default function ChatSection() {
   if (enabled === false) return null;
 
   return (
-    <section className="layout-wrapper my-20 md:my-24 lg:my-32">
+    <section id="ask" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
       <div className="flex flex-col items-start">
         {/* Section heading */}
         <div className="mb-8 flex w-full items-end justify-between">

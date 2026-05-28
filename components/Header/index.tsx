@@ -33,10 +33,11 @@ function Header() {
     }
   }, [pathname]);
 
-  // Close mobile menu on resize to desktop
+  // Close mobile menu on resize to desktop.
+  // Threshold tracks the Tailwind `md:` breakpoint used by the nav swap below.
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 640) {
+      if (window.innerWidth >= 768) {
         setMobileMenuOpen(false);
       }
     };
@@ -67,7 +68,7 @@ function Header() {
         </div>
 
         {/* Desktop links */}
-        <ul className="hidden h-full flex-row items-center space-x-8 text-2xl sm:flex">
+        <ul className="hidden h-full flex-row items-center space-x-6 text-2xl md:flex md:space-x-8">
           {headerLinks.map((headerLink) => (
             <li key={headerLink.title}>
               <CommonLink
@@ -83,7 +84,7 @@ function Header() {
         </ul>
 
         {/* Mobile menu button + theme switcher */}
-        <div className="flex items-center gap-4 sm:hidden">
+        <div className="flex items-center gap-4 md:hidden">
           <ThemeSwitcher />
           <MobileMenuButton isOpen={mobileMenuOpen} onToggle={toggleMenu} />
         </div>
@@ -97,7 +98,7 @@ function Header() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden sm:hidden"
+            className="overflow-hidden md:hidden"
           >
             <ul className="flex flex-col pb-6 pt-2">
               {headerLinks.map((headerLink) => (
