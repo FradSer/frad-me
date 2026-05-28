@@ -39,7 +39,7 @@ const patents = [
 
 export default function Patents() {
   return (
-    <section className="layout-wrapper my-20 md:my-24 lg:my-32">
+    <section id="patent" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
       <div className="flex flex-col items-start">
         <h2 className="mb-8 text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
           patent
