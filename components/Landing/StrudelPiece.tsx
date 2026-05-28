@@ -140,10 +140,10 @@ export default function StrudelPiece() {
     state === 'playing' ? 'Pause music' : state === 'loading' ? 'Loading' : 'Play music';
 
   return (
-    <section id="listen" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
+    <section id="sonics" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
       <div className="flex flex-col items-start">
         <h2 className="mb-8 text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
-          listen
+          sonics
         </h2>
 
         <div className="flex w-full flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">

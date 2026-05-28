@@ -96,8 +96,14 @@ const ShapesInstanced = memo<ShapesInstancedProps>(function ShapesInstanced({
   const r9 = useSimpleLerp(0, { speed: fastLerpSpeed });
   const r10 = useSimpleLerp(0, { speed: fastLerpSpeed });
 
-  const scaleSprings = useMemo(() => [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10], [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10]);
-  const rotationSprings = useMemo(() => [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10], [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10]);
+  const scaleSprings = useMemo(
+    () => [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10],
+    [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10],
+  );
+  const rotationSprings = useMemo(
+    () => [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10],
+    [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10],
+  );
 
   // Group shapes by type and create mappings
   const { boxes, cones, spheres, shapeToManagerIndex } = useMemo(() => {

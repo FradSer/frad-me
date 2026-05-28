@@ -5,6 +5,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import Header from '@/components/Header';
 
+import useHashScroll from '@/hooks/useHashScroll';
 import useLoading from '@/hooks/useLoading';
 import { createCursorClasses, LAYOUT_CLASSES } from '@/utils/classNames';
 import {
@@ -54,6 +55,9 @@ const LoadingScreen = () => (
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const { isLoading } = useLoading();
+
+  // Scroll to #hash target once the loading screen is dismissed
+  useHashScroll(!isLoading);
 
   if (isLoading) {
     return <LoadingScreen />;

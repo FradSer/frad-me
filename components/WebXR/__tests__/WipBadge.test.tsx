@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
+import type React from 'react';
 import { WebXRViewProvider } from '@/contexts/WebXR/WebXRViewContext';
 import WipBadge from '../WipBadge';
 
@@ -10,9 +10,14 @@ jest.mock('@/utils/performance', () => ({
 
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: () => function MockDynamic(props: any) {
-    return <div data-testid="html-badge" {...props}>{props.children}</div>;
-  },
+  default: () =>
+    function MockDynamic(props: any) {
+      return (
+        <div data-testid="html-badge" {...props}>
+          {props.children}
+        </div>
+      );
+    },
 }));
 
 const TestWrapper = ({
