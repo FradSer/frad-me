@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber';
 import { createXRStore, XR } from '@react-three/xr';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useWebXRView } from '@/contexts/WebXR/WebXRViewContext';
-import type { XRStoreState } from '@/types/webxr';
 
 interface WebXRCanvasProps {
   children: React.ReactNode;
@@ -40,7 +39,7 @@ const WebXRCanvas = memo<WebXRCanvasProps>(function WebXRCanvas({ children }) {
   const [isXRActive, setIsXRActive] = useState(false);
 
   useEffect(() => {
-    return xrStore.subscribe((state: XRStoreState) => {
+    return xrStore.subscribe((state) => {
       setIsXRActive(!!state.session);
     });
   }, []);
