@@ -130,16 +130,6 @@ export interface VisionProEventHandlers {
 }
 
 /**
- * WebXR store state interface for React Three XR
- */
-export interface XRStoreState {
-  session: XRSession | null;
-  isPresenting: boolean;
-  isHandTracking: boolean;
-  mode: 'AR' | 'VR' | null;
-}
-
-/**
  * Extended XR capabilities detection interface
  */
 export interface XRCapabilities {
