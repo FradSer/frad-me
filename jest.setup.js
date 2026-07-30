@@ -238,8 +238,6 @@ HTMLCanvasElement.prototype.getContext = jest.fn((contextType) => {
   if (contextType === 'webgl' || contextType === 'webgl2') {
     return {
       getParameter: jest.fn(() => 0),
-      enable: jest.fn(),
-      disable: jest.fn(),
       createShader: jest.fn(() => ({})),
       createProgram: jest.fn(() => ({})),
       attachShader: jest.fn(),
@@ -287,8 +285,6 @@ HTMLCanvasElement.prototype.getContext = jest.fn((contextType) => {
       deleteRenderbuffer: jest.fn(),
       clearColor: jest.fn(),
       clear: jest.fn(),
-      enable: jest.fn(),
-      disable: jest.fn(),
       depthFunc: jest.fn(),
       cullFace: jest.fn(),
       frontFace: jest.fn(),

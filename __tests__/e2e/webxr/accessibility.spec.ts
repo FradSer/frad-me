@@ -432,11 +432,10 @@ test.describe('WebXR Accessibility', () => {
     });
 
     for (const result of contrastResults) {
-      expect(result.passes)
-        .withContext(
-          `Element ${result.element} has contrast ratio ${result.ratio}:1 (minimum 4.5:1)`,
-        )
-        .toBeTruthy();
+      expect(
+        result.passes,
+        `Element ${result.element} has contrast ratio ${result.ratio}:1 (minimum 4.5:1)`,
+      ).toBeTruthy();
     }
   });
 
@@ -530,9 +529,10 @@ test.describe('WebXR Accessibility', () => {
       });
 
       if (badgeContrast) {
-        expect(badgeContrast.passes)
-          .withContext(`Badge has contrast ratio ${badgeContrast.ratio}:1 (minimum 4.5:1)`)
-          .toBeTruthy();
+        expect(
+          badgeContrast.passes,
+          `Badge has contrast ratio ${badgeContrast.ratio}:1 (minimum 4.5:1)`,
+        ).toBeTruthy();
       }
     }
   });
@@ -683,11 +683,10 @@ test.describe('WebXR Accessibility', () => {
     });
 
     for (const result of fontSizeResults) {
-      expect(result.passes)
-        .withContext(
-          `Element ${result.element} has font size ${result.size} (should be 16-20pt equivalent)`,
-        )
-        .toBeTruthy();
+      expect(
+        result.passes,
+        `Element ${result.element} has font size ${result.size} (should be 16-20pt equivalent)`,
+      ).toBeTruthy();
     }
   });
 
@@ -745,11 +744,12 @@ test.describe('WebXR Accessibility', () => {
     // Check if custom font is loaded
     const isFontLoaded = await page.evaluate(async () => {
       return new Promise<boolean>((resolve) => {
-        if ('fonts' in document) {
-          document.fonts
+        const doc = document;
+        if (typeof doc.fonts !== 'undefined') {
+          doc.fonts
             .load('bold 16px "GT Eesti Display"')
             .then(() => {
-              const isLoaded = document.fonts.check('bold 16px "GT Eesti Display"');
+              const isLoaded = doc.fonts.check('bold 16px "GT Eesti Display"');
               resolve(isLoaded);
             })
             .catch(() => {
@@ -757,17 +757,15 @@ test.describe('WebXR Accessibility', () => {
             });
         } else {
           // Fallback check - if FontFace API not available
-          const testElement = document.createElement('div');
+          const testElement = doc.createElement('div');
           testElement.style.fontFamily = '"GT Eesti Display", sans-serif';
           testElement.style.fontWeight = 'bold';
           testElement.style.opacity = '0';
           testElement.textContent = 'test';
-          document.body.appendChild(testElement);
-
+          doc.body.appendChild(testElement);
           const computedFont = window.getComputedStyle(testElement).fontFamily;
           const hasCustomFont = computedFont.includes('GT Eesti Display');
-
-          document.body.removeChild(testElement);
+          doc.body.removeChild(testElement);
           resolve(hasCustomFont);
         }
       });

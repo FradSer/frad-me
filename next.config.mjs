@@ -24,9 +24,6 @@ const nextConfig = {
     'three-stdlib',
   ],
   cacheComponents: true,
-  experimental: {
-    turbopackUseSystemTlsCerts: true,
-  },
 };
 
 const withMDX = createMDX({

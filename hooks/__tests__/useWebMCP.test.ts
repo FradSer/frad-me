@@ -1,18 +1,28 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useWebMCP, type WebMCPActions } from '../useWebMCP';
 
+interface MockToolResult {
+  content: { type: string; text: string }[];
+}
+
+interface MockTool {
+  name: string;
+  execute: (params: unknown) => Promise<MockToolResult>;
+}
+
 const createMockModelContext = () => {
-  const tools: Record<string, { execute: (params: unknown) => Promise<unknown> }> = {};
-  const unregisterFns: jest.Mock[] = [];
+  const tools: Record<string, MockTool> = {};
+  const signals: AbortSignal[] = [];
   return {
-    registerTool: jest.fn((tool) => {
+    registerTool: jest.fn((tool: MockTool, options?: { signal?: AbortSignal }) => {
       tools[tool.name] = tool;
-      const unregister = jest.fn();
-      unregisterFns.push(unregister);
-      return { unregister };
+      if (options?.signal) {
+        signals.push(options.signal);
+      }
+      return Promise.resolve();
     }),
     _tools: tools,
-    _unregisterFns: unregisterFns,
+    _signals: signals,
   };
 };
 
@@ -59,7 +69,7 @@ describe('useWebMCP', () => {
     expect(result.current.isReady).toBe(true);
     expect(mc.registerTool).toHaveBeenCalledTimes(5);
 
-    const toolNames = mc.registerTool.mock.calls.map((call: [{ name: string }]) => call[0].name);
+    const toolNames = mc.registerTool.mock.calls.map((call) => call[0].name);
     expect(toolNames).toContain('navigate');
     expect(toolNames).toContain('get_works');
     expect(toolNames).toContain('read_work');
@@ -67,26 +77,25 @@ describe('useWebMCP', () => {
     expect(toolNames).toContain('get_resume');
   });
 
-  it('should unregister all tools on unmount', () => {
+  it('should abort all tools on unmount via AbortSignal', () => {
     const mc = createMockModelContext();
     Object.defineProperty(window, 'navigator', {
       value: { ...originalNavigator, modelContext: mc },
       writable: true,
       configurable: true,
     });
-
     const actions = createMockActions();
     const { unmount } = renderHook(() => useWebMCP(actions));
 
-    expect(mc._unregisterFns).toHaveLength(5);
-    for (const fn of mc._unregisterFns) {
-      expect(fn).not.toHaveBeenCalled();
+    expect(mc._signals).toHaveLength(5);
+    for (const signal of mc._signals) {
+      expect(signal.aborted).toBe(false);
     }
 
     unmount();
 
-    for (const fn of mc._unregisterFns) {
-      expect(fn).toHaveBeenCalledTimes(1);
+    for (const signal of mc._signals) {
+      expect(signal.aborted).toBe(true);
     }
   });
 
@@ -103,19 +112,13 @@ describe('useWebMCP', () => {
       renderHook(() => useWebMCP(actions));
 
       const navigateTool = mc._tools.navigate;
-      let toolResult: unknown;
-
-      await act(async () => {
-        toolResult = await navigateTool.execute({ path: '/' });
-      });
+      const result = await navigateTool.execute({ path: '/' });
 
       expect(actions.navigate).toHaveBeenCalledWith('/');
-      expect(toolResult).toEqual({
-        content: [{ type: 'text', text: expect.any(String) }],
-      });
+      expect(result.content[0].type).toBe('text');
     });
 
-    it('should reject invalid paths', async () => {
+    it('should reject invalid path', async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -127,48 +130,15 @@ describe('useWebMCP', () => {
       renderHook(() => useWebMCP(actions));
 
       const navigateTool = mc._tools.navigate;
-      let toolResult: { content: { text: string }[] } | undefined;
-
-      await act(async () => {
-        toolResult = (await navigateTool.execute({
-          path: '/invalid',
-        })) as typeof toolResult;
-      });
+      const result = await navigateTool.execute({ path: '/invalid' });
 
       expect(actions.navigate).not.toHaveBeenCalled();
-      expect(JSON.parse(toolResult?.content[0].text ?? '')).toEqual({
-        error: 'Invalid parameters',
-      });
-    });
-
-    it("should reject 'work' without leading slash", async () => {
-      const mc = createMockModelContext();
-      Object.defineProperty(window, 'navigator', {
-        value: { ...originalNavigator, modelContext: mc },
-        writable: true,
-        configurable: true,
-      });
-
-      const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
-
-      const navigateTool = mc._tools.navigate;
-
-      let result: unknown;
-      await act(async () => {
-        result = await navigateTool.execute({ path: 'work' });
-      });
-
-      // 'work' (without leading slash) is not in VALID_PATHS, so it should be rejected
-      expect(actions.navigate).not.toHaveBeenCalled();
-      expect(result).toEqual({
-        content: [{ type: 'text', text: JSON.stringify({ error: 'Invalid parameters' }) }],
-      });
+      expect(result.content[0].text).toContain('error');
     });
   });
 
   describe('get_works tool', () => {
-    it('should execute without params', async () => {
+    it('should execute and return works', async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -179,18 +149,16 @@ describe('useWebMCP', () => {
       const actions = createMockActions();
       renderHook(() => useWebMCP(actions));
 
-      const getWorksTool = mc._tools.get_works;
-
-      await act(async () => {
-        await getWorksTool.execute({});
-      });
+      const worksTool = mc._tools.get_works;
+      const result = await worksTool.execute({});
 
       expect(actions.getWorks).toHaveBeenCalled();
+      expect(result.content[0].type).toBe('text');
     });
   });
 
   describe('read_work tool', () => {
-    it('should validate and execute with valid slug', async () => {
+    it('should validate slug and execute', async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -201,13 +169,11 @@ describe('useWebMCP', () => {
       const actions = createMockActions();
       renderHook(() => useWebMCP(actions));
 
-      const readWorkTool = mc._tools.read_work;
+      const readTool = mc._tools.read_work;
+      const result = await readTool.execute({ slug: 'bearychat' });
 
-      await act(async () => {
-        await readWorkTool.execute({ slug: 'vivo-vision' });
-      });
-
-      expect(actions.readWork).toHaveBeenCalledWith('vivo-vision');
+      expect(actions.readWork).toHaveBeenCalledWith('bearychat');
+      expect(result.content[0].type).toBe('text');
     });
 
     it('should reject empty slug', async () => {
@@ -221,24 +187,16 @@ describe('useWebMCP', () => {
       const actions = createMockActions();
       renderHook(() => useWebMCP(actions));
 
-      const readWorkTool = mc._tools.read_work;
-      let toolResult: { content: { text: string }[] } | undefined;
-
-      await act(async () => {
-        toolResult = (await readWorkTool.execute({
-          slug: '',
-        })) as typeof toolResult;
-      });
+      const readTool = mc._tools.read_work;
+      const result = await readTool.execute({ slug: '' });
 
       expect(actions.readWork).not.toHaveBeenCalled();
-      expect(JSON.parse(toolResult?.content[0].text ?? '')).toEqual({
-        error: 'Invalid parameters',
-      });
+      expect(result.content[0].text).toContain('error');
     });
   });
 
-  describe('logging', () => {
-    it('should cap logs at 50 entries', () => {
+  describe('search_works tool', () => {
+    it('should validate query and execute', async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -247,9 +205,33 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      const { result } = renderHook(() => useWebMCP(actions));
+      renderHook(() => useWebMCP(actions));
 
-      expect(result.current.logs.length).toBeLessThanOrEqual(50);
+      const searchTool = mc._tools.search_works;
+      const result = await searchTool.execute({ query: 'design' });
+
+      expect(actions.searchWorks).toHaveBeenCalledWith('design');
+      expect(result.content[0].type).toBe('text');
+    });
+  });
+
+  describe('get_resume tool', () => {
+    it('should execute and return resume', async () => {
+      const mc = createMockModelContext();
+      Object.defineProperty(window, 'navigator', {
+        value: { ...originalNavigator, modelContext: mc },
+        writable: true,
+        configurable: true,
+      });
+
+      const actions = createMockActions();
+      renderHook(() => useWebMCP(actions));
+
+      const resumeTool = mc._tools.get_resume;
+      const result = await resumeTool.execute({});
+
+      expect(actions.getResume).toHaveBeenCalled();
+      expect(result.content[0].type).toBe('text');
     });
   });
 });

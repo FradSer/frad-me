@@ -178,7 +178,7 @@ export const createTextureAtlas = async (
         const imageAspect = image.width / image.height;
         const tileAspect = tileWidth / tileHeight;
 
-        let drawWidth, drawHeight, drawX, drawY;
+        let drawWidth: number, drawHeight: number, drawX: number, drawY: number;
 
         if (imageAspect > tileAspect) {
           drawHeight = tileHeight;
@@ -235,7 +235,7 @@ export const createTextureAtlas = async (
 };
 
 export const disposeAtlas = (atlas: AtlasResult): void => {
-  if (!atlas || !atlas.texture) {
+  if (!atlas?.texture) {
     return;
   }
 

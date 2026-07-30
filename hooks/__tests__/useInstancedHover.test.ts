@@ -9,7 +9,6 @@ import { act, renderHook } from '@testing-library/react';
 import * as THREE from 'three';
 import {
   __testing__,
-  type HoverDetectionConfig,
   useInstancedHover,
   useUniversalHover,
   useXRHover,
@@ -113,7 +112,7 @@ describe('useInstancedHover Hook', () => {
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: jest.fn().mockImplementation((query) => ({
-        matches: query === '(prefers-reduced-motion: reduce)' ? false : false,
+        matches: false,
         media: query,
         onchange: null,
         addListener: jest.fn(),
@@ -196,7 +195,7 @@ describe('useInstancedHover Hook', () => {
     describe('Given the user has enabled reduced motion', () => {
       beforeEach(() => {
         (window.matchMedia as jest.Mock).mockImplementation((query) => ({
-          matches: query === '(prefers-reduced-motion: reduce)' ? true : false,
+          matches: query === '(prefers-reduced-motion: reduce)',
           media: query,
           onchange: null,
           addListener: jest.fn(),
@@ -207,9 +206,9 @@ describe('useInstancedHover Hook', () => {
         }));
       });
 
-      it('Then reduced motion preference should be detected', () => {
-        renderHook(() => useInstancedHover(mockMeshRef));
-
+      it('Then reduced motion preference should be detected via utility', () => {
+        const result = __testing__.getReducedMotionPreference();
+        expect(result).toBe(true);
         expect(window.matchMedia).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)');
       });
     });

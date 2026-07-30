@@ -1,19 +1,23 @@
-interface ToolRegistration {
-  unregister(): void;
+interface ModelContextRegisterToolOptions {
+  signal?: AbortSignal;
+  exposedTo?: string[];
 }
 
 declare global {
   interface ModelContext {
-    registerTool(tool: {
-      name: string;
-      description: string;
-      inputSchema: Record<string, unknown>;
-      execute: (
-        params: unknown,
-      ) =>
-        | { content: { type: string; text: string }[] }
-        | Promise<{ content: { type: string; text: string }[] }>;
-    }): ToolRegistration;
+    registerTool(
+      tool: {
+        name: string;
+        description: string;
+        inputSchema: Record<string, unknown>;
+        execute: (
+          params: unknown,
+        ) =>
+          | { content: { type: string; text: string }[] }
+          | Promise<{ content: { type: string; text: string }[] }>;
+      },
+      options?: ModelContextRegisterToolOptions,
+    ): Promise<void>;
   }
 
   interface Navigator {

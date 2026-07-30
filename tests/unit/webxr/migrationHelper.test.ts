@@ -8,11 +8,10 @@
 import { ENTRANCE_POSITIONS } from '@/utils/webxr/animationConstants';
 import {
   createInstanceDataForWorks,
-  type InstanceData,
   setupWorkCardInstanceData,
   type WorkLink,
 } from '@/utils/webxr/migrationHelper';
-import { type AtlasConfig, getTileInfo } from '@/utils/webxr/textureAtlas';
+import { getTileInfo } from '@/utils/webxr/textureAtlas';
 import { calculateCardPosition } from '@/utils/webxr/workGridUtils';
 
 // Mock dependencies

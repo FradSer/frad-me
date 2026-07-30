@@ -2,7 +2,6 @@
  * Unit tests for shader material utilities
  */
 
-import { beforeEach, describe, expect, it } from '@jest/globals';
 import * as THREE from 'three';
 import {
   calculateAnimationOffset,
@@ -15,8 +14,6 @@ import {
   generatePositionArrays,
   generateUVOffsets,
   getDefaultAtlasConfig,
-  type InstanceData,
-  type InstanceMeshConfig,
   setHoveredIndex,
   setInstanceAttributes,
   setOpacity,
@@ -28,7 +25,7 @@ import {
   validateInstanceData,
   workLinkToInstanceData,
 } from '../shaderMaterialUtils';
-import { VIEW_MODE_VALUES } from '../shaderTypes';
+import { type InstanceData, type InstanceMeshConfig, VIEW_MODE_VALUES } from '../shaderTypes';
 
 describe('shaderMaterialUtils', () => {
   let mockMaterial: THREE.ShaderMaterial;
@@ -85,6 +82,7 @@ describe('shaderMaterialUtils', () => {
       const config = {
         vertexShader: 'void main() {}',
         fragmentShader: 'void main() {}',
+        uniforms: {},
       };
 
       const material = createShaderMaterial(config);
@@ -421,7 +419,7 @@ describe('shaderMaterialUtils', () => {
       const data = {
         index: 0,
         animationOffset: 0,
-        uvOffset: [0] as [number, number],
+        uvOffset: [0] as unknown as [number, number],
         baseY: 0,
         hoverY: 1,
         basePosition: [0, 0, 0],

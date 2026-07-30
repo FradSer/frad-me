@@ -2,7 +2,6 @@
  * Unit tests for shader type definitions
  */
 
-import { describe, expect, it } from '@jest/globals';
 import {
   DEFAULT_UNIFORMS,
   HOVER_GLOW_COLOR,

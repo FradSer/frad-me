@@ -76,7 +76,7 @@ const WorkCard3D = memo<WorkCard3DProps>(function WorkCard3D({
   work,
   position,
   index,
-  visible = true,
+  visible: _visible = true,
   onHover,
   onClick,
 }) {

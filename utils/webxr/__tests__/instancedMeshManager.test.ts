@@ -8,6 +8,7 @@ import {
   createTransform,
   InstancedMeshFactories,
   InstancedMeshManager,
+  type InstanceState,
   type InstanceTransform,
 } from '../instancedMeshManager';
 
@@ -69,7 +70,7 @@ describe('InstancedMeshManager', () => {
     });
 
     test('adds instance with initial color', () => {
-      const id = manager.addInstance({ color: 0xff0000 });
+      const id = manager.addInstance({ color: new THREE.Color(0xff0000) });
       const state = manager.getInstanceState(id);
       expect(state?.color).toBeDefined();
       expect(state?.color?.getHex()).toBe(0xff0000);
@@ -194,9 +195,18 @@ describe('InstancedMeshManager', () => {
       const id2 = manager.addInstance();
       const id3 = manager.addInstance();
 
-      const updates = new Map([
-        [id1, { transform: { position: { x: 1, y: 0, z: 0 } as InstanceTransform['position'] } }],
-        [id2, { color: 0xff0000, opacity: 0.5 }],
+      const updates = new Map<number, Partial<InstanceState>>([
+        [
+          id1,
+          {
+            transform: {
+              position: { x: 1, y: 0, z: 0 },
+              rotation: { x: 0, y: 0, z: 0 },
+              scale: { x: 1, y: 1, z: 1 },
+            },
+          },
+        ],
+        [id2, { color: new THREE.Color(0xff0000), opacity: 0.5 }],
         [id3, { visible: false }],
       ]);
 

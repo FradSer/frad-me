@@ -109,7 +109,18 @@ const ShapesInstanced = memo<ShapesInstancedProps>(function ShapesInstanced({
       scaleSpring9,
       scaleSpring10,
     ],
-    [],
+    [
+      scaleSpring4,
+      scaleSpring6,
+      scaleSpring9,
+      scaleSpring2,
+      scaleSpring3,
+      scaleSpring7,
+      scaleSpring1,
+      scaleSpring5,
+      scaleSpring10,
+      scaleSpring8,
+    ],
   );
 
   const rotationSprings = useMemo(
@@ -125,7 +136,18 @@ const ShapesInstanced = memo<ShapesInstancedProps>(function ShapesInstanced({
       rotationSpring9,
       rotationSpring10,
     ],
-    [],
+    [
+      rotationSpring4,
+      rotationSpring10,
+      rotationSpring5,
+      rotationSpring9,
+      rotationSpring8,
+      rotationSpring2,
+      rotationSpring7,
+      rotationSpring3,
+      rotationSpring6,
+      rotationSpring1,
+    ],
   );
 
   // Group shapes by type and create mappings
@@ -485,6 +507,7 @@ const ShapesInstanced = memo<ShapesInstancedProps>(function ShapesInstanced({
   );
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: Three.js group element requires event handlers
     <group
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}

@@ -10,6 +10,7 @@ import {
   type BenchmarkConfig,
   type BenchmarkResults,
   BenchmarkRunner,
+  type DeviceType,
   type DrawCallMetrics,
   type FrameRateMetrics,
   type MemoryMetrics,
@@ -48,7 +49,9 @@ describe('BenchmarkRunner', () => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         if (Array.isArray(object.material)) {
-          object.material.forEach((mat) => mat.dispose());
+          object.material.forEach((mat) => {
+            mat.dispose();
+          });
         } else if (object.material) {
           object.material.dispose();
         }

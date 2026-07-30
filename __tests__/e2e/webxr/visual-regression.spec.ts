@@ -117,7 +117,7 @@ async function compareScreenshots(
 
   // Use Playwright's built-in visual comparison
   const comparisonOptions = {
-    maxDiffPixels: '0.5%',
+    maxDiffPixelRatio: 0.005,
     threshold: 0.02,
   };
 
@@ -331,7 +331,7 @@ test.describe('WebXR Visual Regression - View Transition', () => {
 });
 
 test.describe('WebXR Visual Regression - Reduced Motion', () => {
-  test.use({ reducedMotion: 'reduce' });
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
 
   test('reduced motion visual state', async ({ page }) => {
     await page.goto(WEBXR_URL);
@@ -485,7 +485,7 @@ test.describe('WebXR Visual Regression - Failed Comparisons', () => {
 
     try {
       await expect(page).toHaveScreenshot(getBaselinePath(testName), {
-        maxDiffPixels: '0.1%',
+        maxDiffPixelRatio: 0.001,
       });
     } catch (_error) {
       // Diff should be generated
@@ -502,7 +502,7 @@ test.describe('WebXR Visual Regression - Failed Comparisons', () => {
 
     try {
       await expect(page).toHaveScreenshot(getBaselinePath(testName), {
-        maxDiffPixels: '0.1%',
+        maxDiffPixelRatio: 0.001,
       });
     } catch (error) {
       // The error should include pixel difference information
@@ -533,7 +533,7 @@ test.describe('WebXR Visual Regression - Pixel Thresholds', () => {
 
     try {
       await expect(page).toHaveScreenshot(getBaselinePath(testName), {
-        maxDiffPixels: '0.1%',
+        maxDiffPixelRatio: 0.001,
       });
       expect(true).toBe(false); // Should not reach here
     } catch (error) {

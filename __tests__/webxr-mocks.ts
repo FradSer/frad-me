@@ -402,6 +402,7 @@ export const WebXRMockUtils = {
       // Mock permissions denial
       const originalGetContext = HTMLCanvasElement.prototype.getContext;
       HTMLCanvasElement.prototype.getContext = function (
+        this: HTMLCanvasElement,
         type: string,
         attributes?: WebGLContextAttributes,
       ) {
@@ -412,7 +413,7 @@ export const WebXRMockUtils = {
           );
         }
         return Reflect.apply(originalGetContext, this, [type, attributes]);
-      };
+      } as typeof HTMLCanvasElement.prototype.getContext;
     });
   },
 

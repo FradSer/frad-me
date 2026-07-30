@@ -65,7 +65,7 @@ const NavItem = memo<NavItemProps>(function NavItem({
     }, timing.delays.breathingInterval);
 
     return () => clearInterval(breathingAnimation);
-  }, [hasBeenInteracted, scaleSpring, scales.breathing, scales.default, timing.delays]);
+  }, [hasBeenInteracted, scaleSpring]);
 
   useEffect(() => {
     const targetScale =
@@ -74,7 +74,7 @@ const NavItem = memo<NavItemProps>(function NavItem({
     if (hovered || isActive || hasBeenInteracted) {
       scaleSpring.set(targetScale);
     }
-  }, [hovered, isActive, hasBeenInteracted, scaleSpring, scales]);
+  }, [hovered, isActive, hasBeenInteracted, scaleSpring]);
 
   useFrame(() => {
     const group = groupRef.current;
@@ -108,6 +108,7 @@ const NavItem = memo<NavItemProps>(function NavItem({
       : TEXT_COLORS.default;
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: Three.js group element requires event handlers
     <group
       ref={groupRef}
       onClick={handleClick}

@@ -107,6 +107,7 @@ export default function WebMCPPage() {
               ) : (
                 logs.map((l, i) => (
                   <div
+                    // biome-ignore lint/suspicious/noArrayIndexKey: log entries are append-only with no stable ID
                     key={`${i}-${l.substring(0, 10)}`}
                     className="mb-1 border-b border-zinc-200 dark:border-zinc-800 pb-1 last:border-0"
                   >

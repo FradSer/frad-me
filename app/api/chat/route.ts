@@ -1,12 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import {
-  convertToModelMessages,
-  safeValidateUIMessages,
-  stepCountIs,
-  streamText,
-  tool,
-  type UIMessage,
-} from 'ai';
+import { convertToModelMessages, safeValidateUIMessages, stepCountIs, streamText, tool } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';

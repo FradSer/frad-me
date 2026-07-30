@@ -6,12 +6,7 @@
  */
 
 import * as THREE from 'three';
-import {
-  type PerformanceMetrics,
-  PerformanceMonitor,
-  QualityLevel,
-  type RendererInfo,
-} from '@/utils/webxr/performanceMonitor';
+import { PerformanceMonitor } from '@/utils/webxr/performanceMonitor';
 
 export type DeviceType = 'vision-pro' | 'quest' | 'desktop';
 

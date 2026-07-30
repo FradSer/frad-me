@@ -4,8 +4,10 @@
  * Tests for texture atlas creation, validation, and utility functions.
  */
 
+import type * as THREE from 'three';
 import {
   type AtlasConfig,
+  type AtlasResult,
   type AtlasTileInfo,
   calculateTileUV,
   createTextureAtlas,
@@ -77,7 +79,6 @@ describe('Texture Atlas Utility', () => {
       const invalidConfigs = [
         { width: 0, height: 512, columns: 2, rows: 2 },
         { width: 100, height: 512, columns: 2, rows: 2 },
-        { width: 512, height: 512, columns: 2, rows: 2, width: 100 },
       ];
 
       invalidConfigs.forEach((config) => {
@@ -100,9 +101,9 @@ describe('Texture Atlas Utility', () => {
 
     it('should reject non-power-of-two dimensions', () => {
       const invalidConfigs = [
-        { width: 512, height: 512, columns: 2, rows: 2, width: 1000 },
-        { width: 512, height: 512, columns: 2, rows: 2, height: 1000 },
-        { width: 512, height: 512, columns: 2, rows: 2, width: 1024, height: 1025 },
+        { width: 1000, height: 512, columns: 2, rows: 2 },
+        { width: 512, height: 1000, columns: 2, rows: 2 },
+        { width: 1024, height: 1025, columns: 2, rows: 2 },
       ];
 
       invalidConfigs.forEach((config) => {
@@ -392,7 +393,7 @@ describe('Texture Atlas Utility', () => {
             this.onerror(new Event('error'));
           }
         }, 0);
-      } as unknown as { new (): HTMLImageElement };
+      } as unknown as (width?: number, height?: number) => HTMLImageElement;
 
       jest.spyOn(window, 'Image').mockImplementation(ImageMock);
 
@@ -425,18 +426,18 @@ describe('Texture Atlas Utility', () => {
         },
       } as unknown as THREE.CanvasTexture;
 
-      const atlas = {
+      const atlas: AtlasResult = {
         texture: mockTexture,
         tiles: [
           {
             index: 0,
-            uvOffset: [0, 0],
-            uvScale: [0.5, 0.5],
+            uvOffset: [0, 0] as [number, number],
+            uvScale: [0.5, 0.5] as [number, number],
             column: 0,
             row: 0,
           },
         ],
-        tileSize: [1024, 768],
+        tileSize: [1024, 768] as [number, number],
         tileCount: 1,
       };
 
@@ -446,10 +447,10 @@ describe('Texture Atlas Utility', () => {
     });
 
     it('should handle null texture', () => {
-      const atlas = {
+      const atlas: AtlasResult = {
         texture: null as unknown as THREE.CanvasTexture,
         tiles: [],
-        tileSize: [0, 0],
+        tileSize: [0, 0] as [number, number],
         tileCount: 0,
       };
 
@@ -571,8 +572,8 @@ describe('Texture Atlas Utility', () => {
 
       const tileInfo = getTileInfo(0, config);
       const uvScale = tileInfo?.uvScale;
-      const actualTileWidth = uvScale?.[0] * config.width;
-      const actualTileHeight = uvScale?.[1] * config.height;
+      const actualTileWidth = (uvScale?.[0] ?? 0) * config.width;
+      const actualTileHeight = (uvScale?.[1] ?? 0) * config.height;
 
       expect(actualTileWidth).toBeCloseTo(expectedTileWidth, 2);
       expect(actualTileHeight).toBeCloseTo(expectedTileHeight, 2);

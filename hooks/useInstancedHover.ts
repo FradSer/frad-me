@@ -67,14 +67,9 @@ export function useInstancedHover<T extends THREE.Object3D>(
   meshRef: React.RefObject<T | null>,
   config: HoverDetectionConfig = {},
 ): HoverDetectionResult {
-  const {
-    enabled = true,
-    reducedMotion = getReducedMotionPreference(),
-    debounceMs = 16,
-    events = {},
-  } = config;
+  const { enabled = true, debounceMs = 16, events = {} } = config;
 
-  const { camera, pointer } = useThree();
+  const { camera } = useThree();
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const hoverStateRef = useRef<HoverState>({ ...DEFAULT_HOVER_STATE });
   const pointerRef = useRef(new THREE.Vector2(0, 0));

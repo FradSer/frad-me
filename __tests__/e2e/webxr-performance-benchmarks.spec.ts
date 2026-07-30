@@ -11,8 +11,6 @@ import {
   type BenchmarkConfig,
   type BenchmarkResults,
   BenchmarkRunner,
-  type BenchmarkTarget,
-  type DeviceType,
 } from '@/utils/webxr/benchmarkRunner';
 
 describe('WebXR Performance Benchmarks', () => {
@@ -45,7 +43,9 @@ describe('WebXR Performance Benchmarks', () => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
         if (Array.isArray(object.material)) {
-          object.material.forEach((mat) => mat.dispose());
+          object.material.forEach((mat) => {
+            mat.dispose();
+          });
         } else if (object.material) {
           object.material.dispose();
         }
@@ -468,7 +468,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
       const report = runner.generateReport(mockResults);
 
       expect(report).toBeDefined();
@@ -486,7 +486,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
       const report = runner.generateReport(mockResults);
 
       expect(report.passed).toBe(true);
@@ -540,7 +540,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
       const report = runner.generateReport(failingResults);
 
       expect(report.passed).toBe(false);
@@ -595,7 +595,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
       const report = runner.generateReport(failingResults);
 
       expect(report.recommendations.length).toBeGreaterThan(0);
@@ -627,7 +627,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
 
       expect(typeof runner.isBenchmarkRunning).toBe('function');
       expect(runner.isBenchmarkRunning()).toBe(false);
@@ -639,7 +639,7 @@ describe('WebXR Performance Benchmarks', () => {
         durationMs: 1000,
         sampleIntervalMs: 50,
       };
-      const runner = new BenchmarkRunner(renderer, scene, camera, config);
+      const runner = new BenchmarkRunner(renderer, scene, camera, config.deviceType, config);
 
       const startPromise = runner.start();
       expect(startPromise).toBeInstanceOf(Promise);
