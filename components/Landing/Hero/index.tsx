@@ -45,7 +45,7 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
   };
 
   return (
-    <section className="m-auto flex h-auto min-h-screen w-screen items-center justify-center">
+    <section className="m-auto flex h-auto min-h-screen w-full items-center justify-center">
       <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
         {isSupported && (
           <motion.button
