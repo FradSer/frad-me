@@ -101,6 +101,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
           strategy="afterInteractive"
           crossOrigin="anonymous"
         />
+        <Script
+          src="https://datafa.st/js/script.js"
+          data-website-id="dfid_nTTmz1kSbCyWa9RcxQOB7"
+          data-domain="frad.me"
+          strategy="afterInteractive"
+        />
         <ClientLayout>
           {children}
           <SpeedInsights />
