@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -14,8 +14,8 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
+      "*": ["./*"],
       "@/*": ["./*"],
       "@/markdown/*": ["./markdown/*"]
     },
@@ -35,5 +35,11 @@
     ".next/dev/types/**/*.ts",
     ".next/dev/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "tests/**/*"]
+  "exclude": [
+    "node_modules",
+    "__tests__/**/*",
+    "utils/**/__tests__/**/*",
+    "tests/**/*",
+    "playwright.config.*"
+  ]
 }

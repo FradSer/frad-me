@@ -8,7 +8,7 @@ Feature: Strudel Piece on Home
     And the @strudel/web bundle has not been dynamically imported yet
 
   Scenario: Section renders with attribution before any interaction
-    Then the section heading "listen" is visible
+    Then the section heading "sonics" is visible
     And a play control labeled "play" is visible
     And the attribution says it was composed by "Claude Opus 4.7"
     And the attribution links the performer to "https://strudel.cc"

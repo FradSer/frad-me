@@ -42,7 +42,7 @@ describe('StrudelPiece', () => {
   it('renders the listen heading with attribution and no module loaded yet', () => {
     render(<StrudelPiece />);
 
-    expect(screen.getByRole('heading', { name: 'listen' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'sonics' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Play music' })).toHaveTextContent('play');
     expect(screen.getByText(STRUDEL_COMPOSER)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'strudel.cc' })).toHaveAttribute(

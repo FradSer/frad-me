@@ -3,16 +3,16 @@ import { useWebMCP, type WebMCPActions } from '../useWebMCP';
 
 const createMockModelContext = () => {
   const tools: Record<string, { execute: (params: unknown) => Promise<unknown> }> = {};
-  const unregisterFns: jest.Mock[] = [];
+  const signals: AbortSignal[] = [];
   return {
-    registerTool: jest.fn((tool) => {
-      tools[tool.name] = tool;
-      const unregister = jest.fn();
-      unregisterFns.push(unregister);
-      return { unregister };
+    registerTool: jest.fn((tool: { name: string }, opts?: { signal?: AbortSignal }) => {
+      tools[tool.name] = tool as never;
+      if (opts?.signal) signals.push(opts.signal);
+      // v4 returns Promise<void> — resolve undefined
+      return Promise.resolve(undefined);
     }),
     _tools: tools,
-    _unregisterFns: unregisterFns,
+    _signals: signals,
   };
 };
 
@@ -33,6 +33,8 @@ describe('useWebMCP', () => {
       writable: true,
       configurable: true,
     });
+    // clean up document.modelContext if set by polyfill
+    delete (document as unknown as Record<string, unknown>).modelContext;
   });
 
   it('should return isReady=false when navigator.modelContext is absent', () => {
@@ -78,15 +80,15 @@ describe('useWebMCP', () => {
     const actions = createMockActions();
     const { unmount } = renderHook(() => useWebMCP(actions));
 
-    expect(mc._unregisterFns).toHaveLength(5);
-    for (const fn of mc._unregisterFns) {
-      expect(fn).not.toHaveBeenCalled();
+    expect(mc._signals).toHaveLength(5);
+    for (const signal of mc._signals) {
+      expect(signal.aborted).toBe(false);
     }
 
     unmount();
 
-    for (const fn of mc._unregisterFns) {
-      expect(fn).toHaveBeenCalledTimes(1);
+    for (const signal of mc._signals) {
+      expect(signal.aborted).toBe(true);
     }
   });
 
