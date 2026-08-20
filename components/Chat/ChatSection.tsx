@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import type { UIMessage } from 'ai';
+import { DefaultChatTransport, type UIMessage } from 'ai';
 import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -105,7 +105,9 @@ export default function ChatSection() {
       .catch(() => setEnabled(false));
   }, []);
 
-  const { messages, sendMessage, status, error } = useChat();
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
+  });
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const isError = status === 'error';

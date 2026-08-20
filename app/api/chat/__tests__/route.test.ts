@@ -1,0 +1,61 @@
+/**
+ * BDD: tests/features/chat/ask.feature
+ * Regression for AI SDK 7: server must use stateless helpers
+ * toUIMessageStream + createUIMessageStreamResponse and isStepCount,
+ * otherwise streaming response throws / mismatches DefaultChatTransport.
+ *
+ * RED before fix: source contained result.toUIMessageStreamResponse()
+ * and stepCountIs — deprecated in ai 7.
+ * GREEN after fix: uses createUIMessageStreamResponse(toUIMessageStream)
+ * and isStepCount.
+ */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+describe('POST /api/chat — tests/features/chat/ask.feature', () => {
+  const src = readFileSync(join(process.cwd(), 'app/api/chat/route.ts'), 'utf8');
+
+  it('Scenario: Chat API validates and streams via stateless helpers', () => {
+    expect(src).toContain('createUIMessageStreamResponse');
+    expect(src).toContain('toUIMessageStream');
+    expect(src).toContain('isStepCount');
+    expect(src).not.toContain('stepCountIs');
+    expect(src).not.toContain('result.toUIMessageStreamResponse');
+    expect(src).toMatch(/from\s+['"]ai['"]/);
+    expect(src).toContain('convertToModelMessages');
+    expect(src).toContain('safeValidateUIMessages');
+  });
+
+  it('Scenario: Invalid payload is rejected with structured error (missing messages)', () => {
+    expect(src).toContain('Missing messages field.');
+    expect(src).toContain("status: 400");
+    expect(src).toContain("Missing messages field");
+  });
+
+  it('Scenario: Invalid messages format is rejected', () => {
+    expect(src).toContain('Invalid messages format.');
+    expect(src).toContain('validated.success');
+    expect(src).toContain('safeValidateUIMessages');
+  });
+
+  it('Scenario: Tool calling remains available after upgrade', () => {
+    expect(src).toContain('get_works');
+    expect(src).toContain('read_work');
+    expect(src).toContain('search_works');
+    expect(src).toContain('get_resume');
+    expect(src).toContain('isStepCount(3)');
+  });
+
+  it('Regression: route no longer uses deprecated instance method', () => {
+    expect(src).not.toMatch(/result\.toUIMessageStreamResponse/);
+    expect(src).not.toMatch(/result\.toUIMessageStream\(/);
+  });
+
+  it('Regression: ChatSection uses DefaultChatTransport matching server protocol', () => {
+    const chatSrc = readFileSync(join(process.cwd(), 'components/Chat/ChatSection.tsx'), 'utf8');
+    expect(chatSrc).toContain('DefaultChatTransport');
+    expect(chatSrc).toContain("api: '/api/chat'");
+    expect(chatSrc).toMatch(/from\s+['"]ai['"]/);
+    expect(chatSrc).toContain('useChat');
+  });
+});

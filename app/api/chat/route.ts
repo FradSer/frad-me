@@ -1,5 +1,13 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, safeValidateUIMessages, stepCountIs, streamText, tool } from 'ai';
+import {
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  isStepCount,
+  safeValidateUIMessages,
+  streamText,
+  toUIMessageStream,
+  tool,
+} from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
@@ -173,8 +181,10 @@ export async function POST(req: NextRequest) {
         execute: async () => resumeData,
       }),
     },
-    stopWhen: stepCountIs(3),
+    stopWhen: isStepCount(3),
   });
 
-  return result.toUIMessageStreamResponse();
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  });
 }

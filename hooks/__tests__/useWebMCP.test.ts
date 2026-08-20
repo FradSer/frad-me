@@ -61,7 +61,9 @@ describe('useWebMCP', () => {
     expect(result.current.isReady).toBe(true);
     expect(mc.registerTool).toHaveBeenCalledTimes(5);
 
-    const toolNames = mc.registerTool.mock.calls.map((call: [{ name: string }]) => call[0].name);
+    const toolNames = mc.registerTool.mock.calls.map(
+      (call) => (call[0] as { name: string }).name,
+    );
     expect(toolNames).toContain('navigate');
     expect(toolNames).toContain('get_works');
     expect(toolNames).toContain('read_work');
