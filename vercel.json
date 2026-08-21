@@ -1,0 +1,3 @@
+{
+  "installCommand": "corepack enable pnpm && corepack prepare pnpm@11.22.0 --activate && pnpm install"
+}
