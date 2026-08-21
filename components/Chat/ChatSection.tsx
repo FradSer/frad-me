@@ -212,7 +212,12 @@ export default function ChatSection() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={isDisabled ? 'not configured' : 'Ask me anything about Frad...'}
-                onFocus={() => !isDisabled && setIsExpanded(true)}
+                onFocus={() => {
+                  if (isDisabled) return;
+                  setIsExpanded(true);
+                  mouseContext.cursorChangeHandler(CursorType.inputActive);
+                }}
+                onBlur={() => mouseContext.cursorChangeHandler(CursorType.default)}
                 className={clsx(
                   'flex-1 border-b-2 bg-transparent py-3 text-xl font-bold text-black outline-none transition-colors placeholder:font-normal focus:border-black dark:text-white dark:focus:border-white sm:text-2xl md:text-3xl',
                   isDisabled

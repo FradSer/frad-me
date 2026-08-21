@@ -28,6 +28,7 @@ const solidCircleVariants = {
   initial: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  inputActive: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   workCardHover: { scale: DOT_SCALE.large, opacity: 1, transition: primaryTransition },
   attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
 };
@@ -37,6 +38,7 @@ const blendCircleVariants = {
   initial: { scale: DOT_SCALE.small, opacity: 1, transition: primaryTransition },
   headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
+  inputActive: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
   workCardHover: { scale: DOT_SCALE.large, opacity: 0, transition: primaryTransition },
   attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
 };
@@ -50,6 +52,7 @@ const textVariants = {
 const cursorStateMap = {
   'header-link-hovered': { background: 'headerLinkHovered', text: 'initial', title: '' },
   'button-hovered': { background: 'buttonHovered', text: 'initial', title: '' },
+  'input-active': { background: 'inputActive', text: 'initial', title: '' },
   'work-card-hovered': { background: 'workCardHover', text: 'workCardHover', title: 'READ' },
   'work-card-hovered-wip': { background: 'workCardHover', text: 'workCardHover', title: 'WIP' },
   attracted: { background: 'attracted', text: 'initial', title: '' },
