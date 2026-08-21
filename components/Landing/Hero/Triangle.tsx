@@ -20,11 +20,14 @@ export default function Triangle() {
   const rotateOffset = useTransform(scrollYProgress, [0, 0.5], [0, 90]);
 
   useEffect(() => {
-    const updateRotate = () => {
-      rotate.set(rotateOffset.get() + initialRotate);
+    const updateRotate = (v: number) => {
+      rotate.set(v + initialRotate);
     };
 
-    return rotateOffset.onChange(updateRotate);
+    // Initialize once so the derived value is not stale before first scroll event
+    updateRotate(rotateOffset.get());
+
+    return rotateOffset.on('change', updateRotate);
   }, [initialRotate, rotate, rotateOffset]);
 
   return (
