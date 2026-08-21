@@ -120,8 +120,9 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Styling
   const linkClass = useMemo(
     () =>
-      clsx('relative flex w-full items-center justify-center overflow-hidden col-span-2 aspect-100/62', {
-        'md:aspect-100/31': props.isFullScreen,
+      clsx('relative flex w-full items-center justify-center overflow-hidden', {
+        'col-span-2 aspect-100/62 md:col-span-2 md:aspect-100/31': props.isFullScreen,
+        'col-span-2 aspect-100/62 md:col-span-1': !props.isFullScreen,
         'hover:cursor-not-allowed': props.isWIP,
         'hover:cursor-pointer': !props.isWIP,
       }),
