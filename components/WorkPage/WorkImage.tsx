@@ -92,4 +92,4 @@ function WorkBeforeAfterImages({
   );
 }
 
-export { WorkSingleImage, WorkBeforeAfterImages };
+export { WorkBeforeAfterImages, WorkSingleImage };
