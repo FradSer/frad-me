@@ -93,7 +93,6 @@ export default function ChatSection() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [input, setInput] = useState('');
 
-  const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const mouseContext = useMouseContext();
 
@@ -111,15 +110,6 @@ export default function ChatSection() {
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const isError = status === 'error';
-
-  const scrollToBottom = useCallback(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, []);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when messages change
-  useEffect(scrollToBottom, [messages.length, scrollToBottom]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -194,7 +184,7 @@ export default function ChatSection() {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 className="overflow-hidden"
               >
-                <div ref={scrollRef} className="mb-6 max-h-[28rem] space-y-4 overflow-y-auto">
+                <div className="mb-6 space-y-4">
                   {visibleMessages.map((m) => (
                     <ChatMessage key={m.id} role={m.role} text={getMessageText(m)} />
                   ))}

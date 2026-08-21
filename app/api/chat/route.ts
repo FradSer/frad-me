@@ -119,79 +119,79 @@ export async function POST(req: NextRequest) {
       system: SYSTEM_PROMPT,
       messages: modelMessages,
       tools: {
-      get_works: tool({
-        description: "Get a list of all Frad's portfolio projects",
-        inputSchema: z.object({}),
-        execute: async () => {
-          return workLinks.map((w) => ({
-            title: w.title,
-            subtitle: w.subTitle,
-            slug: w.slug,
-            link: w.externalLink || `/works/${w.slug}`,
-            isWIP: w.isWIP ?? false,
-          }));
-        },
-      }),
-      read_work: tool({
-        description:
-          'Get detailed information about a specific project including content summary. Accepts natural language project names like "BearyChat", "vivo Vision", etc.',
-        inputSchema: z.object({
-          slug: z.string().describe('The project name or slug (natural language accepted)'),
-        }),
-        execute: async ({ slug }: { slug: string }) => {
-          // Normalize the slug using our mapping utility
-          const normalizedSlug = normalizeSlug(slug);
-
-          if (!normalizedSlug) {
-            return {
-              error:
-                'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
-            };
-          }
-
-          const work = workLinks.find((w) => w.slug === normalizedSlug);
-          if (!work) {
-            return {
-              error:
-                'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
-            };
-          }
-
-          const summary = getWorkSummary(normalizedSlug);
-          return {
-            title: work.title,
-            subtitle: work.subTitle,
-            slug: work.slug,
-            link: work.externalLink || `/works/${normalizedSlug}`,
-            isWIP: work.isWIP ?? false,
-            summary: summary || work.subTitle,
-          };
-        },
-      }),
-      search_works: tool({
-        description: 'Search portfolio projects by keyword',
-        inputSchema: z.object({
-          query: z.string().describe('Search keyword'),
-        }),
-        execute: async ({ query }: { query: string }) => {
-          const q = query.toLowerCase();
-          return workLinks
-            .filter((w) => `${w.title} ${w.subTitle} ${w.slug}`.toLowerCase().includes(q))
-            .map((w) => ({
+        get_works: tool({
+          description: "Get a list of all Frad's portfolio projects",
+          inputSchema: z.object({}),
+          execute: async () => {
+            return workLinks.map((w) => ({
               title: w.title,
               subtitle: w.subTitle,
               slug: w.slug,
               link: w.externalLink || `/works/${w.slug}`,
+              isWIP: w.isWIP ?? false,
             }));
-        },
-      }),
-      get_resume: tool({
-        description: "Get Frad's structured resume including experience, skills, and patents",
-        inputSchema: z.object({}),
-        execute: async () => resumeData,
-      }),
-    },
-    stopWhen: isStepCount(3),
+          },
+        }),
+        read_work: tool({
+          description:
+            'Get detailed information about a specific project including content summary. Accepts natural language project names like "BearyChat", "vivo Vision", etc.',
+          inputSchema: z.object({
+            slug: z.string().describe('The project name or slug (natural language accepted)'),
+          }),
+          execute: async ({ slug }: { slug: string }) => {
+            // Normalize the slug using our mapping utility
+            const normalizedSlug = normalizeSlug(slug);
+
+            if (!normalizedSlug) {
+              return {
+                error:
+                  'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
+              };
+            }
+
+            const work = workLinks.find((w) => w.slug === normalizedSlug);
+            if (!work) {
+              return {
+                error:
+                  'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
+              };
+            }
+
+            const summary = getWorkSummary(normalizedSlug);
+            return {
+              title: work.title,
+              subtitle: work.subTitle,
+              slug: work.slug,
+              link: work.externalLink || `/works/${normalizedSlug}`,
+              isWIP: work.isWIP ?? false,
+              summary: summary || work.subTitle,
+            };
+          },
+        }),
+        search_works: tool({
+          description: 'Search portfolio projects by keyword',
+          inputSchema: z.object({
+            query: z.string().describe('Search keyword'),
+          }),
+          execute: async ({ query }: { query: string }) => {
+            const q = query.toLowerCase();
+            return workLinks
+              .filter((w) => `${w.title} ${w.subTitle} ${w.slug}`.toLowerCase().includes(q))
+              .map((w) => ({
+                title: w.title,
+                subtitle: w.subTitle,
+                slug: w.slug,
+                link: w.externalLink || `/works/${w.slug}`,
+              }));
+          },
+        }),
+        get_resume: tool({
+          description: "Get Frad's structured resume including experience, skills, and patents",
+          inputSchema: z.object({}),
+          execute: async () => resumeData,
+        }),
+      },
+      stopWhen: isStepCount(3),
     });
 
   const streamFrom = (useModel: ReturnType<typeof gateway>) =>
@@ -204,7 +204,6 @@ export async function POST(req: NextRequest) {
   const fallbackStream = new ReadableStream({
     async start(controller) {
       let didError = false;
-      let errorText = '';
       const primary = streamFrom(getModel());
       const reader = (primary as unknown as ReadableStream).getReader();
       const pump = async () => {
@@ -214,13 +213,6 @@ export async function POST(req: NextRequest) {
           const chunk = value as unknown as Record<string, unknown>;
           if (chunk?.type === 'error') {
             didError = true;
-            errorText = String((chunk as { errorText?: string }).errorText || 'An error occurred.');
-            const msg =
-              errorText.toLowerCase().includes('free tier') ||
-              errorText.toLowerCase().includes('restrictedmodels')
-                ? 'Upgrading model access — retrying with fallback.'
-                : errorText;
-            // surface a hint before switching
             break;
           }
           controller.enqueue(value as unknown as Uint8Array);
@@ -246,5 +238,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return createUIMessageStreamResponse({ stream: fallbackStream as unknown as ReadableStream<never> });
+  return createUIMessageStreamResponse({
+    stream: fallbackStream as unknown as ReadableStream<never>,
+  });
 }
