@@ -120,11 +120,14 @@ export default function ChatSection() {
   const send = useCallback(
     (text: string) => {
       if (!text.trim()) return;
+      // Buttons unmount on expand, so their onMouseLeave never fires —
+      // reset the cursor here or it stays stuck invisible at buttonHovered.
+      mouseContext.cursorChangeHandler(CursorType.default);
       if (!isExpanded) setIsExpanded(true);
       sendMessage({ text });
       setInput('');
     },
-    [sendMessage, isExpanded],
+    [sendMessage, isExpanded, mouseContext],
   );
 
   const handleSubmit = useCallback(
