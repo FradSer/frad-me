@@ -3,7 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
-
+import ThemeScript from '@/components/ThemeScript';
 import ClientLayout from './client-layout';
 
 import '@/styles/globals.css';
@@ -96,6 +96,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
         // Keep native UI controls in sync with theme
         style={{ colorScheme: 'light dark' }}
       >
+        {/* next-themes renders a <script> inside the React tree via
+            dangerouslySetInnerHTML, which React 19 flags as
+            "Encountered a script tag while rendering React component"
+            (https://github.com/pacocoursey/next-themes/issues/169).
+            The inline script is required for FOUC-free theming, but it
+            must not be rendered from inside a Client Component.
+            Render it here as a Server Component so the error disappears. */}
+        <ThemeScript attribute="class" storageKey="theme" defaultTheme="system" enableSystem />
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6009006635541295"
           strategy="afterInteractive"
