@@ -20,7 +20,7 @@ function getModel() {
   // Auth via AI_GATEWAY_API_KEY (preferred) or VERCEL_OIDC_TOKEN on Vercel.
   // Model identifier is the gateway-routed form `provider/model`.
   // See gateway provider docs: https://vercel.com/docs/ai-sdk/guides/providers/ai-gateway
-  const modelId = process.env.AI_GATEWAY_MODEL_ID || 'openai/gpt-4o-mini';
+  const modelId = process.env.AI_GATEWAY_MODEL_ID || 'deepseek/deepseek-v4-flash-0731';
   return gateway(modelId);
 }
 

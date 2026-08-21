@@ -78,7 +78,7 @@ The "ask" section on the homepage uses Vercel AI SDK v6 via Vercel AI Gateway as
 - **Server**: `app/api/chat/route.ts` uses `safeValidateUIMessages` + `convertToModelMessages` to convert between UI and model message formats
 - **Tools**: `get_works`, `read_work`, `search_works`, `get_resume` — allow the AI to look up portfolio and resume data
 - **Rate limiting**: 20 requests/IP/minute, in-memory
-- **Environment variables**: `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN` (Vercel OIDC) — Vercel AI Gateway is the sole AI provider; `AI_GATEWAY_MODEL_ID` (optional, defaults to `openai/gpt-4o-mini`)
+- **Environment variables**: `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN` (Vercel OIDC) — Vercel AI Gateway is the sole AI provider; `AI_GATEWAY_MODEL_ID` (optional, defaults to `deepseek/deepseek-v4-flash-0731`)
 - Feature is hidden from UI when gateway is not configured
 
 ### Content Management
