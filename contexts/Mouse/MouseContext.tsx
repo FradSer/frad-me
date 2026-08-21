@@ -9,6 +9,7 @@ export enum CursorType {
   workCardHoveredWIP = 'work-card-hovered-wip',
   buttonHovered = 'button-hovered',
   attracted = 'attracted',
+  inputActive = 'input-active',
 }
 
 export type MouseContextType = {
