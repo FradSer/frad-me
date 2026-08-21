@@ -15,13 +15,16 @@ import workLinks from '@/content/workLinks';
 import { normalizeSlug } from '@/utils/slugMapping';
 import { getWorkSummary } from '@/utils/workContent';
 
+const DEFAULT_MODEL_ID = 'deepseek/deepseek-v3';
+const FALLBACK_MODEL_ID = 'deepseek/deepseek-v3';
+
 function getModel() {
-  // Single AI channel: Vercel AI Gateway as the sole provider.
-  // Auth via AI_GATEWAY_API_KEY (preferred) or VERCEL_OIDC_TOKEN on Vercel.
-  // Model identifier is the gateway-routed form `provider/model`.
-  // See gateway provider docs: https://vercel.com/docs/ai-sdk/guides/providers/ai-gateway
-  const modelId = process.env.AI_GATEWAY_MODEL_ID || 'deepseek/deepseek-v4-flash-0731';
+  const modelId = process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID;
   return gateway(modelId);
+}
+
+function getFallbackModel() {
+  return gateway(FALLBACK_MODEL_ID);
 }
 
 // Simple in-memory rate limiter: max 20 requests per IP per minute.
@@ -105,12 +108,17 @@ export async function POST(req: NextRequest) {
   }
 
   const messages = validated.data;
+  const modelMessages = await convertToModelMessages(messages);
 
-  const result = streamText({
-    model: getModel(),
-    system: SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
-    tools: {
+  const requestedModelId = process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID;
+  const shouldTryFallback = requestedModelId !== FALLBACK_MODEL_ID;
+
+  const buildStream = (useModel: ReturnType<typeof gateway>) =>
+    streamText({
+      model: useModel,
+      system: SYSTEM_PROMPT,
+      messages: modelMessages,
+      tools: {
       get_works: tool({
         description: "Get a list of all Frad's portfolio projects",
         inputSchema: z.object({}),
@@ -184,9 +192,59 @@ export async function POST(req: NextRequest) {
       }),
     },
     stopWhen: isStepCount(3),
+    });
+
+  const streamFrom = (useModel: ReturnType<typeof gateway>) =>
+    toUIMessageStream({ stream: buildStream(useModel).stream });
+
+  if (!shouldTryFallback) {
+    return createUIMessageStreamResponse({ stream: streamFrom(getModel()) });
+  }
+
+  const fallbackStream = new ReadableStream({
+    async start(controller) {
+      let didError = false;
+      let errorText = '';
+      const primary = streamFrom(getModel());
+      const reader = (primary as unknown as ReadableStream).getReader();
+      const pump = async () => {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = value as unknown as Record<string, unknown>;
+          if (chunk?.type === 'error') {
+            didError = true;
+            errorText = String((chunk as { errorText?: string }).errorText || 'An error occurred.');
+            const msg =
+              errorText.toLowerCase().includes('free tier') ||
+              errorText.toLowerCase().includes('restrictedmodels')
+                ? 'Upgrading model access — retrying with fallback.'
+                : errorText;
+            // surface a hint before switching
+            break;
+          }
+          controller.enqueue(value as unknown as Uint8Array);
+        }
+      };
+      try {
+        await pump();
+      } catch {
+        didError = true;
+      }
+      if (didError) {
+        const fb = streamFrom(getFallbackModel());
+        const fbReader = (fb as unknown as ReadableStream).getReader();
+        while (true) {
+          const { done, value } = await fbReader.read();
+          if (done) break;
+          controller.enqueue(value as unknown as Uint8Array);
+        }
+        controller.close();
+        return;
+      }
+      controller.close();
+    },
   });
 
-  return createUIMessageStreamResponse({
-    stream: toUIMessageStream({ stream: result.stream }),
-  });
+  return createUIMessageStreamResponse({ stream: fallbackStream as unknown as ReadableStream<never> });
 }
