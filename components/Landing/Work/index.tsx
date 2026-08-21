@@ -8,10 +8,7 @@ const MAX_DISPLAY_WORKS = 6;
 
 const Work = memo(function Work() {
   return (
-    <section
-      id="work"
-      className="grid w-full grid-cols-2 gap-4 px-4 text-center md:px-8"
-    >
+    <section id="work" className="grid w-full grid-cols-2 gap-4 px-4 text-center md:px-8">
       <WorkTitle />
       {workLinks.slice(0, MAX_DISPLAY_WORKS).map((link) => (
         <WorkCard
