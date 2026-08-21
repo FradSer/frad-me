@@ -18,10 +18,7 @@ describe('ThemeModeProvider — tests/features/theme/no-client-script-error.feat
     'utf8',
   );
   const layoutSrc = readFileSync(join(process.cwd(), 'app/layout.tsx'), 'utf8');
-  const themeScriptSrc = readFileSync(
-    join(process.cwd(), 'components/ThemeScript.tsx'),
-    'utf8',
-  );
+  const themeScriptSrc = readFileSync(join(process.cwd(), 'components/ThemeScript.tsx'), 'utf8');
 
   it('Scenario: Theme provider must not trigger script-tag console error', () => {
     // Must not import or render next-themes inside a Client Component
