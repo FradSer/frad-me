@@ -49,18 +49,19 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const pathname = usePathname();
   const { isVR, isLoading } = useXRDetect();
 
-  // If user is explicitly on /webxr route, render VR layout directly
+  // /webxr has its own page — render the immersive layout without the standard chrome.
+  // This branch only matches the /webxr route, so "/" is never dropped.
   if (pathname === '/webxr') {
     return <VRLayout />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-black">
-        <div className="text-2xl font-bold text-white">Detecting XR capabilities...</div>
-      </div>
-    );
+  // XR detection is client-only and async. To keep "/" instantly navigable
+  // under `cacheComponents`, we must not drop `children` while detection is
+  // in-flight or when the check hasn't completed. Render the standard layout
+  // immediately and only switch to VR once detection has settled to true.
+  if (!isLoading && isVR) {
+    return <VRLayout />;
   }
 
-  return isVR ? <VRLayout /> : <StandardLayout>{children}</StandardLayout>;
+  return <StandardLayout>{children}</StandardLayout>;
 }
