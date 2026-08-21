@@ -35,3 +35,7 @@ Feature: Ask — AI chat Q&A
     When the assistant needs to answer about projects
     Then the tools get_works, read_work, search_works, get_resume are available
     And stopWhen is isStepCount(3)
+
+  Scenario: Visitor asks about Frad's latest work
+    When the visitor asks what Frad is currently building
+    Then the assistant uses get_recent_activity to fetch live GitHub data

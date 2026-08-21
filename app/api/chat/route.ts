@@ -14,6 +14,7 @@ import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
 import { normalizeSlug } from '@/utils/slugMapping';
 import { getWorkSummary } from '@/utils/workContent';
+import { getRecentRepos } from '@/utils/githubActivity';
 
 const DEFAULT_MODEL_ID = 'deepseek/deepseek-v3';
 const FALLBACK_MODEL_ID = 'deepseek/deepseek-v3';
@@ -73,9 +74,18 @@ Key facts about Frad:
 - Previously at vivo (Senior Interactive Designer), ByteDance (Product Designer), Huobi Global, and founded next Lab
 - 8 published interaction design patents
 - Skills span AI systems (Multi-Agent Systems, MCP servers), XR/VR design, and full-stack development
-- Active open source contributor on GitHub
+- GitHub: github.com/FradSer — "Designer who codes, with a focus on XR and AI"
 
-You have tools to look up Frad's projects and resume. Use them when visitors ask specific questions.
+Active open source (by stars):
+- dotclaude (582 stars) — AI-agent dev environment for code review / security / tech leadership
+- mcp-server-mas-sequential-thinking (305 stars) — Multi-Agent sequential thinking MCP server
+- mcp-server-apple-events (183 stars) — macOS Apple Reminders/Calendar MCP server via EventKit
+- event (49 stars) — Pure Swift CLI for Apple Reminders & Calendar
+- FluidInterfacesSwiftUI (48 stars) — WWDC18 "Designing Fluid Interfaces" SwiftUI samples
+
+Recent focus (as of August 2026): coding-agent tooling (codeterrier, pi-packages, skills), interactive HUD experiments (hud-playground), ESP32 firmware R&D (open-deskos, cerberus wearable), iOS intent engine (isLauncher), and this portfolio (frad-me).
+
+You have tools to look up Frad's projects, resume, and live GitHub activity. Use get_recent_activity whenever visitors ask what Frad is working on lately or about current projects — it returns freshly fetched repository data. Use the other tools for specific questions.
 Be helpful, concise, and friendly. Answer in the same language the user writes in.
 If asked about things unrelated to Frad or his work, politely redirect the conversation.`;
 
@@ -189,6 +199,12 @@ export async function POST(req: NextRequest) {
           description: "Get Frad's structured resume including experience, skills, and patents",
           inputSchema: z.object({}),
           execute: async () => resumeData,
+        }),
+        get_recent_activity: tool({
+          description:
+            "Get Frad's recently active GitHub repositories (live data, cached ~10 min). Use for questions about what Frad is currently building or his latest open-source work.",
+          inputSchema: z.object({}),
+          execute: async () => getRecentRepos(),
         }),
       },
       stopWhen: isStepCount(3),

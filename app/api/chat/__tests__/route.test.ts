@@ -46,6 +46,11 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
     expect(src).toContain('isStepCount(3)');
   });
 
+  it('Scenario: Visitor asks about Frad\'s latest work', () => {
+    expect(src).toContain('get_recent_activity');
+    expect(src).toContain("from '@/utils/githubActivity'");
+  });
+
   it('Scenario: Gateway is the sole AI provider', () => {
     expect(src).toContain("from '@ai-sdk/gateway'");
     expect(src).toContain('gateway(');
