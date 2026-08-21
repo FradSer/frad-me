@@ -25,7 +25,7 @@
     "analyze": "cross-env ANALYZE=true next build --webpack"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^4.0.44",
+    "@ai-sdk/gateway": "^4.0.59",
     "@ai-sdk/react": "^4.0.73",
     "@mcp-b/global": "^4.0.0",
     "@next/mdx": "^16.3.1",

@@ -36,12 +36,11 @@ export function useWebMCP(actions: WebMCPActions) {
   }, []);
 
   useEffect(() => {
-    const mc =
+    // May 2026 draft: getter moved from Navigator to Document — prefer document.modelContext
+    const mc: typeof navigator.modelContext | undefined =
       typeof document !== 'undefined' &&
-      (document as unknown as Record<string, unknown>).modelContext
-        ? ((document as unknown as Record<string, unknown>).modelContext as NonNullable<
-            typeof navigator.modelContext
-          >)
+      (document as unknown as { modelContext?: typeof navigator.modelContext }).modelContext
+        ? (document as unknown as { modelContext: typeof navigator.modelContext }).modelContext
         : typeof navigator !== 'undefined'
           ? navigator.modelContext
           : undefined;

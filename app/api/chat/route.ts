@@ -1,12 +1,12 @@
-import { createOpenAI } from '@ai-sdk/openai';
+import { gateway } from '@ai-sdk/gateway';
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
   isStepCount,
   safeValidateUIMessages,
   streamText,
-  toUIMessageStream,
   tool,
+  toUIMessageStream,
 } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -15,17 +15,13 @@ import workLinks from '@/content/workLinks';
 import { normalizeSlug } from '@/utils/slugMapping';
 import { getWorkSummary } from '@/utils/workContent';
 
-// Configure via Vercel environment variables:
-//   AI_BASE_URL   Base URL of the OpenAI-compatible API (optional, defaults to OpenAI)
-//   AI_API_KEY    API key  (required)
-//   AI_MODEL_ID   Model ID (optional, defaults to gpt-4o-mini)
 function getModel() {
-  const baseURL = process.env.AI_BASE_URL;
-  const apiKey = process.env.AI_API_KEY || '';
-  const modelId = process.env.AI_MODEL_ID || 'gpt-4o-mini';
-
-  const provider = createOpenAI({ baseURL, apiKey });
-  return provider.chat(modelId);
+  // Single AI channel: Vercel AI Gateway as the sole provider.
+  // Auth via AI_GATEWAY_API_KEY (preferred) or VERCEL_OIDC_TOKEN on Vercel.
+  // Model identifier is the gateway-routed form `provider/model`.
+  // See gateway provider docs: https://vercel.com/docs/ai-sdk/guides/providers/ai-gateway
+  const modelId = process.env.AI_GATEWAY_MODEL_ID || 'openai/gpt-4o-mini';
+  return gateway(modelId);
 }
 
 // Simple in-memory rate limiter: max 20 requests per IP per minute.
@@ -54,9 +50,15 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+function isGatewayConfigured(): boolean {
+  // Gateway authenticates via AI_GATEWAY_API_KEY (explicit) or OIDC (Vercel).
+  // Treat either as "configured" so local dev without OIDC still works via key.
+  return !!(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+}
+
 /** Returns whether the chat feature is configured on the server. */
 export async function GET() {
-  return NextResponse.json({ enabled: !!process.env.AI_API_KEY });
+  return NextResponse.json({ enabled: isGatewayConfigured() });
 }
 
 const SYSTEM_PROMPT = `You are Frad LEE's AI assistant on his personal portfolio website frad.me.
@@ -75,7 +77,7 @@ Be helpful, concise, and friendly. Answer in the same language the user writes i
 If asked about things unrelated to Frad or his work, politely redirect the conversation.`;
 
 export async function POST(req: NextRequest) {
-  if (!process.env.AI_API_KEY) {
+  if (!isGatewayConfigured()) {
     return NextResponse.json({ error: 'Chat is not configured.' }, { status: 503 });
   }
 

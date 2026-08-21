@@ -28,8 +28,8 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
 
   it('Scenario: Invalid payload is rejected with structured error (missing messages)', () => {
     expect(src).toContain('Missing messages field.');
-    expect(src).toContain("status: 400");
-    expect(src).toContain("Missing messages field");
+    expect(src).toContain('status: 400');
+    expect(src).toContain('Missing messages field');
   });
 
   it('Scenario: Invalid messages format is rejected', () => {
@@ -44,6 +44,21 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
     expect(src).toContain('search_works');
     expect(src).toContain('get_resume');
     expect(src).toContain('isStepCount(3)');
+  });
+
+  it('Scenario: Gateway is the sole AI provider', () => {
+    expect(src).toContain("from '@ai-sdk/gateway'");
+    expect(src).toContain('gateway(');
+    expect(src).not.toContain("from '@ai-sdk/openai'");
+    expect(src).not.toContain('createOpenAI');
+    expect(src).not.toContain('AI_API_KEY');
+    expect(src).toContain('AI_GATEWAY_MODEL_ID');
+    expect(src).toContain('AI_GATEWAY_API_KEY');
+    const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as {
+      dependencies: Record<string, string>;
+    };
+    expect(pkg.dependencies['@ai-sdk/gateway']).toBeDefined();
+    expect(pkg.dependencies['@ai-sdk/openai']).toBeUndefined();
   });
 
   it('Regression: route no longer uses deprecated instance method', () => {

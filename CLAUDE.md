@@ -73,13 +73,13 @@ pnpm analyze      # Generates webpack bundle analysis
 
 ### AI Chat System
 
-The "ask" section on the homepage uses Vercel AI SDK v6 with an OpenAI-compatible provider:
+The "ask" section on the homepage uses Vercel AI SDK v6 via Vercel AI Gateway as the sole AI provider:
 - **Client**: `useChat` from `@ai-sdk/react` sends `UIMessage` format (with `parts`, not `content`)
 - **Server**: `app/api/chat/route.ts` uses `safeValidateUIMessages` + `convertToModelMessages` to convert between UI and model message formats
 - **Tools**: `get_works`, `read_work`, `search_works`, `get_resume` — allow the AI to look up portfolio and resume data
 - **Rate limiting**: 20 requests/IP/minute, in-memory
-- **Environment variables**: `AI_API_KEY` (required), `AI_BASE_URL` (optional, for non-OpenAI providers like Dashscope), `AI_MODEL_ID` (optional, defaults to `gpt-4o-mini`)
-- Feature is hidden from UI when `AI_API_KEY` is not set
+- **Environment variables**: `AI_GATEWAY_API_KEY` or `VERCEL_OIDC_TOKEN` (Vercel OIDC) — Vercel AI Gateway is the sole AI provider; `AI_GATEWAY_MODEL_ID` (optional, defaults to `openai/gpt-4o-mini`)
+- Feature is hidden from UI when gateway is not configured
 
 ### Content Management
 
@@ -112,7 +112,7 @@ Progressive fallback: WebXR → 3D → 2D. Use `withErrorBoundary` HOC with `com
 
 - **Next.js 16** with App Router, Turbopack (default), TypeScript strict mode
 - **React 19**, **Tailwind CSS v4** (configured via `@tailwindcss/postcss` and CSS, no `tailwind.config.js`)
-- **Vercel AI SDK v6** (`ai`, `@ai-sdk/openai`, `@ai-sdk/react`) for chat
+- **Vercel AI SDK v6** (`ai`, `@ai-sdk/gateway`, `@ai-sdk/react`) for chat via Vercel AI Gateway
 - **React Three Fiber** ecosystem (`@react-three/fiber` v9, `@react-three/drei` v10, `@react-three/xr` v6)
 - **Motion** v12 for 2D DOM animations
 - **MDX** with mdx-bundler, **next-themes** for dark mode

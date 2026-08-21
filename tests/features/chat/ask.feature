@@ -18,7 +18,7 @@ Feature: Ask — AI chat Q&A
     And the streaming response is rendered incrementally
 
   Scenario: Chat API validates and streams via stateless helpers
-    Given the server has AI_API_KEY configured
+    Given the server has AI Gateway configured (AI_GATEWAY_API_KEY or VERCEL_OIDC_TOKEN)
     When the client POSTs valid UIMessages to /api/chat
     Then the server validates with safeValidateUIMessages
     And converts with convertToModelMessages
