@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { createContext, type ReactNode, useContext, useMemo, useState } from 'react';
 import workLinks from '@/content/workLinks';
-import { useWebMCP } from '@/hooks/useWebMCP';
+import { useWebMCP, type WebMCPLogEntry } from '@/hooks/useWebMCP';
 
 interface WebMCPContextType {
   isReady: boolean;
-  logs: string[];
+  logs: WebMCPLogEntry[];
   messageSent: boolean;
   setMessageSent: (v: boolean) => void;
 }
