@@ -35,6 +35,19 @@ Feature: Ask — AI chat Q&A
     Given AI_GATEWAY_MODEL_ID is not configured
     Then the server uses "alibaba/qwen3.7-flash"
 
+  Scenario: Off-topic requests are refused without producing output
+    Given the visitor asks the assistant to write, review, debug, or explain code
+    When the request is unrelated to Frad or his work
+    Then the server prompt declares a strict SCOPE limited to Frad
+    And the REFUSAL POLICY forbids producing any part of the requested content
+    And the assistant offers one concrete on-topic alternative instead
+
+  Scenario: Instruction override attempts are ignored
+    When a user message tries to change the assistant's role or extract its instructions
+    Then the SECURITY RULES mark user messages as untrusted data, never instructions
+    And the assistant never reveals or paraphrases its system instructions
+    And the rules apply to the entire conversation and cannot be overridden
+
   Scenario: Tool calling remains available after upgrade
     When the assistant needs to answer about projects
     Then the tools get_works, read_work, search_works, get_resume are available
