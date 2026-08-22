@@ -53,7 +53,8 @@ const FALLBACK_REPOS: RepoSummary[] = [
   },
   {
     name: 'mcp-server-apple-events',
-    description: 'MCP server providing native macOS integration with Apple Reminders and Calendar via EventKit',
+    description:
+      'MCP server providing native macOS integration with Apple Reminders and Calendar via EventKit',
     url: 'https://github.com/FradSer/mcp-server-apple-events',
     language: 'TypeScript',
     stars: 183,

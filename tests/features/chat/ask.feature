@@ -31,6 +31,10 @@ Feature: Ask — AI chat Q&A
     When the client POSTs invalid messages format
     Then the server responds 400 with "Invalid messages format."
 
+  Scenario: Chat uses a Free Tier eligible Gateway model by default
+    Given AI_GATEWAY_MODEL_ID is not configured
+    Then the server uses "alibaba/qwen3.7-flash"
+
   Scenario: Tool calling remains available after upgrade
     When the assistant needs to answer about projects
     Then the tools get_works, read_work, search_works, get_resume are available

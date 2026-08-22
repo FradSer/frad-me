@@ -11,10 +11,6 @@ import { CursorType } from '@/contexts/Mouse/MouseContext';
 import useMouseContext from '@/hooks/useMouseContext';
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis';
 
-interface IHeroProps {
-  isWebXR?: boolean;
-}
-
 // Combine the text content for speaking
 const heroText = `
 Frad LEE is a self-taught craftier
@@ -28,7 +24,7 @@ const trianglePositionClass =
   'absolute -left-12 bottom-10 z-30 sm:-left-16 sm:bottom-12 lg:-left-24 lg:bottom-16 2xl:-left-28 2xl:bottom-20';
 const mutedTextClass = 'text-gray-400';
 
-function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
+function Hero() {
   const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis();
   const { cursorChangeHandler } = useMouseContext();
 
@@ -83,7 +79,7 @@ function Hero({ isWebXR = false }: Readonly<IHeroProps>) {
           <span className={mutedTextClass}>or building a </span>
           startup
           <ScrollLink destination="work">
-            <DotCircle isInteractive={!isWebXR} />
+            <DotCircle isInteractive />
           </ScrollLink>
         </div>
       </h1>

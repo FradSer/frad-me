@@ -16,13 +16,6 @@ const nextConfig = {
   outputFileTracingExcludes: {
     '*': ['./tests/**/*'],
   },
-  transpilePackages: [
-    '@react-three/fiber',
-    '@react-three/xr',
-    '@react-three/drei',
-    'three',
-    'three-stdlib',
-  ],
   cacheComponents: true,
 };
 

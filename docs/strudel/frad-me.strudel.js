@@ -11,7 +11,7 @@
 // three layers ≈ three views of the site:
 //   • home    — steady cursor pulse (Roland TR-909 drums)
 //   • work    — F-A-D walking bass + lead sparks on hover
-//   • webxr   — drifting pad, deep room
+//   • ambient — drifting pad, deep room
 
 setcps(0.65);
 
@@ -41,7 +41,7 @@ stack(
     .gain(0.65)
     .shape(0.2),
 
-  // ── webxr view: pad voicings, drifting in the room ──
+  // ── ambient view: pad voicings, drifting in the room ──
   chords
     .offset(-1)
     .voicing()

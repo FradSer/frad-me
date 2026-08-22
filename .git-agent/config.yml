@@ -15,3 +15,5 @@ scopes:
       description: Global CSS, design tokens, and PostCSS config; does not cover inline styles or component-specific classes.
     - name: types
       description: TypeScript interfaces and declarations across types/; does not cover runtime implementation logic.
+    - name: markdown
+      description: MDX portfolio work narratives in markdown/; does not cover structured portfolio metadata in content/.

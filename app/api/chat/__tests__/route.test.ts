@@ -38,6 +38,11 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
     expect(src).toContain('safeValidateUIMessages');
   });
 
+  it('Scenario: Chat uses a Free Tier eligible Gateway model by default', () => {
+    expect(src).toContain("const DEFAULT_MODEL_ID = 'alibaba/qwen3.7-flash'");
+    expect(src).toContain("const FALLBACK_MODEL_ID = 'alibaba/qwen3.7-flash'");
+  });
+
   it('Scenario: Tool calling remains available after upgrade', () => {
     expect(src).toContain('get_works');
     expect(src).toContain('read_work');
@@ -46,7 +51,7 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
     expect(src).toContain('isStepCount(3)');
   });
 
-  it('Scenario: Visitor asks about Frad\'s latest work', () => {
+  it("Scenario: Visitor asks about Frad's latest work", () => {
     expect(src).toContain('get_recent_activity');
     expect(src).toContain("from '@/utils/githubActivity'");
   });

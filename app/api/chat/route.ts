@@ -12,12 +12,12 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
 import workLinks from '@/content/workLinks';
+import { getRecentRepos } from '@/utils/githubActivity';
 import { normalizeSlug } from '@/utils/slugMapping';
 import { getWorkSummary } from '@/utils/workContent';
-import { getRecentRepos } from '@/utils/githubActivity';
 
-const DEFAULT_MODEL_ID = 'deepseek/deepseek-v3';
-const FALLBACK_MODEL_ID = 'deepseek/deepseek-v3';
+const DEFAULT_MODEL_ID = 'alibaba/qwen3.7-flash';
+const FALLBACK_MODEL_ID = 'alibaba/qwen3.7-flash';
 
 function getModel() {
   const modelId = process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID;

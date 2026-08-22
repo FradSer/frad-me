@@ -39,17 +39,6 @@ const fallbackConfigs = {
       </div>
     </div>
   ),
-  webxr: (error?: Error) => (
-    <div className="flex h-full w-full items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h3 className="mb-2 text-lg font-semibold">WebXR Error</h3>
-        <p className="mb-4 text-sm text-gray-300">
-          Unable to load WebXR experience. Falling back to 2D view.
-        </p>
-        <p className="text-xs text-gray-400">{error?.message || 'Unknown WebXR error'}</p>
-      </div>
-    </div>
-  ),
   component: (error?: Error, componentName?: string) => (
     <div className="rounded border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
       <p className="text-sm text-red-600 dark:text-red-400">
@@ -107,10 +96,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // Use appropriate default fallback based on component name
       const { componentName } = this.props;
       const { error } = this.state;
-
-      if (componentName?.includes('WebXR') || componentName?.includes('3D')) {
-        return fallbackConfigs.webxr(error);
-      }
 
       if (componentName) {
         return fallbackConfigs.component(error, componentName);

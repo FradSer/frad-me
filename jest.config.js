@@ -43,7 +43,6 @@ const customJestConfig = {
     '!**/node_modules/**',
     '!**/.next/**',
     '!**/__tests__/**',
-    '!**/webxr-mocks.ts',
   ],
 
   // Coverage thresholds (disabled for initial setup)

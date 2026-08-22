@@ -31,7 +31,7 @@ const gtEestiText = localFont({
   display: 'swap',
 });
 
-// GT Eesti Display for 3D WebXR components
+// GT Eesti Display, secondary display face
 const gtEestiDisplay = localFont({
   src: [
     {
@@ -47,7 +47,7 @@ const gtEestiDisplay = localFont({
   ],
   variable: '--font-gt-eesti-display',
   display: 'swap',
-  preload: true, // Preload for WebXR components
+  preload: true,
 });
 
 export const metadata: Metadata = {

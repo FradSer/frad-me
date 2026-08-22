@@ -21,12 +21,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 1.0,
     },
-    {
-      url: `${SITE_CONFIG.domain}/webxr`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
   ];
 
   const workPages: MetadataRoute.Sitemap = slugs.map((slug) => ({

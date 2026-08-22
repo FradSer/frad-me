@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `app/`: Next.js App Router entry points, layouts, route handlers (`app/api/chat/route.ts`), and route-level clients (e.g., `client-layout.tsx`, `webxr/`).
+- `app/`: Next.js App Router entry points, layouts, route handlers (`app/api/chat/route.ts`), and route-level clients (e.g., `client-layout.tsx`).
 - `components/`: Reusable UI, grouped by feature (`Header/`, `Landing/`, `Chat/`, `common/`); prefer colocated tests under `components/**/__tests__/`.
 - `contexts/` & `hooks/`: Cross-cutting providers (mouse, theme, XR) and typed hook interfaces; every hook lives alongside its provider.
 - `styles/`: Tailwind v4 globals and custom variants (`globals.css` defines the `.dark` selector variant).

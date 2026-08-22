@@ -9,7 +9,7 @@ export const STRUDEL_PERFORMER_URL = 'https://strudel.cc';
 
 export const STRUDEL_PIECE = `// "frad.me" — a piece for the personal site
 // motif: F-A-D, the notes hidden in "frad" (= D minor triad)
-// three layers ≈ three views: home pulse · work bass · webxr drift
+// three layers ≈ three views: home pulse · work bass · ambient drift
 
 setcps(0.65)
 
@@ -33,7 +33,7 @@ stack(
     .lpenv(4).lpa(0.02).lpd(0.35).lps(0.25)
     .release(0.4).gain(0.65).shape(0.2),
 
-  // ── webxr view: pad voicings, drifting in the room ──
+  // ── ambient view: pad voicings, drifting in the room ──
   chords.offset(-1).voicing()
     .s("triangle").attack(0.8).release(2.5)
     .lpf(sine.range(900, 1800).slow(16))
