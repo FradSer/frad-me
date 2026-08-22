@@ -6,6 +6,11 @@ import { z } from 'zod';
 
 const VALID_PATHS = ['/', '/work', '/resume'] as const;
 
+export interface WebMCPLogEntry {
+  id: number;
+  message: string;
+}
+
 const NavigateSchema = z.object({
   path: z.enum(VALID_PATHS),
 });
@@ -28,11 +33,14 @@ export interface WebMCPActions {
 
 export function useWebMCP(actions: WebMCPActions) {
   const [isReady, setIsReady] = useState(false);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState<WebMCPLogEntry[]>([]);
 
   const log = useCallback((msg: string) => {
     console.log(`[WebMCP] ${msg}`);
-    setLogs((prev) => [...prev, msg].slice(-50));
+    setLogs((prev) => {
+      const entry = { id: (prev.at(-1)?.id ?? 0) + 1, message: msg };
+      return [...prev, entry].slice(-50);
+    });
   }, []);
 
   useEffect(() => {

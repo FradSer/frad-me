@@ -43,7 +43,9 @@ describe('useWebMCP', () => {
 
     expect(result.current.isReady).toBe(false);
     expect(result.current.logs).toEqual(
-      expect.arrayContaining([expect.stringContaining('WebMCP API not available')]),
+      expect.arrayContaining([
+        expect.objectContaining({ message: expect.stringContaining('WebMCP API not available') }),
+      ]),
     );
   });
 
