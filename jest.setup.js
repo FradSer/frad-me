@@ -1,28 +1,6 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
-// Mock Next.js router
-const mockRouter = {
-  push: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-  back: jest.fn(),
-  prefetch: jest.fn(),
-  beforePopState: jest.fn(),
-  pathname: '/',
-  route: '/',
-  query: {},
-  asPath: '/',
-  basePath: '',
-  isLocaleDomain: false,
-  isReady: true,
-  isPreview: false,
-};
-
-jest.mock('next/router', () => ({
-  useRouter: () => mockRouter,
-}));
-
 // Mock motion
 jest.mock('motion/react', () => {
   const React = require('react');
@@ -163,14 +141,6 @@ const localStorageMock = {
   clear: jest.fn(),
 };
 global.localStorage = localStorageMock;
-
-// Mock performance.mark and performance.measure
-if (!global.performance.mark) {
-  global.performance.mark = jest.fn();
-}
-if (!global.performance.measure) {
-  global.performance.measure = jest.fn();
-}
 
 // Keep original console methods for tests that need to spy on them
 // Tests will mock these individually as needed
