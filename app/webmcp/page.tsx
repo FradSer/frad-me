@@ -105,12 +105,12 @@ export default function WebMCPPage() {
               {logs.length === 0 ? (
                 <div className="opacity-50 italic">Waiting for tool invocations...</div>
               ) : (
-                logs.map((l, i) => (
+                logs.map((l) => (
                   <div
-                    key={`${i}-${l.substring(0, 10)}`}
+                    key={l.id}
                     className="mb-1 border-b border-zinc-200 dark:border-zinc-800 pb-1 last:border-0"
                   >
-                    {l}
+                    {l.message}
                   </div>
                 ))
               )}
