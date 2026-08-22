@@ -38,7 +38,7 @@ pnpm test utils/__tests__/githubActivity.test.ts
 ```
 
 **Package Management:**
-- Uses `pnpm` as package manager (version 10.15.0+)
+- Uses `pnpm` as package manager (version 11+, see `packageManager` field)
 - Node.js version: 22.0.0+ (specified in engines)
 - pnpm lockfile version: 9.0
 
@@ -104,14 +104,14 @@ Use the root `ErrorBoundary` (`componentName` prop) for layout-level errors; fea
 - **React 19**, **Tailwind CSS v4** (configured via `@tailwindcss/postcss` and CSS, no `tailwind.config.js`)
 - **Vercel AI SDK v6** (`ai`, `@ai-sdk/gateway`, `@ai-sdk/react`) for chat via Vercel AI Gateway
 - **Motion** v12 for 2D DOM animations
-- **MDX** with mdx-bundler, **next-themes** for dark mode
+- **MDX** with `@next/mdx`, **next-themes** for dark mode
 - **Million.js** for React optimization (wraps next config)
 - **Biome** 2.x for formatting/linting, **Jest** 30 for unit tests, **Playwright** for E2E
 
 ## Code Style
 
 - **Biome**: Single quotes, 2-space indent, line width 100, import organization enabled, CSS Tailwind directives support
-- **TypeScript**: Strict mode, path alias `@/*`, ES5 target, ESNext modules
+- **TypeScript**: Strict mode, path alias `@/*`, ES2017 target, ESNext modules
 - **Conventions**: `use client` directive for client components; PascalCase filenames for hooks/contexts; `camelCase` for variables/functions; absolute imports via `@/`
 - **Commits**: Lowercase conventional commits (`feat:`, `fix:`, `chore:`), titles under 50 characters
 
