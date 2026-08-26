@@ -20,31 +20,21 @@ function scrollToHash(): void {
 }
 
 /**
- * Hook that scrolls to the element matching the URL hash after the page
- * has fully rendered.
+ * Hook that scrolls to the element matching the URL hash.
  *
- * This is necessary because:
- * 1. The initial loading screen (useLoading) delays DOM insertion of
- *    section elements, so the browser's native hash scroll fires too early.
- * 2. Next.js client-side navigation to /#hash doesn't automatically
- *    scroll to the target element.
- *
- * @param isReady - Pass `true` once the page content is mounted
- *                  (i.e. loading is complete).
+ * This is necessary because Next.js client-side navigation to /#hash
+ * doesn't automatically scroll to the target element.
  */
-export default function useHashScroll(isReady: boolean): void {
-  // Handle hash present on initial load / when isReady flips to true
+export default function useHashScroll(): void {
+  // Handle hash present on initial load
   useEffect(() => {
-    if (!isReady) return;
     scrollToHash();
-  }, [isReady]);
+  }, []);
 
   // Handle subsequent hash changes (e.g. client-side navigation from
   // another page to /#section via Next.js <Link>)
   useEffect(() => {
-    if (!isReady) return;
-
     window.addEventListener('hashchange', scrollToHash);
     return () => window.removeEventListener('hashchange', scrollToHash);
-  }, [isReady]);
+  }, []);
 }

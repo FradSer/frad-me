@@ -1,8 +1,18 @@
-'use client';
-
 import { CommonLink } from '@/components/common/CommonLink';
 
 import footerLinks from '@/content/footerLinks';
+
+// The copyright year bakes into the prerender at build time instead of
+// reading the clock on every request or during hydration.
+async function Copyright() {
+  'use cache';
+
+  return (
+    <span className="text-gray-400 hover:cursor-default">
+      Made by Frad © {new Date().getFullYear()}
+    </span>
+  );
+}
 
 function Footer() {
   return (
@@ -14,9 +24,7 @@ function Footer() {
           </li>
         ))}
       </ul>
-      <span className="text-gray-400 hover:cursor-default">
-        Made by Frad © {new Date().getFullYear()}
-      </span>
+      <Copyright />
     </footer>
   );
 }

@@ -42,7 +42,9 @@ function Hero() {
 
   return (
     <section className="m-auto flex h-auto min-h-screen w-full items-center justify-center">
-      <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
+      {/* The speech control lives outside the h1 so mounting it after
+          hydration never repaints the heading subtree (LCP stability). */}
+      <div className="relative flex flex-col items-start justify-center">
         {isSupported && (
           <motion.button
             type="button"
@@ -55,34 +57,36 @@ function Hero() {
             {isSpeaking ? <StopIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
           </motion.button>
         )}
-        <div className="relative">
-          <div className={trianglePositionClass}>
-            <Triangle />
+        <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
+          <div className="relative">
+            <div className={trianglePositionClass}>
+              <Triangle />
+            </div>
+            Frad LEE
+            <span className={mutedTextClass}> is a self-taught craftier</span>
           </div>
-          Frad LEE
-          <span className={mutedTextClass}> is a self-taught craftier</span>
-        </div>
-        <div className="flex w-full">
-          <span className={mutedTextClass}>who is eager to learn for</span>
-          <Rectangle />
-        </div>
-        <span className={mutedTextClass}>advancement. Whether it&apos;s </span>
-        <div>
-          coding
-          <span className={mutedTextClass}> in a new language,</span>
-        </div>
-        <div>
-          design
-          <span className={mutedTextClass}> with any tool whatsoever</span>
-        </div>
-        <div className="relative">
-          <span className={mutedTextClass}>or building a </span>
-          startup
-          <ScrollLink destination="work">
-            <DotCircle isInteractive />
-          </ScrollLink>
-        </div>
-      </h1>
+          <div className="flex w-full">
+            <span className={mutedTextClass}>who is eager to learn for</span>
+            <Rectangle />
+          </div>
+          <span className={mutedTextClass}>advancement. Whether it&apos;s </span>
+          <div>
+            coding
+            <span className={mutedTextClass}> in a new language,</span>
+          </div>
+          <div>
+            design
+            <span className={mutedTextClass}> with any tool whatsoever</span>
+          </div>
+          <div className="relative">
+            <span className={mutedTextClass}>or building a </span>
+            startup
+            <ScrollLink destination="work">
+              <DotCircle isInteractive />
+            </ScrollLink>
+          </div>
+        </h1>
+      </div>
     </section>
   );
 }

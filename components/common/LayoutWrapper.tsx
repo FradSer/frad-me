@@ -1,67 +1,19 @@
 'use client';
 
-import { motion } from 'motion/react';
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 import Header from '@/components/Header';
 
 import useHashScroll from '@/hooks/useHashScroll';
-import useLoading from '@/hooks/useLoading';
-import { createCursorClasses, LAYOUT_CLASSES } from '@/utils/classNames';
-import {
-  createHeaderVariants,
-  createLoadingDots,
-  createPageVariants,
-  createStaggerChildren,
-} from '@/utils/motion/animationUtils';
-
-const LoadingDots = () => {
-  const containerVariants = useMemo(() => createStaggerChildren(0.4), []);
-  const dotVariants = useMemo(() => createLoadingDots(), []);
-
-  return (
-    <motion.span variants={containerVariants} animate="animate">
-      {['loading-dot-1', 'loading-dot-2', 'loading-dot-3'].map((dotKey) => (
-        <motion.span key={dotKey} variants={dotVariants}>
-          .
-        </motion.span>
-      ))}
-    </motion.span>
-  );
-};
 
 type LayoutWrapperProps = {
   children: ReactNode;
 };
 
-const pageVariants = createPageVariants();
-const headerVariants = createHeaderVariants();
-
-const LoadingScreen = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className={createCursorClasses(`${LAYOUT_CLASSES.fullScreen} bg-white dark:bg-black`)}
-  >
-    <div
-      className={createCursorClasses(`${LAYOUT_CLASSES.loadingText} text-black dark:text-white`)}
-    >
-      loading
-      <LoadingDots />
-    </div>
-  </motion.div>
-);
-
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
-  const { isLoading } = useLoading();
-
-  // Scroll to #hash target once the loading screen is dismissed
-  useHashScroll(!isLoading);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  // Scroll to #hash targets after mount; client-side navigations to /#section
+  // don't trigger the browser's native hash scroll.
+  useHashScroll();
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center bg-white dark:bg-black">
@@ -72,9 +24,8 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
       <div className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
 
       {/* === DESKTOP HEADER BLUR (hidden on mobile) ===
-          Must live here (outside motion.header) because Framer Motion applies
-          transform: translateY() during animation, which breaks backdrop-filter
-          on position:fixed children in Safari. */}
+          Must live here (outside header) because transform-based animations break
+          backdrop-filter on position:fixed children in Safari. */}
       <div
         className="hidden sm:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:!hidden"
         style={{
@@ -96,26 +47,15 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         }}
       />
 
-      <motion.header
-        variants={headerVariants}
-        initial="initial"
-        animate="animate"
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black sm:bg-transparent sm:dark:bg-transparent"
-      >
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black sm:bg-transparent sm:dark:bg-transparent">
         <div className="layout-wrapper pointer-events-auto mx-auto">
           <Header />
         </div>
-      </motion.header>
+      </header>
 
-      <motion.main
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        className="flex w-full flex-col items-center justify-center bg-white dark:bg-black"
-      >
+      <main className="flex w-full flex-col items-center justify-center bg-white dark:bg-black">
         {children}
-      </motion.main>
+      </main>
     </div>
   );
 }

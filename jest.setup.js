@@ -90,6 +90,13 @@ jest.mock('motion/react', () => {
         destroy: () => {},
       };
     },
+    useScroll: () => ({
+      scrollYProgress: {
+        get: () => 0,
+        on: () => () => {},
+        onChange: () => () => {},
+      },
+    }),
   };
 });
 

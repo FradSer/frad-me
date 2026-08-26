@@ -2,15 +2,16 @@
 
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 import { GRID_CLASSES } from '@/utils/constants';
 
 const gridClass = GRID_CLASSES.container;
 
 // Function to calculate work duration
-function calculateWorkDuration(startDate: string, endDate?: string): string {
+function calculateWorkDuration(startDate: string, endDate: string | undefined, now: Date): string {
   const start = new Date(startDate);
-  const end = endDate ? new Date(endDate) : new Date();
+  const end = endDate ? new Date(endDate) : now;
 
   const diffInMs = end.getTime() - start.getTime();
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
@@ -86,7 +87,12 @@ function ExperienceItem({
   description,
   location,
 }: ExperienceItemProps) {
-  const duration = calculateWorkDuration(startDate, endDate);
+  // Reading the current time during render would make prerendering unstable,
+  // so ongoing durations are appended after mount.
+  const [duration, setDuration] = useState<string>();
+  useEffect(() => {
+    setDuration(calculateWorkDuration(startDate, endDate, new Date()));
+  }, [startDate, endDate]);
   const isOngoing = !endDate;
 
   // Format period display
@@ -100,7 +106,9 @@ function ExperienceItem({
         month: 'short',
         year: 'numeric',
       });
-  const period = `${startMonth} - ${endMonth} · ${duration}`;
+  const period = duration
+    ? `${startMonth} - ${endMonth} · ${duration}`
+    : `${startMonth} - ${endMonth}`;
 
   return (
     <div className="mb-8">
