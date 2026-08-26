@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { useWebMCP, type WebMCPActions } from '../useWebMCP';
 
+jest.mock('@mcp-b/global', () => ({}));
+
 const createMockModelContext = () => {
   const tools: Record<string, { execute: (params: unknown) => Promise<unknown> }> = {};
   const signals: AbortSignal[] = [];
@@ -37,9 +39,17 @@ describe('useWebMCP', () => {
     delete (document as unknown as Record<string, unknown>).modelContext;
   });
 
-  it('should return isReady=false when navigator.modelContext is absent', () => {
+  // Registration awaits the deferred @mcp-b/global import, so tests must
+  // flush microtasks before asserting on registered state.
+  const renderRegisteredHook = async (actions: WebMCPActions) => {
+    const rendered = renderHook(() => useWebMCP(actions));
+    await act(async () => {});
+    return rendered;
+  };
+
+  it('should return isReady=false when navigator.modelContext is absent', async () => {
     const actions = createMockActions();
-    const { result } = renderHook(() => useWebMCP(actions));
+    const { result } = await renderRegisteredHook(actions);
 
     expect(result.current.isReady).toBe(false);
     expect(result.current.logs).toEqual(
@@ -49,7 +59,7 @@ describe('useWebMCP', () => {
     );
   });
 
-  it('should register tools and set isReady=true when modelContext is available', () => {
+  it('should register tools and set isReady=true when modelContext is available', async () => {
     const mc = createMockModelContext();
     Object.defineProperty(window, 'navigator', {
       value: { ...originalNavigator, modelContext: mc },
@@ -58,7 +68,7 @@ describe('useWebMCP', () => {
     });
 
     const actions = createMockActions();
-    const { result } = renderHook(() => useWebMCP(actions));
+    const { result } = await renderRegisteredHook(actions);
 
     expect(result.current.isReady).toBe(true);
     expect(mc.registerTool).toHaveBeenCalledTimes(5);
@@ -71,7 +81,7 @@ describe('useWebMCP', () => {
     expect(toolNames).toContain('get_resume');
   });
 
-  it('should unregister all tools on unmount', () => {
+  it('should unregister all tools on unmount', async () => {
     const mc = createMockModelContext();
     Object.defineProperty(window, 'navigator', {
       value: { ...originalNavigator, modelContext: mc },
@@ -80,7 +90,7 @@ describe('useWebMCP', () => {
     });
 
     const actions = createMockActions();
-    const { unmount } = renderHook(() => useWebMCP(actions));
+    const { unmount } = await renderRegisteredHook(actions);
 
     expect(mc._signals).toHaveLength(5);
     for (const signal of mc._signals) {
@@ -104,7 +114,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const navigateTool = mc._tools.navigate;
       let toolResult: unknown;
@@ -128,7 +138,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const navigateTool = mc._tools.navigate;
       let toolResult: { content: { text: string }[] } | undefined;
@@ -154,7 +164,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const navigateTool = mc._tools.navigate;
 
@@ -181,7 +191,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const getWorksTool = mc._tools.get_works;
 
@@ -203,7 +213,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const readWorkTool = mc._tools.read_work;
 
@@ -223,7 +233,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      renderHook(() => useWebMCP(actions));
+      await renderRegisteredHook(actions);
 
       const readWorkTool = mc._tools.read_work;
       let toolResult: { content: { text: string }[] } | undefined;
@@ -242,7 +252,7 @@ describe('useWebMCP', () => {
   });
 
   describe('logging', () => {
-    it('should cap logs at 50 entries', () => {
+    it('should cap logs at 50 entries', async () => {
       const mc = createMockModelContext();
       Object.defineProperty(window, 'navigator', {
         value: { ...originalNavigator, modelContext: mc },
@@ -251,7 +261,7 @@ describe('useWebMCP', () => {
       });
 
       const actions = createMockActions();
-      const { result } = renderHook(() => useWebMCP(actions));
+      const { result } = await renderRegisteredHook(actions);
 
       expect(result.current.logs.length).toBeLessThanOrEqual(50);
     });
