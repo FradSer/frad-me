@@ -9,7 +9,7 @@ import useMousePosition from '@/hooks/useMousePosition';
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
 import { primaryTransition } from '@/utils/motion/springTransitions';
 
-// Spring physics for the cursor follow — see CLAUDE.md (stiffness 300, damping 30).
+// Spring physics for the cursor follow — see AGENTS.md (stiffness 300, damping 30).
 const SPRING_CONFIG = { stiffness: 300, damping: 30 } as const;
 // Looser spring for the text label so it lags slightly behind the dot.
 const TEXT_SPRING_CONFIG = { stiffness: 150, damping: 25 } as const;
