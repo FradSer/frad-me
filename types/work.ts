@@ -9,11 +9,6 @@ export interface WorkFrontmatter {
   nextWork?: string;
 }
 
-export interface WorkPageProps {
-  children: React.ReactNode;
-  metadata: WorkFrontmatter;
-}
-
 export interface WorkImageProps {
   src: string;
   width: number;
