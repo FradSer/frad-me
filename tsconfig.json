@@ -35,11 +35,5 @@
     ".next/dev/types/**/*.ts",
     ".next/dev/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "__tests__/**/*",
-    "utils/**/__tests__/**/*",
-    "tests/**/*",
-    "playwright.config.*"
-  ]
+  "exclude": ["node_modules", "__tests__/**/*", "utils/**/__tests__/**/*", "tests/**/*"]
 }

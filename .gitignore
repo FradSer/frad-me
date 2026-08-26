@@ -202,9 +202,8 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,macos,windows,jetbrains+all
 
-# Playwright test artifacts
-/playwright-report/
-/test-results/
+# Personal agent-tool configs (local only)
+.claude/*.local.md
 
 # git-agent generated files (never track)
 .git-agent/graph.db

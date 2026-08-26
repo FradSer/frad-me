@@ -1,7 +1,7 @@
 # frad-me
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FradSer_frad-me&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=FradSer_frad-me)
-[![TypeScript](https://img.shields.io/badge/TypeScript-62.7%25-blue)](https://github.com/FradSer/frad-me)
+[![TypeScript](https://img.shields.io/badge/TypeScript-blue)](https://github.com/FradSer/frad-me)
 [![Website](https://img.shields.io/badge/website-frad.me-green)](https://frad.me)
 
 A personal website built using modern web technologies to share thoughts, experiences, and showcase projects. Designed for speed, accessibility, and a seamless user experience.
@@ -11,9 +11,9 @@ A personal website built using modern web technologies to share thoughts, experi
 ## 🚀 Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
-- **Language**: TypeScript (62.7%)
-- **Content**: MDX (32.9%)
-- **Styling**: CSS with advanced features
+- **Language**: TypeScript
+- **Content**: MDX
+- **Styling**: Tailwind CSS v4
 - **Deployment**: Vercel
 
 ---
@@ -58,11 +58,12 @@ A personal website built using modern web technologies to share thoughts, experi
 
 ```
 frad-me/
+├── app/            # Next.js App Router routes and API handlers
 ├── components/     # React components
-├── pages/          # Next.js pages
+├── content/        # Structured site metadata
+├── markdown/works/ # MDX case studies
 ├── public/         # Static assets
-├── styles/         # CSS styles
-└── content/        # MDX content
+└── styles/         # Global styles
 ```
 
 ---
@@ -72,9 +73,9 @@ frad-me/
 - `pnpm dev`: Start the development server
 - `pnpm build`: Create a production build
 - `pnpm start`: Launch the production server
-- `pnpm lint`: Run linting for code quality
-- `pnpm format`: Format code and content files
-- `pnpm release`: Prepare a new release
+- `pnpm lint`: Run Biome linting
+- `pnpm format`: Format code with Biome
+- `pnpm test`: Run Jest unit/integration tests
 
 ---
 
@@ -95,8 +96,8 @@ This project adheres to high-quality coding standards:
 
 - **SonarCloud**: Continuous code quality analysis
 - **TypeScript**: Strong type-checking
-- **ESLint**: Enforced code style consistency
-- **Automated Testing & CI/CD**: Robust testing and deployment pipelines
+- **Biome**: Enforced code style consistency
+- **Jest**: Automated unit/integration testing
 
 ---
 

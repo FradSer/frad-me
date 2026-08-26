@@ -13,9 +13,6 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-  outputFileTracingExcludes: {
-    '*': ['./tests/**/*'],
-  },
   cacheComponents: true,
 };
 
