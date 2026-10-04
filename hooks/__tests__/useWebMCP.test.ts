@@ -10,7 +10,7 @@ const createMockModelContext = () => {
     registerTool: jest.fn((tool: { name: string }, opts?: { signal?: AbortSignal }) => {
       tools[tool.name] = tool as never;
       if (opts?.signal) signals.push(opts.signal);
-      // v4 returns Promise<void> — resolve undefined
+      // The current WebMCP API resolves when registration completes.
       return Promise.resolve(undefined);
     }),
     _tools: tools,

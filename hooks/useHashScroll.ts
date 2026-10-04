@@ -14,7 +14,12 @@ function scrollToHash(): void {
   requestAnimationFrame(() => {
     const element = document.getElementById(hash);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+        block: 'start',
+      });
     }
   });
 }
@@ -26,14 +31,8 @@ function scrollToHash(): void {
  * doesn't automatically scroll to the target element.
  */
 export default function useHashScroll(): void {
-  // Handle hash present on initial load
   useEffect(() => {
     scrollToHash();
-  }, []);
-
-  // Handle subsequent hash changes (e.g. client-side navigation from
-  // another page to /#section via Next.js <Link>)
-  useEffect(() => {
     window.addEventListener('hashchange', scrollToHash);
     return () => window.removeEventListener('hashchange', scrollToHash);
   }, []);
