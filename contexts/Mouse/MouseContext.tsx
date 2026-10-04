@@ -12,7 +12,7 @@ export enum CursorType {
   inputActive = 'input-active',
 }
 
-export type MouseContextType = {
+type MouseContextType = {
   cursorType: CursorType;
   cursorChangeHandler: (cursorType: CursorType) => void;
   attractorPosition: Position | null;
