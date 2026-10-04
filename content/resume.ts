@@ -1,4 +1,6 @@
-export interface Experience {
+import patents from '@/content/patents';
+
+interface Experience {
   title: string;
   company: string;
   startDate: string;
@@ -7,17 +9,17 @@ export interface Experience {
   description: string[];
 }
 
-export interface SkillCategory {
+interface SkillCategory {
   category: string;
   skills: string[];
 }
 
-export interface Patent {
+interface Patent {
   number: string;
   url: string;
 }
 
-export interface ResumeData {
+interface ResumeData {
   name: string;
   title: string;
   summary: string;
@@ -35,9 +37,9 @@ export interface ResumeData {
 
 const resumeData: ResumeData = {
   name: 'Frad LEE',
-  title: '"T-shaped" Product Expert & Interactive Designer',
+  title: 'AI Product Manager & Interaction Designer',
   summary:
-    'AI Product Manager at RayNeo focused on AI-native systems and spatial computing. Specializing in Multi-modal interaction and Long-term Memory (LTM) architectures for AR glasses. Bridging technical depth in Multi-Agent Systems with 10+ years of interaction design expertise to build next-generation hardware experiences.',
+    "I'm an AI Product Manager at RayNeo with 10+ years in product management and interaction design. I work on AI systems and spatial computing for AR glasses, with a focus on multimodal interaction, long-term memory, and multi-agent systems.",
   contact: {
     email: 'fradser@gmail.com',
     website: 'https://frad.me',
@@ -52,23 +54,22 @@ const resumeData: ResumeData = {
       startDate: '2025-12-09',
       location: 'Shenzhen, Guangdong, China',
       description: [
-        'Focus on AI-native system architecture and product strategy',
-        'Specializing in Multi-modal interaction and Long-term Memory (LTM) systems',
-        'Leading development of next-generation AI assistant features for AR glasses',
-        'Bridging the gap between advanced AI models and user-centric hardware experiences',
+        'Define product strategy and system architecture for AI features in AR glasses.',
+        'Design multimodal interaction and long-term memory (LTM) systems.',
+        'Lead development of AI assistant features, translating model capabilities into hardware experiences.',
       ],
     },
     {
-      title: 'Senior Interactive Designer',
+      title: 'Senior Interaction Designer',
       company: 'vivo',
       startDate: '2023-03-01',
       endDate: '2025-12-01',
       location: 'Shenzhen, Guangdong, China',
       description: [
-        'Actively participated in the interactive design of the operating system of Vivo Vision since joining Vivo XR Lab',
-        'Led spatial computing and XR interface design for next-generation VR/AR devices',
-        'Collaborated with cross-functional teams to develop innovative interaction paradigms',
-        'Contributed to core OS architecture and user experience design decisions',
+        'Designed interactions for the vivo Vision operating system at vivo XR Lab.',
+        'Led spatial interface design for VR and AR devices.',
+        'Worked with cross-functional teams to develop and refine interaction patterns.',
+        'Contributed to core OS architecture and user experience decisions.',
       ],
     },
     {
@@ -78,10 +79,12 @@ const resumeData: ResumeData = {
       endDate: '2023-03-01',
       location: 'Beijing, China',
       description: [
-        'Designer and prototyper with expertise in creating interactive prototypes for iOS and Unity projects at Lark',
-        'Successfully developed and submitted patents for virtual space interaction design inventions',
-        'Led design research for Eye Protection Design Handbook, implemented across Douyin, Jinri Toutiao, Xigua Video',
-        'Developed interactive prototypes using SwiftUI and Origami Studio',
+        'Designed and prototyped iOS and Unity experiences for Lark.',
+        'Led research for the Eye Protection Design Handbook, used across Douyin, Jinri Toutiao, and Xigua Video.',
+        'Contributed to visual-comfort design validation for Dali desk lamps.',
+        'Built SwiftUI and Origami Studio prototypes for Jinri Toutiao and Xigua Video.',
+        'Developed accessibility and usability improvements for Xigua Video.',
+        'Researched XR collaboration and filed invention patents for virtual-space interactions.',
       ],
     },
     {
@@ -91,8 +94,8 @@ const resumeData: ResumeData = {
       endDate: '2018-11-01',
       location: 'Beijing, China',
       description: [
-        'Oversaw and improved the exchange process with overseas partners',
-        'Led strategic initiatives for cryptocurrency exchange optimization',
+        'Improved cryptocurrency exchange workflows and collaboration with overseas partners.',
+        'Worked with Huobi Australia and HBUS to support international expansion.',
       ],
     },
     {
@@ -102,8 +105,11 @@ const resumeData: ResumeData = {
       endDate: '2018-05-01',
       location: 'Wuhan, Hubei, China',
       description: [
-        'Founded startup focusing on AI, hardware, and blockchain technology development',
-        'Led team including technical partner, front-end engineers, and hardware engineers',
+        'Founded a startup focused on AI, hardware, and blockchain applications.',
+        'Led a team of one technical partner, two front-end engineers, and two hardware engineers.',
+        'Consulted for DaoCloud Wuhan on a new energy monitoring platform with Dongfeng (Aug 2017 – Jan 2018).',
+        'Launched MFIL tokens and crowdfunding for Filecoin mining (Feb 2018 – Jun 2018).',
+        'Developed practical experience with web3.js and blockchain applications.',
       ],
     },
     {
@@ -113,9 +119,9 @@ const resumeData: ResumeData = {
       endDate: '2016-09-01',
       location: 'Beijing, China',
       description: [
-        'Led product strategy for BearyChat, a team collaboration platform',
-        'Successfully navigated company transition from free to commercial product',
-        'Served major clients including Huawei, Keep, and Same',
+        'Led product strategy, planning, and requirements for BearyChat, a team collaboration platform.',
+        'Guided the transition from a free service to a commercial product serving Huawei, Keep, and Same.',
+        'Managed the design team, coordinated development, and used customer feedback to guide priorities.',
       ],
     },
     {
@@ -125,8 +131,9 @@ const resumeData: ResumeData = {
       endDate: '2016-02-01',
       location: 'Beijing, China',
       description: [
-        'Led product design for Manman Comic, a domestic original comic reading platform',
-        'Achieved significant user growth from thousands to millions during tenure',
+        'Led design and development of Manman Comic, an original comics reading platform.',
+        'Managed one designer and five engineers, coordinating with marketing and operations.',
+        'Helped grow the platform from thousands to millions of users.',
       ],
     },
     {
@@ -136,63 +143,64 @@ const resumeData: ResumeData = {
       endDate: '2015-02-01',
       location: 'Beijing, China',
       description: [
-        'Completed wireframe, prototype, and user research for GiftTalk product from version 1.0 to 2.0',
-        'Achieved App Store free chart #1 ranking for Kuaikan Comic project',
+        'Created wireframes, prototypes, and user research for GiftTalk 1.0 and 2.0.',
+        'Took on product management responsibilities, writing PRDs and coordinating development from concept to commercial release.',
+        'Designed wireframes for Kuaikan Comic, which reached No. 1 on the App Store free apps chart.',
       ],
     },
   ],
   skills: [
     {
-      category: 'AI & Advanced Systems',
+      category: 'AI Systems',
       skills: [
         'Multi-Agent Systems',
         'Context Engineering',
         'Prompt Engineering',
         'Agent Design',
+        'MCP Server Development',
+        'Multimodal Interaction',
+        'Long-Term Memory',
         'Model Training',
         'AI Application Development',
       ],
     },
     {
-      category: 'Interaction & UX Design',
+      category: 'Interaction & Product Design',
       skills: [
         'Spatial Computing',
         'XR/VR Interface Design',
-        'Multi-platform UX Design',
+        'Cross-Platform UX',
         'Interactive Prototyping',
-        'Patent Development (8 patents)',
+        'Patent Development',
         'Accessibility Design',
         'User Research',
         'Product Strategy',
       ],
     },
     {
-      category: 'Development & Technical',
+      category: 'Software Development',
       skills: [
-        'iOS/macOS Development',
-        'Swift',
+        'iOS & macOS',
+        'Swift & SwiftUI',
         'React',
-        'SwiftUI',
-        'Unity',
-        'Figma Plugins',
-        '3D Web',
+        'Figma Plugin Development',
+        'Interactive 3D Web',
+        'web3.js',
       ],
     },
     {
-      category: 'Tools & Platforms',
-      skills: ['Origami Studio', 'Figma', 'Unity Engine', 'Xcode', 'GitHub', 'Product Management'],
+      category: 'Tools & Collaboration',
+      skills: [
+        'Figma',
+        'Origami Studio',
+        'Unity',
+        'Xcode',
+        'GitHub',
+        'Cross-Functional Leadership',
+      ],
     },
   ],
-  patents: [
-    { number: 'CN118939106A', url: 'https://patents.google.com/patent/CN118939106A' },
-    { number: 'CN118939105A', url: 'https://patents.google.com/patent/CN118939105A' },
-    { number: 'WO2023143051A1', url: 'https://patents.google.com/patent/WO2023143051A1' },
-    { number: 'CN118535001A', url: 'https://patents.google.com/patent/CN118535001A' },
-    { number: 'CN113504832A', url: 'https://patents.google.com/patent/CN113504832A' },
-    { number: 'CN117635879A', url: 'https://patents.google.com/patent/CN117635879A' },
-    { number: 'CN117376625A', url: 'https://patents.google.com/patent/CN117376625A' },
-    { number: 'CN117676261A', url: 'https://patents.google.com/patent/CN117676261A' },
-  ],
+  patents,
 };
 
 export default resumeData;
