@@ -23,11 +23,11 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           this div covers that zone with an opaque solid color. */}
       <div className="fixed inset-x-0 top-0 h-[env(safe-area-inset-top)] pointer-events-none z-[60] bg-white dark:bg-black" />
 
-      {/* === DESKTOP HEADER BLUR (hidden on mobile) ===
+      {/* === DESKTOP HEADER BLUR (hidden with mobile navigation) ===
           Must live here (outside header) because transform-based animations break
           backdrop-filter on position:fixed children in Safari. */}
       <div
-        className="hidden sm:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:!hidden"
+        className="hidden md:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:!hidden"
         style={{
           background: 'rgba(255,255,255,0.08)',
           maskImage:
@@ -37,7 +37,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         }}
       />
       <div
-        className="hidden sm:dark:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40"
+        className="hidden md:dark:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40"
         style={{
           background: 'rgba(0,0,0,0.08)',
           maskImage:
@@ -47,7 +47,8 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         }}
       />
 
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white dark:bg-black sm:bg-transparent sm:dark:bg-transparent">
+      {/* One glass surface grows with the menu, avoiding nested blur layers. */}
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 sm:px-8 bg-white/80 dark:bg-black/80 backdrop-blur-lg md:bg-transparent md:dark:bg-transparent md:backdrop-blur-none">
         <div className="layout-wrapper pointer-events-auto mx-auto">
           <Header />
         </div>

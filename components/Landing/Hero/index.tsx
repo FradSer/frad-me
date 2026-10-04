@@ -51,7 +51,7 @@ function Hero() {
             onClick={isSpeaking ? stop : () => speak(heroText, 'Fred')}
             onHoverStart={handleButtonHoverStart}
             onHoverEnd={handleButtonHoverEnd}
-            className="absolute -left-10 top-1 z-10 cursor-pointer rounded bg-gray-200 p-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+            className="absolute left-0 -top-8 sm:-left-10 sm:top-1 z-10 cursor-pointer rounded bg-gray-200 p-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             aria-label={isSpeaking ? 'Stop speaking' : 'Speak text'}
           >
             {isSpeaking ? <StopIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}

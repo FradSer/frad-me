@@ -16,6 +16,7 @@ function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleMenu = useCallback(() => {
     setMobileMenuOpen((prev) => !prev);
@@ -47,15 +48,20 @@ function Header() {
 
   // Prevent body scroll when menu is open
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      closeMenu();
+      menuButtonRef.current?.focus();
     };
-  }, [mobileMenuOpen]);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [mobileMenuOpen, closeMenu]);
 
   return (
     <>
@@ -86,7 +92,11 @@ function Header() {
         {/* Mobile menu button + theme switcher */}
         <div className="flex items-center gap-4 md:hidden">
           <ThemeSwitcher />
-          <MobileMenuButton isOpen={mobileMenuOpen} onToggle={toggleMenu} />
+          <MobileMenuButton
+            isOpen={mobileMenuOpen}
+            onToggle={toggleMenu}
+            buttonRef={menuButtonRef}
+          />
         </div>
       </nav>
 
@@ -94,6 +104,7 @@ function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            id="mobile-navigation"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

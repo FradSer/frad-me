@@ -43,11 +43,6 @@ function yieldForPaint(): Promise<void> {
   });
 }
 
-type IdleWindow = Window & {
-  requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-  cancelIdleCallback?: (id: number) => void;
-};
-
 // Kick off the dynamic import without blocking — bundle ends up in the
 // browser cache so the click→play path skips the download.
 function prefetchStrudel() {
@@ -74,21 +69,6 @@ export default function StrudelPiece() {
       if (initRef.current) stop();
     };
   }, [stop]);
-
-  // Prefetch the strudel runtime on browser idle so the bundle is already
-  // in cache by the time the user clicks play. Sample download still
-  // happens after the click (it needs an AudioContext from the gesture)
-  // but the JS parse no longer waits on a cold network fetch.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const w = window as IdleWindow;
-    if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(prefetchStrudel, { timeout: 4000 });
-      return () => w.cancelIdleCallback?.(id);
-    }
-    const id = window.setTimeout(prefetchStrudel, 2000);
-    return () => window.clearTimeout(id);
-  }, []);
 
   const handleToggle = useCallback(async () => {
     if (state === 'playing') {

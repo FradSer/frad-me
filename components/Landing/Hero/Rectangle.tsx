@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, useMotionValue, useTransform } from 'motion/react';
+import { useEffect } from 'react';
 
 import useMousePosition from '@/hooks/useMousePosition';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -18,9 +19,11 @@ export default function Rectangle() {
   const skewX = useTransform(mouseX, [0, 1], [2, -2], { clamp: true });
   const skewY = useTransform(mouseY, [0, 1], [-2, 2], { clamp: true });
 
-  // Update motion values
-  mouseX.set(xValue);
-  mouseY.set(yValue);
+  // Hydrate with the same neutral transform as SSR, then follow the pointer.
+  useEffect(() => {
+    mouseX.set(xValue);
+    mouseY.set(yValue);
+  }, [mouseX, mouseY, xValue, yValue]);
 
   return (
     <div className="ml-2 flex grow lg:ml-8">

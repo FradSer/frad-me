@@ -1,18 +1,22 @@
 'use client';
 
 import { motion } from 'motion/react';
+import type { Ref } from 'react';
 
 type MobileMenuButtonProps = {
   isOpen: boolean;
   onToggle: () => void;
+  buttonRef?: Ref<HTMLButtonElement>;
 };
 
-export default function MobileMenuButton({ isOpen, onToggle }: MobileMenuButtonProps) {
+export default function MobileMenuButton({ isOpen, onToggle, buttonRef }: MobileMenuButtonProps) {
   return (
     <button
       type="button"
+      ref={buttonRef}
       aria-label={isOpen ? 'Close menu' : 'Open menu'}
       aria-expanded={isOpen}
+      aria-controls="mobile-navigation"
       onClick={onToggle}
       className="flex h-10 w-10 items-center justify-center text-black dark:text-white"
     >
