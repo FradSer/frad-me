@@ -15,9 +15,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "*": ["./*"],
-      "@/*": ["./*"],
-      "@/markdown/*": ["./markdown/*"]
+      "@/*": ["./*"]
     },
     "types": ["jest", "@types/node", "@testing-library/jest-dom"],
     "plugins": [
@@ -32,8 +30,7 @@
     "**/*.tsx",
     "**/*.d.ts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    ".next/dev/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "__tests__/**/*", "utils/**/__tests__/**/*", "tests/**/*"]
 }

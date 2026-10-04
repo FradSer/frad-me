@@ -7,8 +7,8 @@ export function getAllWorkSlugs(): string[] {
   try {
     return fs
       .readdirSync(WORKS_PATH)
-      .filter((fileName) => /\.mdx?$/.test(fileName))
-      .map((fileName) => fileName.replace(/\.mdx?$/, ''));
+      .filter((fileName) => fileName.endsWith('.mdx'))
+      .map((fileName) => fileName.slice(0, -4));
   } catch {
     return [...STATIC_WORKS];
   }

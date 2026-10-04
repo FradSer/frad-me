@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export const WORKS_PATH = path.join(process.cwd(), 'markdown', 'works');
-export const MAX_SUMMARY_LENGTH = 500;
+const MAX_SUMMARY_LENGTH = 500;
 
 /** Strip MDX/Markdown syntax to produce plain text. */
-export function stripMdx(content: string): string {
+function stripMdx(content: string): string {
   return content
     .replace(/<[^>]+\/>/g, '') // self-closing JSX tags
     .replace(/<[^>]+>[\s\S]*?<\/[^>]+>/g, '') // paired JSX tags

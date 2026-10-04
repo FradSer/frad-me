@@ -17,3 +17,13 @@ scopes:
       description: TypeScript interfaces and declarations across types/; does not cover runtime implementation logic.
     - name: markdown
       description: MDX portfolio work narratives in markdown/; does not cover structured portfolio metadata in content/.
+    - name: comp
+      description: Shared UI, WebXR components, and landing page sections in components/; does not cover app routing.
+    - name: ctx
+      description: React state providers for theme, mouse, and WebMCP in contexts/; does not cover component logic.
+    - name: util
+      description: Cross-cutting helpers, performance utilities, and MDX logic in utils/; does not cover React hooks.
+    - name: data
+      description: Static portfolio content, resume data, and MDX source files in content/ and markdown/; does not cover API logic.
+    - name: type
+      description: Global TypeScript interfaces and type definitions in types/; does not cover runtime implementation code.

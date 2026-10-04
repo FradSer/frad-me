@@ -20,13 +20,7 @@ const customJestConfig = {
   },
 
   // Test file patterns
-  testMatch: [
-    '<rootDir>/**/__tests__/**/*.(test|spec).(ts|tsx|js)',
-    '<rootDir>/**/*.(test|spec).(ts|tsx|js)',
-  ],
-
-  // Ignore patterns
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  testMatch: ['<rootDir>/**/*.(test|spec).(ts|tsx|js)'],
 
   // Coverage configuration
   collectCoverageFrom: [
@@ -36,25 +30,8 @@ const customJestConfig = {
     'app/**/*.(ts|tsx)',
     'contexts/**/*.(ts|tsx)',
     '!**/*.d.ts',
-    '!**/node_modules/**',
-    '!**/.next/**',
     '!**/__tests__/**',
   ],
-
-  // Coverage thresholds (disabled for initial setup)
-  // coverageThreshold: {
-  //   global: {
-  //     branches: 70,
-  //     functions: 70,
-  //     lines: 70,
-  //     statements: 70,
-  //   },
-  // },
-
-  // Transform configuration
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
-  },
 
   // Module file extensions
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],

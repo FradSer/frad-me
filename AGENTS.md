@@ -21,6 +21,9 @@ This is a self-contained single-package pnpm workspace (`pnpm-workspace.yaml` in
 - `tests/features/`: BDD `.feature` specs (Gherkin) paired with source-assertion Jest tests.
 - `test/__mocks__/`: Jest module mocks.
 
+WebMCP uses `@mcp-b/global` v5. Await every `registerTool()` promise before reporting
+readiness, and share an `AbortSignal` to cancel registrations together on failure or cleanup.
+
 ## Common Development Commands
 
 ```bash
@@ -87,7 +90,7 @@ The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gatew
 - **Next.js 16** App Router with Cache Components, TypeScript strict mode
 - **React 19**, **Tailwind CSS v4** (configured via `@tailwindcss/postcss` and CSS, no config file)
 - **Vercel AI SDK v7** (`ai`, `@ai-sdk/gateway`, `@ai-sdk/react`) for chat
-- **Motion** v13 for animations; shared helpers in `utils/motion/`
+- **Motion** v14 for animations; shared helpers in `utils/motion/`
 - **MDX** via `@next/mdx`; **Million.js** wraps the Next config
 - **Biome** 2.x for formatting/linting, **Jest** 30 for unit/integration tests
 - Custom theme system in `contexts/Theme/` (`light` / `dark` / `system` preference, resolved value persisted under the `theme` storage key); no third-party theming library
@@ -99,7 +102,7 @@ The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gatew
 - Explicit `use client` directive for client components; shared utilities remain server-safe
 - Hooks/providers use PascalCase filenames with default exports; variables/functions are camelCase
 - Absolute imports via `@/`; group React/third-party/local imports in that order
-- Tailwind utility classes inline; prefer semantic helper constants (`utils/classNames.ts`, `utils/constants.ts`)
+- Tailwind utility classes inline; prefer semantic helper constants (`utils/constants.ts`)
 
 ## Testing Guidelines
 

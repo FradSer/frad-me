@@ -1,26 +1,3 @@
-interface ToolRegistration {
-  unregister(): void;
-}
-
-declare global {
-  interface ModelContext {
-    registerTool(tool: {
-      name: string;
-      description: string;
-      inputSchema: Record<string, unknown>;
-      execute: (
-        params: unknown,
-      ) =>
-        | { content: { type: string; text: string }[] }
-        | Promise<{ content: { type: string; text: string }[] }>;
-    }): ToolRegistration;
-  }
-
-  interface Navigator {
-    modelContext?: ModelContext;
-  }
-}
-
 export interface WebMCPFormEvent extends Event {
   agentInvoked?: boolean;
   respondWith?: (promise: Promise<unknown>) => void;

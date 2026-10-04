@@ -1,4 +1,4 @@
-export interface RepoSummary {
+interface RepoSummary {
   name: string;
   description: string;
   url: string;
@@ -7,7 +7,7 @@ export interface RepoSummary {
   pushedAt: string;
 }
 
-export interface ActivitySnapshot {
+interface ActivitySnapshot {
   source: 'github' | 'fallback';
   fetchedAt: string;
   repos: RepoSummary[];

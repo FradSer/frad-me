@@ -2,4 +2,5 @@ packages:
   - .
 minimumReleaseAge: 0
 allowBuilds:
+  '@parcel/watcher': false
   unrs-resolver: true

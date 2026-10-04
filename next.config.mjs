@@ -8,10 +8,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  typescript: {
-    ignoreBuildErrors: false,
-  },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   cacheComponents: true,
 };
@@ -19,7 +15,6 @@ const nextConfig = {
 const withMDX = createMDX({
   options: {
     remarkPlugins: ['remark-gfm'],
-    rehypePlugins: [],
   },
 });
 

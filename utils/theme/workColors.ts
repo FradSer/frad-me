@@ -1,5 +1,5 @@
 // Work card background color mapping
-export const workColorMap = {
+const workColorMap = {
   'eye-protection-design-handbook': 'bg-[#313131]',
   'usability-design-for-xigua-video': 'bg-blue-500',
   pachino: 'bg-red-600',

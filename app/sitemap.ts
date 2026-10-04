@@ -3,16 +3,10 @@ import type { MetadataRoute } from 'next';
 import { SITE_CONFIG } from '@/utils/constants';
 import { getAllWorkSlugs } from '@/utils/workList';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const currentDate = new Date().toISOString();
 
-  let slugs: string[] = [];
-  try {
-    slugs = getAllWorkSlugs();
-  } catch (error) {
-    console.error('Failed to get works for sitemap:', error);
-    // Continue with empty works array to prevent build failure
-  }
+  const slugs = getAllWorkSlugs();
 
   const staticPages: MetadataRoute.Sitemap = [
     {

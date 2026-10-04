@@ -48,6 +48,8 @@ jest.mock('motion/react', () => {
       line: createMotionWrapper('line'),
     },
     AnimatePresence: ({ children }) => children,
+    MotionConfig: ({ children }) => children,
+    useReducedMotion: () => false,
     useAnimationControls: () => ({
       start: jest.fn(),
       stop: jest.fn(),
