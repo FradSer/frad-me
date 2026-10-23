@@ -5,10 +5,12 @@ import ResumePageClient from './resume-page-client';
 
 export const metadata: Metadata = {
   title: 'Resume - Frad Lee',
-  description: `${resumeData.name} — ${resumeData.title}`,
+  description: resumeData.summary,
+  alternates: { canonical: '/resume' },
   openGraph: {
     title: 'Resume - Frad Lee',
-    description: `${resumeData.name} — ${resumeData.title}`,
+    description: resumeData.summary,
+    url: '/resume',
   },
 };
 

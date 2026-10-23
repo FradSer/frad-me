@@ -19,9 +19,18 @@ interface Patent {
   url: string;
 }
 
+interface Project {
+  name: string;
+  role: string;
+  description: string;
+  href: string;
+  linkLabel: string;
+}
+
 interface ResumeData {
   name: string;
   title: string;
+  headline: string;
   summary: string;
   contact: {
     email: string;
@@ -31,15 +40,17 @@ interface ResumeData {
     huggingface: string;
   };
   experience: Experience[];
+  projects: Project[];
   skills: SkillCategory[];
   patents: Patent[];
 }
 
 const resumeData: ResumeData = {
   name: 'Frad LEE',
-  title: 'AI Product Manager & Interaction Designer',
+  title: 'AI Product Manager & Builder',
+  headline: 'Agents, developer tools, and spatial computing.',
   summary:
-    "I'm an AI Product Manager at RayNeo with 10+ years in product management and interaction design. I work on AI systems and spatial computing for AR glasses, with a focus on multimodal interaction, long-term memory, and multi-agent systems.",
+    'I define products, design interactions, and build working software. My background spans product and interaction design since 2014, with experience at RayNeo, vivo, and ByteDance. Today I focus on AI agents, developer workflows, and wearable experiences.',
   contact: {
     email: 'fradser@gmail.com',
     website: 'https://frad.me',
@@ -54,9 +65,9 @@ const resumeData: ResumeData = {
       startDate: '2025-12-09',
       location: 'Shenzhen, Guangdong, China',
       description: [
-        'Define product strategy and system architecture for AI features in AR glasses.',
-        'Design multimodal interaction and long-term memory (LTM) systems.',
-        'Lead development of AI assistant features, translating model capabilities into hardware experiences.',
+        'Define AI assistant workflows for AR glasses, connecting product strategy, interaction design, and system architecture.',
+        'Prototype cross-device agent experiences, including multimodal interaction and context and memory workflows.',
+        'Work with engineering teams to evaluate assistant behavior and turn model capabilities into usable wearable experiences.',
       ],
     },
     {
@@ -66,10 +77,9 @@ const resumeData: ResumeData = {
       endDate: '2025-12-01',
       location: 'Shenzhen, Guangdong, China',
       description: [
-        'Designed interactions for the vivo Vision operating system at vivo XR Lab.',
-        'Led spatial interface design for VR and AR devices.',
-        'Worked with cross-functional teams to develop and refine interaction patterns.',
-        'Contributed to core OS architecture and user experience decisions.',
+        'Designed spatial interactions for the vivo Vision operating system at vivo XR Lab.',
+        'Developed and prototyped interface patterns for VR and AR devices, informing core OS and user experience decisions.',
+        'Collaborated with engineering and product teams to refine interactions across the system.',
       ],
     },
     {
@@ -81,10 +91,8 @@ const resumeData: ResumeData = {
       description: [
         'Designed and prototyped iOS and Unity experiences for Lark.',
         'Led research for the Eye Protection Design Handbook, used across Douyin, Jinri Toutiao, and Xigua Video.',
-        'Contributed to visual-comfort design validation for Dali desk lamps.',
-        'Built SwiftUI and Origami Studio prototypes for Jinri Toutiao and Xigua Video.',
-        'Developed accessibility and usability improvements for Xigua Video.',
-        'Researched XR collaboration and filed invention patents for virtual-space interactions.',
+        'Built SwiftUI and Origami Studio prototypes for Jinri Toutiao and Xigua Video, including accessibility and usability improvements.',
+        'Researched XR collaboration and filed invention patent applications for virtual-space interactions.',
       ],
     },
     {
@@ -105,11 +113,8 @@ const resumeData: ResumeData = {
       endDate: '2018-05-01',
       location: 'Wuhan, Hubei, China',
       description: [
-        'Founded a startup focused on AI, hardware, and blockchain applications.',
-        'Led a team of one technical partner, two front-end engineers, and two hardware engineers.',
+        'Founded a startup exploring AI, hardware, and blockchain applications; led a team across software and hardware development.',
         'Consulted for DaoCloud Wuhan on a new energy monitoring platform with Dongfeng (Aug 2017 – Jan 2018).',
-        'Launched MFIL tokens and crowdfunding for Filecoin mining (Feb 2018 – Jun 2018).',
-        'Developed practical experience with web3.js and blockchain applications.',
       ],
     },
     {
@@ -149,29 +154,66 @@ const resumeData: ResumeData = {
       ],
     },
   ],
+  projects: [
+    {
+      name: 'Code Terrier',
+      role: 'Independent product · Product, design & engineering',
+      description:
+        'An AI code review product for GitHub pull requests and local changes. Built review workflows with repository tools, evidence-backed findings, and persistent state for interrupted reviews.',
+      href: 'https://codeterrier.com',
+      linkLabel: 'Visit product',
+    },
+    {
+      name: 'Open DeskOS',
+      role: 'Open source · Product, interaction & engineering',
+      description:
+        'A cross-platform desk companion combining a desktop shell, a resident agent, and modular widgets. Develop the product across software, interaction design, and hardware integration.',
+      href: 'https://github.com/FradSer/open-deskos',
+      linkLabel: 'View repository',
+    },
+    {
+      name: 'Agent Workflow Tools',
+      role: 'Open source · Developer tools',
+      description:
+        'Plugins and native packages for coding agents, including Pi. Build tools for agent coordination, context handoff, and development workflows, and maintain them alongside the code they support.',
+      href: 'https://github.com/FradSer/pi-packages',
+      linkLabel: 'View repository',
+    },
+    {
+      name: 'MCP Server for Apple Events',
+      role: 'Open source · Agent integrations',
+      description:
+        'Connects AI assistants with Apple Calendar and Reminders. Work across the MCP interface, native platform integration, and tools that make personal workflows accessible to agents.',
+      href: 'https://github.com/FradSer/mcp-server-apple-events',
+      linkLabel: 'View repository',
+    },
+    {
+      name: 'Pachino',
+      role: 'Independent product · Design & native development',
+      description:
+        'Designed and built a SwiftUI focus timer for iOS and macOS, with generative visuals and ambient audio. Currently exploring a task-planning and focus workflow.',
+      href: '/works/pachino',
+      linkLabel: 'Read case study',
+    },
+  ],
   skills: [
     {
-      category: 'AI Systems',
+      category: 'Agents & Developer Tools',
       skills: [
-        'Multi-Agent Systems',
+        'Agent Workflows & Tool Use',
         'Context Engineering',
-        'Prompt Engineering',
-        'Agent Design',
         'MCP Server Development',
-        'Multimodal Interaction',
-        'Long-Term Memory',
-        'Model Training',
-        'AI Application Development',
+        'Evaluation & Regression Testing',
+        'Multi-Agent Coordination',
+        'Memory Systems',
       ],
     },
     {
-      category: 'Interaction & Product Design',
+      category: 'Product & Interaction Design',
       skills: [
         'Spatial Computing',
-        'XR/VR Interface Design',
         'Cross-Platform UX',
         'Interactive Prototyping',
-        'Patent Development',
         'Accessibility Design',
         'User Research',
         'Product Strategy',
@@ -180,24 +222,17 @@ const resumeData: ResumeData = {
     {
       category: 'Software Development',
       skills: [
-        'iOS & macOS',
+        'TypeScript & React',
+        'Next.js',
+        'Python',
         'Swift & SwiftUI',
-        'React',
-        'Figma Plugin Development',
-        'Interactive 3D Web',
-        'web3.js',
+        'Cloudflare Workers',
+        'iOS & macOS',
       ],
     },
     {
       category: 'Tools & Collaboration',
-      skills: [
-        'Figma',
-        'Origami Studio',
-        'Unity',
-        'Xcode',
-        'GitHub',
-        'Cross-Functional Leadership',
-      ],
+      skills: ['Figma', 'Origami Studio', 'Unity', 'GitHub', 'Cross-Functional Leadership'],
     },
   ],
   patents,
