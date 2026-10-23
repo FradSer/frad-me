@@ -5,108 +5,44 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 import SectionHeading from '@/components/common/SectionHeading';
-import { STRUDEL_COMPOSER, STRUDEL_PERFORMER_URL, STRUDEL_PIECE } from '@/content/strudelPiece';
+import { STRUDEL_COMPOSER, STRUDEL_PERFORMER_URL } from '@/content/strudelPiece';
+import { prefetchStrudel, startStrudel, stopStrudel } from '@/utils/strudelPlayback';
 
 type PlayerState = 'idle' | 'loading' | 'playing' | 'error';
 
-// Local type alias for the @strudel/web namespace we touch — see
-// types/strudel.d.ts for the declared shape.
-type StrudelModule = typeof import('@strudel/web');
-
-// strudel.cc's REPL preloads several packs from this CDN. We mirror just the
-// `tidal-drum-machines` pack because the piece uses .bank('RolandTR909') —
-// that bank lives in this pack, not in tidalcycles/dirt-samples. Without it,
-// evaluate() succeeds but every `s("bd hh sd rim")` resolves to silence.
-const STRUDEL_CDN = 'https://strudel.b-cdn.net';
-const DRUM_MACHINES_JSON = `${STRUDEL_CDN}/tidal-drum-machines.json`;
-const DRUM_MACHINES_BASE = `${STRUDEL_CDN}/tidal-drum-machines/machines/`;
-
-// Cache the dynamic import so a second play doesn't re-fetch the bundle,
-// and so prefetch + click converge on the same Promise.
-let strudelModulePromise: Promise<StrudelModule> | null = null;
-function getStrudelModule(): Promise<StrudelModule> {
-  if (!strudelModulePromise) {
-    // Dynamic import keeps the ~1MB Strudel runtime out of the initial bundle.
-    strudelModulePromise = import('@strudel/web');
-  }
-  return strudelModulePromise;
-}
-
-// Wait one animation frame so the browser actually paints the new state
-// before we hand the main thread to a multi-hundred-ms bundle parse.
-function yieldForPaint(): Promise<void> {
-  return new Promise((resolve) => {
-    if (typeof requestAnimationFrame === 'function') {
-      requestAnimationFrame(() => resolve());
-    } else {
-      setTimeout(resolve, 0);
-    }
-  });
-}
-
-// Kick off the dynamic import without blocking — bundle ends up in the
-// browser cache so the click→play path skips the download.
-function prefetchStrudel() {
-  void getStrudelModule().catch(() => {
-    // swallow — the real error surface is the click handler.
-  });
-}
-
 export default function StrudelPiece() {
   const [state, setState] = useState<PlayerState>('idle');
-  const initRef = useRef(false);
-  const moduleRef = useRef<StrudelModule | null>(null);
-
-  const stop = useCallback(() => {
-    try {
-      moduleRef.current?.hush();
-    } catch {
-      // best-effort — module may not be ready yet
-    }
-  }, []);
+  const mountedRef = useRef(true);
+  const busyRef = useRef(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
-      if (initRef.current) stop();
+      mountedRef.current = false;
+      stopStrudel();
     };
-  }, [stop]);
+  }, []);
 
   const handleToggle = useCallback(async () => {
     if (state === 'playing') {
-      stop();
+      stopStrudel();
       setState('idle');
       return;
     }
-    if (state === 'loading') return;
-
-    // flushSync + a one-frame yield guarantees the play→loading swap
-    // paints BEFORE the dynamic import parses ~850KB of strudel runtime
-    // on the main thread — otherwise the "play" label visibly lingers
-    // until parse finishes and then snaps straight to "pause".
+    if (busyRef.current) return;
+    busyRef.current = true;
     flushSync(() => setState('loading'));
-    await yieldForPaint();
 
     try {
-      const strudel = await getStrudelModule();
-      moduleRef.current = strudel;
-
-      if (!initRef.current) {
-        // Must await — initStrudel returns the `initDone` Promise that
-        // resolves after default + user prebake finish (synth sounds and
-        // the tidal-drum-machines pack registered). evaluate() does NOT
-        // await this on our behalf, so calling it earlier produces silence.
-        await strudel.initStrudel({
-          prebake: () => strudel.samples(DRUM_MACHINES_JSON, DRUM_MACHINES_BASE),
-        });
-        initRef.current = true;
-      }
-      await strudel.evaluate(STRUDEL_PIECE);
-      setState('playing');
+      await startStrudel(() => !mountedRef.current);
+      if (mountedRef.current) setState('playing');
     } catch (err) {
       console.error('[StrudelPiece] failed to play', err);
-      setState('error');
+      if (mountedRef.current) setState('error');
+    } finally {
+      busyRef.current = false;
     }
-  }, [state, stop]);
+  }, [state]);
 
   const label =
     state === 'loading'
@@ -134,6 +70,7 @@ export default function StrudelPiece() {
               onFocus={prefetchStrudel}
               disabled={state === 'loading'}
               aria-pressed={state === 'playing'}
+              aria-busy={state === 'loading'}
               aria-label={ariaLabel}
               className="group flex items-center gap-5 text-left text-4xl font-bold text-black transition-opacity disabled:opacity-60 dark:text-white sm:text-5xl md:text-6xl"
             >
@@ -160,6 +97,14 @@ export default function StrudelPiece() {
             </span>
           </p>
         </div>
+        <p
+          role="status"
+          className={
+            state === 'error' ? 'mt-4 text-base text-gray-600 dark:text-gray-400' : 'sr-only'
+          }
+        >
+          {state === 'error' ? "Music couldn't start. Please try again." : ''}
+        </p>
       </div>
     </section>
   );

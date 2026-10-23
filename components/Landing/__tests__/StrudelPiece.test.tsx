@@ -1,167 +1,127 @@
-/**
- * BDD: tests/features/landing/strudel-piece.feature
- *
- * @strudel/web is dynamically imported on first click. We mock the module
- * entirely — jsdom can't run the real runtime (it touches AudioContext +
- * AudioWorklet) and we don't need to: the contract under test is the
- * component's lifecycle, not strudel's audio output.
- */
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { STRUDEL_COMPOSER, STRUDEL_PIECE } from '@/content/strudelPiece';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+
+import { STRUDEL_COMPOSER } from '@/content/strudelPiece';
+import { prefetchStrudel, startStrudel, stopStrudel } from '@/utils/strudelPlayback';
 import StrudelPiece from '../StrudelPiece';
 
-// Hoisted stubs the mock factory can reach (jest.mock is hoisted above
-// imports, so we can't reference outer let bindings directly).
-const strudelMocks = {
-  initStrudel: jest.fn(),
-  evaluate: jest.fn(),
-  hush: jest.fn(),
-  samples: jest.fn(),
-};
+jest.mock('@/utils/strudelPlayback', () => ({
+  prefetchStrudel: jest.fn(),
+  startStrudel: jest.fn(),
+  stopStrudel: jest.fn(),
+}));
 
-jest.mock('@strudel/web', () => strudelMocks);
+const start = jest.mocked(startStrudel);
 
-function setupHappyPathMocks() {
-  strudelMocks.initStrudel.mockImplementation(async (opts) => {
-    if (opts?.prebake) await opts.prebake();
-    return undefined;
-  });
-  strudelMocks.evaluate.mockResolvedValue(undefined);
-  strudelMocks.samples.mockResolvedValue(undefined);
-}
-
-describe('StrudelPiece', () => {
+describe('StrudelPiece lifecycle', () => {
   beforeEach(() => {
-    strudelMocks.initStrudel.mockReset();
-    strudelMocks.evaluate.mockReset();
-    strudelMocks.hush.mockReset();
-    strudelMocks.samples.mockReset();
-    setupHappyPathMocks();
+    jest.clearAllMocks();
+    start.mockReset().mockResolvedValue(undefined);
   });
 
-  it('renders the listen heading with attribution and no module loaded yet', () => {
+  it('shows attribution without starting or prefetching on mount', () => {
     render(<StrudelPiece />);
-
-    expect(screen.getByRole('heading', { name: 'sonics' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Play music' })).toHaveTextContent('play');
-    expect(screen.getByText(STRUDEL_COMPOSER)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'sonics' })).toBeVisible();
+    expect(screen.getByText(STRUDEL_COMPOSER)).toBeVisible();
+    expect(STRUDEL_COMPOSER).toBe('GPT-6.1 Sol');
     expect(screen.getByRole('link', { name: 'strudel.cc' })).toHaveAttribute(
       'href',
       'https://strudel.cc',
     );
-    expect(strudelMocks.initStrudel).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Play music' })).toHaveTextContent('play');
+    expect(start).not.toHaveBeenCalled();
+    expect(prefetchStrudel).not.toHaveBeenCalled();
   });
 
-  it('first click awaits initStrudel (with drum-machines prebake) before evaluating', async () => {
-    // Verifies the bug fix: initStrudel must fully resolve — including the
-    // user-supplied prebake that loads the RolandTR909 pack — before
-    // evaluate runs, otherwise the pattern is scheduled before samples are
-    // registered and plays silence.
-    const callOrder: string[] = [];
-    strudelMocks.samples.mockImplementation(async (...args) => {
-      callOrder.push(`samples:${args[0]}`);
-    });
-    strudelMocks.initStrudel.mockImplementation(async (opts) => {
-      callOrder.push('initStrudel:start');
-      if (opts?.prebake) await opts.prebake();
-      callOrder.push('initStrudel:end');
-    });
-    strudelMocks.evaluate.mockImplementation(async (code: string) => {
-      callOrder.push(`evaluate:${code.length}`);
-    });
-
+  it('prefetches on hover and focus without starting playback', () => {
     render(<StrudelPiece />);
-
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('button')).toHaveTextContent('pause');
-    });
-
-    expect(strudelMocks.initStrudel).toHaveBeenCalledTimes(1);
-    expect(strudelMocks.samples).toHaveBeenCalledWith(
-      'https://strudel.b-cdn.net/tidal-drum-machines.json',
-      'https://strudel.b-cdn.net/tidal-drum-machines/machines/',
-    );
-    expect(strudelMocks.evaluate).toHaveBeenCalledWith(STRUDEL_PIECE);
-
-    // evaluate must come AFTER initStrudel has fully resolved.
-    const initEndIdx = callOrder.indexOf('initStrudel:end');
-    const evalIdx = callOrder.findIndex((s) => s.startsWith('evaluate:'));
-    expect(initEndIdx).toBeGreaterThan(-1);
-    expect(evalIdx).toBeGreaterThan(initEndIdx);
-  });
-
-  it('pointer-enter on the button prefetches the runtime before click', async () => {
-    // The module promise is cached at module scope, so a hover before click
-    // should warm it. We can't observe `import()` directly, but we can
-    // verify the click path still works after a hover and that no extra
-    // initStrudel calls happen.
-    render(<StrudelPiece />);
-
     const button = screen.getByRole('button', { name: 'Play music' });
     fireEvent.pointerEnter(button);
-
-    await act(async () => {
-      fireEvent.click(button);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('button')).toHaveTextContent('pause');
-    });
-
-    expect(strudelMocks.initStrudel).toHaveBeenCalledTimes(1);
+    fireEvent.focus(button);
+    expect(prefetchStrudel).toHaveBeenCalledTimes(2);
+    expect(start).not.toHaveBeenCalled();
   });
 
-  it('second click pauses without re-initializing the runtime', async () => {
+  it('shows loading until playback succeeds and prevents duplicate starts', async () => {
+    let finish: () => void = () => {};
+    start.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     render(<StrudelPiece />);
+    fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
+    expect(start).toHaveBeenCalledTimes(1);
+    const button = screen.getByRole('button');
+    expect(button).toHaveTextContent('loading');
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(start).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      finish();
+    });
+    expect(screen.getByRole('button', { name: 'Pause music' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
 
+  it('pauses and allows playback to restart', async () => {
+    render(<StrudelPiece />);
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
     });
-    await waitFor(() => {
-      expect(screen.getByRole('button')).toHaveTextContent('pause');
-    });
-
     fireEvent.click(screen.getByRole('button', { name: 'Pause music' }));
-
-    expect(strudelMocks.hush).toHaveBeenCalledTimes(1);
-    expect(strudelMocks.initStrudel).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('button')).toHaveTextContent('play');
-  });
-
-  it('shows retry when initStrudel rejects', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-    strudelMocks.initStrudel.mockRejectedValueOnce(new Error('boom'));
-
-    render(<StrudelPiece />);
-
+    expect(stopStrudel).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Play music' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
     });
+    expect(start).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole('button', { name: 'Pause music' })).toBeEnabled();
+  });
 
-    await waitFor(() => {
+  it('offers a retry with a friendly live status after failure', async () => {
+    const errorLog = jest.spyOn(console, 'error').mockImplementation(() => {});
+    start.mockRejectedValueOnce(new Error('internal runtime failure'));
+    try {
+      render(<StrudelPiece />);
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
+      });
       expect(screen.getByRole('button')).toHaveTextContent('retry');
-    });
-    expect(strudelMocks.evaluate).not.toHaveBeenCalled();
-    expect(consoleError).toHaveBeenCalled();
-
-    consoleError.mockRestore();
+      expect(screen.getByRole('status').textContent).toMatch(/try|retry|could|unable/i);
+      expect(screen.getByRole('status')).not.toHaveTextContent('internal runtime failure');
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button'));
+      });
+      expect(screen.getByRole('button', { name: 'Pause music' })).toBeEnabled();
+    } finally {
+      errorLog.mockRestore();
+    }
   });
 
-  it('hushes playback on unmount', async () => {
+  it('cancels a pending start on unmount and stops global playback', async () => {
+    let finish: () => void = () => {};
+    start.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     const { unmount } = render(<StrudelPiece />);
-
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('button')).toHaveTextContent('pause');
-    });
-
+    fireEvent.click(screen.getByRole('button', { name: 'Play music' }));
+    const isCancelled = start.mock.calls[0][0];
+    expect(isCancelled()).toBe(false);
     unmount();
-    expect(strudelMocks.hush).toHaveBeenCalled();
+    expect(isCancelled()).toBe(true);
+    expect(stopStrudel).toHaveBeenCalled();
+    await act(async () => {
+      finish();
+    });
+    expect(start).toHaveBeenCalledTimes(1);
   });
 });

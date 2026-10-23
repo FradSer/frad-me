@@ -7,11 +7,15 @@ declare module '@strudel/web' {
   type PrebakeFn = () => void | Promise<void>;
 
   export function initStrudel(opts?: {
+    audioContext?: AudioContext;
+    onEvalError?: (error: unknown) => void;
     prebake?: PrebakeFn;
     miniAllStrings?: boolean;
   }): Promise<unknown>;
 
-  export function evaluate(code: string, autoplay?: boolean): Promise<void>;
+  export function initAudio(): Promise<void>;
+
+  export function evaluate(code: string, autoplay?: boolean): Promise<unknown>;
 
   export function hush(): void;
 

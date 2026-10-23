@@ -1,54 +1,97 @@
-// Single source of truth for the homepage Strudel piece.
-// The .strudel.js mirror under docs/strudel/ exists so the file can be
-// pasted directly into https://strudel.cc — keep the two in sync.
-//
-// The runtime version is pinned via the `@strudel/web` entry in package.json.
-
-export const STRUDEL_COMPOSER = 'Claude Opus 4.7';
+// Canonical homepage score; keep docs/strudel/frad-me.strudel.js identical.
+// Every voice uses a built-in synth, so playback needs no sample downloads.
+export const STRUDEL_COMPOSER = 'GPT-6.1 Sol';
 export const STRUDEL_PERFORMER_URL = 'https://strudel.cc';
 
-export const STRUDEL_PIECE = `// "frad.me" — a piece for the personal site
-// motif: F-A-D, the notes hidden in "frad" (= D minor triad)
-// three layers ≈ three views: home pulse · work bass · ambient drift
+export const STRUDEL_PIECE = `// "Between the dots" — for frad.me, by GPT-6.1 Sol
+// 88 BPM, D minor. An eight-bar conversation around F-A-D.
+// Dm9 · Dm7 · Bbmaj7 · Bbmaj9 · Fmaj9 · Fmaj9 · Gm9 · A7sus4
+// Synths only: no sample packs or REPL-only helpers.
 
-setcps(0.65)
-
-let chords = chord("<Dm9 Fmaj9 Gm11 Am9>/4").dict('ireal')
+setcps(88 / 240);
 
 stack(
-  // ── home view: cursor pulse, dot-ring breathing ──
-  stack(
-    s("bd").struct("<x ~ [~ x] x  x ~ [x ~] ~>"),
-    s("~ sd ~ [sd ~ sd]").gain(0.65).room(0.2),
-    n("[0 <1 3>]*<2!3 4>").s("hh").gain(sine.range(0.2, 0.5).slow(4)),
-    s("rim*2").mask("<0 0 1 1>/8").gain(0.5)
-      .delay(0.35).delaytime(0.375).delayfeedback(0.45),
-  ).bank("RolandTR909")
-   .mask("<[0 1] 1 1 1>/8".early(0.5)),
+  // Soft chord changes leave space around the melody.
+  note(
+    '<[d3,f3,a3,e4] [d3,f3,a3,c4] [bb2,d3,f3,a3] [bb2,c3,f3,a3] [c3,e3,g3,a3] [c3,e3,g3,a3] [bb2,d3,f3,a3] [a2,d3,e3,g3]>',
+  )
+    .s('triangle')
+    .attack(0.35)
+    .decay(0.6)
+    .sustain(0.55)
+    .release(0.9)
+    .lpf(sine.range(700, 1300).slow(16))
+    .gain(0.12)
+    .pan(0.42)
+    .room(0.28)
+    .roomsize(2)
+    .orbit(1),
 
-  // ── work view: bass spells F → A → D in the low end ──
-  note("<f2 a2 d3 a2  f2 [a2 c3] d3 [c3 a2]>")
-    .s("sawtooth")
-    .lpf(sine.range(280, 900).slow(8)).lpq(7)
-    .lpenv(4).lpa(0.02).lpd(0.35).lps(0.25)
-    .release(0.4).gain(0.65).shape(0.2),
+  // Root and fifth answer the pulse; the last bar leans home.
+  note(
+    '<[d2 ~ ~ a2 ~ d3 ~ a2] [d2 ~ a2 ~ ~ d3 a2 ~] [bb1 ~ ~ f2 ~ bb2 ~ f2] [bb1 ~ f2 ~ ~ bb2 f2 ~] [f2 ~ ~ c3 ~ f3 ~ c3] [f2 ~ c3 ~ ~ a2 c3 ~] [g2 ~ ~ d3 ~ g3 ~ d3] [a1 ~ e2 ~ ~ a2 e2 ~]>',
+  )
+    .s('sine')
+    .attack(0.008)
+    .decay(0.2)
+    .sustain(0.15)
+    .release(0.12)
+    .gain(0.34)
+    .lpf(650)
+    .orbit(2),
 
-  // ── ambient view: pad voicings, drifting in the room ──
-  chords.offset(-1).voicing()
-    .s("triangle").attack(0.8).release(2.5)
-    .lpf(sine.range(900, 1800).slow(16))
-    .phaser(3).room(0.85).roomsize(6).gain(0.4),
+  // F-A-D returns, then opens into a small answering phrase.
+  note(
+    '<[f4 ~ a4 ~ d5 ~ a4 ~] [e5 ~ d5 ~ ~ a4 c5 ~] [f4 ~ a4 ~ d5 ~ c5 ~] [a4 ~ f4 ~ ~ e4 f4 ~] [a4 ~ c5 ~ e5 ~ c5 ~] [g4 ~ a4 ~ ~ c5 a4 ~] [bb4 ~ a4 ~ g4 ~ f4 ~] [e4 ~ g4 ~ a4 ~ ~ e5]>',
+  )
+    .s('triangle')
+    .attack(0.006)
+    .decay(0.24)
+    .sustain(0)
+    .release(0.18)
+    .lpf(sine.range(1400, 2600).slow(16))
+    .gain(0.25)
+    .pan(0.58)
+    .delay(0.2)
+    .delaytime(0.511)
+    .delayfeedback(0.25)
+    .room(0.22)
+    .roomsize(2)
+    .orbit(3),
 
-  // ── lead: F-A-D motif sparks, like work-card hovers ──
-  n("<[0 2 4]  [2 4 7]  [4 7 9]  [2 7 [4 0]]>*2")
-    .set(chords).anchor("D5").voicing()
-    .s("triangle").clip(0.55)
-    .room(0.55).delay(0.4).delaytime(0.5).delayfeedback(0.4)
-    .lpf(sine.range(1200, 2400).slow(8)).lpq(4)
-    .gain(perlin.range(0.3, 0.55))
-    .sometimes(add(note(12)))
-    .chunk(4, fast(2))
-    .mask("<0 0 1 1 1 1 1 0>/8"),
-)
-.late("[0 0.008]*4").size(4)
+  // A low sine thump: two beats, with a quiet turnaround.
+  s('<[sine ~ ~ ~ sine ~ ~ ~] [sine ~ ~ ~ sine ~ ~ sine]>')
+    .freq(48)
+    .penv(16)
+    .pdec(0.045)
+    .attack(0.002)
+    .decay(0.14)
+    .sustain(0)
+    .release(0.05)
+    .gain(0.28)
+    .orbit(4),
+
+  // Brushed noise ticks alternate their spacing every other bar.
+  s('<[~ pink ~ pink ~ pink ~ pink] [~ pink ~ pink ~ pink ~ [pink pink]]>')
+    .attack(0.001)
+    .decay(0.025)
+    .sustain(0)
+    .release(0.02)
+    .hpf(6500)
+    .lpf(10500)
+    .gain('0.045 0.025 0.035 0.025')
+    .pan(0.62)
+    .orbit(4),
+
+  // A tiny wood-like backbeat, kept behind the pitched voices.
+  note('~ g5 ~ <g5 [g5 ~ g5]>')
+    .s('sine')
+    .attack(0.001)
+    .decay(0.025)
+    .sustain(0)
+    .release(0.025)
+    .gain(0.07)
+    .pan(0.38)
+    .orbit(4),
+);
 `;
