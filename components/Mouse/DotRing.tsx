@@ -1,154 +1,92 @@
 'use client';
 
 import { motion, useMotionValue, useSpring } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { CursorType } from '@/contexts/Mouse/MouseContext';
+import useCursorTarget from '@/contexts/Mouse/useCursorTarget';
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
-
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
-import { primaryTransition } from '@/utils/motion/springTransitions';
 
-// Spring physics for the cursor follow — see AGENTS.md (stiffness 300, damping 30).
 const SPRING_CONFIG = { stiffness: 300, damping: 30 } as const;
-// Looser spring for the text label so it lags slightly behind the dot.
-const TEXT_SPRING_CONFIG = { stiffness: 150, damping: 25 } as const;
-// Blend factor passed to calculateBlendPosition() when an attractor is set.
-const BLEND_FACTOR = 0.7;
+const MORPH_TRANSITION = { type: 'spring', ...SPRING_CONFIG } as const;
+const CURSOR_SIZE = 64;
 
-// CSS size is 4rem (w-16 h-16). Scale between 0.25 (=1rem) and 1 (=4rem)
-// Center regardless of visual size.
-const DOT_SCALE = {
-  small: 0.25,
-  large: 1,
-} as const;
-
-// Solid circle: visible only during work-card hover
-const solidCircleVariants = {
-  initial: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  inputActive: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  workCardHover: { scale: DOT_SCALE.large, opacity: 1, transition: primaryTransition },
-  attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-};
-
-// Blend circle: visible in default state, hides on hover
-const blendCircleVariants = {
-  initial: { scale: DOT_SCALE.small, opacity: 1, transition: primaryTransition },
-  headerLinkHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  buttonHovered: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  inputActive: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-  workCardHover: { scale: DOT_SCALE.large, opacity: 0, transition: primaryTransition },
-  attracted: { scale: DOT_SCALE.small, opacity: 0, transition: primaryTransition },
-};
-
-// Text label (READ / WIP)
-const textVariants = {
-  initial: { opacity: 0, y: 8, transition: primaryTransition },
-  workCardHover: { opacity: 1, y: 0, transition: primaryTransition },
-};
-
-type CursorState = { background: string; text: string; title: string };
-
-const cursorStateMap: Record<CursorType, CursorState> = {
-  [CursorType.default]: { background: 'initial', text: 'initial', title: '' },
-  [CursorType.headerLinkHovered]: {
-    background: 'headerLinkHovered',
-    text: 'initial',
-    title: '',
-  },
-  [CursorType.buttonHovered]: { background: 'buttonHovered', text: 'initial', title: '' },
-  [CursorType.inputActive]: { background: 'inputActive', text: 'initial', title: '' },
-  [CursorType.workCardHovered]: {
-    background: 'workCardHover',
-    text: 'workCardHover',
-    title: 'READ',
-  },
-  [CursorType.workCardHoveredWIP]: {
-    background: 'workCardHover',
-    text: 'workCardHover',
-    title: 'WIP',
-  },
-  [CursorType.attracted]: { background: 'attracted', text: 'initial', title: '' },
-};
+// A fixed command sequence lets one visible path interpolate between all shapes.
+function roundedShape(width: number, height: number, radius: number): string {
+  const left = (CURSOR_SIZE - width) / 2;
+  const top = (CURSOR_SIZE - height) / 2;
+  const right = left + width;
+  const bottom = top + height;
+  const r = Math.min(radius, width / 2, height / 2);
+  return `M ${left + r} ${top} L ${right - r} ${top} A ${r} ${r} 0 0 1 ${right} ${top + r} L ${right} ${bottom - r} A ${r} ${r} 0 0 1 ${right - r} ${bottom} L ${left + r} ${bottom} A ${r} ${r} 0 0 1 ${left} ${bottom - r} L ${left} ${top + r} A ${r} ${r} 0 0 1 ${left + r} ${top} Z`;
+}
 
 export default function DotRing() {
   const mousePosition = useMousePosition();
-  const mouseContext = useMouseContext();
-
+  const { cursorType, attractorPosition, cursorChangeHandler } = useMouseContext();
+  const resetCursor = useCallback(
+    () => cursorChangeHandler(CursorType.default),
+    [cursorChangeHandler],
+  );
+  const { target, visible } = useCursorTarget(resetCursor);
   const attractedX = useMotionValue(0);
   const attractedY = useMotionValue(0);
   const springX = useSpring(attractedX, SPRING_CONFIG);
   const springY = useSpring(attractedY, SPRING_CONFIG);
-
-  const textAttractedX = useMotionValue(0);
-  const textAttractedY = useMotionValue(0);
-  const textSpringX = useSpring(textAttractedX, TEXT_SPRING_CONFIG);
-  const textSpringY = useSpring(textAttractedY, TEXT_SPRING_CONFIG);
-
-  const [displayTitle, setDisplayTitle] = useState('');
-
-  const currentState = cursorStateMap[mouseContext.cursorType];
-
-  useEffect(() => {
-    const blendedPosition = calculateBlendPosition(
-      mousePosition,
-      mouseContext.attractorPosition,
-      BLEND_FACTOR,
-    );
-    attractedX.set(blendedPosition.x);
-    attractedY.set(blendedPosition.y);
-    textAttractedX.set(blendedPosition.x);
-    textAttractedY.set(blendedPosition.y);
-  }, [
-    mousePosition,
-    mouseContext.attractorPosition,
-    attractedX,
-    attractedY,
-    textAttractedX,
-    textAttractedY,
-  ]);
+  const isWorkCard =
+    cursorType === CursorType.workCardHovered || cursorType === CursorType.workCardHoveredWIP;
+  const activeTarget = isWorkCard ? null : target;
+  const size = isWorkCard ? 64 : 16;
+  const shape = roundedShape(
+    activeTarget?.width ?? size,
+    activeTarget?.height ?? size,
+    activeTarget?.radius ?? size / 2,
+  );
 
   useEffect(() => {
-    if (currentState.title) setDisplayTitle(currentState.title);
-  }, [currentState.title]);
+    const position = activeTarget ?? calculateBlendPosition(mousePosition, attractorPosition, 0.7);
+    attractedX.set(position.x - CURSOR_SIZE / 2);
+    attractedY.set(position.y - CURSOR_SIZE / 2);
+  }, [mousePosition, attractorPosition, activeTarget, attractedX, attractedY]);
 
-  const positionStyle = { left: springX, top: springY, x: '-50%', y: '-50%' } as const;
-  const textPositionStyle = { left: textSpringX, top: textSpringY, x: '-50%', y: '-50%' } as const;
-
+  const positionStyle = { x: springX, y: springY };
   return (
     <>
-      <motion.div
-        className="fixed hidden md:flex w-16 h-16 items-center justify-center pointer-events-none z-70"
-        style={textPositionStyle}
+      <style>{`@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+        html[data-custom-cursor], html[data-custom-cursor] * { cursor: none !important; }
+      }`}</style>
+      <motion.svg
+        aria-hidden="true"
+        width={CURSOR_SIZE}
+        height={CURSOR_SIZE}
+        className="fixed top-0 left-0 pointer-events-none z-60 overflow-visible"
+        style={{
+          ...positionStyle,
+          display: visible ? 'block' : 'none',
+          mixBlendMode: isWorkCard ? 'normal' : 'difference',
+        }}
       >
-        <motion.span
-          animate={currentState.text}
-          variants={textVariants}
-          initial="initial"
-          className="text-black font-bold text-xl"
+        <motion.path
+          data-cursor-shape={isWorkCard ? 'work-card' : (activeTarget?.kind ?? 'dot')}
+          data-cursor-width={activeTarget?.width ?? size}
+          data-cursor-height={activeTarget?.height ?? size}
+          initial={{ d: roundedShape(16, 16, 8) }}
+          animate={{ d: shape }}
+          transition={MORPH_TRANSITION}
+          fill="white"
+        />
+      </motion.svg>
+      {isWorkCard && visible && (
+        <motion.div
+          aria-hidden="true"
+          className="fixed top-0 left-0 w-16 h-16 flex items-center justify-center pointer-events-none z-70 text-black font-bold text-xl"
+          style={positionStyle}
         >
-          {displayTitle}
-        </motion.span>
-      </motion.div>
-
-      <motion.div
-        animate={currentState.background}
-        variants={solidCircleVariants}
-        initial="initial"
-        className="fixed hidden md:block w-16 h-16 rounded-full bg-white pointer-events-none z-60"
-        style={positionStyle}
-      />
-
-      <motion.div
-        animate={currentState.background}
-        variants={blendCircleVariants}
-        initial="initial"
-        className="fixed hidden md:block w-16 h-16 rounded-full bg-white pointer-events-none z-60 mix-blend-difference"
-        style={positionStyle}
-      />
+          {cursorType === CursorType.workCardHoveredWIP ? 'WIP' : 'READ'}
+        </motion.div>
+      )}
     </>
   );
 }
