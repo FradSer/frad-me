@@ -82,7 +82,6 @@ frad-me/
 ## 🚀 Deployment
 
 The website is automatically deployed to **Vercel** on every push to the `main` branch. The deployment process includes:
-
 1. Building the Next.js application
 2. Running quality checks
 3. Deploying to production
@@ -93,7 +92,6 @@ The website is automatically deployed to **Vercel** on every push to the `main` 
 ## ✅ Code Quality
 
 This project adheres to high-quality coding standards:
-
 - **SonarCloud**: Continuous code quality analysis
 - **TypeScript**: Strong type-checking
 - **Biome**: Enforced code style consistency

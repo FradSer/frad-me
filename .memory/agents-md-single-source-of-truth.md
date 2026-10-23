@@ -1,4 +1,5 @@
 ---
+
 name: agents-md-single-source-of-truth
 description: AGENTS.md is the only real agent-instructions file; CLAUDE.md and WARP.md are symlinks to it; Playwright E2E stack was removed as dead infrastructure.
 type: decision

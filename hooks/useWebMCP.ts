@@ -69,7 +69,15 @@ export function useWebMCP(actions: WebMCPActions) {
       await import('@mcp-b/global');
       if (cancelled) return;
 
-      const mc = document.modelContext || navigator.modelContext;
+      const mc =
+        document.modelContext ||
+        (
+          navigator as {
+            modelContext?: {
+              registerTool: (tool: unknown, options?: { signal?: AbortSignal }) => Promise<void>;
+            };
+          }
+        ).modelContext;
 
       if (!mc) {
         log('WebMCP API not available');

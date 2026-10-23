@@ -9,7 +9,6 @@ Personal website for Frad LEE (frad.me) built with Next.js 16 App Router, featur
 ## Project Structure & Module Organization
 
 This is a self-contained single-package pnpm workspace (`pnpm-workspace.yaml` includes `.` only). No internal shared kit (`@fradser/pi-kit`) exists for this repo; keep framework-free helpers under `utils/` instead of adding an unverified registry dependency.
-
 - `app/`: App Router entry points, layouts, route handlers (`app/api/chat/route.ts`), and route-level clients (`client-layout.tsx`, `work-page-client.tsx`, `resume-page-client.tsx`).
 - `components/`: Reusable UI grouped by feature (`Header/`, `Landing/`, `Chat/`, `WorkPage/`, `webmcp/`, `common/`, `Mouse/`, `ThemeScript.tsx`); colocated tests under `__tests__/`.
 - `contexts/`: Cross-cutting providers (`Mouse/`, `Theme/`, `WebMCP/`), each paired with typed hook interfaces.
@@ -47,14 +46,14 @@ Production deploys run on Vercel via Git push to `main`; `vercel.json` pins the 
 
 ### Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | Home/landing with work cards and AI chat section |
-| `/works/[slug]` | Individual work case studies (MDX) |
-| `/resume` | Resume page |
-| `/webmcp` | WebMCP AI tools page |
-| `/api/chat` | AI chat endpoint (GET: enabled check, POST: streaming chat) |
-| `/api/content` | Content API for portfolio data |
+| Route           | Purpose                                                     |
+| --------------- | ----------------------------------------------------------- |
+| `/`             | Home/landing with work cards and AI chat section            |
+| `/works/[slug]` | Individual work case studies (MDX)                          |
+| `/resume`       | Resume page                                                 |
+| `/webmcp`       | WebMCP AI tools page                                        |
+| `/api/chat`     | AI chat endpoint (GET: enabled check, POST: streaming chat) |
+| `/api/content`  | Content API for portfolio data                              |
 
 ### Root Client Layout
 

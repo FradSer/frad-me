@@ -17,3 +17,11 @@ declare module 'react' {
     toolparamdescription?: string;
   }
 }
+
+declare global {
+  interface Navigator {
+    readonly modelContext?: {
+      registerTool: (tool: unknown, options?: { signal?: AbortSignal }) => Promise<void>;
+    };
+  }
+}
