@@ -33,6 +33,25 @@ Feature: The cursor dot joins interactive elements
     Then the cursor morphs into a line at the field's lower border
     And text and the native caret remain readable
 
+  Scenario: Selectable text uses a vertical cursor
+    When the pointer is over an actual selectable glyph
+    Then the same cursor path becomes a 2-pixel-wide vertical line at the pointer
+    And its height follows the glyph's text line
+    And text takes priority over magnetic retention from a nearby control
+    When the pointer moves over blank paragraph space or nonselectable content
+    Then the cursor returns to its normal shape
+
+  Scenario: Dragging a selection preserves the vertical cursor
+    Given a selection drag starts on selectable text
+    When the pointer crosses a link, a work card, or leaves the text line during the drag
+    Then the cursor remains vertical without morphing into the link
+    And work card READ or WIP labels do not replace selection feedback
+    When the pointer is released
+    Then the next pointer target determines the cursor shape normally
+    And pointer cancellation also releases selection mode
+    When the window loses focus during text mode
+    Then the vertical geometry is cleared and the custom cursor hides
+
   Scenario: Work card labels remain readable
     When the pointer enters a work card
     Then the cursor remains a white circle with the READ or WIP label

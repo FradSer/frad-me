@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import type { Position } from '@/types/common';
 import { type CursorTarget, getMagneticTarget } from '@/utils/motion/cursorGeometry';
+import { getTextTarget } from '@/utils/motion/cursorText';
 
 const POINTER_QUERY =
   '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
-const CONTROL_SELECTOR = 'a[href], button, input, textarea, select, [role="button"]';
+const CONTROL_SELECTOR =
+  'a[href], button, input, textarea, select, [role="button"], [data-cursor="work-card"]';
 
 function readTarget(element: Element | null, point: Position | null): CursorTarget | null {
   if (
@@ -36,11 +38,16 @@ export default function useCursorTarget(resetCursor: () => void) {
     let point: Position | null = null;
     let frame: number | null = null;
     let isInside = false;
+    let selectionHeight: number | null = null;
     const resizeObserver = new ResizeObserver(() => scheduleRefresh());
     const updateTarget = (next: Element | null, retain = false) => {
-      const candidate = next ?? (retain ? element : null);
-      const bounds = readTarget(candidate, point);
-      const validElement = bounds ? candidate : null;
+      const text = next || selectionHeight ? null : getTextTarget(pointerElement, point);
+      const candidate = next ?? (retain && !text ? element : null);
+      const bounds: CursorTarget | null =
+        selectionHeight && point
+          ? { ...point, width: 2, height: selectionHeight, kind: 'text', grip: 0 }
+          : (text ?? readTarget(candidate, point));
+      const validElement = bounds && bounds.kind !== 'text' ? candidate : null;
       if (element !== validElement) {
         resizeObserver.disconnect();
         element = validElement;
@@ -52,6 +59,9 @@ export default function useCursorTarget(resetCursor: () => void) {
     };
     const hide = () => {
       isInside = false;
+      selectionHeight = null;
+      pointerElement = null;
+      point = null;
       setVisible(false);
       updateTarget(null);
       document.documentElement.removeAttribute('data-custom-cursor');
@@ -85,6 +95,21 @@ export default function useCursorTarget(resetCursor: () => void) {
       if (frame !== null) cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => refresh(false));
     };
+    const startSelection = (event: PointerEvent) => {
+      if (
+        event.button !== 0 ||
+        !media.matches ||
+        (event.pointerType && event.pointerType !== 'mouse')
+      )
+        return;
+      const element = event.target instanceof Element ? event.target : null;
+      const text = getTextTarget(element, { x: event.clientX, y: event.clientY });
+      selectionHeight = text?.height ?? null;
+    };
+    const endSelection = () => {
+      selectionHeight = null;
+      scheduleRefresh();
+    };
     const observer = new MutationObserver(scheduleRefresh);
     observer.observe(document.body, {
       childList: true,
@@ -100,6 +125,9 @@ export default function useCursorTarget(resetCursor: () => void) {
     document.addEventListener('pointermove', move, { passive: true });
     document.addEventListener('pointerover', move, { passive: true });
     document.addEventListener('pointerleave', hide);
+    document.addEventListener('pointerdown', startSelection, { passive: true });
+    document.addEventListener('pointerup', endSelection, { passive: true });
+    document.addEventListener('pointercancel', endSelection, { passive: true });
     window.addEventListener('blur', hide);
     window.addEventListener('scroll', scheduleRefresh, true);
     window.addEventListener('resize', scheduleRefresh);
@@ -112,6 +140,9 @@ export default function useCursorTarget(resetCursor: () => void) {
       document.removeEventListener('pointermove', move);
       document.removeEventListener('pointerover', move);
       document.removeEventListener('pointerleave', hide);
+      document.removeEventListener('pointerdown', startSelection);
+      document.removeEventListener('pointerup', endSelection);
+      document.removeEventListener('pointercancel', endSelection);
       window.removeEventListener('blur', hide);
       window.removeEventListener('scroll', scheduleRefresh, true);
       window.removeEventListener('resize', scheduleRefresh);

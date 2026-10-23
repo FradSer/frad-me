@@ -6,7 +6,7 @@ export const CURSOR_RELEASE_DISTANCE = 48;
 export type CursorTarget = Position & {
   width: number;
   height: number;
-  kind: 'control' | 'input';
+  kind: 'control' | 'input' | 'text';
   grip: number;
 };
 
@@ -15,7 +15,7 @@ type TargetBounds = Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom' | 'width' 
 /** Keep a spatial tether until the pointer pulls clear of the target. */
 export function getMagneticTarget(
   rect: TargetBounds,
-  kind: CursorTarget['kind'],
+  kind: Exclude<CursorTarget['kind'], 'text'>,
   point: Position,
 ): CursorTarget | null {
   const dx = Math.max(rect.left - point.x, 0, point.x - rect.right);

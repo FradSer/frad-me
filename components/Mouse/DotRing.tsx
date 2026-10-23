@@ -37,7 +37,8 @@ export default function DotRing() {
   const springX = useSpring(attractedX, SPRING_CONFIG);
   const springY = useSpring(attractedY, SPRING_CONFIG);
   const isWorkCard =
-    cursorType === CursorType.workCardHovered || cursorType === CursorType.workCardHoveredWIP;
+    target?.kind !== 'text' &&
+    (cursorType === CursorType.workCardHovered || cursorType === CursorType.workCardHoveredWIP);
   const activeTarget = isWorkCard ? null : target;
   const size = isWorkCard ? 64 : CURSOR_DOT_SIZE;
   const width = activeTarget?.width ?? size;
@@ -50,7 +51,9 @@ export default function DotRing() {
     attractedY.set(position.y - CURSOR_SIZE / 2);
   }, [mousePosition, attractorPosition, activeTarget, attractedX, attractedY]);
 
-  const positionStyle = { x: springX, y: springY };
+  // Text selection needs an exact hotspot instead of the magnetic spring's lag.
+  const positionStyle =
+    activeTarget?.kind === 'text' ? { x: attractedX, y: attractedY } : { x: springX, y: springY };
   return (
     <>
       <style>{`@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
