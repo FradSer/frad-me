@@ -1,111 +1,78 @@
 'use client';
 
-import { motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+import { useState } from 'react';
 
-import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
 import { DownArrowIcon } from '@/components/common/Icons';
 
-import { primaryTransition } from '@/utils/motion/springTransitions';
+const SPRING = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
-// * Animation configuration constants
-const ANIMATION_CONFIG = {
-  circleDelay: 2.5,
-  arrowDelay: 0.6,
-  hoverScale: 1.1,
-  bounceYPath: [0, 4, 0] as [number, number, number],
-} as const;
-
-const ANIMATION_TIMING = {
-  scaleDuration: 0.2,
-  bounceDuration: 1.2,
-  resetDuration: 0.3,
-} as const;
-
-const CIRCLE_SIZE = {
-  initial: '20%',
-  expanded: '100%',
-} as const;
-
-function DotCircle() {
-  const [hovered, setHovered] = useState<boolean>(false);
-
-  const arrowAnimateProps = useMemo(
-    () =>
-      hovered
-        ? {
-            scale: ANIMATION_CONFIG.hoverScale,
-            y: ANIMATION_CONFIG.bounceYPath,
-          }
-        : {
-            scale: 1,
-            y: 0,
-          },
-    [hovered],
-  );
-
-  const arrowTransitionProps = useMemo(
-    () =>
-      hovered
-        ? {
-            scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
-            y: {
-              duration: ANIMATION_TIMING.bounceDuration,
-              repeat: Number.POSITIVE_INFINITY,
-              repeatType: 'loop' as const,
-              ease: 'easeInOut' as const,
-            },
-          }
-        : {
-            scale: { duration: ANIMATION_TIMING.scaleDuration, ease: 'easeOut' as const },
-            y: { duration: ANIMATION_TIMING.resetDuration, ease: 'easeOut' as const },
-          },
-    [hovered],
-  );
-
+function CircleArrow({ active, reducedMotion }: { active: boolean; reducedMotion: boolean }) {
+  const animated = active && !reducedMotion;
   return (
-    <CursorProvider targetCursorType={CursorType.headerLinkHovered}>
-      <motion.div
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
-        className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 hover:cursor-pointer lg:-bottom-20 lg:-right-24 lg:scale-100"
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+    >
+      <motion.span
+        data-hero-arrow
+        data-active={active}
+        initial={false}
+        animate={{ scale: animated ? 1.1 : 1, y: animated ? [0, 6, 0] : 0 }}
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : {
+                scale: SPRING,
+                y: animated
+                  ? { duration: 1.2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }
+                  : SPRING,
+              }
+        }
+        className="flex h-16 w-16 items-center justify-center fill-white dark:fill-black"
       >
-        <motion.div
-          whileInView={{
-            opacity: [0, 1],
-            transition: {
-              ...primaryTransition,
-              delay: ANIMATION_CONFIG.arrowDelay + ANIMATION_CONFIG.circleDelay,
-            },
-          }}
-          viewport={{ once: true }}
-          animate={arrowAnimateProps}
-          transition={arrowTransitionProps}
-          className="absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center fill-white dark:fill-black"
-        >
-          <DownArrowIcon className="h-full w-full" />
-        </motion.div>
-        <motion.div
-          initial={{ height: CIRCLE_SIZE.initial, width: CIRCLE_SIZE.initial }}
-          animate={{
-            height: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded],
-            width: [CIRCLE_SIZE.initial, CIRCLE_SIZE.expanded],
-          }}
-          transition={{ ...primaryTransition, delay: ANIMATION_CONFIG.circleDelay }}
-          className="absolute z-0 h-full w-full"
-        >
-          <svg
-            viewBox="0 0 96 96"
-            className="fill-black dark:fill-white"
-            aria-label="Loading indicator"
-          >
-            <title>Loading indicator</title>
-            <circle cx="48" cy="48" r="48" />
-          </svg>
-        </motion.div>
-      </motion.div>
-    </CursorProvider>
+        <DownArrowIcon className="h-full w-full" />
+      </motion.span>
+    </span>
   );
 }
 
-export default DotCircle;
+export default function DotCircle() {
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const reducedMotion = useReducedMotion() ?? false;
+  const active = hovered || focused;
+
+  const scrollToWork = () => {
+    document.getElementById('work')?.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  };
+
+  return (
+    <motion.button
+      type="button"
+      aria-label="View selected work"
+      onClick={scrollToWork}
+      onMouseEnter={() => {
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(true);
+      }}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      className="absolute -bottom-20 -right-20 z-30 h-24 w-24 scale-75 rounded-full cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black dark:focus-visible:outline-white lg:-bottom-20 lg:-right-24 lg:scale-100"
+    >
+      <motion.span
+        aria-hidden="true"
+        data-hero-circle
+        data-active={active}
+        initial={false}
+        animate={{ scale: active && !reducedMotion ? 1.12 : 1 }}
+        transition={reducedMotion ? { duration: 0 } : SPRING}
+        className="pointer-events-none absolute inset-0 rounded-full bg-black dark:bg-white"
+      />
+      <CircleArrow active={active} reducedMotion={reducedMotion} />
+    </motion.button>
+  );
+}

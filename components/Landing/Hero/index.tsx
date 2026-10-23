@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react';
 import { PlayIcon, StopIcon } from '@/components/common/Icons';
-import ScrollLink from '@/components/common/ScrollLink';
 import DotCircle from '@/components/Landing/Hero/DotCircle';
 import Rectangle from '@/components/Landing/Hero/Rectangle';
 import Triangle from '@/components/Landing/Hero/Triangle';
@@ -76,9 +75,7 @@ function Hero() {
           <div className="relative">
             <span className={mutedTextClass}>or building a </span>
             startup
-            <ScrollLink destination="work">
-              <DotCircle />
-            </ScrollLink>
+            <DotCircle />
           </div>
         </h1>
       </div>

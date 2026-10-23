@@ -10,6 +10,8 @@
  */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import Hero from '@/components/Landing/Hero';
+import DotCircle from '@/components/Landing/Hero/DotCircle';
 import { CursorType } from '@/contexts/Mouse/MouseContext';
 import MouseContextProvider from '@/contexts/Mouse/MouseContextProvider';
 import useMouseContext from '@/hooks/useMouseContext';
@@ -57,6 +59,16 @@ describe('DotRing', () => {
 
   it('mounts without ReferenceError (spring configs are defined)', () => {
     expect(() => render(<DotRing />)).not.toThrow();
+  });
+
+  it('keeps the hero circle as one control without a wrapping scroll button', () => {
+    render(
+      <MouseContextProvider>
+        <Hero />
+      </MouseContextProvider>,
+    );
+    const button = screen.getByRole('button', { name: 'View selected work' });
+    expect(button.parentElement?.closest('button')).toBeNull();
   });
 
   it('morphs one visible shape into an unwrapped button and back to the dot', async () => {
@@ -118,6 +130,47 @@ describe('DotRing', () => {
       'data-cursor-height',
       '2',
     );
+  });
+
+  it('fuses to the actual hero circle with circular corners and returns to a dot', async () => {
+    const { motion } = require('motion/react');
+    const pathRender = jest.spyOn(motion.path, 'render');
+    try {
+      const { container } = render(
+        <MouseContextProvider>
+          <DotRing />
+          <DotCircle />
+          <p>Outside circle</p>
+        </MouseContextProvider>,
+      );
+      const button = screen.getByRole('button', { name: 'View selected work' });
+      button.getBoundingClientRect = () => bounds(96, 96);
+      button.style.borderTopLeftRadius = '9999px';
+      const arrow = button.querySelector('[data-hero-arrow]') as HTMLElement;
+      fireEvent.pointerMove(arrow, { clientX: 50, clientY: 50 });
+      await waitFor(() =>
+        expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+          'data-cursor-width',
+          '104',
+        ),
+      );
+      expect(container.querySelectorAll('[data-cursor-shape]')).toHaveLength(1);
+      expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+        'data-cursor-height',
+        '104',
+      );
+      const props = pathRender.mock.calls.at(-1)?.[0] as { animate: { d: string } };
+      expect(props.animate.d).toContain('A 52 52');
+      fireEvent.pointerMove(screen.getByText('Outside circle'), { clientX: 200, clientY: 200 });
+      await waitFor(() =>
+        expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+          'data-cursor-shape',
+          'dot',
+        ),
+      );
+    } finally {
+      pathRender.mockRestore();
+    }
   });
 
   it.each([
