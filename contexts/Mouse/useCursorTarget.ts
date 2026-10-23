@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react';
 import type { Position } from '@/types/common';
 import { type CursorTarget, getMagneticTarget } from '@/utils/motion/cursorGeometry';
-import { getTextTarget } from '@/utils/motion/cursorText';
+import {
+  canRetainText,
+  getTextTarget,
+  TEXT_EXIT_DELAY_MS,
+  TEXT_EXIT_DISTANCE,
+  type TextCursorTarget,
+} from '@/utils/motion/cursorText';
 
 const POINTER_QUERY =
   '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
@@ -39,9 +45,55 @@ export default function useCursorTarget(resetCursor: () => void) {
     let frame: number | null = null;
     let isInside = false;
     let selectionHeight: number | null = null;
-    const resizeObserver = new ResizeObserver(() => scheduleRefresh());
-    const updateTarget = (next: Element | null, retain = false) => {
-      const text = next || selectionHeight ? null : getTextTarget(pointerElement, point);
+    let retainedText: TextCursorTarget | null = null;
+    let textExitTimer: ReturnType<typeof setTimeout> | null = null;
+    let textExitExpired = false;
+    const cancelTextExit = () => {
+      if (textExitTimer !== null) clearTimeout(textExitTimer);
+      textExitTimer = null;
+      textExitExpired = false;
+    };
+    const clearText = () => {
+      cancelTextExit();
+      retainedText = null;
+    };
+    const resolveText = (next: Element | null, retain: boolean): CursorTarget | null => {
+      if (selectionHeight) {
+        cancelTextExit();
+        return null;
+      }
+      if (next || !point) {
+        clearText();
+        return null;
+      }
+      if (retainedText && !canRetainText(retainedText.element)) clearText();
+      const hit = getTextTarget(pointerElement, point, retainedText ? TEXT_EXIT_DISTANCE : 0);
+      if (hit) {
+        cancelTextExit();
+        retainedText = hit;
+        return hit.bounds;
+      }
+      if (retain && retainedText && !textExitExpired && canRetainText(retainedText.element)) {
+        if (textExitTimer === null) {
+          textExitTimer = setTimeout(() => {
+            textExitTimer = null;
+            textExitExpired = true;
+            if (frame !== null) cancelAnimationFrame(frame);
+            refresh(false);
+          }, TEXT_EXIT_DELAY_MS);
+        }
+        return { ...retainedText.bounds, ...point };
+      }
+      clearText();
+      return null;
+    };
+    const invalidateLayout = () => {
+      clearText();
+      scheduleRefresh();
+    };
+    const resizeObserver = new ResizeObserver(invalidateLayout);
+    const updateTarget = (next: Element | null, retain = false, retainText = retain) => {
+      const text = resolveText(next, retainText);
       const candidate = next ?? (retain && !text ? element : null);
       const bounds: CursorTarget | null =
         selectionHeight && point
@@ -59,6 +111,7 @@ export default function useCursorTarget(resetCursor: () => void) {
     };
     const hide = () => {
       isInside = false;
+      clearText();
       selectionHeight = null;
       pointerElement = null;
       point = null;
@@ -80,7 +133,8 @@ export default function useCursorTarget(resetCursor: () => void) {
           : pointerElement;
       if (resolveUnderPointer && underPointer !== pointerElement) resetCursor();
       pointerElement = underPointer;
-      updateTarget(underPointer?.closest(CONTROL_SELECTOR) ?? null, !resolveUnderPointer);
+      // Unrelated DOM updates must not cut a pending text exit short.
+      updateTarget(underPointer?.closest(CONTROL_SELECTOR) ?? null, !resolveUnderPointer, true);
     };
     function scheduleRefresh() {
       if (frame === null) frame = requestAnimationFrame(() => refresh());
@@ -103,12 +157,22 @@ export default function useCursorTarget(resetCursor: () => void) {
       )
         return;
       const element = event.target instanceof Element ? event.target : null;
-      const text = getTextTarget(element, { x: event.clientX, y: event.clientY });
-      selectionHeight = text?.height ?? null;
+      const text = getTextTarget(
+        element,
+        { x: event.clientX, y: event.clientY },
+        retainedText ? TEXT_EXIT_DISTANCE : 0,
+      );
+      selectionHeight = text?.bounds.height ?? null;
+      clearText();
+      retainedText = text;
     };
     const endSelection = () => {
       selectionHeight = null;
       scheduleRefresh();
+    };
+    const cancelSelection = () => {
+      clearText();
+      endSelection();
     };
     const observer = new MutationObserver(scheduleRefresh);
     observer.observe(document.body, {
@@ -117,7 +181,7 @@ export default function useCursorTarget(resetCursor: () => void) {
       attributes: true,
       attributeFilter: ['disabled', 'aria-disabled', 'hidden', 'inert'],
     });
-    const themeObserver = new MutationObserver(scheduleRefresh);
+    const themeObserver = new MutationObserver(invalidateLayout);
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class', 'style'],
@@ -127,12 +191,13 @@ export default function useCursorTarget(resetCursor: () => void) {
     document.addEventListener('pointerleave', hide);
     document.addEventListener('pointerdown', startSelection, { passive: true });
     document.addEventListener('pointerup', endSelection, { passive: true });
-    document.addEventListener('pointercancel', endSelection, { passive: true });
+    document.addEventListener('pointercancel', cancelSelection, { passive: true });
     window.addEventListener('blur', hide);
-    window.addEventListener('scroll', scheduleRefresh, true);
-    window.addEventListener('resize', scheduleRefresh);
+    window.addEventListener('scroll', invalidateLayout, true);
+    window.addEventListener('resize', invalidateLayout);
     media.addEventListener('change', hide);
     return () => {
+      clearText();
       if (frame !== null) cancelAnimationFrame(frame);
       resizeObserver.disconnect();
       observer.disconnect();
@@ -142,10 +207,10 @@ export default function useCursorTarget(resetCursor: () => void) {
       document.removeEventListener('pointerleave', hide);
       document.removeEventListener('pointerdown', startSelection);
       document.removeEventListener('pointerup', endSelection);
-      document.removeEventListener('pointercancel', endSelection);
+      document.removeEventListener('pointercancel', cancelSelection);
       window.removeEventListener('blur', hide);
-      window.removeEventListener('scroll', scheduleRefresh, true);
-      window.removeEventListener('resize', scheduleRefresh);
+      window.removeEventListener('scroll', invalidateLayout, true);
+      window.removeEventListener('resize', invalidateLayout);
       media.removeEventListener('change', hide);
       document.documentElement.removeAttribute('data-custom-cursor');
     };

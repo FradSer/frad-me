@@ -39,7 +39,19 @@ Feature: The cursor dot joins interactive elements
     And its height follows the glyph's text line
     And text takes priority over magnetic retention from a nearby control
     When the pointer moves over blank paragraph space or nonselectable content
-    Then the cursor returns to its normal shape
+    Then nonselectable content clears the text cursor immediately
+    And ordinary text departure allows an 8-pixel glyph-edge tolerance
+    And beyond that tolerance the text cursor follows the pointer for 160 milliseconds before returning to a dot
+    And repeated pointer movement does not extend the release deadline
+    And unrelated DOM updates neither shorten nor extend the release deadline
+    And re-entering selectable glyphs cancels the pending release
+    And controls and work cards take over immediately without waiting for text release
+
+  Scenario: Delayed text release cannot restore invalid geometry
+    Given a text release timer is pending
+    When the text becomes hidden or the pointer context is invalidated
+    Then text feedback and its timer are cleared immediately
+    And the old timer cannot replace a newer control or revive an unmounted cursor
 
   Scenario: Dragging a selection preserves the vertical cursor
     Given a selection drag starts on selectable text
@@ -49,6 +61,8 @@ Feature: The cursor dot joins interactive elements
     When the pointer is released
     Then the next pointer target determines the cursor shape normally
     And pointer cancellation also releases selection mode
+    And a drag can start inside an already active glyph-edge tolerance
+    And releasing a drag over blank space starts the same 160-millisecond text release delay
     When the window loses focus during text mode
     Then the vertical geometry is cleared and the custom cursor hides
 
