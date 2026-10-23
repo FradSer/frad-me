@@ -67,9 +67,11 @@ Production deploys run on Vercel via Git push to `main`; `vercel.json` pins the 
 The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gateway`) via Vercel AI Gateway as the sole AI provider:
 - **Client**: `useChat` from `@ai-sdk/react` sends `UIMessage` format (with `parts`, not `content`)
 - **Server**: `app/api/chat/route.ts` converts between UI and model message formats
-- **Tools**: `get_works`, `read_work`, `search_works`, `get_resume`, `get_recent_activity` (live GitHub data from `utils/githubActivity.ts`, ~10-minute cache) — keep BDD scenarios in sync when adding tools
+- **Knowledge**: `utils/chatKnowledge.ts` builds the assistant's profile from `content/resume.ts`, including current projects and linked historical case studies. Keep factual changes in that shared content rather than duplicating facts in prompts.
+- **Tools**: `get_works`, `read_work`, `search_works`, `get_resume`, `get_recent_activity` (public GitHub activity from `utils/githubActivity.ts`, ~10-minute cache). A GitHub failure returns clearly labeled curated projects with unknown metrics, not invented recent activity. Keep BDD scenarios in sync when adding tools.
 - **Rate limiting**: 20 requests/IP/minute, in-memory
-- **Environment variables**: `AI_GATEWAY_API_KEY` (or Vercel OIDC when hosted); optional `AI_GATEWAY_MODEL_ID` in `provider/model` form (defaults to `alibaba/qwen3.7-flash`). See `.env.example`. Feature is hidden from UI when the gateway is not configured.
+- **Environment variables**: `AI_GATEWAY_API_KEY` (or Vercel OIDC when hosted); optional `AI_GATEWAY_MODEL_ID` in `provider/model` form (defaults to `alibaba/qwen3.7-flash`). See `.env.example`. The UI offers the resume when chat is unconfigured and a reconnect action after a transient availability failure.
+- **Conversation contract**: only user/assistant history ending in a text question; maximum 40 messages, 4,000 characters per user question, 32,000 total text characters, and 128,000 UTF-8 request bytes. Read request bytes incrementally and cancel at the limit. Validate tool history with the server's tool schemas. Forward cancellation to generation and tool fetches, hide reasoning, and sanitize errors. Do not concatenate a fallback model stream after a partial response.
 
 ### Content Management
 
@@ -129,7 +131,7 @@ The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gatew
 
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 

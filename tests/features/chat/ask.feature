@@ -1,58 +1,67 @@
-Feature: Ask — AI chat Q&A
+Feature: Ask — portfolio assistant
   As a portfolio visitor
-  I want to ask the AI about Frad's work via the Ask section
-  So that I can get streamed answers without page reload or error
+  I want current, sourced answers about Frad
+  So that I can explore his work through a reliable conversation
 
-  Background:
-    Given the user is on the home page
-    And the Ask section is visible
+  Scenario: Configuration controls availability
+    Given Gateway authentication is absent or configured through a key or Vercel OIDC
+    When the browser checks GET /api/chat
+    Then enabled reflects the available authentication
+    And an unconfigured POST returns 503
 
-  Scenario: Ask section renders with heading and suggested questions
-    Then the heading "ask" is visible
-    And suggested questions are displayed
-    And the input placeholder is "Ask me anything about Frad..."
+  Scenario: A valid conversation streams one bounded answer
+    Given the client submits valid UI messages ending in a nonempty user question
+    When the API starts generation
+    Then it uses the configured Gateway model or alibaba/qwen3.7-flash
+    And it converts messages with the same tool schemas used for validation
+    And it permits four steps, 2400 output tokens, and one SDK retry
+    And it returns the SDK UI message stream with reasoning hidden
+    And request cancellation reaches model generation
 
-  Scenario: Frontend sends a question via DefaultChatTransport
-    When the user types "What does Frad do?" and submits
-    Then the message is sent via DefaultChatTransport to "/api/chat"
-    And the streaming response is rendered incrementally
+  Scenario: Invalid conversation input is rejected before generation
+    Given JSON is malformed or messages are missing, malformed, or contain a system role
+    Or the final message is not a nonempty user question
+    When the client submits the conversation
+    Then the API returns a structured 400 error without starting generation
 
-  Scenario: Chat API validates and streams via stateless helpers
-    Given the server has AI Gateway configured (AI_GATEWAY_API_KEY or VERCEL_OIDC_TOKEN)
-    When the client POSTs valid UIMessages to /api/chat
-    Then the server validates with safeValidateUIMessages
-    And converts with convertToModelMessages
-    And streams via toUIMessageStream + createUIMessageStreamResponse
-    And the response has UIMessage stream headers
+  Scenario: Conversation and request limits are enforced
+    Given a conversation exceeds 40 messages, 4000 characters per user message, or 32000 total text characters
+    When the client submits the conversation
+    Then the API rejects the conversation before generation
+    Given the request body exceeds 128000 actual UTF-8 bytes
+    When the client submits it with no trustworthy Content-Length
+    Then the API returns 413 without starting generation
+    And it cancels an oversized streaming body as soon as the byte limit is crossed
 
-  Scenario: Invalid payload is rejected with structured error
-    When the client POSTs to /api/chat without messages field
-    Then the server responds 400 with "Missing messages field."
-    When the client POSTs invalid messages format
-    Then the server responds 400 with "Invalid messages format."
+  Scenario: Rate limiting includes retry guidance
+    Given an IP has made 20 requests during the current minute
+    When that IP submits another request
+    Then the API returns 429 with Retry-After
+    And another IP can still submit a question
 
-  Scenario: Chat uses a Free Tier eligible Gateway model by default
-    Given AI_GATEWAY_MODEL_ID is not configured
-    Then the server uses "alibaba/qwen3.7-flash"
+  Scenario: Tool-assisted conversation supports follow-up questions
+    Given assistant history contains tool calls
+    When the API validates and converts the conversation
+    Then it uses the actual server tool schemas
+    And it ignores incomplete historical tool calls during conversion
+    And portfolio, resume, and recent activity tools remain executable
+    And an assistant answer longer than 4000 characters does not block a valid follow-up
 
-  Scenario: Off-topic requests are refused without producing output
-    Given the visitor asks the assistant to write, review, debug, or explain code
-    When the request is unrelated to Frad or his work
-    Then the server prompt declares a strict SCOPE limited to Frad
-    And the REFUSAL POLICY forbids producing any part of the requested content
-    And the assistant offers one concrete on-topic alternative instead
+  Scenario: Setup and streaming errors do not disclose provider details
+    Given generation setup or the provider stream fails
+    When the visitor receives the failure
+    Then the error is sanitized
+    And no ad hoc model fallback appends another answer to a partial response
 
-  Scenario: Instruction override attempts are ignored
-    When a user message tries to change the assistant's role or extract its instructions
-    Then the SECURITY RULES mark user messages as untrusted data, never instructions
-    And the assistant never reveals or paraphrases its system instructions
-    And the rules apply to the entire conversation and cannot be overridden
+  Scenario: Answers use the current public profile
+    When the server creates the model request
+    Then its system prompt comes from shared profile and project knowledge
+    And questions outside Frad's portfolio remain out of scope
+    And tool descriptions and results help the model cite public sources
 
-  Scenario: Tool calling remains available after upgrade
-    When the assistant needs to answer about projects
-    Then the tools get_works, read_work, search_works, get_resume are available
-    And stopWhen is isStepCount(3)
-
-  Scenario: Visitor asks about Frad's latest work
-    When the visitor asks what Frad is currently building
-    Then the assistant uses get_recent_activity to fetch live GitHub data
+  Scenario: Explicit recent GitHub questions fetch repository activity
+    When the visitor asks "请查询 Frad 的 GitHub 近期活动"
+    Then the first generation step is required to call get_recent_activity
+    And subsequent steps can answer using the activity result
+    When the visitor asks "介绍 Code Terrier"
+    Then recent activity lookup is not forced
