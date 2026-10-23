@@ -224,19 +224,29 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
   // * Render with appropriate wrapper
   if (props.isWIP) {
-    return <div className={linkClass}>{workCardContent}</div>;
+    return (
+      <div className={linkClass} data-cursor="work-card">
+        {workCardContent}
+      </div>
+    );
   }
 
   if (props.externalLink) {
     return (
-      <a href={props.externalLink} target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <a
+        href={props.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={linkClass}
+        data-cursor="work-card"
+      >
         {workCardContent}
       </a>
     );
   }
 
   return (
-    <Link href={`/works/${props.slug}`} className={linkClass}>
+    <Link href={`/works/${props.slug}`} className={linkClass} data-cursor="work-card">
       {workCardContent}
     </Link>
   );

@@ -2,44 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import type { Position } from '@/types/common';
-
-export type CursorTarget = Position & {
-  width: number;
-  height: number;
-  radius: number;
-  kind: 'control' | 'input';
-};
+import { type CursorTarget, getMagneticTarget } from '@/utils/motion/cursorGeometry';
 
 const POINTER_QUERY =
   '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
 const CONTROL_SELECTOR = 'a[href], button, input, textarea, select, [role="button"]';
 
-function readTarget(element: Element | null): CursorTarget | null {
-  if (!element?.isConnected || element.matches(':disabled, [aria-disabled="true"]')) return null;
+function readTarget(element: Element | null, point: Position | null): CursorTarget | null {
+  if (
+    !point ||
+    !element?.isConnected ||
+    element.matches(':disabled, [aria-disabled="true"], [data-cursor="work-card"]') ||
+    element.closest('[hidden], [inert]')
+  )
+    return null;
   const rect = element.getBoundingClientRect();
   if (!rect.width || !rect.height) return null;
   const isInput = element.matches(
     'textarea, input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"])',
   );
-  if (isInput) {
-    return {
-      x: rect.left + rect.width / 2,
-      y: rect.bottom + 2,
-      width: rect.width,
-      height: 2,
-      radius: 1,
-      kind: 'input',
-    };
-  }
-  const radius = Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
-  return {
-    x: rect.left + rect.width / 2,
-    y: rect.top + rect.height / 2,
-    width: rect.width + 8,
-    height: rect.height + 8,
-    radius: radius ? radius + 4 : element.matches('a') ? (rect.height + 8) / 2 : 8,
-    kind: 'control',
-  };
+  return getMagneticTarget(rect, isInput ? 'input' : 'control', point);
 }
 
 /** Delegated targeting also covers controls without CursorProvider wrappers. */
@@ -55,13 +37,15 @@ export default function useCursorTarget(resetCursor: () => void) {
     let frame: number | null = null;
     let isInside = false;
     const resizeObserver = new ResizeObserver(() => scheduleRefresh());
-    const updateTarget = (next: Element | null) => {
-      if (element !== next) {
+    const updateTarget = (next: Element | null, retain = false) => {
+      const candidate = next ?? (retain ? element : null);
+      const bounds = readTarget(candidate, point);
+      const validElement = bounds ? candidate : null;
+      if (element !== validElement) {
         resizeObserver.disconnect();
-        element = next;
+        element = validElement;
         if (element) resizeObserver.observe(element);
       }
-      const bounds = readTarget(element);
       setTarget((previous) =>
         JSON.stringify(previous) === JSON.stringify(bounds) ? previous : bounds,
       );
@@ -86,7 +70,7 @@ export default function useCursorTarget(resetCursor: () => void) {
           : pointerElement;
       if (resolveUnderPointer && underPointer !== pointerElement) resetCursor();
       pointerElement = underPointer;
-      updateTarget(underPointer?.closest(CONTROL_SELECTOR) ?? null);
+      updateTarget(underPointer?.closest(CONTROL_SELECTOR) ?? null, !resolveUnderPointer);
     };
     function scheduleRefresh() {
       if (frame === null) frame = requestAnimationFrame(() => refresh());
@@ -102,7 +86,12 @@ export default function useCursorTarget(resetCursor: () => void) {
       frame = requestAnimationFrame(() => refresh(false));
     };
     const observer = new MutationObserver(scheduleRefresh);
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['disabled', 'aria-disabled', 'hidden', 'inert'],
+    });
     const themeObserver = new MutationObserver(scheduleRefresh);
     themeObserver.observe(document.documentElement, {
       attributes: true,

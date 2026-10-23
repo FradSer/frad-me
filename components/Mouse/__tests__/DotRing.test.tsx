@@ -33,10 +33,12 @@ function WorkCard({ wip }: { wip: boolean }) {
   const { cursorChangeHandler } = useMouseContext();
   return (
     <a
+      data-cursor="work-card"
       href="/works/example"
       onMouseEnter={() =>
         cursorChangeHandler(wip ? CursorType.workCardHoveredWIP : CursorType.workCardHovered)
       }
+      onMouseLeave={() => cursorChangeHandler(CursorType.default)}
     >
       Work
     </a>
@@ -193,6 +195,15 @@ describe('DotRing', () => {
       '64',
     );
     expect(container.querySelector('svg')).toHaveStyle({ mixBlendMode: 'normal' });
+    fireEvent.mouseLeave(link);
+    fireEvent.pointerMove(document.body, { clientX: 630, clientY: 100 });
+    await waitFor(() =>
+      expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+        'data-cursor-width',
+        '16',
+      ),
+    );
+    expect(screen.queryByText(label)).not.toBeInTheDocument();
   });
 
   it('clears geometry when navigation removes the hovered control', async () => {

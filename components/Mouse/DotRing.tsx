@@ -8,18 +8,19 @@ import useCursorTarget from '@/contexts/Mouse/useCursorTarget';
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
 import { calculateBlendPosition } from '@/utils/motion/animationHelpers';
+import { CURSOR_DOT_SIZE } from '@/utils/motion/cursorGeometry';
 
 const SPRING_CONFIG = { stiffness: 300, damping: 30 } as const;
 const MORPH_TRANSITION = { type: 'spring', ...SPRING_CONFIG } as const;
 const CURSOR_SIZE = 64;
 
 // A fixed command sequence lets one visible path interpolate between all shapes.
-function roundedShape(width: number, height: number, radius: number): string {
+function roundedShape(width: number, height: number): string {
   const left = (CURSOR_SIZE - width) / 2;
   const top = (CURSOR_SIZE - height) / 2;
   const right = left + width;
   const bottom = top + height;
-  const r = Math.min(radius, width / 2, height / 2);
+  const r = Math.min(width, height) / 2;
   return `M ${left + r} ${top} L ${right - r} ${top} A ${r} ${r} 0 0 1 ${right} ${top + r} L ${right} ${bottom - r} A ${r} ${r} 0 0 1 ${right - r} ${bottom} L ${left + r} ${bottom} A ${r} ${r} 0 0 1 ${left} ${bottom - r} L ${left} ${top + r} A ${r} ${r} 0 0 1 ${left + r} ${top} Z`;
 }
 
@@ -38,12 +39,10 @@ export default function DotRing() {
   const isWorkCard =
     cursorType === CursorType.workCardHovered || cursorType === CursorType.workCardHoveredWIP;
   const activeTarget = isWorkCard ? null : target;
-  const size = isWorkCard ? 64 : 16;
-  const shape = roundedShape(
-    activeTarget?.width ?? size,
-    activeTarget?.height ?? size,
-    activeTarget?.radius ?? size / 2,
-  );
+  const size = isWorkCard ? 64 : CURSOR_DOT_SIZE;
+  const width = activeTarget?.width ?? size;
+  const height = activeTarget?.height ?? size;
+  const shape = roundedShape(width, height);
 
   useEffect(() => {
     const position = activeTarget ?? calculateBlendPosition(mousePosition, attractorPosition, 0.7);
@@ -70,9 +69,13 @@ export default function DotRing() {
       >
         <motion.path
           data-cursor-shape={isWorkCard ? 'work-card' : (activeTarget?.kind ?? 'dot')}
-          data-cursor-width={activeTarget?.width ?? size}
-          data-cursor-height={activeTarget?.height ?? size}
-          initial={{ d: roundedShape(16, 16, 8) }}
+          data-cursor-width={width}
+          data-cursor-height={height}
+          data-cursor-radius={Math.min(width, height) / 2}
+          data-cursor-grip={activeTarget?.grip ?? 0}
+          data-cursor-x={activeTarget?.x}
+          data-cursor-y={activeTarget?.y}
+          initial={{ d: roundedShape(CURSOR_DOT_SIZE, CURSOR_DOT_SIZE) }}
           animate={{ d: shape }}
           transition={MORPH_TRANSITION}
           fill="white"

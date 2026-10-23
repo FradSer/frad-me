@@ -117,6 +117,15 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// JSDOM has no PointerEvent. Preserve pointer coordinates for geometry tests.
+if (typeof window.PointerEvent === 'undefined') {
+  Object.defineProperty(window, 'PointerEvent', {
+    configurable: true,
+    writable: true,
+    value: MouseEvent,
+  });
+}
+
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),

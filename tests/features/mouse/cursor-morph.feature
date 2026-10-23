@@ -6,10 +6,27 @@ Feature: The cursor dot joins interactive elements
   Scenario: Hover an unwrapped link or button
     When the pointer enters a link or button through its nested content
     Then the visible cursor morphs to the actual control bounds
-    And its shape respects the control geometry
+    And links and buttons use the same capsule corners based on half the shorter cursor dimension
     And the cursor cannot intercept clicks
-    When the pointer leaves the control
-    Then the same shape springs back to a small visible dot
+    When the pointer moves just outside the control
+    Then the cursor remains attracted within a 48-pixel release zone
+    And its center and dimensions move continuously toward the pointer and a 16-pixel dot
+    When the pointer moves beyond the release zone
+    Then the same shape returns to the small visible dot
+
+  Scenario: Re-enter or move to another control during magnetic release
+    Given the pointer is just outside the previous target
+    When it re-enters that target
+    Then the full target geometry is restored
+    When it enters a different control
+    Then that control takes over immediately
+
+  Scenario: Invalid magnetic targets cannot linger
+    Given the pointer remains inside the magnetic release zone
+    When the previous control is disabled, removed, or replaced during navigation
+    Then the stale target is released
+    When the window loses focus or fine-pointer motion becomes unavailable
+    Then the custom cursor hides and clears the target
 
   Scenario: Hover an editable field
     When the pointer enters an input or textarea
