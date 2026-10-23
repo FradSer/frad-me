@@ -15,13 +15,13 @@ function NextWork(props: Readonly<{ href?: string }>) {
         back to all works
       </Link>
     );
-  } else {
-    return (
-      <Link href="/work/[slug]" as={`/work/${props.href}`} className={linkClass}>
-        next work
-      </Link>
-    );
   }
+
+  return (
+    <Link href={`/works/${props.href}`} className={linkClass}>
+      next work
+    </Link>
+  );
 }
 
 export default NextWork;

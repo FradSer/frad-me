@@ -1,6 +1,5 @@
 'use client';
 
-import { clsx } from 'clsx';
 import { motion } from 'motion/react';
 import { PlayIcon, StopIcon } from '@/components/common/Icons';
 import ScrollLink from '@/components/common/ScrollLink';
@@ -28,10 +27,6 @@ function Hero() {
   const { isSupported, isSpeaking, speak, stop } = useSpeechSynthesis();
   const { cursorChangeHandler } = useMouseContext();
 
-  const heroH1 = clsx(
-    'text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl',
-  );
-
   const handleButtonHoverStart = () => {
     cursorChangeHandler(CursorType.headerLinkHovered);
   };
@@ -57,7 +52,7 @@ function Hero() {
             {isSpeaking ? <StopIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
           </motion.button>
         )}
-        <h1 className={clsx('relative flex flex-col items-start justify-center', heroH1)}>
+        <h1 className="relative flex flex-col items-start justify-center text-left text-2xl font-bold hover:cursor-default sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
           <div className="relative">
             <div className={trianglePositionClass}>
               <Triangle />
@@ -82,7 +77,7 @@ function Hero() {
             <span className={mutedTextClass}>or building a </span>
             startup
             <ScrollLink destination="work">
-              <DotCircle isInteractive />
+              <DotCircle />
             </ScrollLink>
           </div>
         </h1>

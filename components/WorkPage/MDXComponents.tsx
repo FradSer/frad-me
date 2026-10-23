@@ -63,7 +63,7 @@ function Blockquote(props: Readonly<ICommonProps>) {
 }
 
 function Line() {
-  return <hr className={clsx(GRID_CLASSES.fullWidth, 'my-4 h-1 bg-black dark:bg-white')}></hr>;
+  return <hr className={clsx(GRID_CLASSES.fullWidth, 'my-4 h-1 bg-black dark:bg-white')} />;
 }
 
-export { Blockquote, H1, H2, H3, Line, OL, P, UL, wrapperClass };
+export { Blockquote, H1, H2, H3, Line, OL, P, UL };

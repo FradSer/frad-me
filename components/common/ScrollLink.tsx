@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 type IScrollLinkProps = {
   destination: string;
@@ -7,8 +7,7 @@ type IScrollLinkProps = {
 };
 
 export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleClick = () => {
     const element = document.getElementById(props.destination);
     if (element) {
       element.scrollIntoView({
@@ -20,12 +19,7 @@ export default function ScrollLink(props: Readonly<IScrollLinkProps>) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="cursor-pointer appearance-none border-none bg-transparent p-0"
-      style={{ all: 'unset', cursor: 'pointer' }}
-    >
+    <button type="button" onClick={handleClick} style={{ all: 'unset', cursor: 'pointer' }}>
       {props.children}
     </button>
   );

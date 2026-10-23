@@ -13,7 +13,6 @@ const ANIMATION_CONFIG = {
   circleDelay: 2.5,
   arrowDelay: 0.6,
   hoverScale: 1.1,
-  bounceDistance: 4,
   bounceYPath: [0, 4, 0] as [number, number, number],
 } as const;
 
@@ -28,11 +27,7 @@ const CIRCLE_SIZE = {
   expanded: '100%',
 } as const;
 
-interface IDotCircleProps {
-  isInteractive?: boolean;
-}
-
-function DotCircle(_props: Readonly<IDotCircleProps>) {
+function DotCircle() {
   const [hovered, setHovered] = useState<boolean>(false);
 
   const arrowAnimateProps = useMemo(

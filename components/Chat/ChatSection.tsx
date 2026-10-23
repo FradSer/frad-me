@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import SectionHeading from '@/components/common/SectionHeading';
 import { CursorType } from '@/contexts/Mouse/MouseContext';
 import useMouseContext from '@/hooks/useMouseContext';
 
@@ -153,9 +154,7 @@ export default function ChatSection() {
       <div className="flex flex-col items-start">
         {/* Section heading */}
         <div className="mb-8 flex w-full items-end justify-between">
-          <h2 className="text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
-            ask
-          </h2>
+          <SectionHeading>ask</SectionHeading>
         </div>
 
         <div className="w-full max-w-3xl">

@@ -29,7 +29,6 @@ export default function WorkPageClient({ children, metadata }: Readonly<WorkPage
             <strong className="font-black text-black dark:text-white">{metadata.title}</strong>{' '}
             {metadata.description}
           </h1>
-          <div className="md:col-span-0 col-span-4 hidden md:flex"></div>
         </header>
 
         <div className={GRID_CLASSES.container}>

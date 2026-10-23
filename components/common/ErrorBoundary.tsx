@@ -2,25 +2,18 @@
 
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
-// Simplified error boundary state
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  componentName?: string;
+}
+
 interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
-  errorInfo?: ErrorInfo;
 }
 
-// Common error boundary props
-export interface ErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  componentName?: string;
-  enableLogging?: boolean;
-}
-
-// Default fallback UI configurations
-const fallbackConfigs = {
-  default: (_error?: Error) => (
+function FullPageFallback() {
+  return (
     <div className="flex min-h-screen items-center justify-center bg-white dark:bg-black">
       <div className="max-w-md text-center">
         <h2 className="mb-4 text-2xl font-bold text-red-600 dark:text-red-400">
@@ -38,12 +31,13 @@ const fallbackConfigs = {
         </button>
       </div>
     </div>
-  ),
-  component: (error?: Error, componentName?: string) => (
+  );
+}
+
+function ComponentFallback({ componentName, error }: { componentName: string; error?: Error }) {
+  return (
     <div className="rounded border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-      <p className="text-sm text-red-600 dark:text-red-400">
-        Component error{componentName ? ` in ${componentName}` : ''}
-      </p>
+      <p className="text-sm text-red-600 dark:text-red-400">Component error in {componentName}</p>
       {error && (
         <details className="mt-2">
           <summary className="cursor-pointer text-xs text-red-500">Error details</summary>
@@ -51,60 +45,34 @@ const fallbackConfigs = {
         </details>
       )}
     </div>
-  ),
-} as const;
+  );
+}
 
-/**
- * Reusable error boundary with multiple fallback modes
- */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state: ErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
-  async componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    const { componentName, onError, enableLogging = true } = this.props;
-
-    // Update state with error info
-    this.setState((prevState) => ({
-      ...prevState,
-      errorInfo,
-    }));
-
-    // Log to console
-    const logPrefix = componentName ? `[${componentName}]` : '[ErrorBoundary]';
-    if (enableLogging) {
-      console.error(logPrefix, error, errorInfo);
-    }
-
-    // Call custom error handler
-    onError?.(error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const logPrefix = this.props.componentName
+      ? `[${this.props.componentName}]`
+      : '[ErrorBoundary]';
+    console.error(logPrefix, error, errorInfo);
   }
 
   render() {
-    if (this.state.hasError) {
-      // Use custom fallback if provided
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
+    const { hasError, error } = this.state;
+    const { children, componentName } = this.props;
 
-      // Use appropriate default fallback based on component name
-      const { componentName } = this.props;
-      const { error } = this.state;
+    if (!hasError) return children;
 
-      if (componentName) {
-        return fallbackConfigs.component(error, componentName);
-      }
-
-      return fallbackConfigs.default(error);
+    if (componentName) {
+      return <ComponentFallback componentName={componentName} error={error} />;
     }
 
-    return this.props.children;
+    return <FullPageFallback />;
   }
 }
 

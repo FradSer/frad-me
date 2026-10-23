@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, type ReactNode, useContext, useMemo, useState } from 'react';
-import workLinks from '@/content/workLinks';
 import { useWebMCP, type WebMCPLogEntry } from '@/hooks/useWebMCP';
+import { findWork, listWorks } from '@/utils/workCatalog';
 
 interface WebMCPContextType {
   isReady: boolean;
@@ -48,12 +48,7 @@ export function WebMCPProvider({ children }: { children: ReactNode }) {
       },
 
       getWorks: () => {
-        const works = workLinks.map((w) => ({
-          title: w.title,
-          subtitle: w.subTitle,
-          slug: w.slug,
-          link: w.externalLink || `/works/${w.slug}`,
-        }));
+        const works = listWorks();
         return { success: true, count: works.length, works };
       },
 
@@ -61,11 +56,11 @@ export function WebMCPProvider({ children }: { children: ReactNode }) {
         const data = await fetchContent('read_work', { slug });
         if (!data.success) return data;
 
-        const work = workLinks.find((w) => w.slug === slug);
-        if (work && !work.externalLink) {
-          router.push(`/works/${slug}`);
-        } else if (work?.externalLink) {
+        const work = findWork(slug);
+        if (work?.externalLink) {
           window.open(work.externalLink, '_blank');
+        } else if (work) {
+          router.push(`/works/${work.slug}`);
         }
 
         return data;

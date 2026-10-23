@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { CursorProvider, CursorType } from '@/components/common/CursorProvider';
+import SectionHeading from '@/components/common/SectionHeading';
 import { STRUDEL_COMPOSER, STRUDEL_PERFORMER_URL, STRUDEL_PIECE } from '@/content/strudelPiece';
 
 type PlayerState = 'idle' | 'loading' | 'playing' | 'error';
@@ -122,9 +123,7 @@ export default function StrudelPiece() {
   return (
     <section id="sonics" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
       <div className="flex flex-col items-start">
-        <h2 className="mb-8 text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
-          sonics
-        </h2>
+        <SectionHeading className="mb-8">sonics</SectionHeading>
 
         <div className="flex w-full flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
           <CursorProvider targetCursorType={CursorType.buttonHovered}>

@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useEffect, useState } from 'react';
 
+import { CursorType } from '@/contexts/Mouse/MouseContext';
 import useMouseContext from '@/hooks/useMouseContext';
 import useMousePosition from '@/hooks/useMousePosition';
 
@@ -49,15 +50,29 @@ const textVariants = {
   workCardHover: { opacity: 1, y: 0, transition: primaryTransition },
 };
 
-const cursorStateMap = {
-  'header-link-hovered': { background: 'headerLinkHovered', text: 'initial', title: '' },
-  'button-hovered': { background: 'buttonHovered', text: 'initial', title: '' },
-  'input-active': { background: 'inputActive', text: 'initial', title: '' },
-  'work-card-hovered': { background: 'workCardHover', text: 'workCardHover', title: 'READ' },
-  'work-card-hovered-wip': { background: 'workCardHover', text: 'workCardHover', title: 'WIP' },
-  attracted: { background: 'attracted', text: 'initial', title: '' },
-  default: { background: 'initial', text: 'initial', title: '' },
-} as const;
+type CursorState = { background: string; text: string; title: string };
+
+const cursorStateMap: Record<CursorType, CursorState> = {
+  [CursorType.default]: { background: 'initial', text: 'initial', title: '' },
+  [CursorType.headerLinkHovered]: {
+    background: 'headerLinkHovered',
+    text: 'initial',
+    title: '',
+  },
+  [CursorType.buttonHovered]: { background: 'buttonHovered', text: 'initial', title: '' },
+  [CursorType.inputActive]: { background: 'inputActive', text: 'initial', title: '' },
+  [CursorType.workCardHovered]: {
+    background: 'workCardHover',
+    text: 'workCardHover',
+    title: 'READ',
+  },
+  [CursorType.workCardHoveredWIP]: {
+    background: 'workCardHover',
+    text: 'workCardHover',
+    title: 'WIP',
+  },
+  [CursorType.attracted]: { background: 'attracted', text: 'initial', title: '' },
+};
 
 export default function DotRing() {
   const mousePosition = useMousePosition();
@@ -75,7 +90,7 @@ export default function DotRing() {
 
   const [displayTitle, setDisplayTitle] = useState('');
 
-  const currentState = cursorStateMap[mouseContext.cursorType] ?? cursorStateMap.default;
+  const currentState = cursorStateMap[mouseContext.cursorType];
 
   useEffect(() => {
     const blendedPosition = calculateBlendPosition(

@@ -40,7 +40,7 @@ describe('POST /api/chat — tests/features/chat/ask.feature', () => {
 
   it('Scenario: Chat uses a Free Tier eligible Gateway model by default', () => {
     expect(src).toContain("const DEFAULT_MODEL_ID = 'alibaba/qwen3.7-flash'");
-    expect(src).toContain("const FALLBACK_MODEL_ID = 'alibaba/qwen3.7-flash'");
+    expect(src).toContain('const FALLBACK_MODEL_ID = DEFAULT_MODEL_ID');
   });
 
   it('Scenario: Off-topic requests are refused without producing output', () => {

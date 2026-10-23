@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 
+import { SITE_CONFIG } from '@/utils/constants';
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
@@ -7,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://frad.me/sitemap.xml',
+    sitemap: `${SITE_CONFIG.domain}/sitemap.xml`,
   };
 }

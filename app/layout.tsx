@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 import ThemeScript from '@/components/ThemeScript';
+import { SITE_CONFIG } from '@/utils/constants';
 import ClientLayout from './client-layout';
 
 import '@/styles/globals.css';
@@ -51,7 +52,7 @@ const gtEestiDisplay = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://frad.me'),
+  metadataBase: new URL(SITE_CONFIG.domain),
   title: {
     default: 'Frad LEE',
     template: '%s | Frad LEE',
@@ -103,7 +104,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             The inline script is required for FOUC-free theming, but it
             must not be rendered from inside a Client Component.
             Render it here as a Server Component so the error disappears. */}
-        <ThemeScript attribute="class" storageKey="theme" defaultTheme="system" enableSystem />
+        <ThemeScript />
         <Script
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6009006635541295"
           strategy="afterInteractive"

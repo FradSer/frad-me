@@ -10,6 +10,10 @@ type LayoutWrapperProps = {
   children: ReactNode;
 };
 
+const BLUR_MASK =
+  'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)';
+const BLUR_STYLE = { maskImage: BLUR_MASK, WebkitMaskImage: BLUR_MASK } as const;
+
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   // Scroll to #hash targets after mount; client-side navigations to /#section
   // don't trigger the browser's native hash scroll.
@@ -27,24 +31,8 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           Must live here (outside header) because transform-based animations break
           backdrop-filter on position:fixed children in Safari. */}
       <div
-        className="hidden md:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40 dark:!hidden"
-        style={{
-          background: 'rgba(255,255,255,0.08)',
-          maskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-        }}
-      />
-      <div
-        className="hidden md:dark:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] backdrop-blur-lg pointer-events-none z-40"
-        style={{
-          background: 'rgba(0,0,0,0.08)',
-          maskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.3) 80%, transparent 100%)',
-        }}
+        className="hidden md:block fixed inset-x-0 top-0 h-[calc(6rem+env(safe-area-inset-top))] bg-[rgba(255,255,255,0.08)] dark:bg-[rgba(0,0,0,0.08)] backdrop-blur-lg pointer-events-none z-40"
+        style={BLUR_STYLE}
       />
 
       {/* One glass surface grows with the menu, avoiding nested blur layers. */}

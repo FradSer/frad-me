@@ -15,6 +15,22 @@ function getSystemTheme(): ResolvedTheme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
+function resolveTheme(preference: ThemePreference): ResolvedTheme {
+  return preference === 'system' ? getSystemTheme() : preference;
+}
+
+function parseThemePreference(value: string | null): ThemePreference {
+  return AVAILABLE_THEMES.find((theme) => theme === value) ?? DEFAULT_THEME;
+}
+
+function readStoredTheme(): ThemePreference {
+  try {
+    return parseThemePreference(localStorage.getItem(THEME_STORAGE_KEY));
+  } catch {
+    return DEFAULT_THEME;
+  }
+}
+
 function applyTheme(resolved: ResolvedTheme) {
   const root = document.documentElement;
   root.classList.remove('light', 'dark');
@@ -27,57 +43,38 @@ export default function ThemeModeProvider({ children }: Readonly<ThemeModeProvid
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
   const [isMounted, setIsMounted] = useState(false);
 
-  // Hydrate from localStorage / system on mount — mirrors next-themes logic
-  // but without rendering a <script> inside the Client Component tree
-  // (which React 19 + Next 16 flags as
-  // "Encountered a script tag while rendering React component").
-  // The FOUC-prevention inline script lives in <ThemeScript> (Server Component).
+  // Hydrate from localStorage / system on mount — mirrors the inline script
+  // in <ThemeScript> but without rendering a <script> inside the Client
+  // Component tree (React 19 + Next 16 reject that).
   useEffect(() => {
-    const stored = (() => {
-      try {
-        return localStorage.getItem(THEME_STORAGE_KEY) as ThemePreference | null;
-      } catch {
-        return null;
-      }
-    })();
-    const initial = stored ?? DEFAULT_THEME;
+    const initial = readStoredTheme();
     setThemeState(initial);
-    const resolved = initial === 'system' ? getSystemTheme() : (initial as ResolvedTheme);
-    setResolvedTheme(resolved);
-    applyTheme(resolved);
+    setResolvedTheme(resolveTheme(initial));
     setIsMounted(true);
   }, []);
 
-  // Keep document class in sync when theme/resolved changes after mount
+  // Keep document class in sync when the resolved theme changes after mount.
   useEffect(() => {
     if (!isMounted) return;
     applyTheme(resolvedTheme);
   }, [resolvedTheme, isMounted]);
 
-  // React to system theme changes when preference is "system"
+  // React to system theme changes when preference is "system".
   useEffect(() => {
     if (theme !== 'system') return;
     const mql = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => {
-      const next = getSystemTheme();
-      setResolvedTheme(next);
-    };
-    // addEventListener is modern; fallback to addListener for older
-    if (mql.addEventListener) mql.addEventListener('change', handler);
-    else mql.addListener(handler);
-    return () => {
-      if (mql.removeEventListener) mql.removeEventListener('change', handler);
-      else mql.removeListener(handler);
-    };
+    const handler = () => setResolvedTheme(getSystemTheme());
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
   }, [theme]);
 
-  // Cross-tab sync via storage event
+  // Cross-tab sync via storage event.
   useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key !== THEME_STORAGE_KEY) return;
-      const next = (e.newValue as ThemePreference | null) ?? DEFAULT_THEME;
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== THEME_STORAGE_KEY) return;
+      const next = parseThemePreference(event.newValue);
       setThemeState(next);
-      setResolvedTheme(next === 'system' ? getSystemTheme() : (next as ResolvedTheme));
+      setResolvedTheme(resolveTheme(next));
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
@@ -85,12 +82,11 @@ export default function ThemeModeProvider({ children }: Readonly<ThemeModeProvid
 
   const handleSetTheme = useCallback((value: ThemePreference) => {
     setThemeState(value);
-    const resolved = value === 'system' ? getSystemTheme() : (value as ResolvedTheme);
-    setResolvedTheme(resolved);
+    setResolvedTheme(resolveTheme(value));
     try {
       localStorage.setItem(THEME_STORAGE_KEY, value);
     } catch {
-      // ignore
+      // Ignore storage failures (private mode, quota).
     }
   }, []);
 

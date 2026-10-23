@@ -1,21 +1,32 @@
 'use client';
 
 import { clsx } from 'clsx';
-import { motion, type useAnimationControls } from 'motion/react';
+import { motion, useAnimationControls, type Variants } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { CursorType } from '@/contexts/Mouse/MouseContext';
 import useMouseContext from '@/hooks/useMouseContext';
-import {
-  type AnimationVariants,
-  createVariants,
-  useAnimationGroup,
-} from '@/utils/motion/animationHelpers';
+import { primaryTransition } from '@/utils/motion/springTransitions';
+import { getWorkColor } from '@/utils/theme/workColors';
 
 type AnimationControls = ReturnType<typeof useAnimationControls>;
+type WorkCardVariants = Record<'backgroundImage' | 'backgroundMask' | 'text', Variants>;
 
-import { getWorkColor } from '@/utils/theme/workColors';
+const VARIANTS: WorkCardVariants = {
+  backgroundMask: {
+    initial: { opacity: 0, transition: primaryTransition },
+    hover: { opacity: 0.5, transition: primaryTransition },
+  },
+  backgroundImage: {
+    initial: { scale: 1.1, transition: primaryTransition },
+    hover: { scale: 1.2, transition: primaryTransition },
+  },
+  text: {
+    initial: { opacity: 0, y: -20, transition: primaryTransition },
+    hover: { opacity: 1, y: 0, transition: primaryTransition },
+  },
+};
 
 interface IWorkCardProps {
   title: string;
@@ -33,13 +44,12 @@ interface IWorkCardContentProps {
   subTitle: string;
   cover: string;
   slug: string;
-  isFullScreen?: boolean;
   isCenter?: boolean;
   onHoverStart: () => void;
   onHoverEnd: () => void;
   onClick: () => void;
   controls: Record<string, AnimationControls>;
-  variants: AnimationVariants;
+  variants: WorkCardVariants;
 }
 
 const WorkCardContent = memo(
@@ -113,7 +123,6 @@ const WorkCardContent = memo(
 
 WorkCardContent.displayName = 'WorkCardContent';
 
-const ANIMATION_KEYS = ['backgroundImage', 'backgroundMask', 'text'];
 const ANIMATION_RESET_DEBOUNCE_MS = 50;
 
 function WorkCard(props: Readonly<IWorkCardProps>) {
@@ -130,25 +139,16 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   );
 
   // * Animation
-  const { controls, startGroup } = useAnimationGroup(ANIMATION_KEYS);
-
-  const variants = useMemo(
-    () =>
-      createVariants({
-        backgroundMask: {
-          initial: { opacity: 0 },
-          hover: { opacity: 0.5 },
-        },
-        backgroundImage: {
-          initial: { scale: 1.1 },
-          hover: { scale: 1.2 },
-        },
-        text: {
-          initial: { opacity: 0, y: -20 },
-          hover: { opacity: 1, y: 0 },
-        },
-      }),
-    [],
+  const backgroundImageControls = useAnimationControls();
+  const backgroundMaskControls = useAnimationControls();
+  const textControls = useAnimationControls();
+  const controls = useMemo(
+    () => ({
+      backgroundImage: backgroundImageControls,
+      backgroundMask: backgroundMaskControls,
+      text: textControls,
+    }),
+    [backgroundImageControls, backgroundMaskControls, textControls],
   );
 
   // * Hooks
@@ -170,25 +170,27 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
     const cursorType = props.isWIP ? CursorType.workCardHoveredWIP : CursorType.workCardHovered;
     cursorChangeHandler(cursorType);
 
-    startGroup({
-      backgroundImage: 'hover',
-      backgroundMask: 'hover',
-      text: 'hover',
-    });
-  }, [props.isWIP, cursorChangeHandler, startGroup]);
+    backgroundImageControls.start('hover');
+    backgroundMaskControls.start('hover');
+    textControls.start('hover');
+  }, [
+    props.isWIP,
+    cursorChangeHandler,
+    backgroundImageControls,
+    backgroundMaskControls,
+    textControls,
+  ]);
 
   const handleHoverEnd = useCallback(() => {
     isHoveredRef.current = false;
     cursorChangeHandler(CursorType.default);
 
     animationTimeoutRef.current = setTimeout(() => {
-      startGroup({
-        backgroundImage: 'initial',
-        backgroundMask: 'initial',
-        text: 'initial',
-      });
+      backgroundImageControls.start('initial');
+      backgroundMaskControls.start('initial');
+      textControls.start('initial');
     }, ANIMATION_RESET_DEBOUNCE_MS);
-  }, [cursorChangeHandler, startGroup]);
+  }, [cursorChangeHandler, backgroundImageControls, backgroundMaskControls, textControls]);
 
   useEffect(() => {
     return () => {
@@ -211,13 +213,12 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       subTitle={props.subTitle}
       cover={props.cover}
       slug={props.slug}
-      isFullScreen={props.isFullScreen}
       isCenter={props.isCenter}
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
       onClick={handleClick}
       controls={controls}
-      variants={variants}
+      variants={VARIANTS}
     />
   );
 

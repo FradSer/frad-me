@@ -7,26 +7,27 @@ interface IMDXComponentProviderProps {
   className?: string;
 }
 
+const VARIANTS = {
+  hidden: {
+    opacity: 0,
+    y: 200,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: 'linear' as const,
+    },
+  },
+};
+
 function MDXComponentProvider(props: Readonly<IMDXComponentProviderProps>) {
-  const variants = {
-    hidden: {
-      opacity: 0,
-      y: 200,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: 'linear' as const,
-      },
-    },
-  };
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      variants={variants}
+      variants={VARIANTS}
       viewport={{ once: true }}
       className={props.className}
     >

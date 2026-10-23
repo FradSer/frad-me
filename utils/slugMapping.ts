@@ -13,31 +13,25 @@ import workLinks from '@/content/workLinks';
 export function normalizeSlug(input: string): string | null {
   if (!input) return null;
 
-  // First, check if it's already a valid slug
-  const exactMatch = workLinks.find((w) => w.slug === input);
-  if (exactMatch) return input;
-
-  // Normalize input: lowercase and replace various separators with hyphens
+  // Lowercase and replace various separators with single hyphens.
   const normalized = input
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric except spaces and hyphens
-    .replace(/[\s-]+/g, '-'); // Replace spaces/hyphens with single hyphen
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s-]+/g, '-');
 
-  // Try direct match with normalized version
-  const directMatch = workLinks.find((w) => w.slug === normalized);
-  if (directMatch) return normalized;
+  if (workLinks.some((work) => work.slug === normalized)) return normalized;
 
-  // Try fuzzy matching by checking if any work title/subtitle contains the input
+  // Fall back to fuzzy matching against title, subtitle, and slug.
+  const query = input.toLowerCase();
   for (const work of workLinks) {
-    const titleMatch = work.title.toLowerCase().includes(input.toLowerCase());
-    const subtitleMatch = work.subTitle.toLowerCase().includes(input.toLowerCase());
-    const partialSlugMatch = work.slug.includes(normalized) || normalized.includes(work.slug);
+    const matches =
+      work.title.toLowerCase().includes(query) ||
+      work.subTitle.toLowerCase().includes(query) ||
+      work.slug.includes(normalized) ||
+      normalized.includes(work.slug);
 
-    if (titleMatch || subtitleMatch || partialSlugMatch) {
-      return work.slug;
-    }
+    if (matches) return work.slug;
   }
 
-  // If we can't find a match, return null
   return null;
 }

@@ -5,19 +5,21 @@ import { useEffect } from 'react';
 
 import useMousePosition from '@/hooks/useMousePosition';
 import useWindowSize from '@/hooks/useWindowSize';
-import { calculateSkew } from '@/utils/motion/animationUtils';
+
+const SKEW_ANGLE = 2;
 
 export default function Rectangle() {
   const mousePosition = useMousePosition();
   const size = useWindowSize();
 
-  const { xValue, yValue } = calculateSkew(mousePosition, size, 2);
+  const xValue = mousePosition.x / (size.width || 1);
+  const yValue = mousePosition.y / (size.height || 1);
 
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
 
-  const skewX = useTransform(mouseX, [0, 1], [2, -2], { clamp: true });
-  const skewY = useTransform(mouseY, [0, 1], [-2, 2], { clamp: true });
+  const skewX = useTransform(mouseX, [0, 1], [SKEW_ANGLE, -SKEW_ANGLE], { clamp: true });
+  const skewY = useTransform(mouseY, [0, 1], [-SKEW_ANGLE, SKEW_ANGLE], { clamp: true });
 
   // Hydrate with the same neutral transform as SSR, then follow the pointer.
   useEffect(() => {

@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 
+import resumeData from '@/content/resume';
 import ResumePageClient from './resume-page-client';
 
 export const metadata: Metadata = {
   title: 'Resume - Frad Lee',
-  description: 'Frad Lee - Product Designer & Developer Resume',
+  description: `${resumeData.name} — ${resumeData.title}`,
   openGraph: {
     title: 'Resume - Frad Lee',
-    description: 'Frad Lee - Product Designer & Developer Resume',
+    description: `${resumeData.name} — ${resumeData.title}`,
   },
 };
 

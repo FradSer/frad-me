@@ -1,51 +1,70 @@
 import type { Metadata } from 'next';
 
 import { notFound } from 'next/navigation';
+import type { ComponentType } from 'react';
 import type { WorkFrontmatter } from '@/types/work';
+import { getAllWorkSlugs } from '@/utils/workList';
 import WorkPageClient from './work-page-client';
 
 type WorkPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-// Works list for generating static params
-const WORKS = ['bearychat', 'eye-protection-design-handbook', 'pachino'];
+type LoadedWork = {
+  Content: ComponentType;
+  metadata: WorkFrontmatter;
+};
 
-export async function generateStaticParams() {
-  return WORKS.map((slug) => ({ slug }));
+async function loadWork(slug: string): Promise<LoadedWork | null> {
+  try {
+    const module = await import(`@/markdown/works/${slug}.mdx`);
+    return {
+      Content: module.default,
+      metadata: module.metadata as WorkFrontmatter,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function generateStaticParams() {
+  return getAllWorkSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
-  try {
-    const { slug } = await params;
-    const module = await import(`@/markdown/works/${slug}.mdx`);
-    const workMetadata = module.metadata as WorkFrontmatter;
+  const { slug } = await params;
+  const work = await loadWork(slug);
 
-    return {
-      title: workMetadata.title,
-      description: workMetadata.description || `Work showcase: ${workMetadata.title}`,
-      openGraph: {
-        title: workMetadata.title,
-        description: workMetadata.description,
-        images: workMetadata.cover ? [{ url: workMetadata.cover }] : [],
-      },
-    };
-  } catch {
-    return {
-      title: 'Work Not Found',
-    };
+  if (!work) {
+    return { title: 'Work Not Found' };
   }
+
+  const { metadata } = work;
+
+  return {
+    title: metadata.title,
+    description: metadata.description || `Work showcase: ${metadata.title}`,
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      images: metadata.cover ? [{ url: metadata.cover }] : [],
+    },
+  };
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
-  try {
-    const { slug } = await params;
-    const module = await import(`@/markdown/works/${slug}.mdx`);
-    const WorkContent = module.default;
-    const workMetadata = module.metadata as WorkFrontmatter;
+  const { slug } = await params;
+  const work = await loadWork(slug);
 
-    return <WorkPageClient metadata={workMetadata}>{<WorkContent />}</WorkPageClient>;
-  } catch {
+  if (!work) {
     notFound();
   }
+
+  const { Content, metadata } = work;
+
+  return (
+    <WorkPageClient metadata={metadata}>
+      <Content />
+    </WorkPageClient>
+  );
 }

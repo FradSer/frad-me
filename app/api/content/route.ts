@@ -1,68 +1,39 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import resumeData from '@/content/resume';
-import workLinks from '@/content/workLinks';
-import { normalizeSlug } from '@/utils/slugMapping';
-import { getWorkSummary } from '@/utils/workContent';
+import { searchWorks } from '@/utils/workCatalog';
+import { readWork } from '@/utils/workQueries';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const action = searchParams.get('action');
 
   if (action === 'read_work') {
-    const slugParam = searchParams.get('slug');
-    if (!slugParam) {
+    const slug = searchParams.get('slug');
+    if (!slug) {
       return NextResponse.json(
         { success: false, error: 'Missing slug parameter' },
         { status: 400 },
       );
     }
 
-    // First try exact match (for backward compatibility)
-    let work = workLinks.find((w) => w.slug === slugParam);
-
-    // If not found, try normalized slug
-    if (!work) {
-      const normalized = normalizeSlug(slugParam);
-      if (normalized) {
-        work = workLinks.find((w) => w.slug === normalized);
-      }
-    }
-
+    const work = readWork(slug);
     if (!work) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
-    const summary = getWorkSummary(work.slug);
-
-    return NextResponse.json({
-      success: true,
-      work: {
-        title: work.title,
-        subtitle: work.subTitle,
-        slug: work.slug,
-        isWIP: work.isWIP ?? false,
-        link: work.externalLink || `/works/${work.slug}`,
-        summary: summary || work.subTitle,
-      },
-    });
+    return NextResponse.json({ success: true, work });
   }
 
   if (action === 'search_works') {
-    const query = searchParams.get('query')?.toLowerCase() || '';
-    const results = workLinks
-      .filter((w) => {
-        const text = `${w.title} ${w.subTitle} ${w.slug}`.toLowerCase();
-        return text.includes(query);
-      })
-      .map((w) => ({
-        title: w.title,
-        subtitle: w.subTitle,
-        slug: w.slug,
-        link: w.externalLink || `/works/${w.slug}`,
-        isWIP: w.isWIP ?? false,
-      }));
+    const query = searchParams.get('query') || '';
+    const results = searchWorks(query);
 
-    return NextResponse.json({ success: true, query, count: results.length, results });
+    return NextResponse.json({
+      success: true,
+      query: query.toLowerCase(),
+      count: results.length,
+      results,
+    });
   }
 
   if (action === 'get_resume') {

@@ -11,21 +11,15 @@ import {
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import resumeData from '@/content/resume';
-import workLinks from '@/content/workLinks';
 import { getRecentRepos } from '@/utils/githubActivity';
-import { normalizeSlug } from '@/utils/slugMapping';
-import { getWorkSummary } from '@/utils/workContent';
+import { listWorks, searchWorks, WORK_NOT_FOUND_MESSAGE } from '@/utils/workCatalog';
+import { readWork } from '@/utils/workQueries';
 
 const DEFAULT_MODEL_ID = 'alibaba/qwen3.7-flash';
-const FALLBACK_MODEL_ID = 'alibaba/qwen3.7-flash';
+const FALLBACK_MODEL_ID = DEFAULT_MODEL_ID;
 
-function getModel() {
-  const modelId = process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID;
+function getModel(modelId: string) {
   return gateway(modelId);
-}
-
-function getFallbackModel() {
-  return gateway(FALLBACK_MODEL_ID);
 }
 
 // Simple in-memory rate limiter: max 20 requests per IP per minute.
@@ -135,7 +129,6 @@ export async function POST(req: NextRequest) {
 
   const requestedModelId = process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID;
   const shouldTryFallback = requestedModelId !== FALLBACK_MODEL_ID;
-
   const buildStream = (useModel: ReturnType<typeof gateway>) =>
     streamText({
       model: useModel,
@@ -146,13 +139,7 @@ export async function POST(req: NextRequest) {
           description: "Get a list of all Frad's portfolio projects",
           inputSchema: z.object({}),
           execute: async () => {
-            return workLinks.map((w) => ({
-              title: w.title,
-              subtitle: w.subTitle,
-              slug: w.slug,
-              link: w.externalLink || `/works/${w.slug}`,
-              isWIP: w.isWIP ?? false,
-            }));
+            return listWorks();
           },
         }),
         read_work: tool({
@@ -162,33 +149,7 @@ export async function POST(req: NextRequest) {
             slug: z.string().describe('The project name or slug (natural language accepted)'),
           }),
           execute: async ({ slug }: { slug: string }) => {
-            // Normalize the slug using our mapping utility
-            const normalizedSlug = normalizeSlug(slug);
-
-            if (!normalizedSlug) {
-              return {
-                error:
-                  'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
-              };
-            }
-
-            const work = workLinks.find((w) => w.slug === normalizedSlug);
-            if (!work) {
-              return {
-                error:
-                  'Project not found. Available projects: BearyChat, vivo Vision, Pachino, Eye Protection Design Handbook, Interactive Cross-platform Mixed Reality Video Player, Usability Design for Xigua Video',
-              };
-            }
-
-            const summary = getWorkSummary(normalizedSlug);
-            return {
-              title: work.title,
-              subtitle: work.subTitle,
-              slug: work.slug,
-              link: work.externalLink || `/works/${normalizedSlug}`,
-              isWIP: work.isWIP ?? false,
-              summary: summary || work.subTitle,
-            };
+            return readWork(slug) ?? { error: WORK_NOT_FOUND_MESSAGE };
           },
         }),
         search_works: tool({
@@ -197,15 +158,7 @@ export async function POST(req: NextRequest) {
             query: z.string().describe('Search keyword'),
           }),
           execute: async ({ query }: { query: string }) => {
-            const q = query.toLowerCase();
-            return workLinks
-              .filter((w) => `${w.title} ${w.subTitle} ${w.slug}`.toLowerCase().includes(q))
-              .map((w) => ({
-                title: w.title,
-                subtitle: w.subTitle,
-                slug: w.slug,
-                link: w.externalLink || `/works/${w.slug}`,
-              }));
+            return searchWorks(query);
           },
         }),
         get_resume: tool({
@@ -227,13 +180,13 @@ export async function POST(req: NextRequest) {
     toUIMessageStream({ stream: buildStream(useModel).stream });
 
   if (!shouldTryFallback) {
-    return createUIMessageStreamResponse({ stream: streamFrom(getModel()) });
+    return createUIMessageStreamResponse({ stream: streamFrom(getModel(requestedModelId)) });
   }
 
   const fallbackStream = new ReadableStream({
     async start(controller) {
       let didError = false;
-      const primary = streamFrom(getModel());
+      const primary = streamFrom(getModel(requestedModelId));
       const reader = (primary as unknown as ReadableStream).getReader();
       const pump = async () => {
         while (true) {
@@ -253,7 +206,7 @@ export async function POST(req: NextRequest) {
         didError = true;
       }
       if (didError) {
-        const fb = streamFrom(getFallbackModel());
+        const fb = streamFrom(getModel(FALLBACK_MODEL_ID));
         const fbReader = (fb as unknown as ReadableStream).getReader();
         while (true) {
           const { done, value } = await fbReader.read();

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 
 import ChatSectionIsland from '@/components/Chat/ChatSectionIsland';
+import SectionHeading from '@/components/common/SectionHeading';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Landing/Hero';
 import Patents from '@/components/Landing/Patents';
@@ -13,9 +14,7 @@ function ChatFallback() {
   return (
     <section id="ask" className="layout-wrapper my-20 scroll-mt-24 md:my-24 lg:my-32">
       <div className="mb-8 flex w-full items-end justify-between">
-        <h2 className="text-[7rem] hover:cursor-default lg:text-[10rem] xl:text-[13rem] 2xl:text-[16rem]">
-          ask
-        </h2>
+        <SectionHeading>ask</SectionHeading>
       </div>
     </section>
   );
