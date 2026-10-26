@@ -34,6 +34,7 @@ function WorkCard({ wip }: { wip: boolean }) {
   return (
     <a
       data-cursor="work-card"
+      data-cursor-label={wip ? 'WIP' : 'READ'}
       href="/works/example"
       onMouseEnter={() =>
         cursorChangeHandler(wip ? CursorType.workCardHoveredWIP : CursorType.workCardHovered)

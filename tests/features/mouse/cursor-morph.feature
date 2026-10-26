@@ -71,6 +71,16 @@ Feature: The cursor dot joins interactive elements
     Then the cursor remains a white circle with the READ or WIP label
     And the work card is not replaced by a control-sized rectangle
 
+  Scenario: Scrolling resolves the work card under a stationary pointer
+    Given the pointer is over a work card showing READ or WIP
+    When scrolling reveals another descendant of the same card
+    Then the work card cursor and label remain visible
+    And scrolling before a pending pointer frame still resolves the new element under the pointer
+    When scrolling reveals a different published or work-in-progress card
+    Then its READ or WIP label replaces the previous label without pointer movement
+    When scrolling reveals blank content, a control, or a removed card
+    Then the previous work card state is cleared without oversized geometry
+
   Scenario: Hovered elements move or disappear
     When the page scrolls or the hovered target changes size
     Then the cursor uses fresh target bounds under the pointer

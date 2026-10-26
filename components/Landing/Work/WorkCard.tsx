@@ -225,7 +225,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   // * Render with appropriate wrapper
   if (props.isWIP) {
     return (
-      <div className={linkClass} data-cursor="work-card">
+      <div className={linkClass} data-cursor="work-card" data-cursor-label="WIP">
         {workCardContent}
       </div>
     );
@@ -239,6 +239,7 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
         rel="noopener noreferrer"
         className={linkClass}
         data-cursor="work-card"
+        data-cursor-label="READ"
       >
         {workCardContent}
       </a>
@@ -246,7 +247,12 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   }
 
   return (
-    <Link href={`/works/${props.slug}`} className={linkClass} data-cursor="work-card">
+    <Link
+      href={`/works/${props.slug}`}
+      className={linkClass}
+      data-cursor="work-card"
+      data-cursor-label="READ"
+    >
       {workCardContent}
     </Link>
   );

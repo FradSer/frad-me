@@ -35,6 +35,7 @@ function CursorCard({ wip = false }: { wip?: boolean }) {
   return (
     <motion.div
       data-cursor="work-card"
+      data-cursor-label={wip ? 'WIP' : 'READ'}
       onMouseEnter={() =>
         cursorChangeHandler(wip ? CursorType.workCardHoveredWIP : CursorType.workCardHovered)
       }

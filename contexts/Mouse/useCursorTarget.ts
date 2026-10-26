@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { CursorType, MouseContext } from '@/contexts/Mouse/MouseContext';
 import type { Position } from '@/types/common';
 import { type CursorTarget, getMagneticTarget } from '@/utils/motion/cursorGeometry';
 import {
@@ -16,14 +17,24 @@ const POINTER_QUERY =
 const CONTROL_SELECTOR =
   'a[href], button, input, textarea, select, [role="button"], [data-cursor="work-card"]';
 
+function isAvailable(element: Element | null): element is Element {
+  return (
+    !!element?.isConnected &&
+    !element.matches(':disabled, [aria-disabled="true"]') &&
+    !element.closest('[hidden], [inert]')
+  );
+}
+
+function workCardCursor(element: Element | null): CursorType | null {
+  if (!element?.matches('[data-cursor="work-card"]')) return null;
+  const label = element.getAttribute('data-cursor-label');
+  if (label === 'READ') return CursorType.workCardHovered;
+  if (label === 'WIP') return CursorType.workCardHoveredWIP;
+  return null;
+}
+
 function readTarget(element: Element | null, point: Position | null): CursorTarget | null {
-  if (
-    !point ||
-    !element?.isConnected ||
-    element.matches(':disabled, [aria-disabled="true"], [data-cursor="work-card"]') ||
-    element.closest('[hidden], [inert]')
-  )
-    return null;
+  if (!point || !isAvailable(element) || element.matches('[data-cursor="work-card"]')) return null;
   const rect = element.getBoundingClientRect();
   if (!rect.width || !rect.height) return null;
   const isInput = element.matches(
@@ -34,6 +45,7 @@ function readTarget(element: Element | null, point: Position | null): CursorTarg
 
 /** Delegated targeting also covers controls without CursorProvider wrappers. */
 export default function useCursorTarget(resetCursor: () => void) {
+  const { cursorChangeHandler } = useContext(MouseContext);
   const [target, setTarget] = useState<CursorTarget | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -41,6 +53,7 @@ export default function useCursorTarget(resetCursor: () => void) {
     const media = window.matchMedia(POINTER_QUERY);
     let element: Element | null = null;
     let pointerElement: Element | null = null;
+    let semanticElement: Element | null = null;
     let point: Position | null = null;
     let frame: number | null = null;
     let isInside = false;
@@ -89,6 +102,10 @@ export default function useCursorTarget(resetCursor: () => void) {
     };
     const invalidateLayout = () => {
       clearText();
+      // A pending pointer frame uses its event target. Layout changes need a
+      // fresh hit test even when they arrive before that frame has rendered.
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
       scheduleRefresh();
     };
     const resizeObserver = new ResizeObserver(invalidateLayout);
@@ -114,6 +131,7 @@ export default function useCursorTarget(resetCursor: () => void) {
       clearText();
       selectionHeight = null;
       pointerElement = null;
+      semanticElement = null;
       point = null;
       setVisible(false);
       updateTarget(null);
@@ -131,10 +149,15 @@ export default function useCursorTarget(resetCursor: () => void) {
         resolveUnderPointer && document.elementFromPoint
           ? document.elementFromPoint(point.x, point.y)
           : pointerElement;
-      if (resolveUnderPointer && underPointer !== pointerElement) resetCursor();
       pointerElement = underPointer;
+      const control = underPointer?.closest(CONTROL_SELECTOR) ?? null;
+      const next = isAvailable(control) ? control : null;
+      if (next !== semanticElement) resetCursor();
+      semanticElement = next;
+      const cardCursor = workCardCursor(next);
+      if (cardCursor) cursorChangeHandler(cardCursor);
       // Unrelated DOM updates must not cut a pending text exit short.
-      updateTarget(underPointer?.closest(CONTROL_SELECTOR) ?? null, !resolveUnderPointer, true);
+      updateTarget(next, !resolveUnderPointer, true);
     };
     function scheduleRefresh() {
       if (frame === null) frame = requestAnimationFrame(() => refresh());
@@ -179,7 +202,7 @@ export default function useCursorTarget(resetCursor: () => void) {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['disabled', 'aria-disabled', 'hidden', 'inert'],
+      attributeFilter: ['disabled', 'aria-disabled', 'hidden', 'inert', 'data-cursor-label'],
     });
     const themeObserver = new MutationObserver(invalidateLayout);
     themeObserver.observe(document.documentElement, {
@@ -214,7 +237,7 @@ export default function useCursorTarget(resetCursor: () => void) {
       media.removeEventListener('change', hide);
       document.documentElement.removeAttribute('data-custom-cursor');
     };
-  }, [resetCursor]);
+  }, [resetCursor, cursorChangeHandler]);
 
   return { target, visible };
 }
