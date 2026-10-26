@@ -1,26 +1,24 @@
-import { clsx } from 'clsx';
 import Link from 'next/link';
-
-import { GRID_CLASSES } from '@/utils/constants';
+import { findWork } from '@/utils/workCatalog';
 
 function NextWork(props: Readonly<{ href?: string }>) {
-  const linkClass = clsx(
-    GRID_CLASSES.fullWidthCentered,
-    'text-black dark:text-white text-4xl my-8 font-bold',
-  );
-
-  if (!props.href) {
-    return (
-      <Link href="/#work" className={linkClass}>
-        back to all works
-      </Link>
-    );
-  }
-
+  const next = props.href ? findWork(props.href) : null;
+  const linkClass =
+    'underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4';
   return (
-    <Link href={`/works/${props.href}`} className={linkClass}>
-      next work
-    </Link>
+    <nav
+      aria-label="Case study navigation"
+      className="flex flex-wrap items-center justify-between gap-6 border-t border-gray-200 pt-8 text-lg dark:border-neutral-800 md:text-2xl"
+    >
+      <Link href="/#work" className={linkClass}>
+        All work
+      </Link>
+      {next && (
+        <Link href={`/works/${next.slug}`} className={linkClass}>
+          Next: {next.title}
+        </Link>
+      )}
+    </nav>
   );
 }
 

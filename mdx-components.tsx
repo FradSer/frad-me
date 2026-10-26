@@ -2,15 +2,16 @@ import Topography from '@/components/WorkPage/BearyChat/Topography';
 import ComfortableFontSFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontSFormula';
 import ComfortableFontYong from '@/components/WorkPage/EyeProtectionDesignHandbook/ComfortableFontYong';
 import EyeComfortDFormula from '@/components/WorkPage/EyeProtectionDesignHandbook/EyeComfortDFormula';
-import { Blockquote, H1, H2, H3, Line, OL, P, UL } from '@/components/WorkPage/MDXComponents';
+import { A, Blockquote, H2, H3, Line, OL, P, UL } from '@/components/WorkPage/MDXComponents';
 import { WorkBeforeAfterImages, WorkSingleImage } from '@/components/WorkPage/WorkImage';
 
 const components = {
   blockquote: Blockquote,
-  h1: H1,
+  a: A,
+  h1: H2,
   h2: H2,
   h3: H3,
-  line: Line,
+  hr: Line,
   ol: OL,
   p: P,
   ul: UL,

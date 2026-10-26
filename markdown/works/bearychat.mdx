@@ -1,117 +1,119 @@
 export const metadata = {
   cover: '/works/bearychat/cover.png',
   title: 'BearyChat',
-  description: 'is a team workspace that brings conversations, connected tools, and shared information together.',
+  description: 'A team workspace that brings conversations, connected tools, and shared information together.',
   platforms: ['Web', 'Electron'],
   contributors: ['Product Manager', 'UX Designer'],
-  site: 'https://bearychat.com',
   nextWork: 'pachino',
 }
 
-Before joining BearyChat, I worked with the team to establish a guiding design principle:
+BearyChat brought team conversations and updates from connected services into one workspace. As Product Manager, I worked on product strategy, requirements, and UX, managed the design team, and coordinated development during its transition from a free service to a commercial product.
+
+## Context and Challenge
+
+The product needed to serve Chinese teams, give growing organizations a reason to pay, and make an expanding feature set easier to navigate. Bots were an important part of the experience, but most delivered information without helping people act on it.
+
+Before joining, I worked with the team to establish a guiding design principle:
 
 Teamwork runs on information: conversations, updates from connected tools, and shared documents. BearyChat helps teams organize that information and turn it into useful context.
 
-This principle shaped three priorities:
+That principle shaped three priorities:
 
 1. Design a paid product suited to the Chinese market.
 2. Make bots more useful within conversations.
 3. Bring the growing feature set into a coherent experience.
 
----
+## Give the Team a Shared Design Language
 
-# Design Team
+When I joined, BearyChat had 15 employees across Beijing, Shenzhen, and remote locations. Designers and engineers needed a common way to describe how an interaction should work.
 
-## The Language of UX
+I introduced a vocabulary for UX flows, drawing on UML and my previous experience. The flowchart template distinguished interfaces, system actions, decision points, and linked subflows.
 
 <WorkSingleImage
   src="/works/bearychat/figure-1.png"
   width="528"
   height="996"
-  alt="Flowchart template we use."
+  alt="UX flowchart legend for interfaces, system actions, decision points, subflows, and linked steps."
   position="underH2"
 />
 
-When I joined, BearyChat had 15 employees across Beijing, Shenzhen, and remote locations. To help designers and engineers communicate, I introduced a shared vocabulary for UX flows, drawing on UML and my previous experience.
+Engineers could read requirements through user actions and system states. Designers could discuss the technical logic of a flow before refining its presentation. I also introduced a product requirements document template to make decisions easier to read and discuss.
 
-The flowchart template gave both disciplines a common reference:
+## Design Around How Chinese Teams Worked
 
-- Engineers could understand requirements through user actions and system states.
-- Designers could understand the technical logic behind an interaction before refining it.
+Although BearyChat shared many core features with Slack, its interactions needed to reflect the teams using it.
 
----
-
-# Design Strategy
-
-## Designing for Chinese Teams
-
-I also introduced a product requirements document template to make decisions easier to read and discuss. Although BearyChat shared many core features with Slack, its interaction design needed to reflect how Chinese teams worked.
-
-Reminders were one example. Instead of asking people to enter commands, we provided a visual interface. Recurring reminders could be shared with a team, supporting schedules without requiring everyone to use a separate calendar.
+Reminders were one example. We provided a visual interface instead of requiring people to enter commands. Teams could share recurring reminders, supporting a common schedule without requiring everyone to use a separate calendar.
 
 <WorkSingleImage
   src="/works/bearychat/figure-2.png"
   width="980"
   height="533"
-  alt="A visual interface for creating and sharing recurring reminders."
+  alt="BearyChat interface for creating a recurring reminder and sharing it with a conversation."
   position="fullScreen"
 />
 
-## From Free to Paid
+The decision connected a familiar task to the conversation where it mattered. It also made the capability discoverable to people who did not know the bot command syntax.
 
-BearyChat had been free for its first year. I worked on a pricing and product strategy that could support the business while continuing to grow the user base.
+## Build a Commercial Offering
 
-After comparing similar products, we expanded the message history and bot allowance in the free plan. This kept the product useful for small teams while giving larger teams a reason to upgrade.
+BearyChat had been free for its first year. I worked on the pricing and product strategy, using comparisons with similar products and interviews with medium and large teams to define the plans.
 
-Interviews with medium and large teams shaped the paid plan, which included full message history and more bots:
+### Keep the Free Plan Useful
 
-- Reliability mattered when bots carried business-critical updates. The paid plan increased bot capacity and included service-level agreements.
-- External collaboration required clear access controls. Guest accounts could join selected conversations, with controls over channel access and message history.
+We expanded the message history and bot allowance in the free plan. Small teams could continue using the product, while larger organizations could evaluate the additional capacity and controls in the paid offering.
+
+### Connect Paid Features to Team Needs
+
+The paid plan included full message history and more bots. Interviews also brought two requirements into focus:
+
+- **Reliability:** bots carried business-critical updates. The plan increased bot capacity and included service-level agreements.
+- **External collaboration:** guest accounts needed access to selected conversations, with controls over channel access and message history.
 
 For enterprises that needed to keep information within their own systems, we designed a separate plan with private deployment and deeper customization.
 
-The enterprise plan was central to the revenue strategy. Modular code and interface design let customers combine the capabilities they needed without tightly coupling every part of the product.
+### Make Customization Part of the Product Structure
 
-Customization work for Huawei and Manila Group put this approach into practice, helping us deliver tailored products efficiently.
+The enterprise plan was central to the revenue strategy. Modular code and interface design let customers combine the capabilities they needed. We applied this approach to customization work for Huawei and Manila Group.
 
 <WorkSingleImage
   src="/works/bearychat/figure-3.png"
   width="980"
   height="2163"
-  alt="Screenshot of BearyChat's price presentation page."
+  alt="BearyChat pricing page presenting its product plans and included capabilities."
   position="fullScreen"
 />
 
----
+## Reorganize a Growing Workspace
 
-# Design UX
-
-## A More Coherent Experience
-
-As the paid product grew, we added features based on feedback, usage data, and internal ideas. Each addition addressed a need, but the overall experience became harder to understand.
+Features arrived through customer feedback, usage data, and internal ideas. Each addressed a need, but grouping them by similarity made the overall workspace harder to understand.
 
 <WorkSingleImage
   src="/works/bearychat/figure-4.png"
   width="980"
   height="532"
-  alt="Screenshot of old BearyChat version."
+  alt="Earlier BearyChat workspace layout before the navigation and conversation redesign."
   position="fullScreen"
 />
 
-Modularity had helped us ship, but it also encouraged us to group features by similarity rather than by the way people worked. We redesigned the layout around the existing product and its near-term direction.
+We redesigned the layout around the existing product and its near-term direction, separating navigation from the conversation itself:
 
-## A Clearer Layout
-
-The new structure separated navigation from conversation:
-
-1. Hierarchical navigation organized features into business-focused modules, making the product easier to understand and customize.
-2. The content area kept the conversation and message input central. Files, saved information, and contacts remained connected to the conversations that gave them context.
+1. Hierarchical navigation organized features into business-focused modules, supporting both everyday use and customer-specific configurations.
+2. The content area kept the conversation and message input central. Files, saved information, and contacts stayed connected to the conversations that gave them context.
 
 <Topography />
 
-## Interactive Bots
+## Extend Bots from Updates to Actions
 
-Connected services were one of BearyChat's strengths. Earlier bots mostly forwarded updates and sent people back to another service to act. The “Interactive Robots” plan aimed to bring those actions into the conversation.
+Earlier bots mostly forwarded updates and sent people to another service to act. The “Interactive Robots” plan explored actions within the conversation:
 
 - The short-term plan introduced interactive inputs, buttons, and immediate feedback within bot messages.
 - The longer-term plan proposed a marketplace where people could share bots for free or offer paid integrations.
+
+These were roadmap directions. The marketplace proposal should be read as a planned extension of the product.
+
+## Outcome and Learning
+
+I helped guide BearyChat's move from a free service to a commercial product, connecting its pricing, team workflows, and interface structure. The work included shared requirements tools, reminder interactions, enterprise customization, and a workspace redesign.
+
+The case shows how product strategy and interaction design informed each other. Modular features supported customization; the growing product also needed an information architecture organized around the way teams worked.

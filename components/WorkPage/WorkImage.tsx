@@ -30,6 +30,8 @@ function OptimizedImage({
       priority={priority}
       loading={priority ? undefined : 'lazy'}
       unoptimized={unoptimized}
+      className="h-auto w-full"
+      sizes="(max-width: 767px) 100vw, (max-width: 1279px) 90vw, 1024px"
     />
   );
 }
@@ -47,7 +49,14 @@ function WorkSingleImage({
 
   return (
     <MDXComponentProvider className={workImageClass}>
-      <div className={COMMON_CLASSES.workComponentLayout}>
+      <figure
+        className={clsx(
+          COMMON_CLASSES.workComponentLayout,
+          position === ImagePosition.underH2 &&
+            Number(height) > Number(width) &&
+            'mx-auto max-w-md',
+        )}
+      >
         <OptimizedImage
           src={src}
           width={width}
@@ -56,8 +65,8 @@ function WorkSingleImage({
           priority={priority}
           unoptimized={unoptimized}
         />
-        <span className={COMMON_CLASSES.workCaption}>{alt}</span>
-      </div>
+        <figcaption className={COMMON_CLASSES.workCaption}>{alt}</figcaption>
+      </figure>
     </MDXComponentProvider>
   );
 }
@@ -73,7 +82,6 @@ function WorkBeforeAfterImages({
   const sharedImageProps = {
     width,
     height,
-    alt: description,
     priority,
   };
 
@@ -81,13 +89,19 @@ function WorkBeforeAfterImages({
     <MDXComponentProvider
       className={clsx(COMMON_CLASSES.workComponentLayout, GRID_CLASSES.fullWidth)}
     >
-      <div className="flex w-full flex-col justify-center gap-3 md:flex-row">
-        <span>Before:</span>
-        <OptimizedImage src={beforeSrc} {...sharedImageProps} />
-        <span>After:</span>
-        <OptimizedImage src={afterSrc} {...sharedImageProps} />
-      </div>
-      <span className={COMMON_CLASSES.workCaption}>{description}</span>
+      <figure className={COMMON_CLASSES.workComponentLayout}>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <figure className="min-w-0 space-y-3">
+            <figcaption className="text-sm font-medium">Before</figcaption>
+            <OptimizedImage src={beforeSrc} alt={`Before: ${description}`} {...sharedImageProps} />
+          </figure>
+          <figure className="min-w-0 space-y-3">
+            <figcaption className="text-sm font-medium">After</figcaption>
+            <OptimizedImage src={afterSrc} alt={`After: ${description}`} {...sharedImageProps} />
+          </figure>
+        </div>
+        <figcaption className={COMMON_CLASSES.workCaption}>{description}</figcaption>
+      </figure>
     </MDXComponentProvider>
   );
 }

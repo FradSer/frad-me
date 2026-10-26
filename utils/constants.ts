@@ -1,10 +1,12 @@
 // Grid classes used across work pages
 export const GRID_CLASSES = {
   container: 'grid grid-cols-16 gap-y-3 md:gap-y-6',
-  contentWrapper: 'col-span-16 col-start-1 md:col-span-10 md:col-start-7',
+  contentWrapper:
+    'col-span-16 col-start-1 md:col-span-12 md:col-start-3 xl:col-span-10 xl:col-start-4',
   fullWidth: 'col-span-16',
   fullWidthCentered: 'col-span-16 col-start-1 text-center',
-  listWrapper: 'col-span-15 col-start-2 md:col-span-10 md:col-start-7 -mt-3 md:-mt-4',
+  listWrapper:
+    'col-span-16 col-start-1 md:col-span-12 md:col-start-3 xl:col-span-10 xl:col-start-4',
 } as const;
 
 // Image position classes for WorkImage components

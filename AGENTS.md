@@ -78,6 +78,7 @@ The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gatew
 - `markdown/works/*.mdx` export an `export const metadata: WorkFrontmatter` with fields defined in `types/work.ts`: `title`, `description`, plus optional `cover`, `coverBackground`, `platforms`, `contributors`, `site`, `nextWork`
 - Images live in `public/works/<slug>/`
 - `content/workLinks.ts` drives homepage work cards (including external/WIP links); `/works/[slug]` reads metadata straight from each MDX module
+- When adding a published case, register its static MDX import in `app/works/[slug]/page.tsx`. Static imports keep client references available during Next.js instant validation. The route test checks this registry against the MDX directory.
 - MDX rendering via `@next/mdx`; `utils/workContent.ts` handles plain-text extraction for AI tools
 - `docs/strudel/frad-me.strudel.js` is a paste-ready mirror of `content/strudelPiece.ts` for strudel.cc — keep the two in sync
 

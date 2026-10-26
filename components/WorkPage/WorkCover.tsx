@@ -12,7 +12,7 @@ function WorkCover(props: Readonly<IWorkCoverProps>) {
 
   const imageAlt = `Cover for ${props.title}`;
   const workCoverClass = clsx(
-    'flex h-[75vh] w-screen items-center justify-center relative overflow-hidden',
+    'relative flex h-[52svh] min-h-64 max-h-[38rem] w-full items-center justify-center overflow-hidden',
     props.coverBackground,
   );
 

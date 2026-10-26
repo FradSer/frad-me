@@ -2,59 +2,38 @@ export const metadata = {
   cover: '/works/eye-protection-design-handbook/cover.png',
   coverBackground: 'bg-[#313131]',
   title: 'Eye Protection Design Handbook',
-  description: 'is a ByteDance design study of viewing distance, typography, color, and visual comfort.',
+  description: 'A ByteDance design study of viewing distance, typography, color, and visual comfort.',
   platforms: ['Web', 'iOS', 'Android'],
   contributors: ['Design Researcher', 'UX Designer'],
   site: 'https://bytedance.com',
   nextWork: 'bearychat',
 }
 
-At ByteDance, I helped establish the GIP UED Creative Design Lab and led a study of visual comfort in digital products. The handbook translated research into practical guidance for teams working on Douyin, Xigua Video, Jinri Toutiao, and other applications.
+At ByteDance, I helped establish the GIP UED Creative Design Lab and led research for the Eye Protection Design Handbook. My work translated questions about visual comfort into practical guidance, interface examples, and prototypes for product teams, including Douyin, Xigua Video, and Jinri Toutiao.
+
+## Context and Research Question
 
 > Why is it designed this way?
 
-The lab was created to connect design decisions with the reasoning behind them. This project explored viewing distance, text size, color, contrast, and screen use.
+The lab connected design decisions with the reasoning behind them. Teams working across mobile products and larger displays needed a way to discuss viewing distance, text size, color, contrast, and screen use together.
 
----
+The question was how to make these considerations part of everyday design decisions. A text size that worked on a familiar phone could be a poor starting point for a different device, viewing distance, or audience.
 
-_This case study summarizes the design work. The original internal handbook is not available publicly. Device calculations below describe the assumptions used in that project._
+_This case summarizes the design work. The original internal handbook is not publicly available. The calculations below are historical project assumptions and examples; they do not establish a clinical benefit or a universal viewing standard._
 
-# Visual Fatigue
+## Define the Viewing Context
 
-Long periods of screen use can cause temporary discomfort such as dryness, tired eyes, and blurred vision. The design question was how to make interfaces easier to read and support more comfortable use.
+Long screen sessions can involve discomfort such as tired or dry eyes. For this project, the design task was to examine the reading conditions an interface creates.
 
-## Causes of Visual Fatigue
+Looking at nearby objects involves **accommodation**, which changes the lens's focus, and **convergence**, which turns the eyes inward. These considerations led us to evaluate text size alongside viewing distance, rather than treat either value in isolation.
 
-### Near Response
+### Set a Reference Distance
 
-Looking at a nearby object involves accommodation and convergence. For interface design, this makes viewing distance and readable text size important considerations.
+We used **design viewing distance** to describe the distance at which an interface should be evaluated. It combines the viewing task, device size, input method, and practical reach of the user.
 
-- **Accommodation** changes the lens's focus for near objects.
-- **Convergence** turns the eyes inward so both can focus on the same object.
+For the handheld example in this study, we used **40 cm** as a design reference. It was a project assumption for that example.
 
-### Light Intensity
-
-A bright screen in a dim room, glare, or reflections can make viewing uncomfortable. Screen brightness should suit the surroundings, and interface transitions should avoid abrupt changes in luminance.
-
-### Highly Saturated Colors
-
-Highly saturated colors can compete with text and make hierarchy harder to follow. The study explored calmer background colors while keeping enough contrast for important content.
-
-### Vibration
-
-A moving device makes small details harder to follow. Interfaces intended for use in motion need larger, simpler content and appropriate interaction targets.
-
-## Ways to Relieve Visual Fatigue
-
-### Viewing from a Distance
-
-We used “design viewing distance” to describe the distance at which an interface should be evaluated. It combines the viewing task, device size, input method, and practical reach of the user.
-
-For the handheld example in this study, we used **40 cm** as a design reference. It was a project assumption rather than a universal minimum for every screen or person.
-
-We also explored the visual angle of a logical pixel. The calculations below use an assumed angle of 1.5/60 degrees to compare device size and logical resolution.
-
-The model estimates a reference viewing distance:
+We also explored the visual angle of a logical pixel. The model below uses an assumed angle of **1.5/60 degrees** to compare screen size and logical resolution:
 
 <EyeComfortDFormula />
 
@@ -63,15 +42,13 @@ The model estimates a reference viewing distance:
 - _W_ is the screen width in logical pixels.
 - _d_ is the assumed visual angle, set to 1.5/60 degrees in this example.
 
-Within this model, a larger screen or lower logical resolution increases the reference distance. It provides a design comparison, which still needs to be checked with real users and devices.
+Within this model, a larger screen or lower logical resolution increases the reference distance. This comparison was a starting point for evaluating prototypes on real devices.
 
-Casting content to a TV or projector changes both the viewing distance and the interaction. A handheld device can become the controller while the larger screen carries the content.
+### Include Reach and Field of View
 
-We called the distance allowed by the input method the **operable distance**. Touch, a keyboard and mouse, and a remote control each create different constraints.
+We called the distance allowed by the input method the **operable distance**. Touch, a keyboard and mouse, and a remote control each create different constraints. Casting to a TV or projector can separate the controller from the display carrying the content.
 
-We used **presence distance** to describe how the image fills the viewer's field of view. This was another input to the layout model, rather than a promise of fatigue-free viewing.
-
-Comparing these distances helped us choose a reference for prototypes and usability tests, particularly on devices that designers did not use every day.
+We used **presence distance** to describe how the image fills the viewer's field of view. Comparing these distances helped us choose a reference for prototypes and usability tests, particularly on unfamiliar devices.
 
 For the study's iPhone X landscape example, the model produced:
 
@@ -81,29 +58,27 @@ For the study's iPhone X landscape example, the model produced:
 
 We selected **40 cm** as the design viewing distance for that example.
 
-**Real Cases:**
+### Apply the Model to Product Discussions
 
-After releasing the handbook, we worked with product teams to apply the ideas, especially in online education.
-
-We helped GuaGualong refine its viewing-distance reminders and contributed to visual-comfort design validation for Dali desk lamps.
+After releasing the handbook, we worked with product teams to apply the ideas, especially in online education. We helped GuaGualong refine its viewing-distance reminders and contributed to visual-comfort design validation for Dali desk lamps.
 
 <WorkSingleImage
   src="/works/eye-protection-design-handbook/figure-1.png"
   width="1626"
   height="750"
-  alt="There is a prompt in the Guagualong app if a child is too close to the screen."
+  alt="GuaGualong interface displaying a reminder when a child is close to the screen."
   position="fullScreen"
 />
 
-## Comfortable Font Size
+## Relate Typography to Distance
 
-Viewing distance also changes the text size a design needs. We used the model to check familiar mobile interfaces and to explore less familiar formats such as large displays.
+Viewing distance changes the text size a design needs. We used the model to examine familiar mobile interfaces and explore less familiar formats such as large displays.
 
 <ComfortableFontYong />
 
-In our PingFang Regular example, a stroke thickness of 1 pt corresponded to a font size of about 14.5 pt. Font family, weight, display characteristics, and the reader all affect the result.
+In the PingFang Regular example, a stroke thickness of 1 pt corresponded to a font size of about 14.5 pt. Font family, weight, display characteristics, and the reader all affect the result.
 
-To adapt that reference size to the selected design viewing distance, we used the following ratio:
+To adapt that reference size to the selected design viewing distance, we used this ratio:
 
 <ComfortableFontSFormula />
 
@@ -111,124 +86,110 @@ To adapt that reference size to the selected design viewing distance, we used th
 - _Dec_ is the eye comfort distance.
 - _Sec_ is font size at eye comfort distance.
 
-With the example distances of 38.07 cm and 40 cm, the model gave a text size of 15.12 pt. We rounded up to **16 pt** for the prototype.
+With example distances of 38.07 cm and 40 cm, the model gave a text size of 15.12 pt. We rounded up to **16 pt** for the prototype.
 
-Readers have different needs. Rather than assume one size works for an age group, interfaces should support text scaling and be tested with the people who will use them.
+### Translate the Research into Type Specifications
 
-Contrast matters alongside size. [WCAG 2.2](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) specifies at least 4.5:1 for normal text and 3:1 for large text at Level AA.
-
-**Real Cases:**
-
-We tested the approach across ByteDance products and helped teams make text sizing and contrast more explicit parts of their design process.
+We worked across ByteDance products to make text sizing and contrast explicit parts of the design process. The Xigua Video work included a revised font system.
 
 <WorkSingleImage
   src="/works/eye-protection-design-handbook/figure-2.png"
   width="1920"
   height="1080"
-  alt="I helped Xigua Video create a new font system."
+  alt="Xigua Video typography specification showing a hierarchy of text sizes and line heights."
   position="fullScreen"
 />
 
-For the pre-K product line, the resulting body-text specifications were 19 pt on iPhone, 22 pt on iPad, and 22 pt on Android. These values reflected that project's users and device distribution.
+For the pre-K product line, the resulting body-text specifications were **19 pt on iPhone, 22 pt on iPad, and 22 pt on Android**. These values reflected that project's users and device distribution.
 
 <WorkSingleImage
   src="/works/eye-protection-design-handbook/figure-3.png"
   width="1920"
   height="1080"
-  alt="We helped to check the font size of the text in the pre-K app."
+  alt="Examples of typography and interface layouts from ByteDance pre-K applications."
   position="fullScreen"
 />
 
-### Breaks from Near Work
+The specifications made design choices concrete, while text scaling and evaluation with the intended readers remained important. One size should not be assumed to meet everyone's needs.
 
-The [American Optometric Association](https://www.aoa.org/healthy-eyes/eye-and-vision-conditions/computer-vision-syndrome) recommends regular breaks using the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds. An optional reminder can support this habit without interrupting the user unnecessarily.
+Contrast also matters. [WCAG 2.2](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) specifies at least **4.5:1 for normal text and 3:1 for large text** at Level AA.
 
-Break reminders should be easy to dismiss, pause, and configure. Their purpose is to support the user's routine, rather than add another obligation.
+## Consider the Whole Viewing Environment
 
-### Appropriate Light Contrast
+The study extended beyond typography to the lighting, transitions, and interruptions around a reading task.
 
-Evaluate the screen in the environments where it will be used. Reading, working, and settling down for sleep create different lighting needs.
+### Offer Configurable Break Reminders
 
-Respect the device's automatic brightness controls where available, and test the interface at both low and high screen brightness.
+The [American Optometric Association](https://www.aoa.org/healthy-eyes/eye-and-vision-conditions/computer-vision-syndrome) recommends the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.
 
-Other apps and screens form part of the viewing environment. Keep related surfaces consistent so switching between them does not create a sudden flash of light or dark.
+For interface design, a reminder should be optional and easy to dismiss, pause, and configure. Its role is to support a routine without creating another obligation.
 
-Display flicker depends on the hardware and brightness setting. Test on representative devices rather than assuming one frequency or brightness recommendation applies to every OLED screen.
+### Keep Related Surfaces Consistent
 
-**Real Cases:**
+A bright screen in a dim room, glare, and reflections can make viewing uncomfortable. We considered the interface alongside the device's brightness controls and its surroundings.
 
-In reading products, we found that switching from a dark reading surface to a white page could create an abrupt brightness change. Keeping the surfaces aligned, or using a brief transition where appropriate, made the change less disruptive.
+In reading products, we observed abrupt brightness changes when people moved from a dark reading surface to a white page. We explored aligned surface colors and brief transitions to make those changes less disruptive.
 
-### Low-saturation Colors
+Display flicker depends on hardware and brightness settings. Evaluating representative devices is more useful than assuming one frequency or brightness setting applies to every OLED screen.
 
-Reserve strong saturation for elements that need emphasis. For large surfaces, compare quieter alternatives and check their contrast with the content.
+### Use Saturation with a Clear Purpose
 
-Offer light and dark themes and follow the system preference by default. Give people a way to choose the theme that suits their surroundings.
+Strong saturation can compete with text and obscure hierarchy. For large backgrounds, we explored quieter alternatives while checking the contrast of important content.
 
-Both themes need readable contrast. Avoid sudden changes between unrelated light and dark surfaces during a task.
-
-**Real Cases:**
-
-For children's products, we worked with designers to reduce excessive saturation while preserving the visual identity and readability of each app.
+For children's products, we worked with designers to reduce excessive saturation while preserving each app's identity and readability.
 
 <WorkBeforeAfterImages
   beforeSrc="/works/eye-protection-design-handbook/figure-4-1.png"
   afterSrc="/works/eye-protection-design-handbook/figure-4-2.png"
   width={1920}
   height={1080}
-  description="We helped one of ByteDance's pre-K apps to reduce the bright of colors."
+  description="A pre-K interface before and after reducing background saturation while preserving its visual identity."
 />
 
-### Keep the Screen Still
+Light and dark themes should both remain readable. Following the system preference and offering a manual choice lets people adapt the interface to their surroundings.
 
-For interfaces used while moving, increase the clarity of text and controls. Motion detection should only support a clear user need, and any reminder should be gentle and optional.
+### Account for Movement
 
-# Blue Light
+A moving device makes small details harder to follow. For use in motion, the design guidance emphasized clear text, simpler content, and appropriate interaction targets. Any motion-triggered reminder needed a clear purpose and a gentle, optional presentation.
 
-The original study also explored warmer display colors. Current evidence does not establish that blue light from ordinary digital-device use damages the retina. Evening light exposure can affect sleep timing; visual comfort and sleep are separate design concerns. See the [American Academy of Ophthalmology](https://www.aao.org/eye-health/tips-prevention/blue-light-digital-eye-strain).
+## Explore Warmer Display Colors
 
-## Exploring Warmer Display Colors
+The original study also explored warmer palettes and screen-content rendering. These were interface experiments, with color, brightness, and contrast evaluated together.
 
-### Hardware Filtering
+The [American Academy of Ophthalmology](https://www.aao.org/eye-health/tips-prevention/blue-light-digital-eye-strain) reports no meaningful link between blue light from digital devices and damage to human retinas. Evening light exposure and sleep timing are separate concerns from visual comfort.
 
-Blue-light filters change the spectrum reaching the eye, but that alone does not demonstrate a benefit for digital eye strain. Our interface work focused on the resulting color, brightness, and contrast changes.
+### Prototype the Color Change
 
-### Screen Reduction
+Hardware filters alter the spectrum reaching the eye. Our interface work focused on how the resulting colors, brightness, and contrast affected the design.
 
-Warmer interface colors can support a night-mode preference. Check the complete palette so that text, images, and controls remain distinguishable after the change.
-
-The study explored applying a warmer color layer to images. Its temperature values were prototype choices, which needed to be evaluated with the content and display in use.
+I created a SwiftUI prototype to explore warmer color rendering on screen content. Its temperature values were prototype choices to evaluate with the content and display in use. A GPU-based implementation offered another way to adjust rendered colors.
 
 <WorkSingleImage
   src="/works/eye-protection-design-handbook/figure-5.png"
   width="1080"
   height="1080"
-  alt="I created a SwiftUI prototype of screen reduction of blue light to help understand how it works."
+  alt="SwiftUI reading-screen prototype with a warmer background, color-temperature slider, and Kelvin and RGB readouts."
   position="inline"
 />
 
-A GPU-based implementation can also adjust the rendered colors. The design still needs to preserve contrast and communicate the setting clearly.
+### Recheck Contrast after Tinting
 
-### Uniform Contrast
+Changing a surface's color temperature changes its luminance and its relationship with foreground elements. Some apps placed an orange layer over the entire screen, reducing text contrast.
 
-Changing a surface's color temperature changes its luminance and its relationship with surrounding elements. Recheck contrast after applying a warmer palette.
-
-For a light background, adjust foreground colors together with the background instead of adding a tint to the entire interface and assuming the original contrast remains.
-
-**Real Cases:**
-
-Some apps placed an orange layer over the screen, reducing text contrast. We explored adjusting the text and blending method together to keep the content readable.
+We explored changing text colors and the blending method together. The comparison below illustrates that design approach.
 
 <WorkBeforeAfterImages
   beforeSrc="/works/eye-protection-design-handbook/figure-6-1.png"
   afterSrc="/works/eye-protection-design-handbook/figure-6-2.png"
   width={499}
   height={1080}
-  description="Use the new blending method and change the color of the text to keep the contrast stable."
+  description="A warmer interface treatment comparing the original overlay with adjusted text colors and blending."
 />
 
-## Circadian Rhythm Compliance
+For scheduled color changes, the guidance favored gradual transitions, manual control, and respect for the user's device settings and routine. A fixed sunset offset or color temperature was not a universal health requirement.
 
-Evening light exposure can affect the body's sleep–wake cycle. A warmer display is one possible preference, and it should be considered separately from claims about preventing eye disease.
+## Outcome and Learning
 
-For scheduled color changes, follow the user's device settings and routine. Make the transition gradual, allow manual control, and avoid treating a fixed sunset offset or color temperature as a universal health requirement.
+The handbook gave product teams a way to discuss viewing conditions through explicit assumptions, calculations, specifications, and interface examples. Its applications included viewing-distance reminders, typography systems, pre-K interface work, and color-rendering prototypes.
+
+My role connected research with the details teams could use in a product: what distance to evaluate, how to size text, and what to check when colors or surroundings changed.

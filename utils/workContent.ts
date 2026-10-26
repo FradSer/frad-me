@@ -7,10 +7,12 @@ const MAX_SUMMARY_LENGTH = 500;
 /** Strip MDX/Markdown syntax to produce plain text. */
 function stripMdx(content: string): string {
   return content
+    .replace(/^export\s+const\s+metadata\s*=\s*\{[\s\S]*?^\}\s*;?/m, '')
     .replace(/<[^>]+\/>/g, '') // self-closing JSX tags
     .replace(/<[^>]+>[\s\S]*?<\/[^>]+>/g, '') // paired JSX tags
     .replace(/^export\s+(const|function|class|let|var)\s+\w+.*$/gm, '') // export statements
-    .replace(/^---[\s\S]*?---/m, '') // frontmatter (backward compatibility)
+    .replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, '') // frontmatter only at the start
+    .replace(/^---\s*$/gm, '') // preserve prose around thematic breaks
     .replace(/^#+\s+.*/gm, '') // headings
     .replace(/!\[.*?\]\(.*?\)/g, '') // images
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links -> text
@@ -29,7 +31,7 @@ export function getWorkSummary(slug: string): string | null {
     const source = fs.readFileSync(filePath, 'utf8');
     const plain = stripMdx(source);
     if (plain.length <= MAX_SUMMARY_LENGTH) return plain;
-    const truncated = plain.slice(0, MAX_SUMMARY_LENGTH);
+    const truncated = plain.slice(0, MAX_SUMMARY_LENGTH - 3);
     const lastSpace = truncated.lastIndexOf(' ');
     return `${truncated.slice(0, lastSpace > 0 ? lastSpace : MAX_SUMMARY_LENGTH)}...`;
   } catch {

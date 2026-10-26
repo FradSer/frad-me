@@ -2,6 +2,11 @@ import type { Metadata } from 'next';
 
 import { notFound } from 'next/navigation';
 import type { ComponentType } from 'react';
+import BearyChat, { metadata as bearyChatMetadata } from '@/markdown/works/bearychat.mdx';
+import EyeProtection, {
+  metadata as eyeProtectionMetadata,
+} from '@/markdown/works/eye-protection-design-handbook.mdx';
+import Pachino, { metadata as pachinoMetadata } from '@/markdown/works/pachino.mdx';
 import type { WorkFrontmatter } from '@/types/work';
 import { getAllWorkSlugs } from '@/utils/workList';
 import WorkPageClient from './work-page-client';
@@ -15,16 +20,15 @@ type LoadedWork = {
   metadata: WorkFrontmatter;
 };
 
-async function loadWork(slug: string): Promise<LoadedWork | null> {
-  try {
-    const module = await import(`@/markdown/works/${slug}.mdx`);
-    return {
-      Content: module.default,
-      metadata: module.metadata as WorkFrontmatter,
-    };
-  } catch {
-    return null;
-  }
+// Static MDX imports keep client references available to instant validation.
+const works = new Map<string, LoadedWork>([
+  ['bearychat', { Content: BearyChat, metadata: bearyChatMetadata }],
+  ['eye-protection-design-handbook', { Content: EyeProtection, metadata: eyeProtectionMetadata }],
+  ['pachino', { Content: Pachino, metadata: pachinoMetadata }],
+]);
+
+function loadWork(slug: string): LoadedWork | null {
+  return works.get(slug) ?? null;
 }
 
 export function generateStaticParams() {
@@ -33,7 +37,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const work = await loadWork(slug);
+  const work = loadWork(slug);
 
   if (!work) {
     return { title: 'Work Not Found' };
@@ -54,7 +58,7 @@ export async function generateMetadata({ params }: WorkPageProps): Promise<Metad
 
 export default async function WorkPage({ params }: WorkPageProps) {
   const { slug } = await params;
-  const work = await loadWork(slug);
+  const work = loadWork(slug);
 
   if (!work) {
     notFound();

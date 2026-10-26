@@ -6,12 +6,10 @@ export default function WorkInformation(
 ) {
   if (!props.data) return null;
   return (
-    <div className="col-span-8 md:col-span-3">
-      <p className="uppercase">{props.title}</p>
+    <div className="min-w-0 space-y-2">
+      <dt className="text-sm text-gray-500 dark:text-gray-400">{props.title}</dt>
       {props.data.map((item) => (
-        <p key={item} className="text-gray-500 dark:text-gray-400">
-          {item}
-        </p>
+        <dd key={item}>{item}</dd>
       ))}
     </div>
   );

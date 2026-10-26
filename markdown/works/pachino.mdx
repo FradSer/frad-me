@@ -2,84 +2,96 @@ export const metadata = {
   cover: '/works/pachino/cover.png',
   title: 'Pachino',
   coverBackground: 'bg-red-600',
-  description: 'is a SwiftUI focus timer for iOS and macOS, with generative visuals and ambient audio.',
+  description: 'A SwiftUI focus timer for iOS and macOS, with generative visuals and ambient audio.',
   platforms: ['iOS', 'macOS'],
   contributors: ['Developer'],
-  site: 'https://apple.co/3xjqO5K',
+  site: 'https://apps.apple.com/us/app/pachino/id1578918163',
   nextWork: 'eye-protection-design-handbook',
 }
+
+Pachino is an independent product I designed and built in SwiftUI for iOS and macOS. I wanted a Pomodoro timer that felt at home on both platforms and stayed out of the way while I worked.
+
+## Context and Role
 
 I learn by making things. Pachino grew from a simple principle:
 
 > Make something useful, and learn what it takes.
 
-Rather than start with a tool or programming language, I looked for a daily task I could improve. A focus timer was small enough to build independently and useful enough to keep testing.
+Rather than start with a programming language or tool, I chose a daily task I could improve. A focus timer was small enough to build independently and useful enough to keep testing through my own routine.
 
-As a regular iPhone and Mac user, I wanted a Pomodoro timer that felt at home on both platforms and stayed out of the way while I worked.
-
-# Designing an Accurate Timer
-
-The first design rule was restraint: a useful tool should be quiet until it is needed. Pachino keeps its controls in predictable places and gives the timer a clear, consistent structure.
+My work covered the timer interactions, platform-specific interfaces, generative visuals, ambient audio experience, and native implementation.
 
 The name comes from Pachino, a tomato grown on the southeast coast of Sicily—a nod to the Pomodoro Technique.
 
+## Keep the Timer Quiet and Predictable
+
+The first design rule was restraint: a useful tool should be quiet until it is needed. I kept controls in predictable places and gave the countdown a clear, consistent structure.
+
+### Show When a Session Will End
+
 A 25-minute focus session can collide with a scheduled meeting. I added an end-time indicator so people could see when a session would finish before starting it. The indicator stays secondary to the countdown.
+
+### Make Daily Progress Visible
+
+Daily goals give people a simple way to recognize their progress without adding another task to manage.
 
 <WorkSingleImage
   src="/works/pachino/figure-1.gif"
   width="800"
   height="500"
-  alt="When people accomplish their daily goals."
+  alt="Pachino animation showing progress toward a daily focus-session goal."
   position="underH2"
   unoptimized="true"
 />
-
-Daily goals give people a simple way to recognize their progress without adding another task to manage.
 
 <WorkSingleImage
   src="/works/pachino/figure-2.png"
   width="1920"
   height="1080"
-  alt="Timer screenshot of iOS and macOS."
+  alt="Pachino timer interfaces on iPhone and Mac, with countdown controls and session timing."
   position="fullScreen"
 />
 
-## Beyond the Timer
+## Give Breaks a Different Atmosphere
+
+Breaks needed a different atmosphere from focus sessions. I explored generative visuals with Metal and GLSL, then used p5.js to prototype them quickly in the browser.
+
+The resulting zen mode pairs changing graphics with a quiet time display and hides the iOS status bar for a more immersive break. It gave the visual experiments a purpose within the timer's routine.
 
 <WorkSingleImage
   src="/works/pachino/figure-3.gif"
   width="888"
   height="1920"
-  alt="Timer screenshot of iOS and macOS."
+  alt="Pachino zen mode on iPhone, combining animated generative graphics with a time display."
   position="underH2"
   unoptimized="true"
 />
 
-Breaks needed a different atmosphere from focus sessions. I explored generative visuals with Metal and GLSL, then used p5.js to prototype them quickly in the browser. The resulting zen mode pairs changing graphics with a quiet time display and hides the iOS status bar for a more immersive break.
+## Share Views, Adapt the Platform Experience
 
-# Designed for Each Platform
+I chose to build a dedicated macOS app rather than rely on Catalyst alone. Separating shared content from its platform-specific container let me reuse core views while adapting the surrounding experience to each device.
 
-I chose to build a dedicated macOS app rather than rely on Catalyst alone. Separating shared content from its platform-specific container let me reuse the core views while adapting the surrounding experience to each device.
+The purchase interface demonstrates that separation: the same view and code sit within different platform containers.
 
 <WorkSingleImage
   src="/works/pachino/figure-4.png"
   width="1920"
   height="1080"
-  alt="The in-app purchase page uses the same view and code in a different container."
+  alt="Pachino purchase interface reusing a shared view inside iOS and macOS containers."
   position="fullScreen"
 />
 
-On macOS, multi-window support makes better use of a larger screen. A menu bar extra keeps the timer within reach without requiring the main window to stay open.
+On macOS, multi-window support makes use of the larger screen. A menu bar extra keeps the timer within reach while the main window is closed or out of the way.
 
 <WorkSingleImage
   src="/works/pachino/figure-5.png"
   width="1920"
   height="1080"
-  alt="Designed for features of macOS."
+  alt="Pachino on macOS with separate timer, zen-mode, and settings windows, plus a menu bar countdown."
   position="fullScreen"
 />
 
-# Sound for Focus
+## Make Sound Part of the Routine
 
 Ambient audio became another part of the experience. After trying options with friends, I added café, subway, ocean, rain, metronome, and seasonal sounds alongside white noise.
 
@@ -87,7 +99,7 @@ Ambient audio became another part of the experience. After trying options with f
   src="/works/pachino/figure-6.png"
   width="1920"
   height="1080"
-  alt="Ambient sound options in Pachino."
+  alt="Pachino ambient-audio selection, offering different soundscapes for a focus session."
   position="fullScreen"
 />
 
@@ -97,16 +109,24 @@ During the travel restrictions of 2021, recordings from cafés in 11 countries o
   src="/works/pachino/figure-7.png"
   width="1920"
   height="1080"
-  alt="Cafe sound from 11 different countries and four season songs."
+  alt="Pachino sound controls with café-location choices and seasonal soundscapes."
   position="inline"
 />
 
-A high-volume indicator encourages people to turn the audio down when the level gets too loud.
+A high-volume indicator provides a visible prompt to turn the audio down.
 
 <WorkSingleImage
   src="/works/pachino/figure-8.png"
   width="1920"
   height="1080"
-  alt="A simple but effective alert for excessive volume."
+  alt="Pachino audio controls displaying a high-volume indicator."
   position="inline"
 />
+
+## Outcome and Next Direction
+
+The result was a released focus timer for iOS and macOS, with daily goals, zen visuals, ambient audio, and a platform-specific Mac experience. The project connected interaction design and implementation through a tool I could use in my own workday.
+
+Its central design lesson was to give each addition a clear place in the routine: timing supports focus, visuals mark a change of pace, and audio remains a choice.
+
+I am now exploring a task-planning and focus workflow for Pachino. That exploration is separate from the released timer shown here.

@@ -1,6 +1,5 @@
 'use client';
 
-import { Line } from '@/components/WorkPage/MDXComponents';
 import NextWork from '@/components/WorkPage/NextWork';
 import WorkCover from '@/components/WorkPage/WorkCover';
 import WorkInformation from '@/components/WorkPage/WorkInformation';
@@ -23,29 +22,26 @@ export default function WorkPageClient({ children, metadata }: Readonly<WorkPage
         coverBackground={metadata.coverBackground}
       />
 
-      <section className="layout-wrapper flex flex-col gap-y-3 md:gap-y-6">
-        <header className={GRID_CLASSES.container}>
-          <h1 className="col-span-16 mt-12 text-3xl text-gray-500 dark:text-gray-400 md:col-span-12">
-            <strong className="font-black text-black dark:text-white">{metadata.title}</strong>{' '}
-            {metadata.description}
+      <section className="layout-wrapper flex flex-col pb-16 md:pb-24">
+        <header className="border-b border-gray-200 py-12 dark:border-neutral-800 md:py-20">
+          <h1 className="max-w-[18ch] font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+            {metadata.title}
           </h1>
+          <p className="mt-6 max-w-[45ch] text-xl leading-relaxed text-gray-600 dark:text-gray-300 md:text-2xl">
+            {metadata.description}
+          </p>
+          <dl className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-3 md:gap-12">
+            <WorkInformation title="Platforms" data={metadata.platforms} />
+            <WorkInformation title="My role" data={metadata.contributors} />
+            {metadata.site && <WorkSite href={metadata.site} />}
+          </dl>
         </header>
-
-        <div className={GRID_CLASSES.container}>
-          <WorkInformation title="platforms" data={metadata.platforms} />
-          <WorkInformation title="contributors" data={metadata.contributors} />
-          {metadata.site && <WorkSite href={metadata.site} />}
-        </div>
-
-        <Line />
-
-        <article className={`${GRID_CLASSES.container} text-lg`}>{children}</article>
-
-        <Line />
-
-        {metadata.nextWork && <NextWork href={metadata.nextWork} />}
-
-        <span className="col-span-16 h-16" />
+        <article
+          className={`${GRID_CLASSES.container} py-12 text-base leading-relaxed md:py-20 md:text-lg`}
+        >
+          {children}
+        </article>
+        <NextWork href={metadata.nextWork} />
       </section>
     </div>
   );
