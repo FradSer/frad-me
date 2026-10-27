@@ -78,6 +78,7 @@ Feature: The cursor dot joins interactive elements
     And scrolling before a pending pointer frame still resolves the new element under the pointer
     When scrolling reveals a different published or work-in-progress card
     Then its READ or WIP label replaces the previous label without pointer movement
+    And a late hover-end callback from the previous card cannot replace the current card cursor
     When scrolling reveals blank content, a control, or a removed card
     Then the previous work card state is cleared without oversized geometry
 

@@ -5,8 +5,6 @@ import { motion, useAnimationControls, type Variants } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import { CursorType } from '@/contexts/Mouse/MouseContext';
-import useMouseContext from '@/hooks/useMouseContext';
 import { primaryTransition } from '@/utils/motion/springTransitions';
 import { getWorkColor } from '@/utils/theme/workColors';
 
@@ -47,7 +45,6 @@ interface IWorkCardContentProps {
   isCenter?: boolean;
   onHoverStart: () => void;
   onHoverEnd: () => void;
-  onClick: () => void;
   controls: Record<string, AnimationControls>;
   variants: WorkCardVariants;
 }
@@ -82,7 +79,6 @@ const WorkCardContent = memo(
         ref={ref}
         onHoverStart={props.onHoverStart}
         onHoverEnd={props.onHoverEnd}
-        onClick={props.onClick}
         className="relative flex w-full h-full items-center justify-center overflow-hidden"
       >
         <div className={backgroundImageClass}>
@@ -152,7 +148,6 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
   );
 
   // * Hooks
-  const { cursorChangeHandler } = useMouseContext();
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isHoveredRef = useRef(false);
 
@@ -167,30 +162,20 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
 
     isHoveredRef.current = true;
 
-    const cursorType = props.isWIP ? CursorType.workCardHoveredWIP : CursorType.workCardHovered;
-    cursorChangeHandler(cursorType);
-
     backgroundImageControls.start('hover');
     backgroundMaskControls.start('hover');
     textControls.start('hover');
-  }, [
-    props.isWIP,
-    cursorChangeHandler,
-    backgroundImageControls,
-    backgroundMaskControls,
-    textControls,
-  ]);
+  }, [backgroundImageControls, backgroundMaskControls, textControls]);
 
   const handleHoverEnd = useCallback(() => {
     isHoveredRef.current = false;
-    cursorChangeHandler(CursorType.default);
 
     animationTimeoutRef.current = setTimeout(() => {
       backgroundImageControls.start('initial');
       backgroundMaskControls.start('initial');
       textControls.start('initial');
     }, ANIMATION_RESET_DEBOUNCE_MS);
-  }, [cursorChangeHandler, backgroundImageControls, backgroundMaskControls, textControls]);
+  }, [backgroundImageControls, backgroundMaskControls, textControls]);
 
   useEffect(() => {
     return () => {
@@ -199,12 +184,6 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       }
     };
   }, []);
-
-  const handleClick = useCallback(() => {
-    if (!props.isWIP) {
-      cursorChangeHandler(CursorType.default);
-    }
-  }, [props.isWIP, cursorChangeHandler]);
 
   // * Create shared content
   const workCardContent = (
@@ -216,7 +195,6 @@ function WorkCard(props: Readonly<IWorkCardProps>) {
       isCenter={props.isCenter}
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      onClick={handleClick}
       controls={controls}
       variants={VARIANTS}
     />

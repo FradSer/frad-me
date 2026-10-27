@@ -15,6 +15,7 @@ function Card({ wip = false }: { wip?: boolean }) {
       onMouseEnter={() =>
         cursorChangeHandler(wip ? CursorType.workCardHoveredWIP : CursorType.workCardHovered)
       }
+      onMouseLeave={() => cursorChangeHandler(CursorType.default)}
     >
       <span>{wip ? 'WIP cover' : 'Published cover'}</span>
       <span>{wip ? 'WIP caption' : 'Published caption'}</span>
@@ -143,6 +144,67 @@ describe('Work card cursor during scrolling', () => {
     fireEvent.scroll(window);
     expect(await screen.findByText('WIP')).toBeVisible();
     expect(screen.queryByText('READ')).not.toBeInTheDocument();
+  });
+
+  it('does not let a late hover-end from the previous card replace the current scroll hit', () => {
+    jest.useFakeTimers();
+    const { motion } = require('motion/react');
+    const renderDiv = jest.spyOn(motion.div, 'render');
+    const { container, unmount } = render(
+      <MouseContextProvider>
+        <DotRing />
+        <WorkCard title="Previous" subTitle="Case" slug="previous" cover="/previous.png" />
+        <WorkCard title="Current" subTitle="Case" slug="current" cover="/current.png" isWIP />
+        <p>Blank area</p>
+      </MouseContextProvider>,
+    );
+    try {
+      const handlers = renderDiv.mock.calls
+        .map(([props]) => props)
+        .find((props) => (props as { onHoverEnd?: unknown }).onHoverEnd) as {
+        onHoverStart: () => void;
+        onHoverEnd: () => void;
+      };
+      const cover = screen.getByAltText('Cover for Previous');
+      fireEvent.pointerMove(cover, { clientX: 50, clientY: 60 });
+      act(() => {
+        handlers.onHoverStart();
+      });
+      act(() => {
+        jest.advanceTimersByTime(32);
+      });
+      document.elementFromPoint = () => screen.getByAltText('Cover for Current');
+      fireEvent.scroll(window);
+      act(() => {
+        jest.advanceTimersByTime(32);
+      });
+      expect(screen.getByText('WIP')).toBeVisible();
+      act(() => {
+        handlers.onHoverEnd();
+      });
+      act(() => {
+        jest.advanceTimersByTime(50);
+      });
+      expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+        'data-cursor-shape',
+        'work-card',
+      );
+      expect(screen.getByText('WIP')).toBeVisible();
+      document.elementFromPoint = () => screen.getByText('Blank area');
+      fireEvent.scroll(window);
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      expect(screen.queryByText('WIP')).not.toBeInTheDocument();
+      expect(container.querySelector('[data-cursor-shape]')).toHaveAttribute(
+        'data-cursor-shape',
+        'dot',
+      );
+    } finally {
+      unmount();
+      renderDiv.mockRestore();
+      jest.useRealTimers();
+    }
   });
 
   it.each(['disabled', 'navigation'] as const)(
