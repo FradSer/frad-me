@@ -60,34 +60,50 @@ function useAssistant() {
   const [pending, setPending] = useState(false);
   const busy = useRef(false);
   const failed = useRef(false);
+  const stopped = useRef(false);
+  const draft = useRef({ version: 0, recovered: false });
   const lastQuestion = useRef('');
   const chat = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
     onError: () => {
+      if (stopped.current) return;
       failed.current = true;
       setFailure(true);
     },
   });
   const loading = pending || chat.status === 'submitted' || chat.status === 'streaming';
-  const hasError = failure || chat.status === 'error';
+  const hasError = !stopped.current && (failure || chat.status === 'error');
   const run = useCallback(
-    async (text: string, retry = false) => {
+    async (text: string, retry = false, consumesDraft = true) => {
       if (busy.current || !text.trim()) return;
       busy.current = true;
       failed.current = false;
+      stopped.current = false;
+      const version = draft.current.version;
+      draft.current.recovered = false;
       setPending(true);
       setFailure(false);
       chat.clearError();
       lastQuestion.current = text;
-      if (!retry) setInput(text);
+      if (consumesDraft) setInput('');
       try {
         if (retry) await chat.regenerate();
         else await chat.sendMessage({ text });
-        if (!failed.current) setInput((current) => (current === text ? '' : current));
       } catch {
-        failed.current = true;
-        setFailure(true);
+        if (!stopped.current) {
+          failed.current = true;
+          setFailure(true);
+        }
       } finally {
+        if (
+          failed.current &&
+          !stopped.current &&
+          consumesDraft &&
+          draft.current.version === version
+        ) {
+          draft.current.recovered = true;
+          setInput(text);
+        }
         busy.current = false;
         setPending(false);
       }
@@ -105,12 +121,19 @@ function useAssistant() {
   return {
     ...chat,
     input,
-    setInput,
+    setInput: (text: string) => {
+      draft.current = { version: draft.current.version + 1, recovered: false };
+      setInput(text);
+    },
+    stop: () => {
+      stopped.current = true;
+      void Promise.resolve(chat.stop()).catch(() => {});
+    },
     loading,
     hasError,
     reset,
     send: (text: string) => run(text.trim(), hasError && text.trim() === lastQuestion.current),
-    retry: () => run(lastQuestion.current, true),
+    retry: () => run(lastQuestion.current, true, draft.current.recovered),
   };
 }
 

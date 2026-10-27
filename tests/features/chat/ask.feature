@@ -7,6 +7,7 @@ Feature: Ask — portfolio assistant
     Given Gateway authentication is absent or configured through a key or Vercel OIDC
     When the browser checks GET /api/chat
     Then enabled reflects the available authentication
+    And the X-Chat-Model response header identifies the configured model without exposing credentials
     And an unconfigured POST returns 503
 
   Scenario: A valid conversation streams one bounded answer

@@ -71,6 +71,8 @@ The "ask" section on the homepage uses Vercel AI SDK v7 (`ai@^7`, `@ai-sdk/gatew
 - **Tools**: `get_works`, `read_work`, `search_works`, `get_resume`, `get_recent_activity` (public GitHub activity from `utils/githubActivity.ts`, ~10-minute cache). A GitHub failure returns clearly labeled curated projects with unknown metrics, not invented recent activity. Keep BDD scenarios in sync when adding tools.
 - **Rate limiting**: 20 requests/IP/minute, in-memory
 - **Environment variables**: `AI_GATEWAY_API_KEY` (or Vercel OIDC when hosted); optional `AI_GATEWAY_MODEL_ID` in `provider/model` form (defaults to `alibaba/qwen3.7-flash`). See `.env.example`. The UI offers the resume when chat is unconfigured and a reconnect action after a transient availability failure.
+- **Model changes**: Verify account access with a real tool-assisted request before changing production `AI_GATEWAY_MODEL_ID`. A catalog listing does not establish account access; preserve the working model when an upgrade returns an access error.
+- **Model inspection**: `GET /api/chat` retains its availability JSON and reports only the configured model ID in `X-Chat-Model` for deployment checks.
 - **Conversation contract**: only user/assistant history ending in a text question; maximum 40 messages, 4,000 characters per user question, 32,000 total text characters, and 128,000 UTF-8 request bytes. Read request bytes incrementally and cancel at the limit. Validate tool history with the server's tool schemas. Forward cancellation to generation and tool fetches, hide reasoning, and sanitize errors. Do not concatenate a fallback model stream after a partial response.
 
 ### Content Management

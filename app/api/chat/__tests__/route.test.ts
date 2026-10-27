@@ -110,7 +110,9 @@ afterAll(() => {
 describe('POST /api/chat behavioral contract', () => {
   it('reports Gateway key or OIDC configuration and rejects unconfigured requests', async () => {
     delete process.env.AI_GATEWAY_API_KEY;
-    expect(await (await route.GET()).json()).toEqual({ enabled: false });
+    const availability = await route.GET();
+    expect(await availability.json()).toEqual({ enabled: false });
+    expect(availability.headers.get('x-chat-model')).toBe('alibaba/qwen3.7-flash');
     expect((await route.POST(request())).status).toBe(503);
     process.env.VERCEL_OIDC_TOKEN = 'test-oidc';
     expect(await (await route.GET()).json()).toEqual({ enabled: true });
@@ -148,6 +150,9 @@ describe('POST /api/chat behavioral contract', () => {
   });
   it('respects a configured model without starting a fallback answer', async () => {
     process.env.AI_GATEWAY_MODEL_ID = 'provider/custom-model';
+    const availability = await route.GET();
+    expect(await availability.json()).toEqual({ enabled: true });
+    expect(availability.headers.get('x-chat-model')).toBe('provider/custom-model');
     const response = await route.POST(request());
     await response.text();
     expect(mockGateway).toHaveBeenCalledTimes(1);

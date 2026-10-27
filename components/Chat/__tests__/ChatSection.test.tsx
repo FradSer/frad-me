@@ -78,6 +78,16 @@ function enter(text: string) {
   return input;
 }
 
+function deferred() {
+  let resolve = () => {};
+  let reject = (_reason: Error) => {};
+  const promise = new Promise<void>((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
+  return { promise, resolve, reject };
+}
+
 describe('Ask assistant experience', () => {
   it('explains the assistant, offers four current questions, and uses the SDK transport', async () => {
     render(<ChatSection />);
@@ -96,7 +106,9 @@ describe('Ask assistant experience', () => {
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
-  it('retains failed input and retries the existing turn without another user message', async () => {
+  it('restores failed input and retries the existing turn without clearing a newer draft', async () => {
+    const retry = deferred();
+    chat.regenerate.mockReturnValueOnce(retry.promise);
     chat.sendMessage.mockImplementationOnce(async () => {
       mockUseChat.mock.calls.at(-1)?.[0].onError(new Error('secret provider failure'));
     });
@@ -111,12 +123,19 @@ describe('Ask assistant experience', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Retry answer' }));
     });
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    enter('Tell me about Code Terrier');
+    await act(async () => {
+      retry.resolve();
+    });
     expect(chat.sendMessage).toHaveBeenCalledTimes(1);
     expect(chat.regenerate).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(screen.getByRole('textbox')).toHaveValue('Tell me about Code Terrier');
   });
 
   it('preserves input on rejected submission and Enter retries that turn', async () => {
+    const retry = deferred();
+    chat.regenerate.mockReturnValueOnce(retry.promise);
     chat.sendMessage.mockRejectedValueOnce(new Error('network failed'));
     render(<ChatSection />);
     await ready();
@@ -125,21 +144,25 @@ describe('Ask assistant experience', () => {
       fireEvent.keyDown(input, { key: 'Enter' });
     });
     expect(input).toHaveValue('What has Frad built?');
+    enter('An edited question');
+    enter('What has Frad built?');
     await act(async () => {
       fireEvent.keyDown(input, { key: 'Enter' });
     });
     expect(chat.regenerate).toHaveBeenCalledTimes(1);
     expect(chat.sendMessage).toHaveBeenCalledTimes(1);
+    expect(input).toHaveValue('');
+    await act(async () => {
+      retry.resolve();
+    });
   });
 
   it('prevents duplicate sends and keeps Shift+Enter and composition from submitting', async () => {
-    let finish = () => {};
-    chat.sendMessage.mockImplementationOnce(
-      () =>
-        new Promise<void>((resolve) => {
-          finish = resolve;
-        }),
-    );
+    const request = deferred();
+    chat.sendMessage.mockImplementationOnce(() => {
+      chat.messages = [message('user', 'A question')];
+      return request.promise;
+    });
     render(<ChatSection />);
     await ready();
     const input = enter('A question');
@@ -149,11 +172,48 @@ describe('Ask assistant experience', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(chat.sendMessage).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('log')).toHaveTextContent('A question');
+    expect(input).toHaveValue('');
     expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled();
     expect(screen.getByRole('log')).toHaveAttribute('aria-busy', 'true');
     expect(screen.getByRole('status')).toHaveTextContent('Thinking');
-    await act(async () => finish());
+    await act(async () => request.resolve());
   });
+
+  it.each(['success', 'reject', 'reject-empty', 'onError', 'stop'])(
+    'preserves a newer draft after %s settles an in-flight question',
+    async (outcome) => {
+      const request = deferred();
+      chat.sendMessage.mockReturnValueOnce(request.promise);
+      render(<ChatSection />);
+      await ready();
+      const input = enter('Question');
+      fireEvent.click(screen.getByRole('button', { name: 'Send message' }));
+      const draft =
+        outcome === 'success' ? 'Question' : outcome === 'reject-empty' ? '' : 'Next draft';
+      enter('Editing a new question');
+      enter(draft);
+      if (outcome === 'stop')
+        fireEvent.click(screen.getByRole('button', { name: 'Stop generating' }));
+      await act(async () => {
+        if (outcome === 'stop') chat.status = 'error';
+        if (outcome === 'onError') mockUseChat.mock.calls.at(-1)?.[0].onError(new Error('Failed'));
+        if (outcome.startsWith('reject') || outcome === 'stop')
+          request.reject(new Error('Aborted or failed'));
+        else request.resolve();
+      });
+      expect(input).toHaveValue(draft);
+      if (outcome === 'stop') expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      if (outcome === 'onError') {
+        enter('Question');
+        await act(async () => {
+          fireEvent.click(screen.getByRole('button', { name: 'Retry answer' }));
+        });
+        expect(input).toHaveValue('Question');
+        expect(chat.regenerate).toHaveBeenCalledTimes(1);
+      }
+    },
+  );
 
   it('distinguishes thinking and writing and exposes stop generation', async () => {
     chat.messages = [message('user', 'A question')];

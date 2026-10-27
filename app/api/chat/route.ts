@@ -33,7 +33,10 @@ function isGatewayConfigured(): boolean {
 }
 
 export async function GET() {
-  return NextResponse.json({ enabled: isGatewayConfigured() });
+  return NextResponse.json(
+    { enabled: isGatewayConfigured() },
+    { headers: { 'X-Chat-Model': process.env.AI_GATEWAY_MODEL_ID || DEFAULT_MODEL_ID } },
+  );
 }
 
 function createAnswer(

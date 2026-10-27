@@ -10,6 +10,17 @@ Feature: Ask about Frad's public work
     Then my input remains available
     When I retry the answer
     Then the existing question is regenerated without another user message
+    And retrying does not replace a newer draft
+    When I edit and explicitly resubmit the same question
+    Then the submitted draft clears immediately even when the existing turn is regenerated
+
+  Scenario: Submitted questions leave the composer immediately
+    Given I have entered a question
+    When I submit it and the answer is still pending
+    Then the question appears in the conversation and the input is empty
+    And completion, failure, or manual stop cannot overwrite a draft I edit afterward
+    And a failure restores the question only if I have not edited a newer draft
+    And stopping generation does not restore the submitted question or report a failure
 
   Scenario: Visitors control an active conversation
     Given an answer is being generated
