@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="How Vonli handles audio, dictated text, clipboard contents, usage statistics, and purchases.">
+<title>Vonli Privacy Policy</title>
+<style>
+:root { color-scheme: light dark; font: 17px/1.65 system-ui, sans-serif; }
+body { margin: 0 auto; max-width: 70ch; padding: 3rem 1.5rem 5rem; }
+h1 { font-size: 2rem; line-height: 1.2; letter-spacing: -.025em; }
+h2 { font-size: 1.2rem; line-height: 1.35; margin: 2.2rem 0 .6rem; }
+p, ul { margin: .75rem 0; }
+a { color: LinkText; text-underline-offset: .18em; }
+a:focus-visible { outline: 2px solid Highlight; outline-offset: 4px; }
+::selection { background: Highlight; color: HighlightText; }
+footer { margin-top: 3rem; }
+@media (max-width: 480px) { body { padding-top: 2rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Vonli Privacy Policy</h1>
+<p>Effective date: November 15, 2026. This policy covers the Vonli macOS application, developed by Frad LEE. Contact: <a href="mailto:hey@frad.me">hey@frad.me</a>.</p>
+<p>Vonli turns speech into text on your Mac. It does not require a Vonli account. The app does not send your audio, transcripts, or clipboard contents to a developer-operated server, and does not include advertising or analytics SDKs.</p>
+
+<h2>Audio and text processing</h2>
+<p>Vonli uses the microphone only when you start dictation. Apple Speech processes audio on your Mac. Vonli does not save recordings as audio files. Audio buffers and recognition state are temporary and are released when a session ends or is cancelled.</p>
+<p>If you enable text refinement, Apple's on-device Foundation Models framework processes the transcript. Vonli does not use Private Cloud Compute or a third-party language-model service for this feature. Apple may use the network to install or update the required system models and speech resources.</p>
+<p>The original transcript and edited result stay in the current app session until you clear them, start another dictation, or quit the app. Vonli does not maintain a persistent transcript history. Text you copy, paste, or share then belongs to the destination app or system clipboard and follows that service's policies.</p>
+
+<h2>Keyboard, window metadata, and automatic paste</h2>
+<p>Optional Accessibility access enables the global hold-to-talk shortcut and the Command-V event used for automatic paste. Vonli handles shortcut key codes and modifier state. It does not record a history of typed characters or read the text in another app's input fields.</p>
+<p>To avoid pasting after a change of destination, Vonli checks the frontmost application, window identifier and bounds, and aggregate keyboard/mouse event counters. It does not capture screen pixels or read window titles. If these checks fail, it leaves the result available for manual copying or pasting. Automatic paste cannot identify every programmatic change to a cursor or field; place the cursor in the intended input before dictating.</p>
+<p>For automatic paste, Vonli temporarily holds a snapshot of the existing clipboard in memory, places the result on the clipboard, sends Command-V, and attempts to restore the snapshot after about 0.8 seconds. A newer copy takes priority. If protected or unreadable clipboard formats prevent safe restoration, Vonli skips automatic paste. Explicitly copying a result leaves it on the clipboard until you replace it. Vonli does not maintain a clipboard history.</p>
+
+<h2>Data saved on your Mac</h2>
+<p>Vonli saves your language, shortcut, output preferences, onboarding status, and daily usage totals in macOS application preferences. Usage totals contain character counts, session duration, and completed-session counts by day; they do not contain transcripts or recordings.</p>
+<p>The app writes operational diagnostic messages, such as purchase verification status and rendering performance, to the macOS logging system. These messages do not include dictated text, audio, clipboard contents, or payment credentials. Vonli does not upload these logs automatically. If you choose to send support material, review it before sharing.</p>
+
+<h2>Purchases and Apple services</h2>
+<p>The one-time unlock and restore purchase features use Apple's App Store and StoreKit. Apple handles payment, Apple Account authentication, transaction records, and purchase restoration. Vonli verifies the entitlement returned by StoreKit; it does not receive your password, payment-card details, or billing address. Apple may retain purchase records independently of this app. See <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>.</p>
+
+<h2>Your controls</h2>
+<ul>
+<li>Stop or cancel dictation at any time. Use Clear in the transcript view to remove the current text from the window; this does not clear the system clipboard or text already pasted elsewhere.</li>
+<li>Disable text refinement or automatic paste in Vonli Settings.</li>
+<li>Change microphone or Accessibility permissions in System Settings → Privacy &amp; Security.</li>
+<li>To remove local preferences and usage totals, contact support for instructions appropriate to your installed version. Deleting local app data does not delete Apple's transaction records.</li>
+</ul>
+
+<h2>Changes and contact</h2>
+<p>If the app's data practices change, this policy will be updated with a new effective date. For privacy questions or local-data removal instructions, email <a href="mailto:hey@frad.me">hey@frad.me</a>. Please do not send recordings or private transcripts unless they are necessary for your request and you choose to share them.</p>
+</main>
+<footer><a href="https://frad.me/">Frad LEE</a></footer>
+</body>
+</html>
